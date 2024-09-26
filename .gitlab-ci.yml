@@ -1,0 +1,56 @@
+stages:
+  - format
+  - lint
+  - build
+  - test
+
+# Stage: Code formatting with clang-format
+format:
+  stage: format
+  image: gcc:latest
+  script:
+    - apt-get update && apt-get install -y clang-format
+    - clang-format --version
+    - clang-format -i $(find . -name '*.cpp' -o -name '*.h') # Customize file extensions if needed
+  allow_failure: false
+
+# Stage: Static analysis with cppcheck
+lint:
+  stage: lint
+  image: gcc:latest
+  script:
+    - apt-get update && apt-get install -y cppcheck
+    - cppcheck --enable=all --inconclusive --error-exitcode=1 .
+  allow_failure: false
+
+# Stage: Build in Debug mode
+build_debug:
+  stage: build
+  image: gcc:latest
+  before_script:
+    - apt-get update && apt-get install -y cmake
+  script:
+    - mkdir -p build/debug
+    - cd build/debug
+    - cmake -DCMAKE_BUILD_TYPE=Debug ../..
+    - cmake --build . --target build_all
+  artifacts:
+    paths:
+      - build/debug
+  allow_failure: false
+
+# Stage: Run unit tests (Google Test) in Debug mode
+test:
+  stage: test
+  image: gcc:latest
+  before_script:
+    - apt-get update && apt-get install -y cmake g++ wget
+    - wget https://github.com/google/googletest/archive/release-1.12.1.zip
+    - unzip release-1.12.1.zip
+    - mkdir -p build/debug
+  script:
+    - cd build/debug
+    - cmake -DCMAKE_BUILD_TYPE=Debug ../..
+    - cmake --build .
+    - ctest --output-on-failure
+  allow_failure: false

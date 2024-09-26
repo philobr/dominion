@@ -1,3 +1,55 @@
-.idea/
-.git/
+# by chatgpt
+
+# Ignore system files
+.DS_Store
+Thumbs.db
+
+# Ignore build directories
 cmake-build-debug/
+cmake-build-release/
+build/
+
+# Ignore IDE-specific files and folders
+.idea/
+.vscode/
+
+# Ignore Git folder (this is usually managed by Git itself)
+.git/
+
+# Ignore compiled object files, libraries, and executables
+*.o
+*.a
+*.so
+*.dylib
+*.dll
+*.exe
+
+# Ignore CMake-generated files
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+CTestTestfile.cmake
+
+# Ignore Makefiles and Ninja files
+Makefile
+build.ninja
+rules.ninja
+
+# Ignore CLion-specific files
+*.iml
+*.iws
+
+# Ignore logs and temp files
+*.log
+*.tmp
+
+# Ignore coverage, profiling, and testing reports
+*.gcda
+*.gcno
+*.gcov
+Testing/
+
+# Ignore any backup files
+*~
+*.swp
+*.swo

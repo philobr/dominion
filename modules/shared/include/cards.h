@@ -1,6 +1,7 @@
 #pragma once
 
-#include "card_types/types.h"
+#include "types.h"
+
 #include "card_types/card_factory.h"
 #include "card_types/card_base.h"
 #include "card_types/treasure_cards.h"

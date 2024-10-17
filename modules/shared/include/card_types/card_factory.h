@@ -12,9 +12,9 @@ class CardBase;
 class CardFactory {
 public:
     using CardPtr = std::unique_ptr<CardBase>;
-    using MapType = std::map<card_id_t, CardPtr>;
+    using MapType = std::map<card_name_t, CardPtr>;
 
-    static CardBase* getCard(const card_id_t& id)
+    static CardBase* getCard(const card_name_t& id)
     {
         auto it = card_map_m.find(id);
         if ( it != card_map_m.end() ) {
@@ -23,7 +23,7 @@ public:
         return nullptr;
     }
 
-    static void registerCard(const card_id_t& id, CardPtr card)
+    static void registerCard(const card_name_t& id, CardPtr card)
     {
         card_map_m[id] = std::move(card);
     }

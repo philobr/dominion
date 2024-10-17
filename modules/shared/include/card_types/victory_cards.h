@@ -5,7 +5,7 @@
 class VictoryCard : public CardBase {
     const int points_m;
 public:
-    VictoryCard(int cost, const card_id_t& id, int points) : CardBase(cost, id, "Victory"), points_m(points) { }
+    VictoryCard(int cost, const card_name_t& id, int points) : CardBase(cost, id, "Victory"), points_m(points) { }
     int getPoints() const { return points_m; }
 };
 

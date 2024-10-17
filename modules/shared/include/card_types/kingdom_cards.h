@@ -1,43 +1,10 @@
 #pragma once
 
 #include "card_base.h"
+#include "player.h"
 
-class Player {
-    int extra_coins;
-    int extra_buys;
-    int extra_cards;
-    int extra_actions;
-
-public:
-    Player() = default;
-    ~Player() = default;
-
-    void addCoins(int n)
-    {
-        // TODO:
-        extra_coins += n;
-    }
-
-    void addBuys(int n)
-    {
-        // TODO:
-        extra_buys += n;
-    }
-
-    void addCards(int n)
-    {
-        // TODO:
-        extra_cards += n;
-    }
-
-    void addActions(int n)
-    {
-        // TODO:
-        extra_actions += n;
-    }
-
-private:
-};
+// forward declaration
+class Player;
 
 class KingdomCard : public CardBase {
     const int coins_m;
@@ -46,20 +13,20 @@ class KingdomCard : public CardBase {
     const int actions_m;
 
 public:
-    KingdomCard(int cost, const card_id_t& id, const card_type_t& card_type, int coins, int buys, int cards, int actions)
+    KingdomCard(int cost, const card_name_t& id, const card_type_t& card_type, int coins, int buys, int cards, int actions)
         : CardBase(cost, id, card_type),
         coins_m(coins), buys_m(buys), cards_m(cards), actions_m(actions)
     { }
 
-    void extra_coins(Player* player) const { player->addCoins(coins_m); }
-    void extra_buys(Player* player) const { player->addBuys(buys_m); }
-    void extra_cards(Player* player) const { player->addCards(cards_m); }
-    void extra_actions(Player* player) const { player->addActions(actions_m); }
+    void extra_coins(Player* player) const { player->add_coins(coins_m); }
+    void extra_buys(Player* player) const { player->add_buys(buys_m); }
+    void extra_cards(Player* player) const { player->draw_cards(cards_m); }
+    void extra_actions(Player* player) const { player->add_actions(actions_m); }
 };
 
 class TrivialAction : public KingdomCard {
 public:
-    TrivialAction(int cost, const card_id_t& id, int coins, int buys, int cards, int actions)
+    TrivialAction(int cost, const card_name_t& id, int coins, int buys, int cards, int actions)
         : KingdomCard(cost, id, "Action", coins, buys, cards, actions)
     { }
 };

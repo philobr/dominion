@@ -5,7 +5,7 @@
 class TreasureCard : public CardBase {
     const int value_m;
 public:
-    TreasureCard(int cost, const card_id_t& id, int value) : CardBase(cost, id, "Treasure"), value_m(value) { }
+    TreasureCard(int cost, const card_name_t& id, int value) : CardBase(cost, id, "Treasure"), value_m(value) { }
 
     int getValue() const { return value_m; }
 };

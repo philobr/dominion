@@ -1,8 +1,5 @@
 project(${CMAKE_PROJECT_NAME}/Client)
 
-# Include directories
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
-
 # Add external libraries if any
 # add_subdirectory(external_libraries)
 

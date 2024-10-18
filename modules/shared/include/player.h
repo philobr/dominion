@@ -24,16 +24,16 @@ public:
     { }
 
     void initialise_turn();
-    void end_turn();
+    std::vector<card_name_t> end_turn(); // pick up 5 cards again, reset vars
 
     void add_actions(int n) { available_actions += n; }
     void add_buys(int n) { available_buys += n; }
     void add_coins(int n) { available_coins += n; }
 
-    void draw_cards(int n);
+    std::vector<card_name_t> draw_cards(int n);
     void discard_card(card_name_t card);
     void trash_card(card_name_t card);
-    void buy_card(card_name_t card);
+    card_name_t buy_card(card_name_t card); // needs NULL card
 
 private:
 

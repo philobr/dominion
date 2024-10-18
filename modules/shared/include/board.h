@@ -4,10 +4,13 @@
 #include "cards.h"
 
 class Board {
+public:
     struct Pile {
         card_name_t card_name;
         int count;
     };
+
+private:
 
     std::vector<Pile> kingdom_cards;
     std::vector<Pile> treasure_cards;
@@ -20,6 +23,8 @@ class Board {
 public:
 
     Board();
+
+    static Board make_board(const std::vector<card_name_t>& cards);
 
     bool game_over() const; // count empty piles
     bool buy(card_name_t card); // here also player?

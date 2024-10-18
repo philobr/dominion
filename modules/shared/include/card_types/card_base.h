@@ -17,7 +17,7 @@ public:
     CardBase(int cost, const card_name_t& id, const card_type_t& card_type)
         : cost_m(cost), id_m(id), card_type_m(card_type)
     { }
-
+    // test
     virtual ~CardBase() = default;
 
     virtual card_name_t getCardType() const { return card_type_m; }

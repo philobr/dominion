@@ -5,15 +5,15 @@ project(doMINION)
 
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+set(EXTERNAL_LIBS ${CMAKE_SOURCE_DIR}/external)
+
+enable_testing()
 
 add_compile_options(-Wall -Wpedantic)
 
-set(EXTERNAL_LIBS ${CMAKE_SOURCE_DIR}/external)
-
 add_subdirectory(${EXTERNAL_LIBS}/sockpp)
 add_subdirectory(${EXTERNAL_LIBS}/googletest) # warnings because of old cmake version, cant supress them
-
-enable_testing()
 
 find_package(wxWidgets COMPONENTS core base net REQUIRED)
 if (wxWidgets_FOUND)

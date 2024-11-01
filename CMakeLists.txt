@@ -17,7 +17,7 @@ enable_testing()
 
 find_package(wxWidgets COMPONENTS core base net REQUIRED)
 if (wxWidgets_FOUND)
-    message(STATUS "Including wxWidgets in Dominion project")
+    message(STATUS "Including wxWidgets for ${PROJECT_NAME}")
     include(${wxWidgets_USE_FILE})  
 else()
     message(FATAL_ERROR "wxWidgets not found; ensure it is installed! (use './install_wx_widgets.sh')")
@@ -31,18 +31,8 @@ macro(include_rapidjson target)
     target_include_directories(${target} PRIVATE ${EXTERNAL_LIBS}/rapidjson/include)
 endmacro()
 
-macro(include_gtest target)
-    message(STATUS "Including gtest in ${target}")
-    target_link_libraries(${target} PRIVATE gtest gtest_main)
-    target_include_directories(${target} PRIVATE
-        ${EXTERNAL_LIBS}/googletest/include
-        ${EXTERNAL_LIBS}/googletest/lib
-    )
-endmacro()
-
-
 macro(include_sockpp target)
-    message(STATUS "includeing sockpp in ${target}")
+    message(STATUS "Including sockpp in ${target}")
     target_link_libraries(${target} PRIVATE sockpp)
 
     if (WIN32)
@@ -55,6 +45,15 @@ macro(include_sockpp target)
     endif()
 endmacro()
 
+macro(include_gtest target)
+    message(STATUS "Including gtest in ${target}")
+    target_link_libraries(${target} PRIVATE gtest gtest_main)
+    target_include_directories(${target} PRIVATE
+        ${EXTERNAL_LIBS}/googletest/include
+        ${EXTERNAL_LIBS}/googletest/lib
+    )
+endmacro()
+
 macro(include_wxwidgets target)
     if (wxWidgets_FOUND)
         message(STATUS "Including wxWidgets in ${target}")
@@ -62,26 +61,27 @@ macro(include_wxwidgets target)
         target_include_directories(${target} PRIVATE ${wxWidgets_INCLUDE_DIRS})
         target_compile_options(${target} PRIVATE ${wxWidgets_CXX_FLAGS})  # Add wx-config flags
     else()
-        message(WARNING "wxWidgets not found; skipping ${target}")
+        message(FATAL_ERROR "wxWidgets not found; skipping ${target}")
     endif()
 endmacro()
 
-macro(include_shared_lib target)
-    message(STATUS "Including shared_lib in ${target}")
-    target_link_libraries(${target} PRIVATE shared_lib)
-    target_include_directories(${target} PRIVATE ${CMAKE_SOURCE_DIR}/modules/shared/include)
-endmacro()
-
-macro(include_client_lib target)
-    message(STATUS "Including client_lib in ${target}")
-    target_link_libraries(${target} PRIVATE client_lib)
-    target_include_directories(${target} PRIVATE ${CMAKE_SOURCE_DIR}/modules/client/include)
+macro(include_library target library_name)
+    message(STATUS "Including ${library_name} in ${target}")
+    target_link_libraries(${target} PRIVATE ${library_name})
+    string(REPLACE "_lib" "" library_dir ${library_name})
+    target_include_directories(${target} PRIVATE ${CMAKE_SOURCE_DIR}/modules/${library_dir}/include)
 endmacro()
 
 macro(include_server_lib target)
-    message(STATUS "Including server_lib in ${target}")
-    target_link_libraries(${target} PRIVATE server_lib)
-    target_include_directories(${target} PRIVATE ${CMAKE_SOURCE_DIR}/modules/server/include)
+    include_library(${target} server_lib)
+endmacro()
+
+macro(include_client_lib target)
+    include_library(${target} client_lib)
+endmacro()
+
+macro(include_shared_lib target)
+    include_library(${target} shared_lib)
 endmacro()
 
 ################################
@@ -93,6 +93,16 @@ add_subdirectory(modules/server)
 add_subdirectory(unit_tests)
 
 ################################
+# EXECUTABLES
+################################
+add_executable(client_exe ${CLIENT_EXECUTABLE_SOURCES})
+include_client_lib(client_exe)
+include_shared_lib(client_exe)
+
+add_executable(server_exe ${SERVER_EXECUTABLE_SOURCES})
+include_server_lib(server_exe)
+include_sockpp(server_exe)
+
+################################
 # HELPERS
 ################################
-#?

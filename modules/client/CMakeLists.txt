@@ -1,8 +1,7 @@
 # modules/client/CMakeLists.txt
 
-set(CLIENT_LIBRARY_SOURCES
-    src/example.cpp  
-    # add non main files here
+file(GLOB CLIENT_LIBRARY_SOURCES
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp"
 )
 
 # create lib
@@ -20,11 +19,6 @@ include_sockpp(client_lib)
 include_shared_lib(client_lib)
 
 set(CLIENT_EXECUTABLE_SOURCES
-    src/client_main.cpp  
+    ${CMAKE_CURRENT_SOURCE_DIR}/client_main.cpp  
+    PARENT_SCOPE
 )
-
-add_executable(client_exe ${CLIENT_EXECUTABLE_SOURCES})
-target_link_libraries(client_exe PRIVATE client_lib)
-
-# add libs as needed for the exe
-include_shared_lib(client_exe)

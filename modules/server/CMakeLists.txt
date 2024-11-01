@@ -1,16 +1,29 @@
-project(${CMAKE_PROJECT_NAME}/Server)
+# modules/server/CMakeLists.txt
 
-# Include directories
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
+set(SERVER_LIBRARY_SOURCES
+    src/example.cpp  
+    # add non main files here
+)
 
-# Add external libraries if any
-# add_subdirectory(external_libraries)
+# create lib
+add_library(server_lib ${SERVER_LIBRARY_SOURCES})
 
-# Add a library for the server code
-add_library(server_lib STATIC src/server_core.cpp)  # src/server_code.cpp contains the core logic
+# expose headers
+target_include_directories(server_lib PUBLIC
+    ${CMAKE_CURRENT_SOURCE_DIR}/include  
+)
 
-# Add the executable for the server
-add_executable(server src/main.cpp)
+# add includes as needed for the lib
+include_rapidjson(server_lib)   
+include_sockpp(server_lib)
+include_shared_lib(server_lib)
 
-# Link the server executable to the shared server_lib
-target_link_libraries(server server_lib shared)
+set(SERVER_EXECUTABLE_SOURCES
+    src/server_main.cpp  
+)
+
+add_executable(server_exe ${SERVER_EXECUTABLE_SOURCES})
+
+# include libs
+include_server_lib(server_exe)
+include_sockpp(server_exe)

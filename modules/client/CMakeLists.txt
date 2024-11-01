@@ -1,13 +1,30 @@
-project(${CMAKE_PROJECT_NAME}/Client)
+# modules/client/CMakeLists.txt
 
-# Add external libraries if any
-# add_subdirectory(external_libraries)
+set(CLIENT_LIBRARY_SOURCES
+    src/example.cpp  
+    # add non main files here
+)
 
-# Add a library for the client code
-add_library(client_lib STATIC src/client_core.cpp)  # src/client_code.cpp contains the core logic
+# create lib
+add_library(client_lib ${CLIENT_LIBRARY_SOURCES})
 
-# Add the executable for the client
-add_executable(client src/main.cpp)
+# expose headers
+target_include_directories(client_lib PUBLIC
+    ${CMAKE_CURRENT_SOURCE_DIR}/include  
+)
 
-# Link the client executable to the shared client_lib
-target_link_libraries(client client_lib shared)
+# add libs as needed for the lib
+include_rapidjson(client_lib)  
+include_wxwidgets(client_lib)  
+include_sockpp(client_lib)
+include_shared_lib(client_lib)
+
+set(CLIENT_EXECUTABLE_SOURCES
+    src/client_main.cpp  
+)
+
+add_executable(client_exe ${CLIENT_EXECUTABLE_SOURCES})
+target_link_libraries(client_exe PRIVATE client_lib)
+
+# add libs as needed for the exe
+include_shared_lib(client_exe)

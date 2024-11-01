@@ -106,3 +106,17 @@ include_sockpp(server_exe)
 ################################
 # HELPERS
 ################################
+
+add_custom_target(run_server
+    COMMAND ${CMAKE_COMMAND} -E echo "Starting server..."
+    COMMAND ${CMAKE_BINARY_DIR}/server_exe
+    COMMENT "Running server_exe"
+    USES_TERMINAL
+)
+
+add_custom_target(run_client
+    COMMAND ${CMAKE_COMMAND} -E echo "Starting client..."
+    COMMAND ${CMAKE_BINARY_DIR}/client_exe
+    COMMENT "Running client_exe"
+    USES_TERMINAL
+)

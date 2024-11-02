@@ -100,6 +100,7 @@ include_client_lib(client_exe)
 include_shared_lib(client_exe)
 
 add_executable(server_exe ${SERVER_EXECUTABLE_SOURCES})
+include_shared_lib(server_exe)
 include_server_lib(server_exe)
 include_sockpp(server_exe)
 

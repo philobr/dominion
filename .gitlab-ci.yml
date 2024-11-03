@@ -11,7 +11,7 @@ format:
   script:
     - apt-get update && apt-get install -y clang-format
     - clang-format --version
-    - clang-format -i $(find . -name '*.cpp' -o -name '*.h') # Customize file extensions if needed
+    - find . -name '*.cpp' -o -name '*.h' | grep -v '^./external/' | xargs clang-format -i
   allow_failure: false
 
 # Stage: Static analysis with cppcheck

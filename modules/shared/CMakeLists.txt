@@ -1,7 +1,10 @@
-project(${CMAKE_PROJECT_NAME}/Shared)
+# modules/shared/CMakeLists.txt
 
-# Declare shared as a header-only library
-add_library(shared INTERFACE)
+add_library(shared_lib STATIC
+    src/example.cpp
+)
 
-# Add the include directories to the INTERFACE target
-target_include_directories(shared INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/include)
+# Add root/modules/shared/include as the public include directory
+target_include_directories(shared_lib
+    PUBLIC ${CMAKE_SOURCE_DIR}/modules/shared/include
+)

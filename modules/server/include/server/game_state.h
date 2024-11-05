@@ -9,15 +9,18 @@
 
 #include "message_interface.h"
 
-namespace server {
+namespace server
+{
 
-    class ServerBoard : public shared::Board {
+    class ServerBoard : public shared::Board
+    {
     public:
         bool buy(shared::CardBase::id_t card);
         void trash(shared::CardBase::id_t card);
     };
 
-    class Player : public shared::PlayerBase {
+    class Player : public shared::PlayerBase
+    {
     public:
         std::deque<shared::CardBase::id_t> draw_pile;
         std::vector<shared::CardBase::id_t> discard_pile;
@@ -25,9 +28,10 @@ namespace server {
         shared::CardBase::id_t currently_playing_card;
     };
 
-    class GameState {
+    class GameState
+    {
     public:
-        void receive_action(std::unique_ptr<shared::ActionDecisionMessage> action, MessageInterface& message_interface);
+        void receive_action(std::unique_ptr<shared::ActionDecisionMessage> action, MessageInterface &message_interface);
         shared::ReducedGameState get_reduced_state(shared::PlayerBase::id_t player);
 
     private:
@@ -47,4 +51,4 @@ namespace server {
         ServerBoard board;
         shared::PlayerBase::id_t current_player;
     };
-}
+} // namespace server

@@ -3,11 +3,13 @@
 #include <string>
 #include <vector>
 
-namespace shared {
+namespace shared
+{
 
     // Representing card types like this allows us to combine them using bitwise operations.
     // Example: `ACTION | ATTACK` will create a card that is both an action and an attack.
-    enum CardType {
+    enum CardType
+    {
         ACTION = 0b1,
         ATTACK = 0b10,
         REACTION = 0b100,
@@ -16,7 +18,8 @@ namespace shared {
         CURSE = 0b100000
     };
 
-    class CardBase {
+    class CardBase
+    {
     public:
         using id_t = std::string;
 
@@ -38,7 +41,8 @@ namespace shared {
         const unsigned int cost;
     };
 
-    class PlayerBase {
+    class PlayerBase
+    {
     public:
         using id_t = std::string;
 
@@ -55,22 +59,26 @@ namespace shared {
         unsigned int draw_pile_size;
     };
 
-    class ReducedEnemy : public PlayerBase {
+    class ReducedEnemy : public PlayerBase
+    {
     protected:
         unsigned int hand_size;
     };
 
-    class ReducedPlayer : public PlayerBase {
+    class ReducedPlayer : public PlayerBase
+    {
     protected:
         std::vector<CardBase::id_t> hand_cards;
     };
 
-    struct Pile {
+    struct Pile
+    {
         CardBase::id_t card;
         unsigned int count;
     };
 
-    class Board {
+    class Board
+    {
     public:
         std::vector<Pile> victory_cards;
         std::vector<Pile> treasure_cards;
@@ -78,12 +86,12 @@ namespace shared {
         std::vector<CardBase::id_t> trash;
     };
 
-    class ReducedGameState {
+    class ReducedGameState
+    {
     public:
         Board board;
         ReducedPlayer player;
         std::vector<ReducedEnemy> enemies;
         PlayerBase::id_t active_player;
     };
-}
-
+} // namespace shared

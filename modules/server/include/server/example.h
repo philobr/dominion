@@ -1,7 +1,8 @@
 #pragma once
 
-namespace server {
+namespace server
+{
     bool test();
 
     void hello();
-};
+}; // namespace server

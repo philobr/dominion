@@ -121,3 +121,21 @@ add_custom_target(run_client
     COMMENT "Running client_exe"
     USES_TERMINAL
 )
+
+add_custom_target(format
+    COMMENT "Running clang-format and checking for formatting issues..."
+    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+    COMMAND find modules unit_tests -name '*.cpp' -o -name '*.h' | xargs clang-format -i
+    COMMAND git diff --exit-code || (echo "Formatting issues found!" && exit 1)
+)
+
+add_custom_target(check
+    COMMENT "Running cppcheck..."
+    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+    COMMAND cppcheck --version
+    COMMAND cppcheck
+        --enable=all
+        --error-exitcode=1
+        --suppressions-list=${CMAKE_SOURCE_DIR}/.cppcheck_suppressions
+        modules unit_tests
+)

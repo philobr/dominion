@@ -1,9 +1,11 @@
 #pragma once
 
-namespace client {
+namespace client
+{
     bool test();
 } // namespace client
 
-namespace rapidjson {
-    void test_rapidjson();
+namespace rapidjson
+{
+    bool test_rapidjson();
 } // namespace rapidjson

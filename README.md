@@ -1,16 +1,39 @@
 # doMINION
 
-## How to Run
+## Developing
+
+Generate the build files:
 ```bash
-mkdir -p build && cd build && cmake .. && make
+mkdir -p build
+cd build
+cmake ..
 ```
 
-## How to test
+In the build directory you can now do the following:
+
+Build the project:
 ```bash
-mkdir -p build && cd build && cmake .. && make && make test
+cmake --build .
 ```
 
-## How to make it run faster:
+Run the tests:
 ```bash
-:(){ :|:& };:
+cmake --build . --target test
 ```
+
+Format the code (`clang-format`):
+```bash
+cmake --build . --target format
+```
+
+Run the linter (`cppcheck`):
+```bash
+cmake --build . --target check
+```
+
+### Before Pushing
+
+Before pushing your changes, make sure to:
+ - Run the tests
+ - Format the code
+ - Run the linter

@@ -1,0 +1,11 @@
+
+# Ignore missing include "gtest/gtest.h" in unit tests
+# TODO: Find out why this is happening and remove this suppression
+missingInclude
+
+# This creates a lot of errors
+# TODO: Investigate and fix
+missingIncludeSystem
+
+# We use an old version of cppcheck in CI, so we need to suppress unknown suppressions
+unmatchedSuppression

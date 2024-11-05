@@ -1,6 +1,6 @@
 #include <iostream>
-#include <sockpp/tcp_connector.h>
 #include <server/example.h>
+#include <sockpp/tcp_connector.h>
 
 int main()
 {

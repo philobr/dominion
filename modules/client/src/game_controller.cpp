@@ -64,6 +64,7 @@ void GameController::connectToServer() {
     std::string playerName = inputPlayerName.ToStdString();
 
     // connect to network
+    GameController::_gameWindow->showPanel(GameController::_mainGamePanel);
 
     // send request to join game
 

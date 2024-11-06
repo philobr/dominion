@@ -14,6 +14,12 @@ using namespace rapidjson;
     }                                                                                                                  \
     var = document[member].GetString();
 
+#define GET_UINT_MEMBER(var, document, member)                                                                         \
+    if ( !document.HasMember(member) || !document[member].IsUint() ) {                                                 \
+        return nullptr;                                                                                                \
+    }                                                                                                                  \
+    var = document[member].GetUint();
+
 #define GET_BOOL_MEMBER(var, document, member)                                                                         \
     if ( !document.HasMember(member) || !document[member].IsBool() ) {                                                 \
         return nullptr;                                                                                                \
@@ -30,6 +36,18 @@ using namespace rapidjson;
             return nullptr;                                                                                            \
         }                                                                                                              \
         var.push_back(elem.GetString());                                                                               \
+    }
+
+#define GET_UINT_ARRAY_MEMBER(var, document, member)                                                                   \
+    var = std::vector<unsigned int>();                                                                                 \
+    if ( !document.HasMember(member) || !document[member].IsArray() ) {                                                \
+        return nullptr;                                                                                                \
+    }                                                                                                                  \
+    for ( const auto &elem : document[member].GetArray() ) {                                                           \
+        if ( !elem.IsUint() ) {                                                                                        \
+            return nullptr;                                                                                            \
+        }                                                                                                              \
+        var.push_back(elem.GetUint());                                                                                 \
     }
 
 #define GET_OPTIONAL_STRING_MEMBER(var, document, member)                                                              \
@@ -227,6 +245,31 @@ static std::unique_ptr<ActionDecisionMessage> parse_action_decision(const Docume
 
     message->game_id = game_id;
     message->message_id = message_id;
+    GET_OPTIONAL_STRING_MEMBER(message->in_response_to, json, "in_response_to");
+    GET_STRING_MEMBER(message->player_id, json, "player_id");
+
+    ActionDecision *decision = nullptr;
+    std::string action;
+    GET_STRING_MEMBER(action, json, "action");
+    if ( action == "play_action_card" ) {
+        unsigned int cardIndex;
+        GET_UINT_MEMBER(cardIndex, json, "card_index");
+        decision = new PlayActionCardDecision(cardIndex);
+    } else if ( action == "buy_card" ) {
+        CardBase::id_t card;
+        GET_STRING_MEMBER(card, json, "card");
+        decision = new BuyCardDecision(card);
+    } else if ( action == "end_turn" ) {
+        decision = new EndTurnDecision();
+    } else if ( action == "choose_n_cards_from_hand" ) {
+        std::vector<unsigned int> cards;
+        GET_UINT_ARRAY_MEMBER(cards, json, "cards");
+        decision = new ChooseNCardsFromHandDecision(cards);
+    } else {
+        return nullptr;
+    }
+
+    message->decision = std::unique_ptr<ActionDecision>(decision);
 
     return message;
 }

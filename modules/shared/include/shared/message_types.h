@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 
+#include "action_decision.h"
 #include "game_state.h"
 
 namespace shared
@@ -63,7 +64,9 @@ namespace shared
     public:
         std::string to_json() override;
 
-        // TODO add action decision
+        std::optional<std::string> in_response_to;
+        PlayerBase::id_t player_id;
+        std::unique_ptr<ActionDecision> decision;
     };
 
     /* ======= server -> client ======= */

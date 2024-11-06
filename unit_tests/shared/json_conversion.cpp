@@ -256,11 +256,16 @@ TEST(SharedLibraryTest, StartGameRequestMessageTwoWayConversion)
     ASSERT_EQ(parsed_message->selected_cards, cards);
 }
 
-TEST(SharedLibraryTest, ActionDecisionMessageTwoWayConversion)
+TEST(SharedLibraryTest, ActionDecisionMessageTwoWayConversionPlayActionCard)
 {
     ActionDecisionMessage original_message;
     original_message.game_id = "123";
     original_message.message_id = "456";
+    original_message.in_response_to = "789";
+    original_message.player_id = "player1";
+
+    PlayActionCardDecision *decision = new PlayActionCardDecision(1);
+    original_message.decision = std::unique_ptr<ActionDecision>(decision);
 
     std::string json = original_message.to_json();
 
@@ -274,4 +279,110 @@ TEST(SharedLibraryTest, ActionDecisionMessageTwoWayConversion)
 
     ASSERT_EQ(parsed_message->game_id, "123");
     ASSERT_EQ(parsed_message->message_id, "456");
+    ASSERT_TRUE(parsed_message->in_response_to);
+    ASSERT_EQ(parsed_message->in_response_to.value(), "789");
+    ASSERT_EQ(parsed_message->player_id, "player1");
+
+    ASSERT_NE(parsed_message->decision, nullptr);
+    PlayActionCardDecision *parsed_decision = dynamic_cast<PlayActionCardDecision *>(parsed_message->decision.get());
+    ASSERT_NE(parsed_decision, nullptr);
+    ASSERT_EQ(parsed_decision->cardIndex, 1);
+}
+
+TEST(SharedLibraryTest, ActionDecisionMessageTwoWayConversionBuyCard)
+{
+    ActionDecisionMessage original_message;
+    original_message.game_id = "123";
+    original_message.message_id = "456";
+    original_message.in_response_to = std::nullopt;
+    original_message.player_id = "player1";
+
+    BuyCardDecision *decision = new BuyCardDecision("copper");
+    original_message.decision = std::unique_ptr<ActionDecision>(decision);
+
+    std::string json = original_message.to_json();
+
+    std::unique_ptr<ClientToServerMessage> base_message;
+    base_message = ClientToServerMessage::from_json(json);
+
+    std::unique_ptr<ActionDecisionMessage> parsed_message(
+            dynamic_cast<ActionDecisionMessage *>(base_message.release()));
+
+    ASSERT_NE(parsed_message, nullptr);
+
+    ASSERT_EQ(parsed_message->game_id, "123");
+    ASSERT_EQ(parsed_message->message_id, "456");
+    ASSERT_FALSE(parsed_message->in_response_to);
+    ASSERT_EQ(parsed_message->player_id, "player1");
+
+    ASSERT_NE(parsed_message->decision, nullptr);
+    BuyCardDecision *parsed_decision = dynamic_cast<BuyCardDecision *>(parsed_message->decision.get());
+    ASSERT_NE(parsed_decision, nullptr);
+    ASSERT_EQ(parsed_decision->card, "copper");
+}
+
+TEST(SharedLibraryTest, ActionDecisionMessageTwoWayConversionEndTurn)
+{
+    ActionDecisionMessage original_message;
+    original_message.game_id = "123";
+    original_message.message_id = "456";
+    original_message.in_response_to = "789";
+    original_message.player_id = "player1";
+
+    EndTurnDecision *decision = new EndTurnDecision();
+    original_message.decision = std::unique_ptr<ActionDecision>(decision);
+
+    std::string json = original_message.to_json();
+
+    std::unique_ptr<ClientToServerMessage> base_message;
+    base_message = ClientToServerMessage::from_json(json);
+
+    std::unique_ptr<ActionDecisionMessage> parsed_message(
+            dynamic_cast<ActionDecisionMessage *>(base_message.release()));
+
+    ASSERT_NE(parsed_message, nullptr);
+
+    ASSERT_EQ(parsed_message->game_id, "123");
+    ASSERT_EQ(parsed_message->message_id, "456");
+    ASSERT_TRUE(parsed_message->in_response_to);
+    ASSERT_EQ(parsed_message->in_response_to.value(), "789");
+    ASSERT_EQ(parsed_message->player_id, "player1");
+
+    ASSERT_NE(parsed_message->decision, nullptr);
+    EndTurnDecision *parsed_decision = dynamic_cast<EndTurnDecision *>(parsed_message->decision.get());
+    ASSERT_NE(parsed_decision, nullptr);
+}
+
+TEST(SharedLibraryTest, ActionDecisionMessageTwoWayConversionChooseNCardsFromHand)
+{
+    ActionDecisionMessage original_message;
+    original_message.game_id = "123";
+    original_message.message_id = "456";
+    original_message.in_response_to = std::nullopt;
+    original_message.player_id = "player1";
+
+    std::vector<unsigned int> card_indices = {0, 2, 3};
+    ChooseNCardsFromHandDecision *decision = new ChooseNCardsFromHandDecision(card_indices);
+    original_message.decision = std::unique_ptr<ActionDecision>(decision);
+
+    std::string json = original_message.to_json();
+
+    std::unique_ptr<ClientToServerMessage> base_message;
+    base_message = ClientToServerMessage::from_json(json);
+
+    std::unique_ptr<ActionDecisionMessage> parsed_message(
+            dynamic_cast<ActionDecisionMessage *>(base_message.release()));
+
+    ASSERT_NE(parsed_message, nullptr);
+
+    ASSERT_EQ(parsed_message->game_id, "123");
+    ASSERT_EQ(parsed_message->message_id, "456");
+    ASSERT_FALSE(parsed_message->in_response_to);
+    ASSERT_EQ(parsed_message->player_id, "player1");
+
+    ASSERT_NE(parsed_message->decision, nullptr);
+    ChooseNCardsFromHandDecision *parsed_decision =
+            dynamic_cast<ChooseNCardsFromHandDecision *>(parsed_message->decision.get());
+    ASSERT_NE(parsed_decision, nullptr);
+    ASSERT_EQ(parsed_decision->cards, card_indices);
 }

@@ -10,6 +10,9 @@ set(EXTERNAL_LIBS ${CMAKE_SOURCE_DIR}/external)
 
 enable_testing()
 
+# always provide test output on failure
+list(APPEND CMAKE_CTEST_ARGUMENTS "--output-on-failure")
+
 add_compile_options(-Wall -Wpedantic)
 
 add_subdirectory(${EXTERNAL_LIBS}/sockpp)
@@ -136,6 +139,10 @@ add_custom_target(check
     COMMAND cppcheck
         --enable=all
         --error-exitcode=1
+        # The --max-configs option limits the number of paths (branches) that
+        # cppcheck will analyze in complex functions.
+        # Increasing it might give cppcheck more flexibility in analyzing complex code paths.
+        --max-configs=100
         --suppressions-list=${CMAKE_SOURCE_DIR}/.cppcheck_suppressions
         modules unit_tests
 )

@@ -16,6 +16,3 @@
 - [ ] testcases
 - [ ] Implementation review (click-through)
 - [ ] Changelog 
-
-### Reviewer
-<!--Who does the review?-->

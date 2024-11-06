@@ -82,6 +82,7 @@ namespace shared
     class GameStateMessage : public ServerToClientMessage
     {
     public:
+        GameStateMessage() {}
         std::string to_json() override;
 
         std::optional<std::string> in_response_to;
@@ -91,6 +92,9 @@ namespace shared
     class CreateLobbyResponseMessage : public ServerToClientMessage
     {
     public:
+        CreateLobbyResponseMessage(std::vector<CardBase::id_t> available_cards, std::optional<std::string> in_response_to = std::nullopt)
+            : in_response_to(in_response_to), available_cards(available_cards)
+        {}
         std::string to_json() override;
 
         std::optional<std::string> in_response_to;
@@ -101,7 +105,7 @@ namespace shared
     {
     public:
 
-        JoinLobbyBroadcastMessage(shared::PlayerBase::id_t id) : player_id(id) {}
+        JoinLobbyBroadcastMessage(PlayerBase::id_t join_id) : player_id(join_id) {}
         std::string to_json() override;
         PlayerBase::id_t player_id;
     };
@@ -128,7 +132,7 @@ namespace shared
         std::string to_json() override;
         std::optional<std::string> in_response_to;
         bool success;
-        std::optional<std::optional<std::string>> additional_information;
+        std::optional<std::string> additional_information;
     };
 
     class ActionOrderMessage : public ServerToClientMessage

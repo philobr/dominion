@@ -10,7 +10,8 @@ void server::Lobby::join(MessageInterface message_interface, shared::JoinLobbyRe
     // Check if player is already in the lobby
     for (Player player : game_state.get_players()){
         if (player.getId() == player_id){
-            message_interface.send_message(shared::ResultResponseMessage(false, request.message_id, "Player is already in the lobby"), player_id);
+            shared::ResultResponseMessage failure_message = shared::ResultResponseMessage(false, request.message_id, "Player is already in the lobby");
+            message_interface.send_message(&failure_message, player_id);
             return;
         }
     }
@@ -18,9 +19,11 @@ void server::Lobby::join(MessageInterface message_interface, shared::JoinLobbyRe
     game_state.add_player(Player(player_id));
     // Send game state to all players
     for (Player player : game_state.get_players()){
-        message_interface.send_message(shared::JoinLobbyBroadcast(player_id), player.getId());
+        shared::JoinLobbyBroadcastMessage join_message = shared::JoinLobbyBroadcastMessage(player_id);
+        message_interface.send_message(&join_message, player.getId());
     }
-    message_interface.send_message(shared::ResultResponseMessage(true, request.message_id), player_id);
+    shared::ResultResponseMessage success_message = shared::ResultResponseMessage(true, request.message_id);
+    message_interface.send_message(&success_message, player_id);
     return;
 };
 
@@ -29,15 +32,18 @@ void server::Lobby::start_game(MessageInterface message_interface, shared::Start
     // Check if gamemaster is starting the game
     shared::PlayerBase::id_t requestor_id = request.player_id;
     if (requestor_id != game_master){
-        message_interface.send_message(shared::ResultResponseMessage(false, request.message_id, "Only the game master can start the game"), requestor_id);
+        shared::ResultResponseMessage failure_message = shared::ResultResponseMessage(false, request.message_id, "Only the game master can start the game");
+        message_interface.send_message(&failure_message, requestor_id);
         return;
     }
     // set board cards
-    game_state.start_game(request.get_selected_cards());
+    game_state.start_game(request.selected_cards);
     // send game state to all players
     for (Player player : game_state.get_players()){
-        message_interface.send_message(shared::StartGameResponseMessage(), player.getId());
-        message_interface.send_game_state(game_state, player.getId());
+        shared::StartGameBroadcastMessage start_message = shared::StartGameBroadcastMessage();
+        message_interface.send_message(&start_message, player.getId());
+        shared::GameStateMessage game_state_message = shared::GameStateMessage();
+        message_interface.send_message(&game_state_message, player.getId());
     }
     return;
 };

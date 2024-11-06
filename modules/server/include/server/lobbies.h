@@ -16,6 +16,7 @@ namespace server
     class Lobby
     {
     public:
+        Lobby() {};
         Lobby(shared::PlayerBase::id_t game_master);
         void join(MessageInterface message_interface,shared::JoinLobbyRequestMessage request);
         void start_game(MessageInterface message_interface, shared::StartGameRequestMessage request);

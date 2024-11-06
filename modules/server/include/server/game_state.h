@@ -4,10 +4,10 @@
 #include <memory>
 #include <vector>
 
-#include "shared/game_state.h"
-#include "shared/message_types.h"
+#include <shared/action_decision.h>
+#include <shared/game_state.h>
 
-#include "message_interface.h"
+#include <server/message_interface.h>
 
 namespace server
 {
@@ -31,10 +31,8 @@ namespace server
     class GameState
     {
     public:
-        void receive_action(std::unique_ptr<shared::ActionDecisionMessage> action, MessageInterface &message_interface);
+        // TODO: This won't work, refactor
         shared::ReducedGameState get_reduced_state(shared::PlayerBase::id_t player);
-
-    private:
         void start_game();
         void end_game();
         void start_turn();
@@ -50,5 +48,15 @@ namespace server
         std::vector<Player> players;
         ServerBoard board;
         shared::PlayerBase::id_t current_player;
+    };
+
+    class Game
+    {
+    public:
+        void receive_action(shared::PlayerBase::id_t player, std::unique_ptr<shared::ActionDecision> action,
+                            MessageInterface &message_interface);
+
+    private:
+        GameState gameState;
     };
 } // namespace server

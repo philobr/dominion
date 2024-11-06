@@ -16,6 +16,7 @@ namespace shared
 
         std::string game_id;
         std::string message_id;
+        PlayerBase::id_t player_id; //needed to figure out who to send the message to (from server to client)
     };
 
     /* ======= client -> server ======= */
@@ -24,8 +25,6 @@ namespace shared
     {
     public:
         static std::unique_ptr<ClientToServerMessage> from_json(const std::string &json);
-
-        PlayerBase::id_t player_id;
     };
 
     class GameStateRequestMessage : public ClientToServerMessage

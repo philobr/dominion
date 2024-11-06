@@ -18,6 +18,8 @@ add_compile_options(-Wall -Wpedantic)
 add_subdirectory(${EXTERNAL_LIBS}/sockpp)
 add_subdirectory(${EXTERNAL_LIBS}/googletest) # warnings because of old cmake version, cant supress them
 
+include_directories(external/sockpp/include)
+
 find_package(wxWidgets COMPONENTS core base net REQUIRED)
 if (wxWidgets_FOUND)
     message(STATUS "Including wxWidgets for ${PROJECT_NAME}")
@@ -106,6 +108,7 @@ add_executable(server_exe ${SERVER_EXECUTABLE_SOURCES})
 include_shared_lib(server_exe)
 include_server_lib(server_exe)
 include_sockpp(server_exe)
+include_rapidjson(server_exe)
 
 ################################
 # HELPERS

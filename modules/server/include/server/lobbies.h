@@ -13,6 +13,12 @@
 namespace server
 {
 
+    /**
+     * @brief A lobby is a container for a game that is being played.
+     * 
+     * A lobby is created by a game master, who is the first player to join the lobby.
+     * The game master can start the game when they want to.
+     */
     class Lobby
     {
     public:
@@ -25,6 +31,12 @@ namespace server
         GameState game_state;
     };
 
+    /**
+     * @brief The lobby manager contains all the running games / lobbies.
+     *
+     * The lobby manager is responsible for creating, joining and starting games.
+     * It also receives actions from players and passes them on to the correct game.
+     */
     class LobbyManager
     {
     public:

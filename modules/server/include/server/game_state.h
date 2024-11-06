@@ -22,6 +22,7 @@ namespace server
     class Player : public shared::PlayerBase
     {
     public:
+        Player(shared::PlayerBase::id_t id) : shared::PlayerBase(id) {};
         std::deque<shared::CardBase::id_t> draw_pile;
         std::vector<shared::CardBase::id_t> discard_pile;
         std::vector<shared::CardBase::id_t> hand_cards;
@@ -33,9 +34,11 @@ namespace server
     public:
         void receive_action(std::unique_ptr<shared::ActionDecisionMessage> action, MessageInterface &message_interface);
         shared::ReducedGameState get_reduced_state(shared::PlayerBase::id_t player);
+        void add_player(Player player);
+        const std::vector<Player> &get_players();
 
     private:
-        void start_game();
+        void start_game(std::vector<shared::CardBase::id_t> selected_cards);
         void end_game();
         void start_turn();
         void end_turn();

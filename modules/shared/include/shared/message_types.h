@@ -67,7 +67,8 @@ namespace shared
     class JoinLobbyBroadcastMessage : public ServerToClientMessage
     {
     public:
-        std::string player_name;
+        JoinLobbyBroadcastMessage(shared::PlayerBase::id_t id) : player_id(id) {}
+        shared::PlayerBase::id_t player_id;
     };
 
     class StartGameResponseMessage : public ServerToClientMessage
@@ -82,9 +83,12 @@ namespace shared
     class ResultResponseMessage : public ServerToClientMessage
     {
     public:
+        ResultResponseMessage(bool success, std::optional<std::string> in_response_to = std::nullopt, std::optional<std::string> additional_information = std::nullopt)
+            : in_response_to(in_response_to), success(success), additional_information(additional_information)
+        {}
         std::optional<std::string> in_response_to;
         bool success;
-        std::string additional_information;
+        std::optional<std::string> additional_information;
     };
 
     class ActionOrderMessage : public ServerToClientMessage

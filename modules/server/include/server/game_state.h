@@ -12,6 +12,11 @@
 namespace server
 {
 
+    /**
+     * @brief ServerBoard is a class that represents the game board of the server.
+     *
+     * The ServerBoard offers additional functionality on top of the shared::Board class.
+     */
     class ServerBoard : public shared::Board
     {
     public:
@@ -19,6 +24,11 @@ namespace server
         void trash(shared::CardBase::id_t card);
     };
 
+    /**
+     * @brief Player represents a player on the server (obviously ;) ).
+     *
+     * This class holds all the information about a player that is needed on the server.
+     */
     class Player : public shared::PlayerBase
     {
     public:
@@ -28,6 +38,11 @@ namespace server
         shared::CardBase::id_t currently_playing_card;
     };
 
+    /**
+     * @brief This holds the complete game state on the server.
+     *
+     * @see shared::ReducedGameState
+     */
     class GameState
     {
     public:

@@ -1,4 +1,5 @@
 #include "connection_panel.h"
+#include <wx/gdicmn.h>
 #include <wx/wx.h>
 
 #include "../game_controller.h"
@@ -16,8 +17,8 @@ namespace client
         wxBoxSizer *VerticalLayout = new wxBoxSizer(wxVERTICAL);
 
         ImagePanel *LogoPanel = new ImagePanel(this, // parent element
-                                               "assets/DominionLogo.jpg", // path to image
-                                               wxBITMAP_TYPE_JPEG, // format of image
+                                               "assets/DominionLogo.png", // path to image
+                                               wxBITMAP_TYPE_PNG, // format of image
                                                wxDefaultPosition, // position
                                                wxSize(605, 229), // size
                                                0.0 // rotation

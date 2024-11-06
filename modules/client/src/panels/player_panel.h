@@ -7,7 +7,7 @@ namespace client
     class PlayerPanel : public wxPanel
     {
     public:
-        PlayerPanel(wxWindow *parent);
+        PlayerPanel(wxWindow *parent, wxSize size);
 
     private:
     };

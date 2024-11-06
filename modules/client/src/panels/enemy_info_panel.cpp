@@ -5,7 +5,7 @@
 namespace client
 {
 
-    EnemyInfoPanel::EnemyInfoPanel(wxWindow *parent) : wxPanel(parent, wxID_ANY, wxDefaultPosition, wxSize(1024, 100))
+    EnemyInfoPanel::EnemyInfoPanel(wxWindow *parent, wxSize size) : wxPanel(parent, wxID_ANY, wxDefaultPosition, size)
     {
         this->SetBackgroundColour(wxColour(255, 0, 0));
     }

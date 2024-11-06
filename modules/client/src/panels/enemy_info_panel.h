@@ -8,7 +8,7 @@ namespace client
     class EnemyInfoPanel : public wxPanel
     {
     public:
-        EnemyInfoPanel(wxWindow *parent);
+        EnemyInfoPanel(wxWindow *parent, wxSize size);
 
     private:
     };

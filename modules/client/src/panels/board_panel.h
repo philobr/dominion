@@ -8,7 +8,7 @@ namespace client
     class BoardPanel : public wxPanel
     {
     public:
-        BoardPanel(wxWindow *parent);
+        BoardPanel(wxWindow *parent, wxSize size);
 
     private:
         std::vector<shared::Pile> victory_cards;

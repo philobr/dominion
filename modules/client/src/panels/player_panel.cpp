@@ -4,7 +4,7 @@
 namespace client
 {
 
-    PlayerPanel::PlayerPanel(wxWindow *parent) : wxPanel(parent, wxID_ANY, wxDefaultPosition, wxSize(1024, 100))
+    PlayerPanel::PlayerPanel(wxWindow *parent, wxSize size) : wxPanel(parent, wxID_ANY, wxDefaultPosition, size)
     {
         this->SetBackgroundColour(wxColour(0, 0, 255));
     }

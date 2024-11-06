@@ -1,25 +1,29 @@
-#ifndef IMAGEPANEL_H
-#define IMAGEPANEL_H
+#pragma once
 
-#include <wx/wx.h>
 #include <wx/sizer.h>
+#include <wx/wx.h>
 
-// This class can be used to display an image. It can be scaled with parameter <size> and rotated with <rotation> (in radian)
-class ImagePanel : public wxPanel
+namespace client
 {
-    wxImage _image;
-    wxBitmap _bitmap;
 
-    double _rotation;
+    // This class can be used to display an image. It can be scaled with parameter <size> and rotated with <rotation>
+    // (in radian)
+    class ImagePanel : public wxPanel
+    {
+        wxImage _image;
+        wxBitmap _bitmap;
 
-    int _width;
-    int _height;
+        double _rotation;
 
-public:
-    ImagePanel(wxWindow* parent, wxString file, wxBitmapType format, wxPoint position = wxDefaultPosition, wxSize size = wxDefaultSize, double rotation = 0.0);
+        int _width;
+        int _height;
 
-    void paintEvent(wxPaintEvent& event);
-    void onSize(wxSizeEvent& event);
-};
+    public:
+        ImagePanel(wxWindow *parent, wxString file, wxBitmapType format, wxPoint position = wxDefaultPosition,
+                   wxSize size = wxDefaultSize, double rotation = 0.0);
 
-#endif // IMAGEPANEL_H
+        void paintEvent(wxPaintEvent &event);
+        void onSize(wxSizeEvent &event);
+    };
+
+} // namespace client

@@ -1,20 +1,22 @@
-#ifndef TEST_INPUTFIELD_H
-#define TEST_INPUTFIELD_H
+#pragma once
 
 #include <wx/wx.h>
 
+namespace client
+{
 
-class InputField : public wxPanel {
+    class InputField : public wxPanel
+    {
 
-public:
-    InputField(wxWindow* parent, const wxString& labelText, int labelWidth, const wxString& fieldValue, int fieldWidth);
-    wxString getValue();
+    public:
+        InputField(wxWindow *parent, const wxString &labelText, int labelWidth, const wxString &fieldValue,
+                   int fieldWidth);
+        wxString getValue();
 
-private:
-    wxStaticText* _label;
-    wxTextCtrl* _field;
+    private:
+        wxStaticText *_label;
+        wxTextCtrl *_field;
+    };
 
-};
 
-
-#endif //TEST_INPUTFIELD_H
+} // namespace client

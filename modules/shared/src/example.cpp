@@ -4,7 +4,6 @@
 
 namespace shared
 {
-    void hello_from_shared() { std::cout << "hello from shared, used in " << __FILE__ << std::endl; }
 
     bool test() { return true; }
 

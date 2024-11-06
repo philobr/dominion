@@ -52,7 +52,7 @@ namespace client
         VerticalLayout->Add(this->_playerNameField, 0, wxALIGN_CENTER | wxTOP | wxLEFT | wxRIGHT, 10);
 
         wxButton *connectButton = new wxButton(this, wxID_ANY, "Connect", wxDefaultPosition, wxSize(100, 40));
-        connectButton->Bind(wxEVT_BUTTON, [](wxCommandEvent &event) { GameController::connectToServer(); });
+        connectButton->Bind(wxEVT_BUTTON, [](const wxCommandEvent &event) { GameController::connectToServer(); });
         VerticalLayout->Add(connectButton, 0, wxALIGN_RIGHT | wxALL, 10);
 
         this->SetSizerAndFit(VerticalLayout);

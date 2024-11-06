@@ -22,7 +22,7 @@ namespace client
         ImagePanel(wxWindow *parent, wxString file, wxBitmapType format, wxPoint position = wxDefaultPosition,
                    wxSize size = wxDefaultSize, double rotation = 0.0);
 
-        void paintEvent(wxPaintEvent &event);
+        void paintEvent(const wxPaintEvent &event);
         void onSize(wxSizeEvent &event);
     };
 

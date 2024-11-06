@@ -52,18 +52,12 @@ namespace client
             return;
         }
 
-        // convert host from wxString to std::string
-        std::string host = inputServerAddress.ToStdString();
-
         // convert port from wxString to uint16_t
         unsigned long portAsLong;
         if ( !inputServerPort.ToULong(&portAsLong) || portAsLong > 65535 ) {
             GameController::showError("Connection error", "Invalid port");
             return;
         }
-
-        // convert player name from wxString to std::string
-        std::string playerName = inputPlayerName.ToStdString();
 
         // connect to network
         GameController::_gameWindow->showPanel(GameController::_mainGamePanel);

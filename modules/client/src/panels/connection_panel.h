@@ -10,7 +10,7 @@ namespace client
     {
 
     public:
-        ConnectionPanel(wxWindow *parent);
+        explicit ConnectionPanel(wxWindow *parent);
 
         wxString getServerAddress();
         wxString getServerPort();

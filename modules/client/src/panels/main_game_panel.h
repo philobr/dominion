@@ -9,7 +9,7 @@ namespace client
     {
 
     public:
-        MainGamePanel(wxWindow *parent);
+        explicit MainGamePanel(wxWindow *parent);
 
 
     private:

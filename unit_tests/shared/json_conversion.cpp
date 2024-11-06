@@ -31,11 +31,10 @@ TEST(SharedLibraryTest, GameStateMessageTwoWayConversion)
 
 TEST(SharedLibraryTest, CreateLobbyResponseMessageTwoWayConversion)
 {
-    CreateLobbyResponseMessage original_message;
+    std::vector<CardBase::id_t> available_cards = {"copper", "silver", "gold", "estate", "duchy", "province", "curse"};
+    CreateLobbyResponseMessage original_message(available_cards, std::nullopt);
     original_message.game_id = "123";
     original_message.message_id = "456";
-    original_message.in_response_to = std::nullopt;
-    original_message.available_cards = {"copper", "silver", "gold", "estate", "duchy", "province", "curse"};
 
     std::string json = original_message.to_json();
 
@@ -56,10 +55,10 @@ TEST(SharedLibraryTest, CreateLobbyResponseMessageTwoWayConversion)
 
 TEST(SharedLibraryTest, JoinLobbyBroadcastMessageTwoWayConversion)
 {
-    JoinLobbyBroadcastMessage original_message;
+    shared::PlayerBase::id_t player_id = "player1";
+    JoinLobbyBroadcastMessage original_message(player_id);
     original_message.game_id = "123";
     original_message.message_id = "456";
-    original_message.player_id = "player1";
 
     std::string json = original_message.to_json();
 
@@ -118,12 +117,12 @@ TEST(SharedLibraryTest, EndGameBroadcastMessageTwoWayConversion)
 
 TEST(SharedLibraryTest, ResultResponseMessageTwoWayConversion)
 {
-    ResultResponseMessage original_message;
+    bool success = true;
+    std::string in_response_to = "hui";
+    std::string additional_information = "hey";
+    ResultResponseMessage original_message(success, in_response_to, additional_information);
     original_message.game_id = "123";
     original_message.message_id = "456";
-    original_message.in_response_to = "hui";
-    original_message.success = true;
-    original_message.additional_information = "hey";
 
     std::string json = original_message.to_json();
 

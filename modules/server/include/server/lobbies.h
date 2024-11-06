@@ -15,7 +15,7 @@ namespace server
 
     /**
      * @brief A lobby is a container for a game that is being played.
-     * 
+     *
      * A lobby is created by a game master, who is the first player to join the lobby.
      * The game master can start the game when they want to.
      */

@@ -4,6 +4,7 @@
 
 int main()
 {
-    server::hello();
+    std::cout << "hello" << std::endl;
+    //server::hello();
     return 0;
 }

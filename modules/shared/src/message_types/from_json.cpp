@@ -80,12 +80,13 @@ static std::unique_ptr<GameStateMessage> parse_game_state_message(const Document
 static std::unique_ptr<CreateLobbyResponseMessage>
 parse_create_lobby_response(const Document &json, const std::string &game_id, const std::string &message_id)
 {
-    std::unique_ptr<CreateLobbyResponseMessage> message = std::make_unique<CreateLobbyResponseMessage>();
+    std::vector<shared::CardBase::id_t> available_cards; // TODO implement available cards
+    GET_STRING_ARRAY_MEMBER(available_cards, json, "available_cards");
+    std::unique_ptr<CreateLobbyResponseMessage> message = std::make_unique<CreateLobbyResponseMessage>(available_cards);
 
     message->game_id = game_id;
     message->message_id = message_id;
     GET_OPTIONAL_STRING_MEMBER(message->in_response_to, json, "in_response_to");
-    GET_STRING_ARRAY_MEMBER(message->available_cards, json, "available_cards");
 
     return message;
 }
@@ -93,12 +94,11 @@ parse_create_lobby_response(const Document &json, const std::string &game_id, co
 static std::unique_ptr<JoinLobbyBroadcastMessage>
 parse_join_game_broadcast(const Document &json, const std::string &game_id, const std::string &message_id)
 {
-    std::unique_ptr<JoinLobbyBroadcastMessage> message = std::make_unique<JoinLobbyBroadcastMessage>();
-
+    shared::PlayerBase::id_t player_id;
+    GET_STRING_MEMBER(player_id, json, "player_id");
+    std::unique_ptr<JoinLobbyBroadcastMessage> message = std::make_unique<JoinLobbyBroadcastMessage>(player_id);
     message->game_id = game_id;
     message->message_id = message_id;
-    GET_STRING_MEMBER(message->player_id, json, "player_id");
-
     return message;
 }
 
@@ -127,14 +127,19 @@ parse_end_game_broadcast(const Document &json, const std::string &game_id, const
 static std::unique_ptr<ResultResponseMessage> parse_result_response(const Document &json, const std::string &game_id,
                                                                     const std::string &message_id)
 {
-    std::unique_ptr<ResultResponseMessage> message = std::make_unique<ResultResponseMessage>();
+    std::optional<std::string> in_response_to;
+    bool success;
+    std::optional<std::string> additional_information;
+
+    GET_OPTIONAL_STRING_MEMBER(in_response_to, json, "in_response_to");
+    GET_BOOL_MEMBER(success, json, "success");
+    GET_OPTIONAL_STRING_MEMBER(additional_information, json, "additional_information");
+
+    std::unique_ptr<ResultResponseMessage> message =
+            std::make_unique<ResultResponseMessage>(success, in_response_to, additional_information);
 
     message->game_id = game_id;
     message->message_id = message_id;
-    GET_OPTIONAL_STRING_MEMBER(message->in_response_to, json, "in_response_to");
-    GET_BOOL_MEMBER(message->success, json, "success");
-    GET_OPTIONAL_STRING_MEMBER(message->additional_information, json, "additional_information");
-
     return message;
 }
 

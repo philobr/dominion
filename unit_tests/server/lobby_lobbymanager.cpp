@@ -89,9 +89,5 @@ TEST(ServerLibraryTest, JoinLobby)
 
 TEST(ServerLibraryTest, StartGame)
 {
-
+    // TODO implement
 }
-
-
-
-// Test for the LobbyManager::join_lobby method => are players added to the lobby?

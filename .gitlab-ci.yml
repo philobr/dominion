@@ -10,7 +10,7 @@ format:
   image: archlinux:latest
   script:
     - pacman -Syu --noconfirm  # Update the package list and upgrade system
-    - pacman -S --noconfirm cmake make clang wxgtk3  # Install the required packages
+    - pacman -S --noconfirm cmake make git clang wxgtk3  # Install the required packages
     - mkdir -p build
     - cd build
     - cmake ..

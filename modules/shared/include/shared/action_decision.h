@@ -37,7 +37,7 @@ namespace shared
     public:
         ChooseNCardsFromHandDecision(std::vector<unsigned int> cards) : cards(cards) {}
         // TODO: Where do we enforce that these indices are unique?
-            // tricky, as the same card type can be in the hand multiple times
+        // tricky, as the same card type can be in the hand multiple times
         std::vector<unsigned int> cards;
     };
 } // namespace shared

@@ -46,6 +46,7 @@ namespace shared
     public:
         using id_t = std::string;
         id_t id() const;
+
     protected:
         id_t player_id;
         unsigned int victory_points;

@@ -1,5 +1,6 @@
 add_executable(shared_tests
     json_conversion.cpp
+    game_state.cpp
     # Add more test files here
 )
 

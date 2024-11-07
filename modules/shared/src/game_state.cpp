@@ -18,7 +18,7 @@ namespace shared
 
     CardType CardBase::getType() { return type; }
 
-    CardBase::id_t CardBase::getId() { return value; }
+    CardBase::id_t CardBase::getId() { return id; }
 
     // TODO: Implement PlayerBase
     // ask Nicola why some stuff is protected. ID cannot be accessed by the game logic

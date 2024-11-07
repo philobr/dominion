@@ -23,7 +23,7 @@ namespace shared
     public:
         using id_t = std::string;
 
-        CardBase(id_t value, CardType type, unsigned int cost) : value(value), type(type), cost(cost) {}
+        CardBase(id_t id, CardType type, unsigned int cost) : id(id), type(type), cost(cost) {}
         bool isAction() const;
         bool isAttack() const;
         bool isTreasure() const;
@@ -36,7 +36,7 @@ namespace shared
         virtual std::string toString() = 0;
 
     protected:
-        id_t value;
+        id_t id;
         const CardType type;
         const unsigned int cost;
     };

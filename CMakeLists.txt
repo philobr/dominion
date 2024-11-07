@@ -128,6 +128,7 @@ add_custom_target(run_client
 add_custom_target(format
     COMMENT "Running clang-format and checking for formatting issues..."
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+    COMMAND clang-format --version
     COMMAND find modules unit_tests -name '*.cpp' -o -name '*.h' | xargs clang-format -i
     COMMAND git diff --exit-code || (echo "Formatting issues found!" && exit 1)
 )

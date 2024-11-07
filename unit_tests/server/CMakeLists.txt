@@ -1,5 +1,6 @@
 add_executable(server_tests
     test.cpp
+    create_game.cpp
     # add testfiles here
 )
 

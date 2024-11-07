@@ -7,9 +7,10 @@ stages:
 # Stage: Code formatting with clang-format
 format:
   stage: format
-  image: gcc:latest
+  image: archlinux:latest
   script:
-    - apt-get update && apt-get install -y cmake clang-format libwxgtk3.2-dev
+    - pacman -Syu --noconfirm  # Update the package list and upgrade system
+    - pacman -S --noconfirm cmake clang-format wxgtk3  # Install the required packages
     - mkdir -p build
     - cd build
     - cmake ..

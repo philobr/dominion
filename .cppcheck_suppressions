@@ -12,3 +12,6 @@ unmatchedSuppression
 
 # Suppress warnings about cppcheck not being able to check all branches
 normalCheckLevelMaxBranches
+
+# Suppress warnings about cppcheck not being able to check all functions
+unusedFunction:unittests/shared/game_state.cpp

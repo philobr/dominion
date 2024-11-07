@@ -93,7 +93,7 @@ namespace shared
     public:
         CreateLobbyResponseMessage(std::vector<CardBase::id_t> available_cards,
                                    std::optional<std::string> in_response_to = std::nullopt) :
-            in_response_to(in_response_to), 
+            in_response_to(in_response_to),
             available_cards(available_cards)
         {}
         std::string to_json() override;
@@ -128,7 +128,8 @@ namespace shared
     public:
         ResultResponseMessage(bool success, std::optional<std::string> in_response_to = std::nullopt,
                               std::optional<std::string> additional_information = std::nullopt) :
-            in_response_to(in_response_to), success(success), 
+            in_response_to(in_response_to),
+            success(success),
             additional_information(additional_information)
         {}
         std::string to_json() override;

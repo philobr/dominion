@@ -47,7 +47,7 @@ namespace shared
         using id_t = std::string;
         id_t getId();
         PlayerBase() {}
-        PlayerBase(id_t player_id) : id(player_id) {}
+        PlayerBase(id_t player_id) : player_id(player_id) {}
         // TODO: initialize victory_points, available_actions, available_buys, available_treasure, current_card,
         // discard_pile, draw_pile_size
 

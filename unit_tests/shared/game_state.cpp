@@ -7,7 +7,10 @@ class TestCard : public CardBase
 public:
     TestCard(id_t value, CardType type, unsigned int cost) : CardBase(value, type, cost) {}
 
-    std::string toString() override { return value; }
+    std::string toString() override { return id; }
+
+    virtual ~TestCard() = default;
+
 };
 
 class CardBaseTest : public ::testing::Test

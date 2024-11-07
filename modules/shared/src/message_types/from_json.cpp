@@ -80,8 +80,7 @@ static std::unique_ptr<GameStateMessage> parse_game_state_message(const Document
 static std::unique_ptr<CreateLobbyResponseMessage>
 parse_create_lobby_response(const Document &json, const std::string &game_id, const std::string &message_id)
 {
-    std::vector<shared::CardBase::id_t> available_cards =
-            std::vector<shared::CardBase::id_t>(); // TODO implement available cards
+    std::vector<shared::CardBase::id_t> available_cards; // TODO implement available cards
     GET_STRING_ARRAY_MEMBER(available_cards, json, "available_cards");
     std::unique_ptr<CreateLobbyResponseMessage> message = std::make_unique<CreateLobbyResponseMessage>(available_cards);
 

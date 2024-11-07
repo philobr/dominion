@@ -17,6 +17,7 @@ namespace client
         // Set up main panels
         GameController::_connectionPanel = new ConnectionPanel(gameWindow);
         GameController::_mainGamePanel = new MainGamePanel(gameWindow);
+        GameController::_lobbyPanel = new LobbyPanel(gameWindow);
 
         // Hide all panels
         GameController::_connectionPanel->Show(false);
@@ -60,9 +61,18 @@ namespace client
         }
 
         // connect to network
-        GameController::_gameWindow->showPanel(GameController::_mainGamePanel);
+        GameController::_gameWindow->showPanel(GameController::_lobbyPanel);
 
         // send request to join game
+    }
+
+    void GameController::startGame()
+    {
+        // send request to start game
+        //
+
+        GameController::_gameWindow->showPanel(GameController::_mainGamePanel);
+        
     }
 
 

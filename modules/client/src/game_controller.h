@@ -3,6 +3,7 @@
 #include "panels/connection_panel.h"
 #include "panels/main_game_panel.h"
 #include "windows/game_window.h"
+#include "panels/lobby_panel.h"
 
 namespace client
 {
@@ -14,6 +15,7 @@ namespace client
         static void init(GameWindow *gameWindow);
 
         static void connectToServer();
+        static void startGame();
 
         static void showError(const std::string &title, const std::string &message);
         static void showStatus(const std::string &message);
@@ -22,6 +24,7 @@ namespace client
         static GameWindow *_gameWindow;
         static ConnectionPanel *_connectionPanel;
         static MainGamePanel *_mainGamePanel;
+        static LobbyPanel *_lobbyPanel;
     };
 
 } // namespace client

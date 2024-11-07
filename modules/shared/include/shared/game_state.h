@@ -45,7 +45,11 @@ namespace shared
     {
     public:
         using id_t = std::string;
-        id_t id() const;
+        id_t getId();
+        PlayerBase() {}
+        PlayerBase(id_t player_id) : id(player_id) {}
+        // TODO: initialize victory_points, available_actions, available_buys, available_treasure, current_card,
+        // discard_pile, draw_pile_size
 
     protected:
         id_t player_id;
@@ -68,6 +72,10 @@ namespace shared
 
     class ReducedPlayer : public PlayerBase
     {
+    public:
+        ReducedPlayer() {}
+        ReducedPlayer(id_t player_id) : PlayerBase(player_id) {}
+
     protected:
         std::vector<CardBase::id_t> hand_cards;
     };
@@ -90,6 +98,7 @@ namespace shared
     class ReducedGameState
     {
     public:
+        ReducedGameState() {}
         Board board;
         ReducedPlayer player;
         std::vector<ReducedEnemy> enemies;

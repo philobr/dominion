@@ -1,6 +1,6 @@
 #pragma once
 
-#include "shared/message_types.h"
+#include <shared/message_types.h>
 
 namespace server
 {
@@ -14,6 +14,6 @@ namespace server
     class MessageInterface
     {
     public:
-        void send_message(shared::ServerToClientMessage message);
+        void send_message(shared::ServerToClientMessage *message, shared::PlayerBase::id_t player_id);
     };
 } // namespace server

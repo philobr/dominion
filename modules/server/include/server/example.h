@@ -2,7 +2,5 @@
 
 namespace server
 {
-    bool test();
-
-    void hello();
+    bool test() { return true; }
 }; // namespace server

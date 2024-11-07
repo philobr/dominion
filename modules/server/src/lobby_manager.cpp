@@ -1,5 +1,4 @@
 #include <server/lobbies.h>
-#include <iostream>
 
 
 server::LobbyManager::LobbyManager(MessageInterface message_interface) :

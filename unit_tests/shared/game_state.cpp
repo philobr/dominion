@@ -10,7 +10,6 @@ public:
     std::string toString() override { return id; }
 
     virtual ~TestCard() = default;
-
 };
 
 class CardBaseTest : public ::testing::Test

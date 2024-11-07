@@ -7,6 +7,7 @@ namespace client
     GameWindow *GameController::_gameWindow = nullptr;
     ConnectionPanel *GameController::_connectionPanel = nullptr;
     MainGamePanel *GameController::_mainGamePanel = nullptr;
+    LobbyPanel *GameController::_lobbyPanel = nullptr;
 
 
     void GameController::init(GameWindow *gameWindow)
@@ -22,6 +23,7 @@ namespace client
         // Hide all panels
         GameController::_connectionPanel->Show(false);
         GameController::_mainGamePanel->Show(false);
+        GameController::_lobbyPanel->Show(false);
 
         // Only show connection panel at the start of the game
         GameController::_gameWindow->showPanel(GameController::_connectionPanel);
@@ -62,6 +64,7 @@ namespace client
 
         // connect to network
         GameController::_gameWindow->showPanel(GameController::_lobbyPanel);
+        GameController::_lobbyPanel->AddPlayer(inputPlayerName);
 
         // send request to join game
     }
@@ -72,7 +75,6 @@ namespace client
         //
 
         GameController::_gameWindow->showPanel(GameController::_mainGamePanel);
-        
     }
 
 

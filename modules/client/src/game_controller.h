@@ -1,9 +1,9 @@
 #pragma once
 
 #include "panels/connection_panel.h"
+#include "panels/lobby_panel.h"
 #include "panels/main_game_panel.h"
 #include "windows/game_window.h"
-#include "panels/lobby_panel.h"
 
 namespace client
 {

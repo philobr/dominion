@@ -12,7 +12,7 @@ namespace client
         void AddPlayer(wxString name);
 
     private:
-        wxBoxSizer * VerticalSizer;
+        wxBoxSizer *NamesSizer;
 
         unsigned int playerCount;
     };

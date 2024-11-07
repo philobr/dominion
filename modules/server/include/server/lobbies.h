@@ -24,7 +24,7 @@ namespace server
     public:
         Lobby() {};
         Lobby(shared::PlayerBase::id_t game_master);
-        void join(MessageInterface message_interface,shared::JoinLobbyRequestMessage request);
+        void join(MessageInterface message_interface, shared::JoinLobbyRequestMessage request);
         void start_game(MessageInterface message_interface, shared::StartGameRequestMessage request);
         void receive_action(std::unique_ptr<shared::ActionDecisionMessage> action, MessageInterface &message_interface);
         shared::ReducedGameState get_game_state(shared::PlayerBase::id_t player);

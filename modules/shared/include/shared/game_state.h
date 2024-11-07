@@ -45,9 +45,9 @@ namespace shared
     {
     public:
         using id_t = std::string;
-
+        id_t id() const;
     protected:
-        id_t id;
+        id_t player_id;
         unsigned int victory_points;
         std::vector<CardBase::id_t> played_cards;
         std::vector<CardBase::id_t> gained_cards;

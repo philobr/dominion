@@ -1,6 +1,6 @@
 add_executable(server_tests
     test.cpp
-    create_game.cpp
+    lobby_lobbymanager.cpp
     # add testfiles here
 )
 

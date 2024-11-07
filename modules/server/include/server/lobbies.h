@@ -27,7 +27,9 @@ namespace server
         void join(MessageInterface message_interface, shared::JoinLobbyRequestMessage request);
         void start_game(MessageInterface message_interface, shared::StartGameRequestMessage request);
         void receive_action(std::unique_ptr<shared::ActionDecisionMessage> action, MessageInterface &message_interface);
-        shared::ReducedGameState get_game_state(shared::PlayerBase::id_t player);
+        shared::ReducedGameState get_game_state(shared::PlayerBase::id_t player) const;
+        server::GameState get_full_game_state() const { return game_state; };
+        shared::PlayerBase::id_t get_game_master() const { return game_master; };
 
     private:
         GameState game_state;
@@ -49,6 +51,7 @@ namespace server
         void start_game(shared::StartGameRequestMessage request);
         void receive_action(std::unique_ptr<shared::ActionDecisionMessage> action, MessageInterface &message_interface);
         shared::ReducedGameState get_game_state(std::string game_id, shared::PlayerBase::id_t player);
+        const std::map<std::string, Lobby> *get_games() { return &games; };
 
     private:
         std::map<std::string, Lobby> games;

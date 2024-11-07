@@ -14,6 +14,6 @@ namespace server
     class MessageInterface
     {
     public:
-        void send_message(shared::ServerToClientMessage *message, shared::PlayerBase::id_t player_id);
+        void send_message(shared::ServerToClientMessage *message, shared::PlayerBase::id_t player_id) {return;}; // TODO implement
     };
 } // namespace server

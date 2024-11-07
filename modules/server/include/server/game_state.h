@@ -53,7 +53,7 @@ namespace server
         shared::ReducedGameState get_reduced_state(shared::PlayerBase::id_t player);
         void add_player(Player player);
         const std::vector<Player> &get_players();
-        void start_game(std::vector<shared::CardBase::id_t> selected_cards);
+        void start_game(std::vector<shared::CardBase::id_t> selected_cards) { return; }; // TODO implement
 
     private:
         void end_game();

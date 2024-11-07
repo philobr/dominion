@@ -7,7 +7,7 @@ stages:
 # Stage: Code formatting with clang-format
 format:
   stage: format
-  image: archlinux:latest
+  image: archlinux:latest # We use arch linux as the base image because it has a recent version of clang-format
   script:
     - pacman -Syu --noconfirm  # Update the package list and upgrade system
     - pacman -S --noconfirm cmake make git clang wxgtk3  # Install the required packages

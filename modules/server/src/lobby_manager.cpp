@@ -2,7 +2,7 @@
 
 
 server::LobbyManager::LobbyManager(MessageInterface message_interface) :
-    games(std::map<std::string, Lobby>()), message_interface(message_interface) {};
+    games(std::map<std::string, Lobby>()), message_interface(message_interface){};
 
 void server::LobbyManager::create_lobby(shared::CreateLobbyRequestMessage request)
 {

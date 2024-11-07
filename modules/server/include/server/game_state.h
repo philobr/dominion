@@ -49,14 +49,4 @@ namespace server
         ServerBoard board;
         shared::PlayerBase::id_t current_player;
     };
-
-    class Game
-    {
-    public:
-        void receive_action(shared::PlayerBase::id_t player, std::unique_ptr<shared::ActionDecision> action,
-                            MessageInterface &message_interface);
-
-    private:
-        GameState gameState;
-    };
 } // namespace server

@@ -39,16 +39,12 @@ namespace shared
     {
     public:
         std::string to_json() override;
-
-        PlayerBase::id_t player_id;
     };
 
     class JoinLobbyRequestMessage : public ClientToServerMessage
     {
     public:
         std::string to_json() override;
-
-        PlayerBase::id_t player_id;
     };
 
     class StartGameRequestMessage : public ClientToServerMessage

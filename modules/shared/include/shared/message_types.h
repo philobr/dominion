@@ -39,16 +39,12 @@ namespace shared
     {
     public:
         std::string to_json() override;
-
-        PlayerBase::id_t player_id;
     };
 
     class JoinLobbyRequestMessage : public ClientToServerMessage
     {
     public:
         std::string to_json() override;
-
-        PlayerBase::id_t player_id;
     };
 
     class StartGameRequestMessage : public ClientToServerMessage
@@ -85,6 +81,7 @@ namespace shared
     class GameStateMessage : public ServerToClientMessage
     {
     public:
+        GameStateMessage() {}
         std::string to_json() override;
 
         std::optional<std::string> in_response_to;
@@ -94,6 +91,11 @@ namespace shared
     class CreateLobbyResponseMessage : public ServerToClientMessage
     {
     public:
+        CreateLobbyResponseMessage(std::vector<CardBase::id_t> available_cards,
+                                   std::optional<std::string> in_response_to = std::nullopt) :
+            in_response_to(in_response_to),
+            available_cards(available_cards)
+        {}
         std::string to_json() override;
 
         std::optional<std::string> in_response_to;
@@ -103,8 +105,8 @@ namespace shared
     class JoinLobbyBroadcastMessage : public ServerToClientMessage
     {
     public:
+        JoinLobbyBroadcastMessage(PlayerBase::id_t join_id) : player_id(join_id) {}
         std::string to_json() override;
-
         PlayerBase::id_t player_id;
     };
 
@@ -124,8 +126,12 @@ namespace shared
     class ResultResponseMessage : public ServerToClientMessage
     {
     public:
+        ResultResponseMessage(bool success, std::optional<std::string> in_response_to = std::nullopt,
+                              std::optional<std::string> additional_information = std::nullopt) :
+            in_response_to(in_response_to),
+            success(success), additional_information(additional_information)
+        {}
         std::string to_json() override;
-
         std::optional<std::string> in_response_to;
         bool success;
         std::optional<std::string> additional_information;

@@ -90,13 +90,6 @@ TEST(ServerLibraryTest, JoinLobby)
         return join_lobby_broadcast_msg != nullptr;
     };
 
-    auto is_create_lobby_response_message = [](shared::ServerToClientMessage *message)
-    {
-        const shared::CreateLobbyResponseMessage *create_lobby_response_msg =
-                dynamic_cast<shared::CreateLobbyResponseMessage *>(message);
-        return create_lobby_response_msg != nullptr;
-    };
-
     server::MockMessageInterface *message_interface = new server::MockMessageInterface();
     server::LobbyManager lobby_manager(*message_interface);
     shared::PlayerBase::id_t player_1 = "Max";

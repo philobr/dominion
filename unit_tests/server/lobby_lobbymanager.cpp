@@ -139,9 +139,9 @@ TEST(ServerLibraryTest, JoinLobby)
         EXPECT_CALL(*message_interface, send_message(Truly(is_success_message), player_2)).Times(1);
         EXPECT_CALL(*message_interface, send_message(Truly(is_failure_message), player_2)).Times(1);
         EXPECT_CALL(*message_interface, send_message(Truly(is_failure_message), player_3)).Times(1);
-        // 1x ResultResponseMessage + 2x JoinLobbyBroadcastMessage 
+        // 1x ResultResponseMessage + 2x JoinLobbyBroadcastMessage
         // + 1x ResultResponseMessage + 3x JoinLobbyBroadcastMessage
-        EXPECT_CALL(*message_interface, send_message(_, _)).Times(7); 
+        EXPECT_CALL(*message_interface, send_message(_, _)).Times(7);
         EXPECT_CALL(*message_interface, send_message(Truly(is_failure_message), player_5)).Times(1);
     }
     lobby_manager.join_lobby(request2);
@@ -175,5 +175,62 @@ TEST(ServerLibraryTest, JoinLobby)
 
 TEST(ServerLibraryTest, StartGame)
 {
-    
+    auto is_failure_message = [](shared::ServerToClientMessage *message)
+    {
+        const shared::ResultResponseMessage *result_msg = dynamic_cast<shared::ResultResponseMessage *>(message);
+        return result_msg && !result_msg->success;
+    };
+
+    server::MockMessageInterface *message_interface = new server::MockMessageInterface();
+    server::LobbyManager lobby_manager(*message_interface);
+    shared::PlayerBase::id_t player_1 = "Max";
+    shared::PlayerBase::id_t player_2 = "Peter";
+
+    shared::CreateLobbyRequestMessage request1;
+    request1.game_id = "123";
+    request1.message_id = "101";
+    request1.player_id = player_1;
+
+    shared::JoinLobbyRequestMessage request2;
+    request2.game_id = "123";
+    request2.message_id = "102";
+    request2.player_id = player_2;
+
+    // Start game request with wrong game_id
+    shared::StartGameRequestMessage request3;
+    request3.game_id = "abc";
+    request3.message_id = "103";
+    request3.player_id = player_1;
+
+    // Start game request not as game_master
+    shared::StartGameRequestMessage request4;
+    request4.game_id = "123";
+    request4.message_id = "104";
+    request4.player_id = player_2;
+
+    // Start game request as game_master
+    shared::StartGameRequestMessage request5;
+    request5.game_id = "123";
+    request5.message_id = "105";
+    request5.player_id = player_1;
+
+    lobby_manager.create_lobby(request1);
+    lobby_manager.join_lobby(request2);
+
+    // All expected function calls of send_message
+    {
+        InSequence s;
+        // request3
+        EXPECT_CALL(*message_interface, send_message(Truly(is_failure_message), player_1)).Times(1);
+        // request4
+        EXPECT_CALL(*message_interface, send_message(Truly(is_failure_message), player_2)).Times(1);
+        // request5
+        EXPECT_CALL(*message_interface, send_message(_, _)).Times(4);
+    }
+
+    lobby_manager.start_game(request3);
+    lobby_manager.start_game(request4);
+    lobby_manager.start_game(request5);
+    // TODO: Check if the game started correctly
+    delete message_interface;
 }

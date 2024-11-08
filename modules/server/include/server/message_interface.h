@@ -8,7 +8,7 @@ namespace server
 
     /**
      * @brief Abstract base class for sending messages to the client
-     * 
+     *
      * @details Used for enabling Mocking of the send_message method
      * for writing tests.
      */
@@ -36,7 +36,7 @@ namespace server
 
     /**
      * @brief Mock implementation of the MessageInterface
-     * 
+     *
      * @details Used for testing the game logic without actually sending messages to the client
      */
     class MockMessageInterface : public MessageInterface

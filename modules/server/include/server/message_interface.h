@@ -1,6 +1,7 @@
 #pragma once
 
 #include <shared/message_types.h>
+#include "gmock/gmock.h"
 
 namespace server
 {
@@ -14,9 +15,22 @@ namespace server
     class MessageInterface
     {
     public:
-        void send_message(shared::ServerToClientMessage *message, shared::PlayerBase::id_t player_id)
-        {
-            return;
-        }; // TODO implement
+        virtual ~MessageInterface() = default;
+        virtual void send_message(shared::ServerToClientMessage *message, shared::PlayerBase::id_t player_id) = 0;
     };
+
+    class ImplementedMessageInterface : public MessageInterface
+    {
+    public:
+        void send_message(shared::ServerToClientMessage *message, shared::PlayerBase::id_t player_id) override{
+            return; // TODO: Implement
+        };
+    };
+
+    class MockMessageInterface : public MessageInterface {
+        public:
+        // Mock the send_message method, assuming it takes these parameters
+                MOCK_METHOD(void, send_message, (shared::ServerToClientMessage* message, shared::PlayerBase::id_t player_id), (override));
+    };
+
 } // namespace server

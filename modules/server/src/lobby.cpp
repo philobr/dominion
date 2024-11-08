@@ -6,7 +6,7 @@ server::Lobby::Lobby(shared::PlayerBase::id_t game_master) : game_state(GameStat
     game_state.add_player(Player(game_master));
 };
 
-void server::Lobby::join(MessageInterface message_interface, shared::JoinLobbyRequestMessage request)
+void server::Lobby::join(MessageInterface &message_interface, shared::JoinLobbyRequestMessage request)
 {
     shared::PlayerBase::id_t player_id = request.player_id;
     // Check if player is already in the lobby
@@ -31,7 +31,7 @@ void server::Lobby::join(MessageInterface message_interface, shared::JoinLobbyRe
 };
 
 // PRE: selected_cards are validated in message parsing
-void server::Lobby::start_game(MessageInterface message_interface, shared::StartGameRequestMessage request)
+void server::Lobby::start_game(MessageInterface &message_interface, shared::StartGameRequestMessage request)
 {
     // Check if gamemaster is starting the game
     shared::PlayerBase::id_t requestor_id = request.player_id;

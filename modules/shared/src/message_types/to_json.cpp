@@ -7,46 +7,7 @@
 
 #include <shared/message_types.h>
 #include <shared/utils/assert.h>
-
-#define ADD_STRING_MEMBER(var, key)                                                                                    \
-    Value key##_value;                                                                                                 \
-    key##_value.SetString(var, doc.GetAllocator());                                                                    \
-    doc.AddMember(#key, key##_value, doc.GetAllocator());
-
-#define ADD_UINT_MEMBER(var, key)                                                                                      \
-    Value key##_value;                                                                                                 \
-    key##_value.SetUint(var);                                                                                          \
-    doc.AddMember(#key, key##_value, doc.GetAllocator());
-
-#define ADD_OPTIONAL_STRING_MEMBER(var, key)                                                                           \
-    if ( var ) {                                                                                                       \
-        Value key##_value;                                                                                             \
-        key##_value.SetString(var.value().c_str(), doc.GetAllocator());                                                \
-        doc.AddMember(#key, key##_value, doc.GetAllocator());                                                          \
-    }
-
-#define ADD_BOOL_MEMBER(var, key)                                                                                      \
-    Value key##_value;                                                                                                 \
-    key##_value.SetBool(var);                                                                                          \
-    doc.AddMember(#key, key##_value, doc.GetAllocator());
-
-#define ADD_ARRAY_OF_STRINGS_MEMBER(var, key)                                                                          \
-    Value key##_array(kArrayType);                                                                                     \
-    for ( const auto &item : var ) {                                                                                   \
-        Value item_value;                                                                                              \
-        item_value.SetString(item.c_str(), doc.GetAllocator());                                                        \
-        key##_array.PushBack(item_value, doc.GetAllocator());                                                          \
-    }                                                                                                                  \
-    doc.AddMember(#key, key##_array, doc.GetAllocator());
-
-#define ADD_ARRAY_OF_UINTS_MEMBER(var, key)                                                                            \
-    Value key##_array(kArrayType);                                                                                     \
-    for ( const auto &item : var ) {                                                                                   \
-        Value item_value;                                                                                              \
-        item_value.SetUint(item);                                                                                      \
-        key##_array.PushBack(item_value, doc.GetAllocator());                                                          \
-    }                                                                                                                  \
-    doc.AddMember(#key, key##_array, doc.GetAllocator());
+#include <shared/utils/json_macros.h>
 
 using namespace rapidjson;
 

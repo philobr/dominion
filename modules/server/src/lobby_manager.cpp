@@ -9,7 +9,7 @@ void server::LobbyManager::create_lobby(shared::CreateLobbyRequestMessage reques
     std::string lobby_id = request.game_id;
     shared::PlayerBase::id_t game_master = request.player_id;
     // Lobby already exists
-    if ( games.find(lobby_id) == games.end() ) {
+    if ( (games.size() > 0) && (games.find(lobby_id) == games.end()) ) {
         shared::ResultResponseMessage failure_message =
                 shared::ResultResponseMessage(false, request.message_id, "Lobby already exists");
         message_interface.send_message(&failure_message, game_master);

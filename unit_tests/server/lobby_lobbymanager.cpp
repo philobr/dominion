@@ -8,6 +8,7 @@
 
 using ::testing::_;
 using ::testing::Truly;
+using ::testing::InSequence;
 
 TEST(ServerLibraryTest, CreateLobby)
 {
@@ -70,6 +71,29 @@ TEST(ServerLibraryTest, CreateLobby)
 
 TEST(ServerLibraryTest, JoinLobby)
 {
+    auto is_success_message = [](shared::ServerToClientMessage *message) {
+        const shared::ResultResponseMessage *result_msg = dynamic_cast<shared::ResultResponseMessage *>(message);
+        return result_msg && result_msg->success;
+    };
+
+    auto is_failure_message = [](shared::ServerToClientMessage *message) {
+        const shared::ResultResponseMessage *result_msg = dynamic_cast<shared::ResultResponseMessage *>(message);
+        return result_msg && !result_msg->success;
+    };
+
+    auto is_join_lobby_broadcast_message = [](shared::ServerToClientMessage *message) {
+        const shared::JoinLobbyBroadcastMessage *join_lobby_broadcast_msg =
+                dynamic_cast<shared::JoinLobbyBroadcastMessage *>(message);
+        return join_lobby_broadcast_msg != nullptr;
+    };
+
+    auto is_create_lobby_response_message = [](shared::ServerToClientMessage *message)
+    {
+        const shared::CreateLobbyResponseMessage *create_lobby_response_msg =
+                dynamic_cast<shared::CreateLobbyResponseMessage *>(message);
+        return create_lobby_response_msg != nullptr;
+    };
+
     server::MockMessageInterface *message_interface = new server::MockMessageInterface();
     server::LobbyManager lobby_manager(*message_interface);
     shared::PlayerBase::id_t player_1 = "Max";
@@ -93,15 +117,21 @@ TEST(ServerLibraryTest, JoinLobby)
 
     auto games = lobby_manager.get_games();
 
-    ASSERT_EQ(games->empty(), true) << "LobbyManager should be empty at the beginning";
-
     lobby_manager.create_lobby(request1);
-    ASSERT_EQ(games->size(), 1) << "LobbyManager should contain one lobby after creating one";
-    ASSERT_EQ(games->find("123") != games->end(), true) << "Lobby with id 123 should exist";
-    ASSERT_EQ(games->at("123").get_game_master(), player_1) << "Game master should be player_1";
-    ASSERT_EQ(games->at("123").get_full_game_state().get_players().size(), 1)
-            << "There should be one player in the lobby";
 
+    // All expected function calls of send_message (checked bottom-up)
+    {
+        InSequence s;
+        EXPECT_CALL(*message_interface, send_message(Truly(is_join_lobby_broadcast_message), player_1))
+                .Times(1);
+        EXPECT_CALL(*message_interface, send_message(Truly(is_success_message), player_2))
+                .Times(1);
+        EXPECT_CALL(*message_interface, send_message(Truly(is_failure_message), player_2))
+                .Times(1);
+        EXPECT_CALL(*message_interface, send_message(Truly(is_failure_message), player_3))
+                .Times(1);
+        
+    }
     lobby_manager.join_lobby(request2);
     ASSERT_EQ(games->at("123").get_full_game_state().get_players().size(), 2)
             << "There should be two players in the lobby";

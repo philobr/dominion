@@ -7,7 +7,7 @@
 
 #include <shared/message_types.h>
 #include <shared/utils/assert.h>
-#include <shared/utils/json_macros.h>
+#include <shared/utils/json.h>
 
 using namespace rapidjson;
 
@@ -22,14 +22,6 @@ Document document_from_common_attributes(const std::string &type, const std::str
     ADD_STRING_MEMBER(message_id.c_str(), message_id);
 
     return doc;
-}
-
-std::string document_to_string(Document &doc)
-{
-    StringBuffer buffer;
-    Writer<StringBuffer> writer(buffer);
-    doc.Accept(writer);
-    return buffer.GetString();
 }
 
 

@@ -4,7 +4,7 @@
 #include <rapidjson/document.h>
 
 #include <shared/message_types.h>
-#include <shared/utils/json_macros.h>
+#include <shared/utils/json.h>
 
 using namespace shared;
 using namespace rapidjson;

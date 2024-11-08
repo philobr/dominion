@@ -83,6 +83,13 @@ namespace shared
 
     struct Pile
     {
+    public:
+        Pile(CardBase::id_t card, unsigned int count) : card(card), count(count) {}
+
+        // TODO: Test these functions
+        std::string to_json();
+        static Pile *from_json(const std::string &json);
+
         CardBase::id_t card;
         unsigned int count;
     };

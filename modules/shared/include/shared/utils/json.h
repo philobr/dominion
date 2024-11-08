@@ -1,6 +1,8 @@
 
 #pragma once
 
+#include <rapidjson/document.h>
+
 
 // ======= GETTER MACROS ======= //
 
@@ -100,3 +102,6 @@
         key##_array.PushBack(item_value, doc.GetAllocator());                                                          \
     }                                                                                                                  \
     doc.AddMember(#key, key##_array, doc.GetAllocator());
+
+
+std::string document_to_string(const rapidjson::Document &doc);

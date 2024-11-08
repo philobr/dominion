@@ -1,7 +1,7 @@
 #pragma once
 
+#include <gmock/gmock.h>
 #include <shared/message_types.h>
-#include "gmock/gmock.h"
 
 namespace server
 {

@@ -1,7 +1,6 @@
 #include <iostream>
 
 #include <client/example.h>
-#include <shared/example.h>
 
 int main()
 {

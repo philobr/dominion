@@ -25,7 +25,7 @@ void server::Lobby::join(MessageInterface &message_interface, shared::JoinLobbyR
     }
     // Add player to the lobby
     game_state.add_player(Player(player_id));
-    
+
     shared::ResultResponseMessage success_message = shared::ResultResponseMessage(true, request.message_id);
     message_interface.send_message(&success_message, player_id);
     return;

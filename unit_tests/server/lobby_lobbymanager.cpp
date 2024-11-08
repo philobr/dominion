@@ -7,8 +7,8 @@
 #include "gtest/gtest.h"
 
 using ::testing::_;
-using ::testing::Truly;
 using ::testing::InSequence;
+using ::testing::Truly;
 
 TEST(ServerLibraryTest, CreateLobby)
 {
@@ -71,17 +71,20 @@ TEST(ServerLibraryTest, CreateLobby)
 
 TEST(ServerLibraryTest, JoinLobby)
 {
-    auto is_success_message = [](shared::ServerToClientMessage *message) {
+    auto is_success_message = [](shared::ServerToClientMessage *message)
+    {
         const shared::ResultResponseMessage *result_msg = dynamic_cast<shared::ResultResponseMessage *>(message);
         return result_msg && result_msg->success;
     };
 
-    auto is_failure_message = [](shared::ServerToClientMessage *message) {
+    auto is_failure_message = [](shared::ServerToClientMessage *message)
+    {
         const shared::ResultResponseMessage *result_msg = dynamic_cast<shared::ResultResponseMessage *>(message);
         return result_msg && !result_msg->success;
     };
 
-    auto is_join_lobby_broadcast_message = [](shared::ServerToClientMessage *message) {
+    auto is_join_lobby_broadcast_message = [](shared::ServerToClientMessage *message)
+    {
         const shared::JoinLobbyBroadcastMessage *join_lobby_broadcast_msg =
                 dynamic_cast<shared::JoinLobbyBroadcastMessage *>(message);
         return join_lobby_broadcast_msg != nullptr;
@@ -122,15 +125,10 @@ TEST(ServerLibraryTest, JoinLobby)
     // All expected function calls of send_message (checked bottom-up)
     {
         InSequence s;
-        EXPECT_CALL(*message_interface, send_message(Truly(is_join_lobby_broadcast_message), player_1))
-                .Times(1);
-        EXPECT_CALL(*message_interface, send_message(Truly(is_success_message), player_2))
-                .Times(1);
-        EXPECT_CALL(*message_interface, send_message(Truly(is_failure_message), player_2))
-                .Times(1);
-        EXPECT_CALL(*message_interface, send_message(Truly(is_failure_message), player_3))
-                .Times(1);
-        
+        EXPECT_CALL(*message_interface, send_message(Truly(is_join_lobby_broadcast_message), player_1)).Times(1);
+        EXPECT_CALL(*message_interface, send_message(Truly(is_success_message), player_2)).Times(1);
+        EXPECT_CALL(*message_interface, send_message(Truly(is_failure_message), player_2)).Times(1);
+        EXPECT_CALL(*message_interface, send_message(Truly(is_failure_message), player_3)).Times(1);
     }
     lobby_manager.join_lobby(request2);
     ASSERT_EQ(games->at("123").get_full_game_state().get_players().size(), 2)

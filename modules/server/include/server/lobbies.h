@@ -55,6 +55,6 @@ namespace server
 
     private:
         std::map<std::string, Lobby> games;
-        MessageInterface* message_interface;
+        MessageInterface *message_interface;
     };
 } // namespace server

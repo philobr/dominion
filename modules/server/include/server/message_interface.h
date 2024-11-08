@@ -22,15 +22,18 @@ namespace server
     class ImplementedMessageInterface : public MessageInterface
     {
     public:
-        void send_message(shared::ServerToClientMessage *message, shared::PlayerBase::id_t player_id) override{
+        void send_message(shared::ServerToClientMessage *message, shared::PlayerBase::id_t player_id) override
+        {
             return; // TODO: Implement
         };
     };
 
-    class MockMessageInterface : public MessageInterface {
-        public:
+    class MockMessageInterface : public MessageInterface
+    {
+    public:
         // Mock the send_message method, assuming it takes these parameters
-                MOCK_METHOD(void, send_message, (shared::ServerToClientMessage* message, shared::PlayerBase::id_t player_id), (override));
+        MOCK_METHOD(void, send_message, (shared::ServerToClientMessage * message, shared::PlayerBase::id_t player_id),
+                    (override));
     };
 
 } // namespace server

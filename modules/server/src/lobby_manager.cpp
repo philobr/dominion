@@ -37,8 +37,6 @@ void server::LobbyManager::join_lobby(shared::JoinLobbyRequestMessage request)
         return;
     }
     games[lobby_id].join(*message_interface, request);
-    shared::ResultResponseMessage success_message = shared::ResultResponseMessage(true, request.message_id);
-    message_interface->send_message(&success_message, player_id);
     return;
 };
 

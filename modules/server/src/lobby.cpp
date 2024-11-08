@@ -18,13 +18,14 @@ void server::Lobby::join(MessageInterface &message_interface, shared::JoinLobbyR
             return;
         }
     }
-    // Add player to the lobby
-    game_state.add_player(Player(player_id));
-    // Send game state to all players
+    // Send JoinLobbyBroadcast to all players
     for ( Player player : game_state.get_players() ) {
         shared::JoinLobbyBroadcastMessage join_message = shared::JoinLobbyBroadcastMessage(player_id);
         message_interface.send_message(&join_message, player.getId());
     }
+    // Add player to the lobby
+    game_state.add_player(Player(player_id));
+    
     shared::ResultResponseMessage success_message = shared::ResultResponseMessage(true, request.message_id);
     message_interface.send_message(&success_message, player_id);
     return;

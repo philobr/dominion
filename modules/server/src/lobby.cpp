@@ -1,6 +1,8 @@
 #include <server/lobbies.h>
 #include <shared/game_state.h>
 
+int MAX_PLAYERS = 4;
+
 server::Lobby::Lobby(shared::PlayerBase::id_t game_master) : game_state(GameState()), game_master(game_master)
 {
     game_state.add_player(Player(game_master));
@@ -17,6 +19,12 @@ void server::Lobby::join(MessageInterface &message_interface, shared::JoinLobbyR
             message_interface.send_message(&failure_message, player_id);
             return;
         }
+    }
+    if ( game_state.get_players().size() >= MAX_PLAYERS ) {
+        shared::ResultResponseMessage failure_message =
+                shared::ResultResponseMessage(false, request.message_id, "Lobby is full");
+        message_interface.send_message(&failure_message, player_id);
+        return;
     }
     // Send JoinLobbyBroadcast to all players
     for ( Player player : game_state.get_players() ) {

@@ -39,6 +39,11 @@ namespace client
     }
 
 
+    ///
+    /// @brief Adds a player visually to the lobby
+    /// This is specifically not doing any logic
+    /// @pre playerCount < 4
+    /// @post playerCount = playerCount + 1
     void LobbyPanel::AddPlayer(wxString name)
     {
         this->playerCount++;
@@ -46,7 +51,7 @@ namespace client
         Player->SetSizer(new wxBoxSizer(wxVERTICAL));
 
         std::string SpritePath = "assets/Minion" + std::to_string(this->playerCount) + ".png";
-        
+
         ImagePanel *LogoPanel = new ImagePanel(Player, // parent element
                                                SpritePath, // path to image
                                                wxBITMAP_TYPE_PNG, // format of image

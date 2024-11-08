@@ -1,6 +1,7 @@
 #include "lobby_panel.h"
 
 #include "../game_controller.h"
+#include "../uiElements/image_panel.h"
 
 #include <wx/event.h>
 #include <wx/gdicmn.h>
@@ -40,13 +41,24 @@ namespace client
 
     void LobbyPanel::AddPlayer(wxString name)
     {
-        wxPanel *Player = new wxPanel(NamesSizer->GetContainingWindow(), wxID_ANY, wxDefaultPosition, wxSize(64, 64));
-        Player->SetSizer(new wxBoxSizer(wxHORIZONTAL));
+        this->playerCount++;
+        wxPanel *Player = new wxPanel(NamesSizer->GetContainingWindow(), wxID_ANY, wxDefaultPosition, wxSize(256, 256));
+        Player->SetSizer(new wxBoxSizer(wxVERTICAL));
+
+        std::string SpritePath = "assets/Minion" + std::to_string(this->playerCount) + ".png";
+        
+        ImagePanel *LogoPanel = new ImagePanel(Player, // parent element
+                                               SpritePath, // path to image
+                                               wxBITMAP_TYPE_PNG, // format of image
+                                               wxDefaultPosition, // position
+                                               wxSize(100, 100), // size
+                                               0.0 // rotation
+        );
+        Player->GetSizer()->Add(LogoPanel, 0, wxALL | wxALIGN_CENTER, 5);
         wxStaticText *Player_name = new wxStaticText(Player, wxID_ANY, name);
         Player_name->SetForegroundColour(wxColor(0, 0, 0));
         Player->GetSizer()->Add(Player_name, 0, wxALL | wxALIGN_CENTER, 5);
         NamesSizer->Add(Player, 1, wxALL | wxALIGN_CENTER);
         NamesSizer->Layout();
-        this->playerCount++;
     }
 } // namespace client

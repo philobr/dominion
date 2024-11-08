@@ -13,14 +13,14 @@ TEST(ServerLibraryTest, CreateLobby)
 {
     auto is_create_lobby_response_message = [](shared::ServerToClientMessage *message)
     {
-        shared::CreateLobbyResponseMessage *create_lobby_response_msg =
+        const shared::CreateLobbyResponseMessage *create_lobby_response_msg =
                 dynamic_cast<shared::CreateLobbyResponseMessage *>(message);
         return create_lobby_response_msg != nullptr;
     };
 
     auto is_failure_message = [](shared::ServerToClientMessage *message)
     {
-        shared::ResultResponseMessage *result_msg = dynamic_cast<shared::ResultResponseMessage *>(message);
+        const shared::ResultResponseMessage *result_msg = dynamic_cast<shared::ResultResponseMessage *>(message);
         return result_msg && !result_msg->success;
     };
 

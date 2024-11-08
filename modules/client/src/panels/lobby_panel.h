@@ -1,5 +1,6 @@
 #pragma once
 
+#include <wx/sizer.h>
 #include <wx/wx.h>
 
 namespace client
@@ -12,7 +13,7 @@ namespace client
         void AddPlayer(wxString name);
 
     private:
-        wxBoxSizer *NamesSizer;
+        wxGridSizer *NamesSizer;
 
         unsigned int playerCount;
     };

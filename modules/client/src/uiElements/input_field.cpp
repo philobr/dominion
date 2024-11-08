@@ -4,8 +4,7 @@ namespace client
 {
 
     InputField::InputField(wxWindow *parent, const wxString &labelText, int labelWidth, const wxString &fieldValue,
-                           int fieldWidth) :
-        wxPanel(parent, wxID_ANY)
+                           int fieldWidth) : wxPanel(parent, wxID_ANY)
     {
 
         wxBoxSizer *horizontalLayout = new wxBoxSizer(wxHORIZONTAL);

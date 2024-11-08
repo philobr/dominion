@@ -5,18 +5,21 @@
 #include <wx/event.h>
 #include <wx/gdicmn.h>
 #include <wx/sizer.h>
+#include <wx/wx.h>
 
 
 namespace client
 {
     LobbyPanel::LobbyPanel(wxWindow *parent) :
-        wxPanel(parent, wxID_ANY, wxDefaultPosition, wxSize(1024, 1024)), NamesSizer(new wxBoxSizer(wxHORIZONTAL))
+        wxPanel(parent, wxID_ANY, wxDefaultPosition, wxSize(1024, 1024)), NamesSizer(new wxGridSizer(2, 2, 0, 0)),
+        playerCount(0)
     {
         wxStaticText *Title = new wxStaticText(this, wxID_ANY, "Lobby");
+        Title->SetFont(wxFont(24, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD));
+        Title->SetForegroundColour(wxColor(0, 0, 0));
         wxBoxSizer *VerticalSizer = new wxBoxSizer(wxVERTICAL);
         VerticalSizer->Add(Title, 0, wxALIGN_CENTER | wxALL, 5);
-        wxPanel *Panel = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxSize(1024, 512));
-        Panel->SetBackgroundColour(wxColour(0, 100, 0));
+        wxPanel *Panel = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxSize(512, 512));
         VerticalSizer->Add(Panel, 1, wxALIGN_CENTER | wxALL, 5);
         wxButton *StartButton = new wxButton(this, wxID_ANY, "Start Game");
         StartButton->Bind(wxEVT_BUTTON, [](const wxCommandEvent &event) { GameController::startGame(); });
@@ -37,8 +40,13 @@ namespace client
 
     void LobbyPanel::AddPlayer(wxString name)
     {
-        wxStaticText *Player = new wxStaticText(NamesSizer->GetContainingWindow(), wxID_ANY, name);
-        NamesSizer->Add(Player, 0, wxALL, 5);
+        wxPanel *Player = new wxPanel(NamesSizer->GetContainingWindow(), wxID_ANY, wxDefaultPosition, wxSize(64, 64));
+        Player->SetSizer(new wxBoxSizer(wxHORIZONTAL));
+        wxStaticText *Player_name = new wxStaticText(Player, wxID_ANY, name);
+        Player_name->SetForegroundColour(wxColor(0, 0, 0));
+        Player->GetSizer()->Add(Player_name, 0, wxALL | wxALIGN_CENTER, 5);
+        NamesSizer->Add(Player, 1, wxALL | wxALIGN_CENTER);
+        NamesSizer->Layout();
         this->playerCount++;
     }
 } // namespace client

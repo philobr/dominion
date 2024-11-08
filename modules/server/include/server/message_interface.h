@@ -1,6 +1,6 @@
 #pragma once
 
-#include <../../../../external/googletest/lib/googlemock/include/gmock/gmock.h>
+#include <gmock/gmock.h>
 #include <shared/message_types.h>
 
 namespace server

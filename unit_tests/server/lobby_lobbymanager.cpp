@@ -1,9 +1,9 @@
+#include <gmock/gmock.h>
 #include <server/lobbies.h>
 #include <server/message_interface.h>
 #include <shared/game_state.h>
 #include <shared/message_types.h>
 #include <typeinfo>
-#include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
 using ::testing::_;

@@ -45,12 +45,7 @@ TEST(SharedLibraryTest, CreateLobbyResponseMessageTwoWayConversion)
             dynamic_cast<CreateLobbyResponseMessage *>(base_message.release()));
 
     ASSERT_NE(parsed_message, nullptr);
-
-    ASSERT_EQ(parsed_message->game_id, "123");
-    ASSERT_EQ(parsed_message->message_id, "456");
-    ASSERT_FALSE(parsed_message->in_response_to);
-    ASSERT_EQ(parsed_message->available_cards,
-              std::vector<std::string>({"copper", "silver", "gold", "estate", "duchy", "province", "curse"}));
+    ASSERT_EQ(*parsed_message, original_message);
 }
 
 TEST(SharedLibraryTest, JoinLobbyBroadcastMessageTwoWayConversion)
@@ -66,10 +61,7 @@ TEST(SharedLibraryTest, JoinLobbyBroadcastMessageTwoWayConversion)
             dynamic_cast<JoinLobbyBroadcastMessage *>(base_message.release()));
 
     ASSERT_NE(parsed_message, nullptr);
-
-    ASSERT_EQ(parsed_message->game_id, "123");
-    ASSERT_EQ(parsed_message->message_id, "456");
-    ASSERT_EQ(parsed_message->player_id, "player1");
+    ASSERT_EQ(*parsed_message, original_message);
 }
 
 TEST(SharedLibraryTest, StartGameBroadcastMessageTwoWayConversion)
@@ -85,9 +77,7 @@ TEST(SharedLibraryTest, StartGameBroadcastMessageTwoWayConversion)
             dynamic_cast<StartGameBroadcastMessage *>(base_message.release()));
 
     ASSERT_NE(parsed_message, nullptr);
-
-    ASSERT_EQ(parsed_message->game_id, "123");
-    ASSERT_EQ(parsed_message->message_id, "456");
+    ASSERT_EQ(*parsed_message, original_message);
 }
 
 TEST(SharedLibraryTest, EndGameBroadcastMessageTwoWayConversion)
@@ -103,9 +93,7 @@ TEST(SharedLibraryTest, EndGameBroadcastMessageTwoWayConversion)
             dynamic_cast<EndGameBroadcastMessage *>(base_message.release()));
 
     ASSERT_NE(parsed_message, nullptr);
-
-    ASSERT_EQ(parsed_message->game_id, "123");
-    ASSERT_EQ(parsed_message->message_id, "456");
+    ASSERT_EQ(*parsed_message, original_message);
 }
 
 TEST(SharedLibraryTest, ResultResponseMessageTwoWayConversion)
@@ -124,15 +112,7 @@ TEST(SharedLibraryTest, ResultResponseMessageTwoWayConversion)
             dynamic_cast<ResultResponseMessage *>(base_message.release()));
 
     ASSERT_NE(parsed_message, nullptr);
-
-    ASSERT_EQ(parsed_message->game_id, "123");
-    ASSERT_EQ(parsed_message->message_id, "456");
-    ASSERT_TRUE(parsed_message->in_response_to);
-    ASSERT_EQ(parsed_message->in_response_to.value(), "hui");
-    ASSERT_TRUE(parsed_message->success);
-    ASSERT_EQ(parsed_message->success, true);
-    ASSERT_TRUE(parsed_message->additional_information);
-    ASSERT_EQ(parsed_message->additional_information.value(), "hey");
+    ASSERT_EQ(*parsed_message, original_message);
 }
 
 TEST(SharedLibraryTest, ActionOrderMessageTwoWayConversion)
@@ -147,10 +127,7 @@ TEST(SharedLibraryTest, ActionOrderMessageTwoWayConversion)
     std::unique_ptr<ActionOrderMessage> parsed_message(dynamic_cast<ActionOrderMessage *>(base_message.release()));
 
     ASSERT_NE(parsed_message, nullptr);
-
-    ASSERT_EQ(parsed_message->game_id, "123");
-    ASSERT_EQ(parsed_message->message_id, "456");
-    ASSERT_FALSE(parsed_message->description);
+    ASSERT_EQ(*parsed_message, original_message);
 }
 
 // ======= CLIENT TO SERVER MESSAGES ======= //
@@ -168,10 +145,7 @@ TEST(SharedLibraryTest, GameStateRequestMessageTwoWayConversion)
             dynamic_cast<GameStateRequestMessage *>(base_message.release()));
 
     ASSERT_NE(parsed_message, nullptr);
-
-    ASSERT_EQ(parsed_message->game_id, "123");
-    ASSERT_EQ(parsed_message->message_id, "456");
-    ASSERT_EQ(parsed_message->player_id, "player1");
+    ASSERT_EQ(*parsed_message, original_message);
 }
 
 TEST(SharedLibraryTest, CreateLobbyRequestMessageTwoWayConversion)
@@ -187,10 +161,7 @@ TEST(SharedLibraryTest, CreateLobbyRequestMessageTwoWayConversion)
             dynamic_cast<CreateLobbyRequestMessage *>(base_message.release()));
 
     ASSERT_NE(parsed_message, nullptr);
-
-    ASSERT_EQ(parsed_message->game_id, "123");
-    ASSERT_EQ(parsed_message->message_id, "456");
-    ASSERT_EQ(parsed_message->player_id, "player1");
+    ASSERT_EQ(*parsed_message, original_message);
 }
 
 TEST(SharedLibraryTest, JoinLobbyRequestMessageTwoWayConversion)
@@ -206,10 +177,7 @@ TEST(SharedLibraryTest, JoinLobbyRequestMessageTwoWayConversion)
             dynamic_cast<JoinLobbyRequestMessage *>(base_message.release()));
 
     ASSERT_NE(parsed_message, nullptr);
-
-    ASSERT_EQ(parsed_message->game_id, "123");
-    ASSERT_EQ(parsed_message->message_id, "456");
-    ASSERT_EQ(parsed_message->player_id, "player1");
+    ASSERT_EQ(*parsed_message, original_message);
 }
 
 TEST(SharedLibraryTest, StartGameRequestMessageTwoWayConversion)
@@ -227,11 +195,7 @@ TEST(SharedLibraryTest, StartGameRequestMessageTwoWayConversion)
             dynamic_cast<StartGameRequestMessage *>(base_message.release()));
 
     ASSERT_NE(parsed_message, nullptr);
-
-    ASSERT_EQ(parsed_message->game_id, "123");
-    ASSERT_EQ(parsed_message->message_id, "456");
-    ASSERT_EQ(parsed_message->player_id, "player1");
-    ASSERT_EQ(parsed_message->selected_cards, cards);
+    ASSERT_EQ(*parsed_message, original_message);
 }
 
 TEST(SharedLibraryTest, ActionDecisionMessageTwoWayConversionPlayActionCard)
@@ -248,17 +212,7 @@ TEST(SharedLibraryTest, ActionDecisionMessageTwoWayConversionPlayActionCard)
             dynamic_cast<ActionDecisionMessage *>(base_message.release()));
 
     ASSERT_NE(parsed_message, nullptr);
-
-    ASSERT_EQ(parsed_message->game_id, "123");
-    ASSERT_EQ(parsed_message->message_id, "456");
-    ASSERT_EQ(parsed_message->player_id, "player1");
-    ASSERT_TRUE(parsed_message->in_response_to);
-    ASSERT_EQ(parsed_message->in_response_to.value(), "789");
-
-    ASSERT_NE(parsed_message->decision, nullptr);
-    PlayActionCardDecision *parsed_decision = dynamic_cast<PlayActionCardDecision *>(parsed_message->decision.get());
-    ASSERT_NE(parsed_decision, nullptr);
-    ASSERT_EQ(parsed_decision->cardIndex, 1);
+    ASSERT_EQ(*parsed_message, original_message);
 }
 
 TEST(SharedLibraryTest, ActionDecisionMessageTwoWayConversionBuyCard)
@@ -274,17 +228,7 @@ TEST(SharedLibraryTest, ActionDecisionMessageTwoWayConversionBuyCard)
             dynamic_cast<ActionDecisionMessage *>(base_message.release()));
 
     ASSERT_NE(parsed_message, nullptr);
-
-    ASSERT_EQ(parsed_message->game_id, "123");
-    ASSERT_EQ(parsed_message->message_id, "456");
-    ASSERT_EQ(parsed_message->player_id, "player1");
-    ASSERT_FALSE(parsed_message->in_response_to);
-    ASSERT_EQ(parsed_message->player_id, "player1");
-
-    ASSERT_NE(parsed_message->decision, nullptr);
-    BuyCardDecision *parsed_decision = dynamic_cast<BuyCardDecision *>(parsed_message->decision.get());
-    ASSERT_NE(parsed_decision, nullptr);
-    ASSERT_EQ(parsed_decision->card, "copper");
+    ASSERT_EQ(*parsed_message, original_message);
 }
 
 TEST(SharedLibraryTest, ActionDecisionMessageTwoWayConversionEndTurn)
@@ -300,16 +244,7 @@ TEST(SharedLibraryTest, ActionDecisionMessageTwoWayConversionEndTurn)
             dynamic_cast<ActionDecisionMessage *>(base_message.release()));
 
     ASSERT_NE(parsed_message, nullptr);
-
-    ASSERT_EQ(parsed_message->game_id, "123");
-    ASSERT_EQ(parsed_message->message_id, "456");
-    ASSERT_EQ(parsed_message->player_id, "player1");
-    ASSERT_TRUE(parsed_message->in_response_to);
-    ASSERT_EQ(parsed_message->in_response_to.value(), "789");
-
-    ASSERT_NE(parsed_message->decision, nullptr);
-    EndTurnDecision *parsed_decision = dynamic_cast<EndTurnDecision *>(parsed_message->decision.get());
-    ASSERT_NE(parsed_decision, nullptr);
+    ASSERT_EQ(*parsed_message, original_message);
 }
 
 TEST(SharedLibraryTest, ActionDecisionMessageTwoWayConversionChooseNCardsFromHand)
@@ -327,15 +262,5 @@ TEST(SharedLibraryTest, ActionDecisionMessageTwoWayConversionChooseNCardsFromHan
             dynamic_cast<ActionDecisionMessage *>(base_message.release()));
 
     ASSERT_NE(parsed_message, nullptr);
-
-    ASSERT_EQ(parsed_message->game_id, "123");
-    ASSERT_EQ(parsed_message->message_id, "456");
-    ASSERT_EQ(parsed_message->player_id, "player1");
-    ASSERT_FALSE(parsed_message->in_response_to);
-
-    ASSERT_NE(parsed_message->decision, nullptr);
-    ChooseNCardsFromHandDecision *parsed_decision =
-            dynamic_cast<ChooseNCardsFromHandDecision *>(parsed_message->decision.get());
-    ASSERT_NE(parsed_decision, nullptr);
-    ASSERT_EQ(parsed_decision->cards, card_indices);
+    ASSERT_EQ(*parsed_message, original_message);
 }

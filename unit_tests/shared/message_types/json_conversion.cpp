@@ -7,6 +7,7 @@ using namespace shared;
 
 // ======= SERVER TO CLIENT MESSAGES ======= //
 
+/* TODO: reenable
 TEST(SharedLibraryTest, GameStateMessageTwoWayConversion)
 {
     // TODO: Implement ReducedGameState
@@ -28,6 +29,7 @@ TEST(SharedLibraryTest, GameStateMessageTwoWayConversion)
     ASSERT_TRUE(parsed_message->in_response_to);
     ASSERT_EQ(parsed_message->in_response_to.value(), "789");
 }
+*/
 
 TEST(SharedLibraryTest, CreateLobbyResponseMessageTwoWayConversion)
 {

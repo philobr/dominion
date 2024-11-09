@@ -63,8 +63,9 @@ namespace shared
 
     bool GameStateMessage::operator==(const GameStateMessage &other) const
     {
-        return ServerToClientMessage::operator==(other) && this->in_response_to == other.in_response_to &&
-                this->game_state == other.game_state;
+        return ServerToClientMessage::operator==(other) && this->in_response_to == other.in_response_to /* TODO:
+                reenable && this->game_state == other.game_state */
+                ;
     }
 
     bool CreateLobbyResponseMessage::operator==(const CreateLobbyResponseMessage &other) const

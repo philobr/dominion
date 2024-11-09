@@ -9,9 +9,7 @@ namespace server
 
     shared::ReducedGameState GameState::get_reduced_state(shared::PlayerBase::id_t player_id)
     {
-        shared::ReducedGameState *reduced_state = nullptr;
-        ASSERT_NEQ(reduced_state, (shared::ReducedGameState *)nullptr, "Not implemented yet");
-        return *reduced_state;
+        throw std::runtime_error("Not implemented yet");
     }
 
     const std::vector<Player> &GameState::get_players() { return players; }

@@ -61,7 +61,7 @@ void server::Lobby::start_game(MessageInterface message_interface, shared::Start
         shared::ReducedGameState reduced_game_state = game_state.get_reduced_state(player.getId());
         // TODO: provide game_id and message_id
         shared::GameStateMessage game_state_message =
-                shared::GameStateMessage("game_id", "message_id", reduced_game_state);
+                shared::GameStateMessage("game_id", "message_id" /*, reduced_game_state */);
         message_interface.send_message(&game_state_message, player.getId());
     }
     return;

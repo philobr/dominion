@@ -18,11 +18,7 @@ static std::unique_ptr<GameStateMessage> parse_game_state_message(const Document
     std::optional<std::string> in_response_to;
     GET_OPTIONAL_STRING_MEMBER(in_response_to, json, "in_response_to");
 
-    // TODO: Parse game state
-    ASSERT_TRUE(false, "Not implemented");
-    ReducedGameState *game_state = nullptr;
-
-    return std::make_unique<GameStateMessage>(game_id, message_id, *game_state, in_response_to);
+    return std::make_unique<GameStateMessage>(game_id, message_id, /* TODO: game_state, */ in_response_to);
 }
 
 static std::unique_ptr<CreateLobbyResponseMessage>

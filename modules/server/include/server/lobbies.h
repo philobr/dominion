@@ -27,7 +27,7 @@ namespace server
          *
          * @param game_master The player who created the lobby.
          */
-        Lobby(shared::CardBase::id_t game_master);
+        Lobby(shared::PlayerBase::id_t game_master);
         /**
          * @brief Add a player to the lobby.
          */

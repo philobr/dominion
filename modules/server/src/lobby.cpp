@@ -3,7 +3,7 @@
 #include <shared/game_state.h>
 #include <shared/utils/assert.h>
 
-server::Lobby::Lobby(shared::CardBase::id_t game_master) : game_master(game_master)
+server::Lobby::Lobby(shared::PlayerBase::id_t game_master) : game_master(game_master)
 {
     game_state.add_player(Player(game_master));
 };

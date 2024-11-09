@@ -62,8 +62,8 @@ TEST(SharedLibraryTest, JoinLobbyRequestMessageEquality)
 
 TEST(SharedLibraryTest, StartGameRequestMessageEquality)
 {
-    std::vector<CardBase::id_t> selected_cards = { "Adventurer", "Bureaucrat", "Cellar", "Chapel", "CouncilRoom",
-"Festival", "Gardens", "Laboratory", "Market", "Militia" };
+    std::vector<CardBase::id_t> selected_cards = {"Adventurer", "Bureaucrat", "Cellar",     "Chapel", "CouncilRoom",
+                                                  "Festival",   "Gardens",    "Laboratory", "Market", "Militia"};
     StartGameRequestMessage message1("game1", "message1", "player1", selected_cards);
     ASSERT_EQ(message1, message1);
 
@@ -79,8 +79,8 @@ TEST(SharedLibraryTest, StartGameRequestMessageEquality)
     StartGameRequestMessage message5("game1", "message1", "player2", selected_cards);
     ASSERT_NE(message1, message5);
 
-    std::vector<CardBase::id_t> selected_cards2 = { "Adventurer", "Bureaucrat", "Cellar", "Chapel", "CouncilRoom",
-"Festival", "Gardens", "Laboratory", "Market", "Moat" };
+    std::vector<CardBase::id_t> selected_cards2 = {"Adventurer", "Bureaucrat", "Cellar",     "Chapel", "CouncilRoom",
+                                                   "Festival",   "Gardens",    "Laboratory", "Market", "Moat"};
     StartGameRequestMessage message6("game1", "message1", "player1", selected_cards2);
     ASSERT_NE(message1, message6);
 }
@@ -121,7 +121,7 @@ TEST(SharedLibraryTest, ActionDecisionMessage)
 TEST(SharedLibraryTest, GameStateMessageEquality)
 {
     // TODO: Implement game state
-    ReducedGameState* game_state_p1 = nullptr;
+    ReducedGameState *game_state_p1 = nullptr;
     ASSERT_NE(game_state_p1, nullptr);
     ReducedGameState game_state1 = *game_state_p1;
     GameStateMessage message1("game1", "message1", game_state1, "message0");
@@ -137,7 +137,7 @@ TEST(SharedLibraryTest, GameStateMessageEquality)
     ASSERT_NE(message1, message4);
 
     // TODO: Implement game state
-    ReducedGameState* game_state_p2 = nullptr;
+    ReducedGameState *game_state_p2 = nullptr;
     ASSERT_NE(game_state_p2, nullptr);
     ReducedGameState game_state2 = *game_state_p2;
     GameStateMessage message5("game1", "message1", game_state2, "message0");
@@ -149,9 +149,10 @@ TEST(SharedLibraryTest, GameStateMessageEquality)
 
 TEST(SharedLibraryTest, CreateLobbyResponseMessageEquality)
 {
-    std::vector<CardBase::id_t> available_cards = { "Adventurer", "Bureaucrat", "Cellar", "Chapel", "CouncilRoom",
-"Festival", "Gardens", "Laboratory", "Market", "Militia", "Moat", "Moneylender", "Remodel", "Smithy", "Village",
-"Witch", "Woodcutter", "Workshop" };
+    std::vector<CardBase::id_t> available_cards = {"Adventurer", "Bureaucrat",  "Cellar",     "Chapel", "CouncilRoom",
+                                                   "Festival",   "Gardens",     "Laboratory", "Market", "Militia",
+                                                   "Moat",       "Moneylender", "Remodel",    "Smithy", "Village",
+                                                   "Witch",      "Woodcutter",  "Workshop"};
     CreateLobbyResponseMessage message1("game1", "message1", available_cards, "message0");
     ASSERT_EQ(message1, message1);
 
@@ -164,8 +165,8 @@ TEST(SharedLibraryTest, CreateLobbyResponseMessageEquality)
     CreateLobbyResponseMessage message4("game1", "message2", available_cards, "message0");
     ASSERT_NE(message1, message4);
 
-    std::vector<CardBase::id_t> available_cards2 = { "Adventurer", "Bureaucrat", "Cellar", "Chapel", "CouncilRoom",
-"Festival" };
+    std::vector<CardBase::id_t> available_cards2 = {"Adventurer", "Bureaucrat",  "Cellar",
+                                                    "Chapel",     "CouncilRoom", "Festival"};
     CreateLobbyResponseMessage message5("game1", "message1", available_cards2, "message0");
     ASSERT_NE(message1, message5);
 

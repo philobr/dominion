@@ -10,6 +10,7 @@ namespace shared
     public:
         bool operator==(const ActionDecision &other) const;
         bool operator!=(const ActionDecision &other) const;
+
     protected:
         virtual bool equals(const ActionDecision &other) const = 0;
     };
@@ -21,6 +22,7 @@ namespace shared
         bool operator!=(const PlayActionCardDecision &other) const;
         PlayActionCardDecision(unsigned int cardIndex) : cardIndex(cardIndex) {}
         unsigned int cardIndex;
+
     protected:
         bool equals(const ActionDecision &other) const override;
     };
@@ -32,6 +34,7 @@ namespace shared
         bool operator!=(const BuyCardDecision &other) const;
         BuyCardDecision(CardBase::id_t card) : card(card) {}
         CardBase::id_t card;
+
     protected:
         bool equals(const ActionDecision &other) const override;
     };
@@ -42,6 +45,7 @@ namespace shared
         bool operator==(const EndTurnDecision &other) const;
         bool operator!=(const EndTurnDecision &other) const;
         EndTurnDecision() {}
+
     protected:
         bool equals(const ActionDecision &other) const override;
     };
@@ -54,6 +58,7 @@ namespace shared
         ChooseNCardsFromHandDecision(std::vector<unsigned int> cards) : cards(cards) {}
         // TODO: Where do we enforce that these indices are unique?
         std::vector<unsigned int> cards;
+
     protected:
         bool equals(const ActionDecision &other) const override;
     };

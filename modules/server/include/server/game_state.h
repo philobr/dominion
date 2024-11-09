@@ -20,7 +20,8 @@ namespace server
     class ServerBoard : public shared::Board
     {
     public:
-        ServerBoard(const std::vector<shared::CardBase::id_t> &kingdom_cards, unsigned int num_players) : shared::Board(kingdom_cards, num_players) {};
+        ServerBoard(const std::vector<shared::CardBase::id_t> &kingdom_cards, unsigned int num_players) :
+            shared::Board(kingdom_cards, num_players) {};
         bool buy(shared::CardBase::id_t card);
         void trash(shared::CardBase::id_t card);
     };

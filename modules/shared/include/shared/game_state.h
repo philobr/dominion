@@ -79,7 +79,9 @@ namespace shared
     class ReducedPlayer : public PlayerBase
     {
     public:
-        ReducedPlayer(id_t player_id, std::vector<CardBase::id_t> hand_cards) : PlayerBase(player_id), hand_cards(hand_cards) {}
+        ReducedPlayer(id_t player_id, std::vector<CardBase::id_t> hand_cards) :
+            PlayerBase(player_id), hand_cards(hand_cards)
+        {}
         bool operator==(const ReducedPlayer &other) const;
 
     protected:
@@ -121,8 +123,10 @@ namespace shared
     class ReducedGameState
     {
     public:
-        ReducedGameState(Board board, ReducedPlayer player, std::vector<ReducedEnemy> enemies, PlayerBase::id_t current_player)
-            : board(board), player(player), enemies(enemies), current_player(current_player) {}
+        ReducedGameState(Board board, ReducedPlayer player, std::vector<ReducedEnemy> enemies,
+                         PlayerBase::id_t current_player) :
+            board(board), player(player), enemies(enemies), current_player(current_player)
+        {}
         bool operator==(const ReducedGameState &other) const;
 
         Board board;

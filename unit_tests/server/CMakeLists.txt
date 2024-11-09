@@ -1,7 +1,5 @@
 add_executable(server_tests
-    test.cpp
     lobby_lobbymanager.cpp
-    # add testfiles here
 )
 
 include_gtest(server_tests)

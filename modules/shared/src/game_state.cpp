@@ -57,6 +57,24 @@ namespace shared
         return new Pile(card, count);
     }
 
+    Board::Board(const std::vector<CardBase::id_t> &kingdom_cards, unsigned int num_players)
+    {
+        for ( auto card : kingdom_cards ) {
+            this->kingdom_cards.push_back(Pile(card, 10));
+        }
+
+        this->treasure_cards.push_back(Pile("Copper", 60 - 7 * num_players));
+        this->treasure_cards.push_back(Pile("Silver", 40));
+        this->treasure_cards.push_back(Pile("Gold", 30));
+
+        unsigned int num_estates = num_players == 2 ? 8 : 12;
+        this->victory_cards.push_back(Pile("Estate", num_estates));
+        this->victory_cards.push_back(Pile("Duchy", 12));
+        this->victory_cards.push_back(Pile("Province", 12));
+
+        this->victory_cards.push_back(Pile("Curse", 10 * (num_players - 1)));
+    }
+
     bool Board::operator==(const Board &other) const
     {
         return this->victory_cards == other.victory_cards && this->treasure_cards == other.treasure_cards &&
@@ -66,6 +84,6 @@ namespace shared
     bool ReducedGameState::operator==(const ReducedGameState &other) const
     {
         return this->board == other.board && this->player == other.player && this->enemies == other.enemies &&
-                this->active_player == other.active_player;
+                this->current_player == other.current_player;
     }
 } // namespace shared

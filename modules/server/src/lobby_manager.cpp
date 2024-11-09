@@ -1,9 +1,5 @@
 #include <server/lobbies.h>
 
-
-server::LobbyManager::LobbyManager(MessageInterface message_interface) :
-    games(std::map<std::string, Lobby>()), message_interface(message_interface) {};
-
 void server::LobbyManager::create_lobby(shared::CreateLobbyRequestMessage request)
 {
     std::string lobby_id = request.game_id;
@@ -39,7 +35,7 @@ void server::LobbyManager::join_lobby(shared::JoinLobbyRequestMessage request)
         message_interface.send_message(&failure_message, player_id);
         return;
     }
-    games[lobby_id].join(message_interface, request);
+    games.at(lobby_id).join(message_interface, request);
     // TODO: Provide game_id and message_id
     shared::ResultResponseMessage success_message =
             shared::ResultResponseMessage("game_id", "message_id", true, request.message_id);
@@ -58,6 +54,6 @@ void server::LobbyManager::start_game(shared::StartGameRequestMessage request)
         message_interface.send_message(&failure_message, requestor_id);
         return;
     }
-    games[lobby_id].start_game(message_interface, request);
+    games.at(lobby_id).start_game(message_interface, request);
     return;
 };

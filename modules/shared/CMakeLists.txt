@@ -3,6 +3,7 @@
 add_library(shared_lib STATIC
     src/message_types/from_json.cpp
     src/message_types/to_json.cpp
+    src/message_types/other.cpp
     src/game_state.cpp
     src/utils/json.cpp
 )

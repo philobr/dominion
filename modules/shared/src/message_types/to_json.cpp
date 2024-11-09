@@ -11,16 +11,27 @@
 
 using namespace rapidjson;
 
-Document document_from_common_attributes(const std::string &type, const std::string &game_id,
-                                         const std::string &message_id)
+Document document_from_msg(const std::string &type, const shared::Message &msg)
 {
     Document doc;
     doc.SetObject();
 
     ADD_STRING_MEMBER(type.c_str(), type);
-    ADD_STRING_MEMBER(game_id.c_str(), game_id);
-    ADD_STRING_MEMBER(message_id.c_str(), message_id);
+    ADD_STRING_MEMBER(msg.game_id.c_str(), game_id);
+    ADD_STRING_MEMBER(msg.message_id.c_str(), message_id);
 
+    return doc;
+}
+
+Document document_from_server_to_client_msg(const std::string &type, const shared::ServerToClientMessage &msg)
+{
+    return document_from_msg(type, msg);
+}
+
+Document document_from_client_to_server_msg(const std::string &type, const shared::ClientToServerMessage &msg)
+{
+    Document doc = document_from_msg(type, msg);
+    ADD_STRING_MEMBER(msg.player_id.c_str(), player_id);
     return doc;
 }
 
@@ -32,7 +43,7 @@ namespace shared
 
     std::string GameStateMessage::to_json()
     {
-        Document doc = document_from_common_attributes("game_state", this->game_id, this->message_id);
+        Document doc = document_from_server_to_client_msg("game_state", *this);
         ADD_OPTIONAL_STRING_MEMBER(this->in_response_to, in_response_to);
         // TODO: Add game state to the document
         return document_to_string(doc);
@@ -40,7 +51,7 @@ namespace shared
 
     std::string CreateLobbyResponseMessage::to_json()
     {
-        Document doc = document_from_common_attributes("initiate_game_response", this->game_id, this->message_id);
+        Document doc = document_from_server_to_client_msg("initiate_game_response", *this);
         ADD_OPTIONAL_STRING_MEMBER(this->in_response_to, in_response_to);
         ADD_ARRAY_OF_STRINGS_MEMBER(this->available_cards, available_cards);
         return document_to_string(doc);
@@ -48,26 +59,26 @@ namespace shared
 
     std::string JoinLobbyBroadcastMessage::to_json()
     {
-        Document doc = document_from_common_attributes("join_game_broadcast", this->game_id, this->message_id);
+        Document doc = document_from_server_to_client_msg("join_game_broadcast", *this);
         ADD_STRING_MEMBER(this->player_id.c_str(), player_id);
         return document_to_string(doc);
     }
 
     std::string StartGameBroadcastMessage::to_json()
     {
-        Document doc = document_from_common_attributes("start_game_broadcast", this->game_id, this->message_id);
+        Document doc = document_from_server_to_client_msg("start_game_broadcast", *this);
         return document_to_string(doc);
     }
 
     std::string EndGameBroadcastMessage::to_json()
     {
-        Document doc = document_from_common_attributes("end_game_broadcast", this->game_id, this->message_id);
+        Document doc = document_from_server_to_client_msg("end_game_broadcast", *this);
         return document_to_string(doc);
     }
 
     std::string ResultResponseMessage::to_json()
     {
-        Document doc = document_from_common_attributes("result_response", this->game_id, this->message_id);
+        Document doc = document_from_server_to_client_msg("result_response", *this);
         ADD_OPTIONAL_STRING_MEMBER(this->in_response_to, in_response_to);
         ADD_BOOL_MEMBER(this->success, success);
         ADD_OPTIONAL_STRING_MEMBER(this->additional_information, additional_information);
@@ -76,7 +87,7 @@ namespace shared
 
     std::string ActionOrderMessage::to_json()
     {
-        Document doc = document_from_common_attributes("action_order", this->game_id, this->message_id);
+        Document doc = document_from_server_to_client_msg("action_order", *this);
         ADD_OPTIONAL_STRING_MEMBER(this->description, description);
         return document_to_string(doc);
     }
@@ -85,37 +96,34 @@ namespace shared
 
     std::string GameStateRequestMessage::to_json()
     {
-        Document doc = document_from_common_attributes("game_state_request", this->game_id, this->message_id);
+        Document doc = document_from_client_to_server_msg("game_state_request", *this);
         return document_to_string(doc);
     }
 
     std::string CreateLobbyRequestMessage::to_json()
     {
-        Document doc = document_from_common_attributes("initiate_game_request", this->game_id, this->message_id);
-        ADD_STRING_MEMBER(this->player_id.c_str(), player_id);
+        Document doc = document_from_client_to_server_msg("initiate_game_request", *this);
         return document_to_string(doc);
     }
 
     std::string JoinLobbyRequestMessage::to_json()
     {
-        Document doc = document_from_common_attributes("join_game_request", this->game_id, this->message_id);
-        ADD_STRING_MEMBER(this->player_id.c_str(), player_id);
+        Document doc = document_from_client_to_server_msg("join_game_request", *this);
         return document_to_string(doc);
     }
 
     std::string StartGameRequestMessage::to_json()
     {
-        Document doc = document_from_common_attributes("start_game_request", this->game_id, this->message_id);
+        Document doc = document_from_client_to_server_msg("start_game_request", *this);
         ADD_ARRAY_OF_STRINGS_MEMBER(this->selected_cards, selected_cards);
         return document_to_string(doc);
     }
 
     std::string ActionDecisionMessage::to_json()
     {
-        Document doc = document_from_common_attributes("action_decision", this->game_id, this->message_id);
+        Document doc = document_from_client_to_server_msg("action_decision", *this);
 
         ADD_OPTIONAL_STRING_MEMBER(this->in_response_to, in_response_to);
-        ADD_STRING_MEMBER(this->player_id.c_str(), player_id);
 
         ActionDecision *action_decision = this->decision.get();
         if ( PlayActionCardDecision *play_action_card = dynamic_cast<PlayActionCardDecision *>(action_decision) ) {

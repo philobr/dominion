@@ -53,6 +53,8 @@ namespace shared
         // discard_pile, draw_pile_size
 
     protected:
+        bool operator==(const PlayerBase &other) const;
+
         id_t id;
         unsigned int victory_points;
         std::vector<CardBase::id_t> played_cards;
@@ -67,6 +69,9 @@ namespace shared
 
     class ReducedEnemy : public PlayerBase
     {
+    public:
+        bool operator==(const ReducedEnemy &other) const;
+
     protected:
         unsigned int hand_size;
     };
@@ -76,6 +81,7 @@ namespace shared
     public:
         ReducedPlayer() {}
         ReducedPlayer(id_t player_id) : PlayerBase(player_id) {}
+        bool operator==(const ReducedPlayer &other) const;
 
     protected:
         std::vector<CardBase::id_t> hand_cards;
@@ -85,6 +91,7 @@ namespace shared
     {
     public:
         Pile(CardBase::id_t card, unsigned int count) : card(card), count(count) {}
+        bool operator==(const Pile &other) const;
 
         // TODO: Test these functions
         std::string to_json();
@@ -97,6 +104,8 @@ namespace shared
     class Board
     {
     public:
+        bool operator==(const Board &other) const;
+
         std::vector<Pile> victory_cards;
         std::vector<Pile> treasure_cards;
         std::vector<Pile> kingdom_cards;
@@ -106,6 +115,8 @@ namespace shared
     class ReducedGameState
     {
     public:
+        bool operator==(const ReducedGameState &other) const;
+
         ReducedGameState() {}
         Board board;
         ReducedPlayer player;

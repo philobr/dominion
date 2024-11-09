@@ -11,15 +11,8 @@ TEST(ServerLibraryTest, CreateLobby)
     shared::PlayerBase::id_t player_1 = "Max";
     shared::PlayerBase::id_t player_2 = "Peter";
 
-    shared::CreateLobbyRequestMessage request1;
-    request1.game_id = "123";
-    request1.message_id = "456";
-    request1.player_id = player_1;
-
-    shared::CreateLobbyRequestMessage request2;
-    request2.game_id = "123";
-    request2.message_id = "789";
-    request2.player_id = player_2;
+    shared::CreateLobbyRequestMessage request1("123", "456", player_1);
+    shared::CreateLobbyRequestMessage request2("123", "789", player_2);
 
     auto games = lobby_manager.get_games();
     ASSERT_EQ(games->empty(), true) << "LobbyManager should be empty at the beginning";
@@ -49,20 +42,9 @@ TEST(ServerLibraryTest, JoinLobby)
     shared::PlayerBase::id_t player_2 = "Peter";
     shared::PlayerBase::id_t player_3 = "Paul";
 
-    shared::CreateLobbyRequestMessage request1;
-    request1.game_id = "123";
-    request1.message_id = "456";
-    request1.player_id = player_1;
-
-    shared::JoinLobbyRequestMessage request2;
-    request2.game_id = "123";
-    request2.message_id = "789";
-    request2.player_id = player_2;
-
-    shared::JoinLobbyRequestMessage request3;
-    request3.game_id = "222";
-    request3.message_id = "101";
-    request3.player_id = player_3;
+    shared::CreateLobbyRequestMessage request1("123", "456", player_1);
+    shared::JoinLobbyRequestMessage request2("123", "789", player_2);
+    shared::JoinLobbyRequestMessage request3("222", "101", player_3);
 
     auto games = lobby_manager.get_games();
 

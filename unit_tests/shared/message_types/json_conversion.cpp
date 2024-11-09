@@ -9,10 +9,10 @@ using namespace shared;
 
 TEST(SharedLibraryTest, GameStateMessageTwoWayConversion)
 {
-    GameStateMessage original_message;
-    original_message.game_id = "123";
-    original_message.message_id = "456";
-    original_message.in_response_to = "789";
+    // TODO: Implement ReducedGameState
+    ReducedGameState *game_state = nullptr;
+    ASSERT_TRUE(game_state);
+    GameStateMessage original_message("123", "456", *game_state, "789");
 
     std::string json = original_message.to_json();
 
@@ -32,9 +32,7 @@ TEST(SharedLibraryTest, GameStateMessageTwoWayConversion)
 TEST(SharedLibraryTest, CreateLobbyResponseMessageTwoWayConversion)
 {
     std::vector<CardBase::id_t> available_cards = {"copper", "silver", "gold", "estate", "duchy", "province", "curse"};
-    CreateLobbyResponseMessage original_message(available_cards, std::nullopt);
-    original_message.game_id = "123";
-    original_message.message_id = "456";
+    CreateLobbyResponseMessage original_message("123", "456", available_cards, std::nullopt);
 
     std::string json = original_message.to_json();
 
@@ -55,10 +53,7 @@ TEST(SharedLibraryTest, CreateLobbyResponseMessageTwoWayConversion)
 
 TEST(SharedLibraryTest, JoinLobbyBroadcastMessageTwoWayConversion)
 {
-    shared::PlayerBase::id_t player_id = "player1";
-    JoinLobbyBroadcastMessage original_message(player_id);
-    original_message.game_id = "123";
-    original_message.message_id = "456";
+    JoinLobbyBroadcastMessage original_message("123", "456", "player1");
 
     std::string json = original_message.to_json();
 
@@ -77,9 +72,7 @@ TEST(SharedLibraryTest, JoinLobbyBroadcastMessageTwoWayConversion)
 
 TEST(SharedLibraryTest, StartGameBroadcastMessageTwoWayConversion)
 {
-    StartGameBroadcastMessage original_message;
-    original_message.game_id = "123";
-    original_message.message_id = "456";
+    StartGameBroadcastMessage original_message("123", "456");
 
     std::string json = original_message.to_json();
 
@@ -97,9 +90,7 @@ TEST(SharedLibraryTest, StartGameBroadcastMessageTwoWayConversion)
 
 TEST(SharedLibraryTest, EndGameBroadcastMessageTwoWayConversion)
 {
-    EndGameBroadcastMessage original_message;
-    original_message.game_id = "123";
-    original_message.message_id = "456";
+    EndGameBroadcastMessage original_message("123", "456");
 
     std::string json = original_message.to_json();
 
@@ -120,9 +111,7 @@ TEST(SharedLibraryTest, ResultResponseMessageTwoWayConversion)
     bool success = true;
     std::string in_response_to = "hui";
     std::string additional_information = "hey";
-    ResultResponseMessage original_message(success, in_response_to, additional_information);
-    original_message.game_id = "123";
-    original_message.message_id = "456";
+    ResultResponseMessage original_message("123", "456", success, in_response_to, additional_information);
 
     std::string json = original_message.to_json();
 
@@ -146,10 +135,7 @@ TEST(SharedLibraryTest, ResultResponseMessageTwoWayConversion)
 
 TEST(SharedLibraryTest, ActionOrderMessageTwoWayConversion)
 {
-    ActionOrderMessage original_message;
-    original_message.game_id = "123";
-    original_message.message_id = "456";
-    original_message.description = std::nullopt;
+    ActionOrderMessage original_message("123", "456");
 
     std::string json = original_message.to_json();
 
@@ -169,9 +155,7 @@ TEST(SharedLibraryTest, ActionOrderMessageTwoWayConversion)
 
 TEST(SharedLibraryTest, GameStateRequestMessageTwoWayConversion)
 {
-    GameStateRequestMessage original_message;
-    original_message.game_id = "123";
-    original_message.message_id = "456";
+    GameStateRequestMessage original_message("123", "456", "player1");
 
     std::string json = original_message.to_json();
 
@@ -185,14 +169,12 @@ TEST(SharedLibraryTest, GameStateRequestMessageTwoWayConversion)
 
     ASSERT_EQ(parsed_message->game_id, "123");
     ASSERT_EQ(parsed_message->message_id, "456");
+    ASSERT_EQ(parsed_message->player_id, "player1");
 }
 
 TEST(SharedLibraryTest, CreateLobbyRequestMessageTwoWayConversion)
 {
-    CreateLobbyRequestMessage original_message;
-    original_message.game_id = "123";
-    original_message.message_id = "456";
-    original_message.player_id = "player1";
+    CreateLobbyRequestMessage original_message("123", "456", "player1");
 
     std::string json = original_message.to_json();
 
@@ -211,10 +193,7 @@ TEST(SharedLibraryTest, CreateLobbyRequestMessageTwoWayConversion)
 
 TEST(SharedLibraryTest, JoinLobbyRequestMessageTwoWayConversion)
 {
-    JoinLobbyRequestMessage original_message;
-    original_message.game_id = "123";
-    original_message.message_id = "456";
-    original_message.player_id = "player1";
+    JoinLobbyRequestMessage original_message("123", "456", "player1");
 
     std::string json = original_message.to_json();
 
@@ -235,11 +214,7 @@ TEST(SharedLibraryTest, StartGameRequestMessageTwoWayConversion)
 {
     std::vector<std::string> cards = {"village",    "smithy",  "market", "council_room", "festival",
                                       "laboratory", "library", "mine",   "witch",        "adventurer"};
-
-    StartGameRequestMessage original_message;
-    original_message.game_id = "123";
-    original_message.message_id = "456";
-    original_message.selected_cards = cards;
+    StartGameRequestMessage original_message("123", "456", "player1", cards);
 
     std::string json = original_message.to_json();
 
@@ -253,19 +228,14 @@ TEST(SharedLibraryTest, StartGameRequestMessageTwoWayConversion)
 
     ASSERT_EQ(parsed_message->game_id, "123");
     ASSERT_EQ(parsed_message->message_id, "456");
+    ASSERT_EQ(parsed_message->player_id, "player1");
     ASSERT_EQ(parsed_message->selected_cards, cards);
 }
 
 TEST(SharedLibraryTest, ActionDecisionMessageTwoWayConversionPlayActionCard)
 {
-    ActionDecisionMessage original_message;
-    original_message.game_id = "123";
-    original_message.message_id = "456";
-    original_message.in_response_to = "789";
-    original_message.player_id = "player1";
-
-    PlayActionCardDecision *decision = new PlayActionCardDecision(1);
-    original_message.decision = std::unique_ptr<ActionDecision>(decision);
+    std::unique_ptr<ActionDecision> decision = std::make_unique<PlayActionCardDecision>(1);
+    ActionDecisionMessage original_message("123", "456", "player1", std::move(decision), "789");
 
     std::string json = original_message.to_json();
 
@@ -279,9 +249,9 @@ TEST(SharedLibraryTest, ActionDecisionMessageTwoWayConversionPlayActionCard)
 
     ASSERT_EQ(parsed_message->game_id, "123");
     ASSERT_EQ(parsed_message->message_id, "456");
+    ASSERT_EQ(parsed_message->player_id, "player1");
     ASSERT_TRUE(parsed_message->in_response_to);
     ASSERT_EQ(parsed_message->in_response_to.value(), "789");
-    ASSERT_EQ(parsed_message->player_id, "player1");
 
     ASSERT_NE(parsed_message->decision, nullptr);
     PlayActionCardDecision *parsed_decision = dynamic_cast<PlayActionCardDecision *>(parsed_message->decision.get());
@@ -291,14 +261,7 @@ TEST(SharedLibraryTest, ActionDecisionMessageTwoWayConversionPlayActionCard)
 
 TEST(SharedLibraryTest, ActionDecisionMessageTwoWayConversionBuyCard)
 {
-    ActionDecisionMessage original_message;
-    original_message.game_id = "123";
-    original_message.message_id = "456";
-    original_message.in_response_to = std::nullopt;
-    original_message.player_id = "player1";
-
-    BuyCardDecision *decision = new BuyCardDecision("copper");
-    original_message.decision = std::unique_ptr<ActionDecision>(decision);
+    ActionDecisionMessage original_message("123", "456", "player1", std::make_unique<BuyCardDecision>("copper"));
 
     std::string json = original_message.to_json();
 
@@ -312,6 +275,7 @@ TEST(SharedLibraryTest, ActionDecisionMessageTwoWayConversionBuyCard)
 
     ASSERT_EQ(parsed_message->game_id, "123");
     ASSERT_EQ(parsed_message->message_id, "456");
+    ASSERT_EQ(parsed_message->player_id, "player1");
     ASSERT_FALSE(parsed_message->in_response_to);
     ASSERT_EQ(parsed_message->player_id, "player1");
 
@@ -323,14 +287,7 @@ TEST(SharedLibraryTest, ActionDecisionMessageTwoWayConversionBuyCard)
 
 TEST(SharedLibraryTest, ActionDecisionMessageTwoWayConversionEndTurn)
 {
-    ActionDecisionMessage original_message;
-    original_message.game_id = "123";
-    original_message.message_id = "456";
-    original_message.in_response_to = "789";
-    original_message.player_id = "player1";
-
-    EndTurnDecision *decision = new EndTurnDecision();
-    original_message.decision = std::unique_ptr<ActionDecision>(decision);
+    ActionDecisionMessage original_message("123", "456", "player1", std::make_unique<EndTurnDecision>(), "789");
 
     std::string json = original_message.to_json();
 
@@ -344,9 +301,9 @@ TEST(SharedLibraryTest, ActionDecisionMessageTwoWayConversionEndTurn)
 
     ASSERT_EQ(parsed_message->game_id, "123");
     ASSERT_EQ(parsed_message->message_id, "456");
+    ASSERT_EQ(parsed_message->player_id, "player1");
     ASSERT_TRUE(parsed_message->in_response_to);
     ASSERT_EQ(parsed_message->in_response_to.value(), "789");
-    ASSERT_EQ(parsed_message->player_id, "player1");
 
     ASSERT_NE(parsed_message->decision, nullptr);
     EndTurnDecision *parsed_decision = dynamic_cast<EndTurnDecision *>(parsed_message->decision.get());
@@ -355,15 +312,9 @@ TEST(SharedLibraryTest, ActionDecisionMessageTwoWayConversionEndTurn)
 
 TEST(SharedLibraryTest, ActionDecisionMessageTwoWayConversionChooseNCardsFromHand)
 {
-    ActionDecisionMessage original_message;
-    original_message.game_id = "123";
-    original_message.message_id = "456";
-    original_message.in_response_to = std::nullopt;
-    original_message.player_id = "player1";
-
     std::vector<unsigned int> card_indices = {0, 2, 3};
-    ChooseNCardsFromHandDecision *decision = new ChooseNCardsFromHandDecision(card_indices);
-    original_message.decision = std::unique_ptr<ActionDecision>(decision);
+    std::unique_ptr<ActionDecision> decision = std::make_unique<ChooseNCardsFromHandDecision>(card_indices);
+    ActionDecisionMessage original_message("123", "456", "player1", std::move(decision));
 
     std::string json = original_message.to_json();
 
@@ -377,8 +328,8 @@ TEST(SharedLibraryTest, ActionDecisionMessageTwoWayConversionChooseNCardsFromHan
 
     ASSERT_EQ(parsed_message->game_id, "123");
     ASSERT_EQ(parsed_message->message_id, "456");
-    ASSERT_FALSE(parsed_message->in_response_to);
     ASSERT_EQ(parsed_message->player_id, "player1");
+    ASSERT_FALSE(parsed_message->in_response_to);
 
     ASSERT_NE(parsed_message->decision, nullptr);
     ChooseNCardsFromHandDecision *parsed_decision =

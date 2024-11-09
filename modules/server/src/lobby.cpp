@@ -1,5 +1,7 @@
+
 #include <server/lobbies.h>
 #include <shared/game_state.h>
+#include <shared/utils/assert.h>
 
 server::Lobby::Lobby(shared::PlayerBase::id_t game_master) : game_state(GameState()), game_master(game_master)
 {
@@ -13,7 +15,9 @@ void server::Lobby::join(MessageInterface message_interface, shared::JoinLobbyRe
     for ( Player player : game_state.get_players() ) {
         if ( player.getId() == player_id ) {
             shared::ResultResponseMessage failure_message =
-                    shared::ResultResponseMessage(false, request.message_id, "Player is already in the lobby");
+                    // TODO: provide game_id and message_id
+                    shared::ResultResponseMessage("game_id", "message_id", false, request.message_id,
+                                                  "Player is already in the lobby");
             message_interface.send_message(&failure_message, player_id);
             return;
         }
@@ -22,10 +26,14 @@ void server::Lobby::join(MessageInterface message_interface, shared::JoinLobbyRe
     game_state.add_player(Player(player_id));
     // Send game state to all players
     for ( Player player : game_state.get_players() ) {
-        shared::JoinLobbyBroadcastMessage join_message = shared::JoinLobbyBroadcastMessage(player_id);
+        // TODO: provide game_id and message_id
+        shared::JoinLobbyBroadcastMessage join_message =
+                shared::JoinLobbyBroadcastMessage("game_id", "message_id", player_id);
         message_interface.send_message(&join_message, player.getId());
     }
-    shared::ResultResponseMessage success_message = shared::ResultResponseMessage(true, request.message_id);
+    // TODO: provide game_id and message_id
+    shared::ResultResponseMessage success_message =
+            shared::ResultResponseMessage("game_id", "message_id", true, request.message_id);
     message_interface.send_message(&success_message, player_id);
     return;
 };
@@ -37,7 +45,9 @@ void server::Lobby::start_game(MessageInterface message_interface, shared::Start
     shared::PlayerBase::id_t requestor_id = request.player_id;
     if ( requestor_id != game_master ) {
         shared::ResultResponseMessage failure_message =
-                shared::ResultResponseMessage(false, request.message_id, "Only the game master can start the game");
+                // TODO: provide game_id and message_id
+                shared::ResultResponseMessage("game_id", "message_id", false, request.message_id,
+                                              "Only the game master can start the game");
         message_interface.send_message(&failure_message, requestor_id);
         return;
     }
@@ -45,9 +55,14 @@ void server::Lobby::start_game(MessageInterface message_interface, shared::Start
     game_state.start_game(request.selected_cards);
     // send game state to all players
     for ( Player player : game_state.get_players() ) {
-        shared::StartGameBroadcastMessage start_message = shared::StartGameBroadcastMessage();
+        // TODO: provide game_id and message_id
+        shared::StartGameBroadcastMessage start_message = shared::StartGameBroadcastMessage("game_id", "message_id");
         message_interface.send_message(&start_message, player.getId());
-        shared::GameStateMessage game_state_message = shared::GameStateMessage();
+        // TODO: get reduced game state
+        ASSERT_TRUE(false, "Not implemented");
+        shared::ReducedGameState *game_state = nullptr;
+        // TODO: provide game_id and message_id
+        shared::GameStateMessage game_state_message = shared::GameStateMessage("game_id", "message_id", *game_state);
         message_interface.send_message(&game_state_message, player.getId());
     }
     return;

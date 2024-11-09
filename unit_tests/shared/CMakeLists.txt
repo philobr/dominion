@@ -1,6 +1,6 @@
 add_executable(shared_tests
-    test.cpp
-    # add testfiles here
+    json_conversion.cpp
+    # Add more test files here
 )
 
 include_gtest(shared_tests)

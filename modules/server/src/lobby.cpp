@@ -58,11 +58,9 @@ void server::Lobby::start_game(MessageInterface message_interface, shared::Start
         // TODO: provide game_id and message_id
         shared::StartGameBroadcastMessage start_message = shared::StartGameBroadcastMessage("game_id", "message_id");
         message_interface.send_message(&start_message, player.getId());
-        // TODO: get reduced game state
-        ASSERT_TRUE(false, "Not implemented");
-        shared::ReducedGameState *game_state = nullptr;
+        shared::ReducedGameState reduced_game_state = game_state.get_reduced_state(player.getId());
         // TODO: provide game_id and message_id
-        shared::GameStateMessage game_state_message = shared::GameStateMessage("game_id", "message_id", *game_state);
+        shared::GameStateMessage game_state_message = shared::GameStateMessage("game_id", "message_id", reduced_game_state);
         message_interface.send_message(&game_state_message, player.getId());
     }
     return;

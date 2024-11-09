@@ -87,31 +87,31 @@ TEST(SharedLibraryTest, StartGameRequestMessageEquality)
 
 TEST(SharedLibraryTest, ActionDecisionMessage)
 {
-    std::unique_ptr<ActionDecision> decision1 = std::make_unique<ActionDecision>(PlayActionCardDecision(3));
+    std::unique_ptr<ActionDecision> decision1 = std::make_unique<PlayActionCardDecision>(3);
     ActionDecisionMessage message1("game1", "message1", "player1", std::move(decision1), "message0");
     ASSERT_EQ(message1, message1);
 
-    std::unique_ptr<ActionDecision> decision2 = std::make_unique<ActionDecision>(PlayActionCardDecision(3));
+    std::unique_ptr<ActionDecision> decision2 = std::make_unique<PlayActionCardDecision>(3);
     ActionDecisionMessage message2("game1", "message1", "player1", std::move(decision2), "message0");
     ASSERT_EQ(message1, message2);
 
-    std::unique_ptr<ActionDecision> decision3 = std::make_unique<ActionDecision>(PlayActionCardDecision(4));
+    std::unique_ptr<ActionDecision> decision3 = std::make_unique<PlayActionCardDecision>(4);
     ActionDecisionMessage message3("game2", "message1", "player1", std::move(decision3), "message0");
     ASSERT_NE(message1, message3);
 
-    std::unique_ptr<ActionDecision> decision4 = std::make_unique<ActionDecision>(PlayActionCardDecision(3));
+    std::unique_ptr<ActionDecision> decision4 = std::make_unique<PlayActionCardDecision>(3);
     ActionDecisionMessage message4("game1", "message2", "player1", std::move(decision4), "message0");
     ASSERT_NE(message1, message4);
 
-    std::unique_ptr<ActionDecision> decision5 = std::make_unique<ActionDecision>(PlayActionCardDecision(3));
+    std::unique_ptr<ActionDecision> decision5 = std::make_unique<PlayActionCardDecision>(3);
     ActionDecisionMessage message5("game1", "message1", "player2", std::move(decision5), "message0");
     ASSERT_NE(message1, message5);
 
-    std::unique_ptr<ActionDecision> decision6 = std::make_unique<ActionDecision>(BuyCardDecision("Copper"));
+    std::unique_ptr<ActionDecision> decision6 = std::make_unique<BuyCardDecision>("Copper");
     ActionDecisionMessage message6("game1", "message1", "player1", std::move(decision6), "message0");
     ASSERT_NE(message1, message6);
 
-    std::unique_ptr<ActionDecision> decision7 = std::make_unique<ActionDecision>(PlayActionCardDecision(3));
+    std::unique_ptr<ActionDecision> decision7 = std::make_unique<PlayActionCardDecision>(3);
     ActionDecisionMessage message7("game1", "message1", "player1", std::move(decision7));
     ASSERT_NE(message1, message7);
 }

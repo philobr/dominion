@@ -51,7 +51,7 @@ namespace shared
     bool ActionDecisionMessage::operator==(const ActionDecisionMessage &other) const
     {
         return ClientToServerMessage::operator==(other) && this->in_response_to == other.in_response_to &&
-                this->decision == other.decision;
+                *this->decision == *other.decision;
     }
 
     // ======= SERVER -> CLIENT ======= //

@@ -1,6 +1,7 @@
 # modules/shared/CMakeLists.txt
 
 add_library(shared_lib STATIC
+    src/action_decision.cpp
     src/message_types/from_json.cpp
     src/message_types/to_json.cpp
     src/message_types/other.cpp

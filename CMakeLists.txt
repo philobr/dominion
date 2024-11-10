@@ -11,7 +11,7 @@ set(EXTERNAL_LIBS ${CMAKE_SOURCE_DIR}/external)
 enable_testing()
 
 # always provide test output on failure
-list(APPEND CMAKE_CTEST_ARGUMENTS "--output-on-failure")
+list(APPEND CMAKE_CTEST_ARGUMENTS "--output-on-failure" "--timeout" "10")
 
 add_compile_options(-Wall -Wpedantic)
 

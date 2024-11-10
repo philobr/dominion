@@ -4,12 +4,13 @@
 
 #include "server/server_network_manager.h"
 
-#include <shared/default.conf>
 #include "shared/message_types.h"
 
 
 namespace server
 {
+    const std::string DEFAULT_SERVER_HOST = "127.0.0.1";
+    const unsigned int DEFAULT_PORT = 50505;
 
     ServerNetworkManager::ServerNetworkManager()
     {
@@ -17,7 +18,7 @@ namespace server
             _instance = this;
         }
         sockpp::socket_initializer socket_initializer; // Required to initialise sockpp
-        this->connect(default_server_host, default_port); // variables from "default.conf"
+        this->connect(DEFAULT_SERVER_HOST, DEFAULT_PORT);
     }
 
     ServerNetworkManager::~ServerNetworkManager() = default;

@@ -10,6 +10,19 @@ using ::testing::_;
 using ::testing::InSequence;
 using ::testing::Truly;
 
+/**
+ * @brief Mock implementation of the MessageInterface
+ *
+ * @details Used for testing the game logic without actually sending messages to the client
+ */
+class MockMessageInterface : public server::MessageInterface
+{
+public:
+    // Mock the send_message method, assuming it takes these parameters
+    MOCK_METHOD(void, send_message, (shared::ServerToClientMessage * message, shared::PlayerBase::id_t player_id),
+                (override));
+};
+
 TEST(ServerLibraryTest, CreateLobby)
 {
     auto is_create_lobby_response_message = [](shared::ServerToClientMessage *message)
@@ -25,7 +38,7 @@ TEST(ServerLibraryTest, CreateLobby)
         return result_msg && !result_msg->success;
     };
 
-    server::MockMessageInterface *message_interface = new server::MockMessageInterface();
+    MockMessageInterface *message_interface = new MockMessageInterface();
     server::LobbyManager lobby_manager(*message_interface);
     shared::PlayerBase::id_t player_1 = "Max";
     shared::PlayerBase::id_t player_2 = "Peter";
@@ -90,7 +103,7 @@ TEST(ServerLibraryTest, JoinLobby)
         return join_lobby_broadcast_msg != nullptr;
     };
 
-    server::MockMessageInterface *message_interface = new server::MockMessageInterface();
+    MockMessageInterface *message_interface = new MockMessageInterface();
     server::LobbyManager lobby_manager(*message_interface);
     shared::PlayerBase::id_t player_1 = "Max";
     shared::PlayerBase::id_t player_2 = "Peter";
@@ -181,7 +194,7 @@ TEST(ServerLibraryTest, StartGame)
         return result_msg && !result_msg->success;
     };
 
-    server::MockMessageInterface *message_interface = new server::MockMessageInterface();
+    MockMessageInterface *message_interface = new MockMessageInterface();
     server::LobbyManager lobby_manager(*message_interface);
     shared::PlayerBase::id_t player_1 = "Max";
     shared::PlayerBase::id_t player_2 = "Peter";

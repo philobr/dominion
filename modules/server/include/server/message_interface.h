@@ -1,6 +1,5 @@
 #pragma once
 
-#include <gmock/gmock.h>
 #include <shared/message_types.h>
 
 namespace server
@@ -32,19 +31,6 @@ namespace server
         {
             return; // TODO: Implement
         };
-    };
-
-    /**
-     * @brief Mock implementation of the MessageInterface
-     *
-     * @details Used for testing the game logic without actually sending messages to the client
-     */
-    class MockMessageInterface : public MessageInterface
-    {
-    public:
-        // Mock the send_message method, assuming it takes these parameters
-        MOCK_METHOD(void, send_message, (shared::ServerToClientMessage * message, shared::PlayerBase::id_t player_id),
-                    (override));
     };
 
 } // namespace server

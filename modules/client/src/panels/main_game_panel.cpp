@@ -11,11 +11,9 @@
 namespace client
 {
 
-    MainGamePanel::MainGamePanel(wxWindow *parent) : wxPanel(parent, wxID_ANY, wxDefaultPosition, wxSize(1024, 1024))
+    MainGamePanel::MainGamePanel(wxWindow *parent) : wxPanel(parent, wxID_ANY, wxDefaultPosition, PanelSize)
     {
         wxBoxSizer *mainLayout = new wxBoxSizer(wxVERTICAL);
-
-        wxSize VerticalBaseSize = wxSize(1024, 100);
 
         BoardPanel *Board = new BoardPanel(this, VerticalBaseSize);
         wxPanel *Enemies = new EnemyInfoPanel(this, VerticalBaseSize);

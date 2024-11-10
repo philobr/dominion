@@ -8,7 +8,8 @@ namespace server
     {
     public:
         /**
-         * @brief gets a response that has to be broadcast to all players except for the current player, passes it on to the network manager as json
+         * @brief gets a response that has to be broadcast to all players except for the current player, passes it on to
+         * the network manager as json
          */
         static void broadcast_message(std::unique_ptr<shared::ServerToClientMessage> message);
         /**

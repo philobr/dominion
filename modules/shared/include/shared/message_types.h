@@ -16,7 +16,7 @@ namespace shared
 
         std::string game_id;
         std::string message_id;
-        PlayerBase::id_t player_id; //needed to figure out who to send the message to (from server to client)
+        PlayerBase::id_t player_id; // needed to figure out who to send the message to (from server to client)
     };
 
     /* ======= client -> server ======= */

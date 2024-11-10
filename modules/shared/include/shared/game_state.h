@@ -48,14 +48,31 @@ namespace shared
     {
     public:
         using id_t = std::string;
-        id_t getId() { return id; }
         id_t getId() const { return id; }
         PlayerBase(id_t player_id) : id(player_id) {}
         // TODO: initialize victory_points, available_actions, available_buys, available_treasure, current_card,
         // discard_pile, draw_pile_size
 
+        // Make this class polymorphic
+        virtual ~PlayerBase() = default;
+
     protected:
+        PlayerBase() {}
         bool operator==(const PlayerBase &other) const;
+        /**
+         * @brief Converts the player object to a JSON object.
+         *
+         * The JSON object will be incomplete and must be completed by the calling child class.
+         */
+        rapidjson::Document to_json();
+        /**
+         * @brief Initializes the common player attributes from a JSON object.
+         *
+         * @param json The JSON object to initialize the player from.
+         * @return true if the JSON object was successfully parsed, false otherwise.
+         * If false is returned, the player object is left in an undefined state.
+         */
+        bool from_json(const rapidjson::Value &json);
 
         id_t id;
         unsigned int victory_points;
@@ -65,8 +82,16 @@ namespace shared
         unsigned int available_buys;
         unsigned int available_treasure;
         CardBase::id_t current_card;
-        std::pair<CardBase::id_t, unsigned int> discard_pile;
+        std::vector<CardBase::id_t> discard_pile;
         unsigned int draw_pile_size;
+
+    private:
+        // TODO: Find a better way to do this
+        /**
+         * @brief Hacky way to make use of the parsing macros (`json.h`).
+         * This function is not meant to be called except by the `from_json` function.
+         */
+        PlayerBase *_from_json_internal(const rapidjson::Value &json);
     };
 
     class ReducedEnemy : public PlayerBase
@@ -74,9 +99,16 @@ namespace shared
     public:
         ReducedEnemy(id_t player_id, unsigned int hand_size) : PlayerBase(player_id), hand_size(hand_size) {}
         bool operator==(const ReducedEnemy &other) const;
+        // TODO: Test this function
+        rapidjson::Document to_json();
+        // TODO: Test this function
+        static std::unique_ptr<ReducedEnemy> from_json(const rapidjson::Value &json);
 
     protected:
         unsigned int hand_size;
+
+    private:
+        ReducedEnemy() : PlayerBase() {}
     };
 
     class ReducedPlayer : public PlayerBase
@@ -86,9 +118,16 @@ namespace shared
             PlayerBase(player_id), hand_cards(hand_cards)
         {}
         bool operator==(const ReducedPlayer &other) const;
+        // TODO: Test this function
+        rapidjson::Document to_json();
+        // TODO: Test this function
+        static std::unique_ptr<ReducedPlayer> from_json(const rapidjson::Value &json);
 
     protected:
         std::vector<CardBase::id_t> hand_cards;
+
+    private:
+        ReducedPlayer() : PlayerBase() {}
     };
 
     struct Pile

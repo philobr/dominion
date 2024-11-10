@@ -19,14 +19,88 @@ namespace shared
                 this->discard_pile == other.discard_pile && this->draw_pile_size == other.draw_pile_size;
     }
 
+    rapidjson::Document PlayerBase::to_json()
+    {
+        Document doc;
+        doc.SetObject();
+
+        ADD_STRING_MEMBER(id.c_str(), id);
+        ADD_UINT_MEMBER(victory_points, victory_points);
+        ADD_ARRAY_OF_STRINGS_MEMBER(played_cards, played_cards);
+        ADD_ARRAY_OF_STRINGS_MEMBER(gained_cards, gained_cards);
+        ADD_UINT_MEMBER(available_actions, available_actions);
+        ADD_UINT_MEMBER(available_buys, available_buys);
+        ADD_UINT_MEMBER(available_treasure, available_treasure);
+        ADD_STRING_MEMBER(current_card.c_str(), current_card);
+        ADD_ARRAY_OF_STRINGS_MEMBER(discard_pile, discard_pile);
+        ADD_UINT_MEMBER(draw_pile_size, draw_pile_size);
+
+        return doc;
+    }
+
+    // This helper function is required in order to use the macros which return nullptr on failure.
+    // Thus, any function that uses the macros must return some pointer type.
+    // `PlayerBase::from_json` returns a bool, so we need to wrap the call to the macros in this function.
+    PlayerBase *PlayerBase::_from_json_internal(const rapidjson::Value &json)
+    {
+        GET_STRING_MEMBER(id, json, "id");
+        GET_UINT_MEMBER(victory_points, json, "victory_points");
+        GET_STRING_ARRAY_MEMBER(played_cards, json, "played_cards");
+        GET_STRING_ARRAY_MEMBER(gained_cards, json, "gained_cards");
+        GET_UINT_MEMBER(available_actions, json, "available_actions");
+        GET_UINT_MEMBER(available_buys, json, "available_buys");
+        GET_UINT_MEMBER(available_treasure, json, "available_treasure");
+        GET_STRING_MEMBER(current_card, json, "current_card");
+        GET_STRING_ARRAY_MEMBER(discard_pile, json, "discard_pile");
+        GET_UINT_MEMBER(draw_pile_size, json, "draw_pile_size");
+
+        return this;
+    }
+
+    bool PlayerBase::from_json(const rapidjson::Value &json) { return _from_json_internal(json) != nullptr; }
+
     bool ReducedEnemy::operator==(const ReducedEnemy &other) const
     {
         return PlayerBase::operator==(other) && this->hand_size == other.hand_size;
     }
 
+    rapidjson::Document ReducedEnemy::to_json()
+    {
+        Document doc = PlayerBase::to_json();
+        ADD_UINT_MEMBER(hand_size, hand_size);
+        return doc;
+    }
+
+    std::unique_ptr<ReducedEnemy> ReducedEnemy::from_json(const rapidjson::Value &json)
+    {
+        std::unique_ptr<ReducedEnemy> enemy(new ReducedEnemy());
+        if ( !enemy->PlayerBase::from_json(json) ) {
+            return nullptr;
+        }
+        GET_UINT_MEMBER(enemy->hand_size, json, "hand_size");
+        return enemy;
+    }
+
     bool ReducedPlayer::operator==(const ReducedPlayer &other) const
     {
         return PlayerBase::operator==(other) && this->hand_cards == other.hand_cards;
+    }
+
+    rapidjson::Document ReducedPlayer::to_json()
+    {
+        Document doc = PlayerBase::to_json();
+        ADD_ARRAY_OF_STRINGS_MEMBER(hand_cards, hand_cards);
+        return doc;
+    }
+
+    std::unique_ptr<ReducedPlayer> ReducedPlayer::from_json(const rapidjson::Value &json)
+    {
+        std::unique_ptr<ReducedPlayer> player(new ReducedPlayer());
+        if ( !player->PlayerBase::from_json(json) ) {
+            return nullptr;
+        }
+        GET_STRING_ARRAY_MEMBER(player->hand_cards, json, "hand_cards");
+        return player;
     }
 
     bool Pile::operator==(const Pile &other) const { return this->card == other.card && this->count == other.count; }

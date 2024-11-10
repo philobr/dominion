@@ -36,12 +36,12 @@ protected:
         delete curseCard;
     }
 
-    TestCard* actionCard;
-    TestCard* actionAttackCard;
-    TestCard* treasureCard;
-    TestCard* reactionCard;
-    TestCard* victoryCard;
-    TestCard* curseCard;
+    TestCard *actionCard;
+    TestCard *actionAttackCard;
+    TestCard *treasureCard;
+    TestCard *reactionCard;
+    TestCard *victoryCard;
+    TestCard *curseCard;
 };
 
 // Test card type checks

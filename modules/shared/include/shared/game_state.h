@@ -23,7 +23,7 @@ namespace shared
     public:
         using id_t = std::string;
 
-        CardBase(id_t id, CardType type, unsigned int cost) : id(id), type(type), cost(cost) {}
+        CardBase(id_t value, CardType type, unsigned int cost) : value(value), type(type), cost(cost) {}
         bool isAction() const;
         bool isAttack() const;
         bool isTreasure() const;
@@ -36,7 +36,7 @@ namespace shared
         virtual std::string toString() = 0;
 
     protected:
-        id_t id;
+        id_t value;
         const CardType type;
         const unsigned int cost;
     };
@@ -48,12 +48,12 @@ namespace shared
         id_t getId() { return id; }
         id_t getId() const { return id; }
         PlayerBase() {}
-        PlayerBase(id_t player_id) : player_id(player_id) {}
+        PlayerBase(id_t player_id) : id(player_id) {}
         // TODO: initialize victory_points, available_actions, available_buys, available_treasure, current_card,
         // discard_pile, draw_pile_size
 
     protected:
-        id_t player_id;
+        id_t id;
         unsigned int victory_points;
         std::vector<CardBase::id_t> played_cards;
         std::vector<CardBase::id_t> gained_cards;

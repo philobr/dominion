@@ -3,7 +3,6 @@
 add_library(shared_lib STATIC
     src/message_types/from_json.cpp
     src/message_types/to_json.cpp
-    src/game_state.cpp
 )
 
 include_rapidjson(shared_lib)

@@ -54,10 +54,13 @@ TEST(ServerLibraryTest, CreateLobby)
     request2.player_id = player_2;
 
     // All expected function calls of send_message
-    EXPECT_CALL(*message_interface, send_message(Truly(is_failure_message), _))
-            .Times(1); // Error for second time creating lobby
-    EXPECT_CALL(*message_interface, send_message(Truly(is_create_lobby_response_message), _))
-            .Times(1); // Success for first time creating lobby
+    {
+        InSequence s;
+        EXPECT_CALL(*message_interface, send_message(Truly(is_create_lobby_response_message), _))
+                .Times(1); // Success for first time creating lobby
+        EXPECT_CALL(*message_interface, send_message(Truly(is_failure_message), _))
+                .Times(1); // Error for second time creating lobby
+    }
 
     auto games = lobby_manager.get_games();
     ASSERT_EQ(games->empty(), true) << "LobbyManager should be empty at the beginning";

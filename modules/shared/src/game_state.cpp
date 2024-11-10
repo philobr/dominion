@@ -1,4 +1,6 @@
 
+#include <memory>
+
 #include <rapidjson/document.h>
 #include <shared/game_state.h>
 #include <shared/utils/json.h>
@@ -29,7 +31,7 @@ namespace shared
 
     bool Pile::operator==(const Pile &other) const { return this->card == other.card && this->count == other.count; }
 
-    std::string Pile::to_json()
+    rapidjson::Document Pile::to_json()
     {
         Document doc;
         doc.SetObject();
@@ -37,24 +39,17 @@ namespace shared
         ADD_STRING_MEMBER(card.c_str(), card);
         ADD_UINT_MEMBER(count, count);
 
-        return document_to_string(doc);
+        return doc;
     }
 
-    Pile *Pile::from_json(const std::string &json)
+    std::unique_ptr<Pile> Pile::from_json(const rapidjson::Value &json)
     {
-        Document doc;
-        doc.Parse(json.c_str());
-
-        if ( doc.HasParseError() ) {
-            return nullptr;
-        }
-
         CardBase::id_t card;
-        GET_STRING_MEMBER(card, doc, "card");
+        GET_STRING_MEMBER(card, json, "card");
         unsigned int count;
-        GET_UINT_MEMBER(count, doc, "count");
+        GET_UINT_MEMBER(count, json, "count");
 
-        return new Pile(card, count);
+        return std::make_unique<Pile>(card, count);
     }
 
     Board::Board(const std::vector<CardBase::id_t> &kingdom_cards, unsigned int num_players)
@@ -79,6 +74,50 @@ namespace shared
     {
         return this->victory_cards == other.victory_cards && this->treasure_cards == other.treasure_cards &&
                 this->kingdom_cards == other.kingdom_cards && this->trash == other.trash;
+    }
+
+    rapidjson::Document Board::to_json()
+    {
+        Document doc;
+        doc.SetObject();
+
+#define ADD_PILES_MEMBER(name)                                                                                         \
+    Value name(kArrayType);                                                                                            \
+    for ( Pile pile : this->name ) {                                                                                   \
+        name.PushBack(Value(pile.to_json(), doc.GetAllocator()), doc.GetAllocator());                                  \
+    }                                                                                                                  \
+    doc.AddMember(#name, name, doc.GetAllocator());
+
+        ADD_PILES_MEMBER(kingdom_cards);
+        ADD_PILES_MEMBER(victory_cards);
+        ADD_PILES_MEMBER(treasure_cards);
+        ADD_ARRAY_OF_STRINGS_MEMBER(trash, trash);
+
+        return doc;
+    }
+
+    std::unique_ptr<Board> Board::from_json(const rapidjson::Value &json)
+    {
+#define GET_PILES_MEMBER(var, json, member)                                                                            \
+    if ( !json.HasMember(member) || !json[member].IsArray() ) {                                                        \
+        return nullptr;                                                                                                \
+    }                                                                                                                  \
+    std::vector<Pile> var;                                                                                             \
+    for ( auto &pile : json[member].GetArray() ) {                                                                     \
+        std::unique_ptr<Pile> p = Pile::from_json(pile);                                                               \
+        if ( p == nullptr ) {                                                                                          \
+            return nullptr;                                                                                            \
+        }                                                                                                              \
+        var.push_back(*p);                                                                                             \
+    }
+
+        GET_PILES_MEMBER(kingdom_cards_v, json, "kingdom_cards");
+        GET_PILES_MEMBER(victory_cards_v, json, "victory_cards");
+        GET_PILES_MEMBER(treasure_cards_v, json, "treasure_cards");
+        std::vector<std::string> trash_v;
+        GET_STRING_ARRAY_MEMBER(trash_v, json, "trash");
+
+        return std::unique_ptr<Board>(new Board(kingdom_cards_v, victory_cards_v, treasure_cards_v, trash_v));
     }
 
     bool ReducedGameState::operator==(const ReducedGameState &other) const

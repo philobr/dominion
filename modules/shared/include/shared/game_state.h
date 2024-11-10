@@ -1,7 +1,10 @@
 #pragma once
 
+#include <memory>
 #include <string>
 #include <vector>
+
+#include <shared/utils/json.h>
 
 namespace shared
 {
@@ -94,8 +97,8 @@ namespace shared
         Pile(CardBase::id_t card, unsigned int count) : card(card), count(count) {}
         bool operator==(const Pile &other) const;
 
-        std::string to_json();
-        static Pile *from_json(const std::string &json);
+        rapidjson::Document to_json();
+        static std::unique_ptr<Pile> from_json(const rapidjson::Value &json);
 
         CardBase::id_t card;
         unsigned int count;
@@ -113,10 +116,19 @@ namespace shared
         Board(const std::vector<CardBase::id_t> &kingdom_cards, unsigned int num_players);
         bool operator==(const Board &other) const;
 
+        rapidjson::Document to_json();
+        static std::unique_ptr<Board> from_json(const rapidjson::Value &json);
+
         std::vector<Pile> kingdom_cards;
         std::vector<Pile> victory_cards;
         std::vector<Pile> treasure_cards;
         std::vector<CardBase::id_t> trash;
+
+    private:
+        Board(std::vector<Pile> kingdom_cards, std::vector<Pile> victory_cards, std::vector<Pile> treasure_cards,
+              std::vector<CardBase::id_t> trash) :
+            kingdom_cards(kingdom_cards), victory_cards(victory_cards), treasure_cards(treasure_cards), trash(trash)
+        {}
     };
 
     class ReducedGameState

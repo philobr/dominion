@@ -25,7 +25,7 @@ namespace shared
     // i think it should be private/accessible by the game logic
     // Maybe functions for get_reduced_player in playerBase etc...
 
-    PlayerBase::id_t PlayerBase::getId() { return player_id; }
+    PlayerBase::id_t PlayerBase::getId() const { return player_id; }
 
 
 } // namespace shared

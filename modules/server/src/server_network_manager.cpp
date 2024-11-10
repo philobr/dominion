@@ -1,9 +1,10 @@
+
 #include <iostream>
 #include <sstream>
 
 #include "server/server_network_manager.h"
 
-#include "../../shared/default.conf"
+#include <shared/default.conf>
 #include "shared/message_types.h"
 
 
@@ -124,6 +125,11 @@ namespace server
             // try to parse a client_request from msg
             std::unique_ptr<shared::ClientToServerMessage> req = shared::ClientToServerMessage::from_json(msg);
 
+            if ( req == nullptr ) {
+                // TODO: handle invalid message
+                throw std::runtime_error("Not implemented yet");
+            }
+
             // check if this is a connection to a new player
             shared::PlayerBase::id_t player_id = req->player_id;
             _rw_lock.lock_shared();
@@ -141,7 +147,7 @@ namespace server
             std::cout << "Received valid request : " << msg << std::endl;
 #endif
             // execute client request
-            //MessageInterface::handle_request(req); //TODO: currently some f*'ed up type scam
+            MessageInterface::handle_request(std::move(req));
 
         } catch ( const std::exception &e ) {
             std::cerr << "Failed to execute client request. Content was :\n"

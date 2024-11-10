@@ -94,7 +94,6 @@ namespace shared
         Pile(CardBase::id_t card, unsigned int count) : card(card), count(count) {}
         bool operator==(const Pile &other) const;
 
-        // TODO: Test these functions
         std::string to_json();
         static Pile *from_json(const std::string &json);
 

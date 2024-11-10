@@ -1,4 +1,5 @@
 add_executable(shared_tests
+    game_state.cpp
     message_types/constructors.cpp
     message_types/equality.cpp
     message_types/json_conversion.cpp

@@ -156,3 +156,7 @@ add_custom_target(check
         --suppressions-list=${CMAKE_SOURCE_DIR}/.cppcheck_suppressions
         modules unit_tests
 )
+
+
+# copy assets (images) to binary directory
+file(INSTALL assets DESTINATION ${CMAKE_BINARY_DIR})

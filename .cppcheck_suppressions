@@ -10,6 +10,7 @@ missingIncludeSystem
 # We use an old version of cppcheck in CI, so we need to suppress unknown suppressions
 unmatchedSuppression
 
+unusedFunction:modules/client/src/dominion.cpp
 # Suppress warnings about cppcheck not being able to check all branches
 normalCheckLevelMaxBranches
 

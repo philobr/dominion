@@ -1,23 +1,24 @@
+#include <wx/wx.h>
+#include "src/dominion.h"
+
 #include <iostream>
 #include <thread>
 
 #include "client/client_listener.h"
 #include "client/client_network_manager.h"
 
-void set_up_network(std::string host, uint16_t port)
-{
-    ClientNetworkManager network;
-    network.init(host, port);
-}
 
+//wxIMPLEMENT_APP(client::Dominion);
+
+//Temporary test function
 int main()
 {
     std::string input, host;
     uint16_t port;
     std::cin >> host >> port;
 
-    std::thread thread(set_up_network, host, port);
-    thread.detach();
+    ClientNetworkManager network;
+    network.init(host, port);
 
     input = ".";
     std::cout << "Initialized!" << std::endl;

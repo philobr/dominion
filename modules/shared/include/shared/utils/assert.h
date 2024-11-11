@@ -76,6 +76,18 @@ namespace utils
 } // namespace utils
 
 /**
+ * @brief Asserts (expr)
+ */
+#define ASSERT_TRUE(expr, msg)                                                                                         \
+    utils::assert_helpers::custom_assert((expr), true, "==", (msg), __FILE__, __LINE__, __func__)
+
+/**
+ * @brief Asserts (!expr)
+ */
+#define ASSERT_FALSE(expr, msg)                                                                                        \
+    utils::assert_helpers::custom_assert((expr), false, "==", (msg), __FILE__, __LINE__, __func__)
+
+/**
  * @brief Asserts (actual == expected)
  * Also works for containers
  */

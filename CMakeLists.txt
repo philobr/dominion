@@ -59,6 +59,15 @@ macro(include_gtest target)
     )
 endmacro()
 
+macro(include_gmock target)
+    message(STATUS "Including gmock in ${target}")
+    target_link_libraries(${target} PRIVATE gmock gmock_main)
+    target_include_directories(${target} PRIVATE
+        ${EXTERNAL_LIBS}/googlemock/include
+        ${EXTERNAL_LIBS}/googlemock/lib
+    )
+endmacro()
+
 macro(include_wxwidgets target)
     if (wxWidgets_FOUND)
         message(STATUS "Including wxWidgets in ${target}")
@@ -135,6 +144,7 @@ add_custom_target(run_client
 add_custom_target(format
     COMMENT "Running clang-format and checking for formatting issues..."
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+    COMMAND clang-format --version
     COMMAND find modules unit_tests -name '*.cpp' -o -name '*.h' | xargs clang-format -i
     COMMAND git diff --exit-code || (echo "Formatting issues found!" && exit 1)
 )
@@ -153,3 +163,7 @@ add_custom_target(check
         --suppressions-list=${CMAKE_SOURCE_DIR}/.cppcheck_suppressions
         modules unit_tests
 )
+
+
+# copy assets (images) to binary directory
+file(INSTALL assets DESTINATION ${CMAKE_BINARY_DIR})

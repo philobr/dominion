@@ -5,7 +5,9 @@
 ################################
 
 file(GLOB SERVER_LIBRARY_SOURCES
-    "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/lobby.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/lobby_manager.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/game_state.cpp"
 )
 
 # create lib

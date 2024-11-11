@@ -42,14 +42,14 @@ void server::Lobby::join(MessageInterface &message_interface, shared::JoinLobbyR
     // Add player to the lobby
     game_state.add_player(Player(player_id));
 
-    /*
+    
     // TODO: provide game_id and message_id
     shared::ResultResponseMessage success_message =
             shared::ResultResponseMessage("game_id", "message_id", true, request.message_id);
 
     message_interface.send_message(&success_message, player_id);
     return;
-    */
+    
 };
 
 // PRE: selected_cards are validated in message parsing

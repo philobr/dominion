@@ -121,13 +121,17 @@ TEST(ServerLibraryTest, JoinLobby)
     // All expected function calls of send_message
     {
         InSequence s;
+        // request 2
         EXPECT_CALL(*message_interface, send_message(Truly(is_join_lobby_broadcast_message), player_1)).Times(1);
         EXPECT_CALL(*message_interface, send_message(Truly(is_success_message), player_2)).Times(1);
+        // request 2 again
         EXPECT_CALL(*message_interface, send_message(Truly(is_failure_message), player_2)).Times(1);
+        // false_request 3
         EXPECT_CALL(*message_interface, send_message(Truly(is_failure_message), player_3)).Times(1);
-        // 1x ResultResponseMessage + 2x JoinLobbyBroadcastMessage
-        // + 1x ResultResponseMessage + 3x JoinLobbyBroadcastMessage
+        // corrected_request 3 (1x ResultResponseMessage + 2x JoinLobbyBroadcastMessage)
+        // + request 4 (1x ResultResponseMessage + 3x JoinLobbyBroadcastMessage)
         EXPECT_CALL(*message_interface, send_message(_, _)).Times(7);
+        // request 5
         EXPECT_CALL(*message_interface, send_message(Truly(is_failure_message), player_5)).Times(1);
     }
     lobby_manager.join_lobby(request2);

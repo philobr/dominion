@@ -26,7 +26,7 @@ namespace shared
     public:
         using id_t = std::string;
 
-        CardBase(id_t value, CardType type, unsigned int cost) : value(value), type(type), cost(cost) {}
+        CardBase(id_t id, CardType type, unsigned int cost) : id(id), type(type), cost(cost) {}
         bool isAction() const;
         bool isAttack() const;
         bool isTreasure() const;
@@ -39,7 +39,7 @@ namespace shared
         virtual std::string toString() = 0;
 
     protected:
-        id_t value;
+        id_t id;
         const CardType type;
         const unsigned int cost;
     };
@@ -48,10 +48,10 @@ namespace shared
     {
     public:
         using id_t = std::string;
-        id_t getId() const { return id; }
-        PlayerBase(id_t player_id) : id(player_id) {}
+        id_t getId() const;
         // TODO: initialize victory_points, available_actions, available_buys, available_treasure, current_card,
         // discard_pile, draw_pile_size
+        PlayerBase(id_t player_id) : player_id(player_id) {}
 
         // Make this class polymorphic
         virtual ~PlayerBase() = default;
@@ -74,7 +74,7 @@ namespace shared
          */
         bool from_json(const rapidjson::Value &json);
 
-        id_t id;
+        id_t player_id;
         unsigned int victory_points;
         std::vector<CardBase::id_t> played_cards;
         std::vector<CardBase::id_t> gained_cards;

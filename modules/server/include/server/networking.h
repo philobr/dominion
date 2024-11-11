@@ -13,7 +13,7 @@ namespace server
     public:
         void handle_message(std::string message);
         void send_message(shared::ServerToClientMessage message);
-        MessageInterface get_message_interface();
+        MessageInterface *get_message_interface();
 
     private:
         LobbyManager lobby_manager;

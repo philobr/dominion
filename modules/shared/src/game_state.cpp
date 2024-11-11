@@ -10,9 +10,26 @@ using namespace shared;
 
 namespace shared
 {
+    bool CardBase::isAction() const { return type & ACTION; }
+
+    bool CardBase::isAttack() const { return type & ATTACK; }
+
+    bool CardBase::isTreasure() const { return type & TREASURE; }
+
+    bool CardBase::isReaction() const { return type & REACTION; }
+
+    bool CardBase::isVictory() const { return type & VICTORY; }
+
+    bool CardBase::isCurse() const { return type & CURSE; }
+
+    unsigned int CardBase::getCost() { return cost; }
+
+    CardType CardBase::getType() { return type; }
+
+    CardBase::id_t CardBase::getId() { return id; }
     bool PlayerBase::operator==(const PlayerBase &other) const
     {
-        return this->id == other.id && this->victory_points == other.victory_points &&
+        return this->player_id == other.player_id && this->victory_points == other.victory_points &&
                 this->played_cards == other.played_cards && this->gained_cards == other.gained_cards &&
                 this->available_actions == other.available_actions && this->available_buys == other.available_buys &&
                 this->available_treasure == other.available_treasure && this->current_card == other.current_card &&
@@ -24,7 +41,7 @@ namespace shared
         Document doc;
         doc.SetObject();
 
-        ADD_STRING_MEMBER(id.c_str(), id);
+        ADD_STRING_MEMBER(player_id.c_str(), player_id);
         ADD_UINT_MEMBER(victory_points, victory_points);
         ADD_ARRAY_OF_STRINGS_MEMBER(played_cards, played_cards);
         ADD_ARRAY_OF_STRINGS_MEMBER(gained_cards, gained_cards);
@@ -43,7 +60,7 @@ namespace shared
     // `PlayerBase::from_json` returns a bool, so we need to wrap the call to the macros in this function.
     PlayerBase *PlayerBase::_from_json_internal(const rapidjson::Value &json)
     {
-        GET_STRING_MEMBER(id, json, "id");
+        GET_STRING_MEMBER(player_id, json, "player_id");
         GET_UINT_MEMBER(victory_points, json, "victory_points");
         GET_STRING_ARRAY_MEMBER(played_cards, json, "played_cards");
         GET_STRING_ARRAY_MEMBER(gained_cards, json, "gained_cards");
@@ -58,6 +75,12 @@ namespace shared
     }
 
     bool PlayerBase::from_json(const rapidjson::Value &json) { return _from_json_internal(json) != nullptr; }
+    // TODO: Implement PlayerBase
+    // ask Nicola why some stuff is protected. ID cannot be accessed by the game logic
+    // i think it should be private/accessible by the game logic
+    // Maybe functions for get_reduced_player in playerBase etc...
+
+    PlayerBase::id_t PlayerBase::getId() const { return player_id; }
 
     bool ReducedEnemy::operator==(const ReducedEnemy &other) const
     {
@@ -199,4 +222,5 @@ namespace shared
         return this->board == other.board && this->player == other.player && this->enemies == other.enemies &&
                 this->current_player == other.current_player;
     }
+
 } // namespace shared

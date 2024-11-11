@@ -1,6 +1,7 @@
 
 #include <rapidjson/document.h>
 #include <rapidjson/writer.h>
+#include <string>
 
 std::string document_to_string(const rapidjson::Document &doc)
 {

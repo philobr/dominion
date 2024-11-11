@@ -12,10 +12,15 @@ BUILD_DIR="${PROJECT_ROOT}/build"
 # Store current directory to return to it later
 ORIGINAL_DIR="$(pwd)"
 
+# Temporary file for storing command output
+ERROR_LOG=$(mktemp)
+trap 'rm -f $ERROR_LOG' EXIT
+
 # Function to show progress bar
 show_progress() {
     local pid=$1
     local task=$2
+    local output_file=$3
     local bar_length=30
     
     printf "%-20s [" "$task"
@@ -62,6 +67,8 @@ show_progress() {
         printf "\r%-20s [" "$task"
         printf '%*s' "$bar_length" "" | tr ' ' '='
         printf "]${RED}✗${NC}\n"
+        echo -e "${RED}Error during $task:${NC}"
+        cat "$output_file"
         return 1
     fi
 }
@@ -75,8 +82,8 @@ cd "$BUILD_DIR"
 
 # Check if CMake needs to be run
 if [ ! -f "Makefile" ]; then
-    cmake "$PROJECT_ROOT" > /dev/null 2>&1 &
-    show_progress $! "Configuring CMake"
+    cmake "$PROJECT_ROOT" > "$ERROR_LOG" 2>&1 &
+    show_progress $! "Configuring CMake" "$ERROR_LOG"
     if [ $? -ne 0 ]; then
         cd "$ORIGINAL_DIR"
         exit 1
@@ -84,32 +91,32 @@ if [ ! -f "Makefile" ]; then
 fi
 
 # Build project
-cmake --build . > /dev/null 2>&1 &
-show_progress $! "Building project"
+cmake --build . > "$ERROR_LOG" 2>&1 &
+show_progress $! "Building project" "$ERROR_LOG"
 if [ $? -ne 0 ]; then
     cd "$ORIGINAL_DIR"
     exit 1
 fi
 
 # Run tests
-cmake --build . --target test > /dev/null 2>&1 &
-show_progress $! "Running tests"
+cmake --build . --target test > "$ERROR_LOG" 2>&1 &
+show_progress $! "Running tests" "$ERROR_LOG"
 if [ $? -ne 0 ]; then
     cd "$ORIGINAL_DIR"
     exit 1
 fi
 
 # Format code
-cmake --build . --target format > /dev/null 2>&1 &
-show_progress $! "Formatting code"
+cmake --build . --target format > "$ERROR_LOG" 2>&1 &
+show_progress $! "Formatting code" "$ERROR_LOG"
 if [ $? -ne 0 ]; then
     cd "$ORIGINAL_DIR"
     exit 1
 fi
 
 # Run linter
-cmake --build . --target check > /dev/null 2>&1 &
-show_progress $! "Running linter"
+cmake --build . --target check > "$ERROR_LOG" 2>&1 &
+show_progress $! "Running linter" "$ERROR_LOG"
 if [ $? -ne 0 ]; then
     cd "$ORIGINAL_DIR"
     exit 1

@@ -37,11 +37,6 @@ void server::LobbyManager::join_lobby(shared::JoinLobbyRequestMessage request)
     }
 
     games.at(lobby_id).join(*message_interface, request);
-    // TODO: Provide game_id and message_id
-    shared::ResultResponseMessage success_message =
-            shared::ResultResponseMessage("game_id", "message_id", true, request.message_id);
-    message_interface->send_message(&success_message, player_id);
-
     return;
 };
 

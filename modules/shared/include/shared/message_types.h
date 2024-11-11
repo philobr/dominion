@@ -29,6 +29,7 @@ namespace shared
     class ClientToServerMessage : public Message
     {
     public:
+        virtual std::string to_json() = 0;
         static std::unique_ptr<ClientToServerMessage> from_json(const std::string &json);
 
         PlayerBase::id_t player_id;
@@ -111,6 +112,7 @@ namespace shared
          *
          * Returns nullptr if the JSON is invalid.
          */
+        virtual std::string to_json() = 0;
         static std::unique_ptr<ServerToClientMessage> from_json(const std::string &json);
 
     protected:

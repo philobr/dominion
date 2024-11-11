@@ -1,9 +1,4 @@
-#include <iostream>
+#include <wx/wx.h>
+#include "src/dominion.h"
 
-#include <client/example.h>
-
-int main()
-{
-    std::cout << "Client main" << std::endl;
-    return 0;
-}
+wxIMPLEMENT_APP(client::Dominion);

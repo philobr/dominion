@@ -12,6 +12,7 @@ build/
 # Ignore IDE-specific files and folders
 .idea/
 .vscode/
+.cache/
 
 # Ignore Git folder (this is usually managed by Git itself)
 .git/

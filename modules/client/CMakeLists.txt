@@ -2,6 +2,9 @@
 
 file(GLOB CLIENT_LIBRARY_SOURCES
     "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/panels/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/uiElements/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/windows/*.cpp"
 )
 
 # create lib

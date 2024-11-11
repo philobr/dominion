@@ -175,8 +175,8 @@ TEST(ServerLibraryTest, StartGame)
     shared::CreateLobbyRequestMessage request1("123", "101", player_1);
     shared::JoinLobbyRequestMessage request2("123", "102", player_2);
 
-    std::vector<shared::CardBase::id_t> selected_cards = { "Moat", "Village", "Woodcutter", "Workshop", "Militia",
-                                                           "Cellar", "Market", "Mine", "Smithy", "Remodel" };
+    std::vector<shared::CardBase::id_t> selected_cards = {"Moat",   "Village", "Woodcutter", "Workshop", "Militia",
+                                                          "Cellar", "Market",  "Mine",       "Smithy",   "Remodel"};
 
     // Start game request with wrong game_id
     shared::StartGameRequestMessage request3("abc", "103", player_1, selected_cards);

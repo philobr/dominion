@@ -39,19 +39,12 @@ TEST(ServerLibraryTest, CreateLobby)
     };
 
     MockMessageInterface *message_interface = new MockMessageInterface();
-    server::LobbyManager lobby_manager(*message_interface);
+    server::LobbyManager lobby_manager(message_interface);
     shared::PlayerBase::id_t player_1 = "Max";
     shared::PlayerBase::id_t player_2 = "Peter";
 
-    shared::CreateLobbyRequestMessage request1;
-    request1.game_id = "123";
-    request1.message_id = "456";
-    request1.player_id = player_1;
-
-    shared::CreateLobbyRequestMessage request2;
-    request2.game_id = "123";
-    request2.message_id = "789";
-    request2.player_id = player_2;
+    shared::CreateLobbyRequestMessage request1("123", "456", player_1);
+    shared::CreateLobbyRequestMessage request2("123", "789", player_2);
 
     // All expected function calls of send_message
     {
@@ -107,42 +100,19 @@ TEST(ServerLibraryTest, JoinLobby)
     };
 
     MockMessageInterface *message_interface = new MockMessageInterface();
-    server::LobbyManager lobby_manager(*message_interface);
+    server::LobbyManager lobby_manager(message_interface);
     shared::PlayerBase::id_t player_1 = "Max";
     shared::PlayerBase::id_t player_2 = "Peter";
     shared::PlayerBase::id_t player_3 = "Paul";
     shared::PlayerBase::id_t player_4 = "John";
     shared::PlayerBase::id_t player_5 = "George";
 
-    shared::CreateLobbyRequestMessage request1;
-    request1.game_id = "123";
-    request1.message_id = "456";
-    request1.player_id = player_1;
-
-    shared::JoinLobbyRequestMessage request2;
-    request2.game_id = "123";
-    request2.message_id = "789";
-    request2.player_id = player_2;
-
-    shared::JoinLobbyRequestMessage false_request3;
-    false_request3.game_id = "222";
-    false_request3.message_id = "101";
-    false_request3.player_id = player_3;
-
-    shared::JoinLobbyRequestMessage corrected_request3;
-    corrected_request3.game_id = "123";
-    corrected_request3.message_id = "102";
-    corrected_request3.player_id = player_3;
-
-    shared::JoinLobbyRequestMessage request4;
-    request4.game_id = "123";
-    request4.message_id = "103";
-    request4.player_id = player_4;
-
-    shared::JoinLobbyRequestMessage request5;
-    request5.game_id = "123";
-    request5.message_id = "104";
-    request5.player_id = player_5;
+    shared::CreateLobbyRequestMessage request1("123", "456", player_1);
+    shared::JoinLobbyRequestMessage request2("123", "789", player_2);
+    shared::JoinLobbyRequestMessage false_request3("222", "101", player_3);
+    shared::JoinLobbyRequestMessage corrected_request3("123", "102", player_3);
+    shared::JoinLobbyRequestMessage request4("123", "103", player_4);
+    shared::JoinLobbyRequestMessage request5("123", "104", player_5);
 
     auto games = lobby_manager.get_games();
 
@@ -151,13 +121,17 @@ TEST(ServerLibraryTest, JoinLobby)
     // All expected function calls of send_message
     {
         InSequence s;
+        // request 2
         EXPECT_CALL(*message_interface, send_message(Truly(is_join_lobby_broadcast_message), player_1)).Times(1);
         EXPECT_CALL(*message_interface, send_message(Truly(is_success_message), player_2)).Times(1);
+        // request 2 again
         EXPECT_CALL(*message_interface, send_message(Truly(is_failure_message), player_2)).Times(1);
+        // false_request 3
         EXPECT_CALL(*message_interface, send_message(Truly(is_failure_message), player_3)).Times(1);
-        // 1x ResultResponseMessage + 2x JoinLobbyBroadcastMessage
-        // + 1x ResultResponseMessage + 3x JoinLobbyBroadcastMessage
+        // corrected_request 3 (1x ResultResponseMessage + 2x JoinLobbyBroadcastMessage)
+        // + request 4 (1x ResultResponseMessage + 3x JoinLobbyBroadcastMessage)
         EXPECT_CALL(*message_interface, send_message(_, _)).Times(7);
+        // request 5
         EXPECT_CALL(*message_interface, send_message(Truly(is_failure_message), player_5)).Times(1);
     }
     lobby_manager.join_lobby(request2);
@@ -198,37 +172,24 @@ TEST(ServerLibraryTest, StartGame)
     };
 
     MockMessageInterface *message_interface = new MockMessageInterface();
-    server::LobbyManager lobby_manager(*message_interface);
+    server::LobbyManager lobby_manager(message_interface);
     shared::PlayerBase::id_t player_1 = "Max";
     shared::PlayerBase::id_t player_2 = "Peter";
 
-    shared::CreateLobbyRequestMessage request1;
-    request1.game_id = "123";
-    request1.message_id = "101";
-    request1.player_id = player_1;
+    shared::CreateLobbyRequestMessage request1("123", "101", player_1);
+    shared::JoinLobbyRequestMessage request2("123", "102", player_2);
 
-    shared::JoinLobbyRequestMessage request2;
-    request2.game_id = "123";
-    request2.message_id = "102";
-    request2.player_id = player_2;
+    std::vector<shared::CardBase::id_t> selected_cards = {"Moat",   "Village", "Woodcutter", "Workshop", "Militia",
+                                                          "Cellar", "Market",  "Mine",       "Smithy",   "Remodel"};
 
     // Start game request with wrong game_id
-    shared::StartGameRequestMessage request3;
-    request3.game_id = "abc";
-    request3.message_id = "103";
-    request3.player_id = player_1;
+    shared::StartGameRequestMessage request3("abc", "103", player_1, selected_cards);
 
     // Start game request not as game_master
-    shared::StartGameRequestMessage request4;
-    request4.game_id = "123";
-    request4.message_id = "104";
-    request4.player_id = player_2;
+    shared::StartGameRequestMessage request4("123", "104", player_2, selected_cards);
 
     // Start game request as game_master
-    shared::StartGameRequestMessage request5;
-    request5.game_id = "123";
-    request5.message_id = "105";
-    request5.player_id = player_1;
+    shared::StartGameRequestMessage request5("123", "105", player_1, selected_cards);
 
     lobby_manager.create_lobby(request1);
     lobby_manager.join_lobby(request2);

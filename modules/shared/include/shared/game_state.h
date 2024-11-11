@@ -46,12 +46,13 @@ namespace shared
     public:
         using id_t = std::string;
         id_t getId() const;
-        PlayerBase() {}
-        PlayerBase(id_t player_id) : player_id(player_id) {}
         // TODO: initialize victory_points, available_actions, available_buys, available_treasure, current_card,
         // discard_pile, draw_pile_size
+        PlayerBase(id_t player_id) : player_id(player_id) {}
 
     protected:
+        bool operator==(const PlayerBase &other) const;
+
         id_t player_id;
         unsigned int victory_points;
         std::vector<CardBase::id_t> played_cards;
@@ -66,6 +67,10 @@ namespace shared
 
     class ReducedEnemy : public PlayerBase
     {
+    public:
+        ReducedEnemy(id_t player_id, unsigned int hand_size) : PlayerBase(player_id), hand_size(hand_size) {}
+        bool operator==(const ReducedEnemy &other) const;
+
     protected:
         unsigned int hand_size;
     };
@@ -73,8 +78,10 @@ namespace shared
     class ReducedPlayer : public PlayerBase
     {
     public:
-        ReducedPlayer() {}
-        ReducedPlayer(id_t player_id) : PlayerBase(player_id) {}
+        ReducedPlayer(id_t player_id, std::vector<CardBase::id_t> hand_cards) :
+            PlayerBase(player_id), hand_cards(hand_cards)
+        {}
+        bool operator==(const ReducedPlayer &other) const;
 
     protected:
         std::vector<CardBase::id_t> hand_cards;
@@ -82,6 +89,14 @@ namespace shared
 
     struct Pile
     {
+    public:
+        Pile(CardBase::id_t card, unsigned int count) : card(card), count(count) {}
+        bool operator==(const Pile &other) const;
+
+        // TODO: Test these functions
+        std::string to_json();
+        static Pile *from_json(const std::string &json);
+
         CardBase::id_t card;
         unsigned int count;
     };
@@ -89,19 +104,33 @@ namespace shared
     class Board
     {
     public:
+        /**
+         * @brief Construct a new Board object
+         *
+         * @param kingdom_cards The kingdom cards that are available in this game (chosen by the game master).
+         * They must be exactly 10 cards.
+         */
+        Board(const std::vector<CardBase::id_t> &kingdom_cards, unsigned int num_players);
+        bool operator==(const Board &other) const;
+
+        std::vector<Pile> kingdom_cards;
         std::vector<Pile> victory_cards;
         std::vector<Pile> treasure_cards;
-        std::vector<Pile> kingdom_cards;
         std::vector<CardBase::id_t> trash;
     };
 
     class ReducedGameState
     {
     public:
-        ReducedGameState() {}
+        ReducedGameState(Board board, ReducedPlayer player, std::vector<ReducedEnemy> enemies,
+                         PlayerBase::id_t current_player) :
+            board(board), player(player), enemies(enemies), current_player(current_player)
+        {}
+        bool operator==(const ReducedGameState &other) const;
+
         Board board;
         ReducedPlayer player;
         std::vector<ReducedEnemy> enemies;
-        PlayerBase::id_t active_player;
+        PlayerBase::id_t current_player;
     };
 } // namespace shared

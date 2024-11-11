@@ -20,6 +20,8 @@ namespace server
     class ServerBoard : public shared::Board
     {
     public:
+        ServerBoard(const std::vector<shared::CardBase::id_t> &kingdom_cards, unsigned int num_players) :
+            shared::Board(kingdom_cards, num_players) {};
         bool buy(shared::CardBase::id_t card);
         void trash(shared::CardBase::id_t card);
     };
@@ -32,7 +34,6 @@ namespace server
     class Player : public shared::PlayerBase
     {
     public:
-        Player() {};
         Player(shared::PlayerBase::id_t id) : shared::PlayerBase(id) {};
         std::deque<shared::CardBase::id_t> draw_pile;
         std::vector<shared::CardBase::id_t> discard_pile;
@@ -48,7 +49,14 @@ namespace server
     class GameState
     {
     public:
-        GameState() {};
+        /**
+         * @brief Construct a new Game State object
+         *
+         * The game state is initialized with no board and no players.
+         * The players are added when they connect to the server (see `add_player`).
+         * The board is initialized when the game starts (see `start_game`).
+         */
+        GameState() {}
         void receive_action(std::unique_ptr<shared::ActionDecisionMessage> action, MessageInterface &message_interface);
         shared::ReducedGameState get_reduced_state(shared::PlayerBase::id_t player);
         void add_player(Player player);
@@ -67,8 +75,8 @@ namespace server
         bool play(shared::PlayerBase::id_t player, unsigned int index);
         bool is_game_over();
 
+        std::optional<ServerBoard> board;
         std::vector<Player> players;
-        ServerBoard board;
         shared::PlayerBase::id_t current_player;
     };
 } // namespace server

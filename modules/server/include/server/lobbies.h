@@ -22,8 +22,15 @@ namespace server
     class Lobby
     {
     public:
-        Lobby() {};
+        /**
+         * @brief Create a new game lobby.
+         *
+         * @param game_master The player who created the lobby.
+         */
         Lobby(shared::PlayerBase::id_t game_master);
+        /**
+         * @brief Add a player to the lobby.
+         */
         void join(MessageInterface &message_interface, shared::JoinLobbyRequestMessage request);
         void start_game(MessageInterface &message_interface, shared::StartGameRequestMessage request);
         void receive_action(std::unique_ptr<shared::ActionDecisionMessage> action, MessageInterface &message_interface);
@@ -45,7 +52,11 @@ namespace server
     class LobbyManager
     {
     public:
-        LobbyManager(MessageInterface &message_interface);
+        // TODO: The message interface should not be passed to the constructor, but to the methods that need it.
+        // Also, the message interface should definitely not be passed as a raw pointer.
+        LobbyManager(MessageInterface *message_interface) :
+            games(std::map<std::string, Lobby>()), message_interface(message_interface) {};
+
         void create_lobby(shared::CreateLobbyRequestMessage request);
         void join_lobby(shared::JoinLobbyRequestMessage request);
         void start_game(shared::StartGameRequestMessage request);

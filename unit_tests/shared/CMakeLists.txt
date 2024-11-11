@@ -1,7 +1,8 @@
 add_executable(shared_tests
-    json_conversion.cpp
+    message_types/constructors.cpp
+    message_types/equality.cpp
+    message_types/json_conversion.cpp
     game_state.cpp
-    # Add more test files here
 )
 
 include_gtest(shared_tests)

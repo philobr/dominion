@@ -8,9 +8,9 @@
 #include "client/client_network_manager.h"
 
 
-//wxIMPLEMENT_APP(client::Dominion);
+// wxIMPLEMENT_APP(client::Dominion);
 
-//Temporary test function
+// Temporary test function
 int main()
 {
     std::string input, host;

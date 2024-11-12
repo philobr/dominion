@@ -22,7 +22,6 @@ target_include_directories(client_lib PUBLIC
 )
 
 set(CLIENT_EXECUTABLE_SOURCES
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/client_main.cpp  
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/client_network_manager.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/client_main.cpp  
     PARENT_SCOPE
 )

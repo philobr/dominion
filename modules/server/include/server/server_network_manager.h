@@ -33,7 +33,7 @@ namespace server
         // MessageInterface get_message_interface();
 
     private:
-        LobbyManager lobby_manager;
+        //LobbyManager lobby_manager;
 
         inline static ServerNetworkManager *_instance;
         inline static std::shared_mutex _rw_lock;

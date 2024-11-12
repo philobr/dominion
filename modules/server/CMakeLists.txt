@@ -25,5 +25,10 @@ target_include_directories(server_lib PUBLIC
 
 set(SERVER_EXECUTABLE_SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/server_main.cpp  
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/server_network_manager.cpp  
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/message_interface.cpp  
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/lobby.cpp  
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/lobby_manager.cpp  
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/game_state.cpp  
     PARENT_SCOPE
 )

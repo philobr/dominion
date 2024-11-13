@@ -35,7 +35,7 @@ TEST(ServerLibraryTest, CreateLobby)
     auto is_failure_message = [](shared::ServerToClientMessage *message)
     {
         const shared::ResultResponseMessage *result_msg = dynamic_cast<shared::ResultResponseMessage *>(message);
-        return result_msg && !result_msg->success;
+        return (result_msg != nullptr) && !result_msg->success;
     };
 
     MockMessageInterface *message_interface = new MockMessageInterface();
@@ -82,13 +82,13 @@ TEST(ServerLibraryTest, JoinLobby)
     auto is_success_message = [](shared::ServerToClientMessage *message)
     {
         const shared::ResultResponseMessage *result_msg = dynamic_cast<shared::ResultResponseMessage *>(message);
-        return result_msg && result_msg->success;
+        return (result_msg != nullptr) && result_msg->success;
     };
 
     auto is_failure_message = [](shared::ServerToClientMessage *message)
     {
         const shared::ResultResponseMessage *result_msg = dynamic_cast<shared::ResultResponseMessage *>(message);
-        return result_msg && !result_msg->success;
+        return (result_msg != nullptr) && !result_msg->success;
     };
 
     auto is_join_lobby_broadcast_message = [](shared::ServerToClientMessage *message)
@@ -162,7 +162,7 @@ TEST(ServerLibraryTest, StartGame)
     auto is_failure_message = [](shared::ServerToClientMessage *message)
     {
         const shared::ResultResponseMessage *result_msg = dynamic_cast<shared::ResultResponseMessage *>(message);
-        return result_msg && !result_msg->success;
+        return (result_msg != nullptr) && !result_msg->success;
     };
 
     MockMessageInterface *message_interface = new MockMessageInterface();

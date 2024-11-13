@@ -1,11 +1,16 @@
 ---
+# TODO: enforce const correctness (misc-const-correctness)
 Checks: |
   -*,
+  cppcoreguidelines-prefer-member-initializer,
+  readability-avoid-return-with-void-value,
+  readability-braces-around-statements,
   readability-duplicate-include,
   readability-implicit-bool-conversion,
   readability-named-parameter,
   readability-non-const-parameter,
   readability-redundant-smartptr-get
+WarningsAsErrors: '*'
 HeaderFileExtensions:
   - h
 ImplementationFileExtensions:

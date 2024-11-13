@@ -207,7 +207,7 @@ TEST(CardServerTest, BehaviourNotDoneYetTest)
 
     struct MockBehaviourNotDoneYet : public server::behaviour::BehaviourBase
     {
-        bool apply(server::GameState &, server::Player::id_t &) override
+        bool apply(server::GameState & /*gamestate*/, server::Player::id_t & /*affected_player*/) override
         {
             // Simulate a behaviour that is not done yet
             return server::behaviour::NOT_DONE_YET;

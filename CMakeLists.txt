@@ -11,14 +11,12 @@ set(EXTERNAL_LIBS ${CMAKE_SOURCE_DIR}/external)
 enable_testing()
 
 # always provide test output on failure
-list(APPEND CMAKE_CTEST_ARGUMENTS "--output-on-failure" "--timeout" "10")
+list(APPEND CMAKE_CTEST_ARGUMENTS "--output-on-failure")
 
 add_compile_options(-Wall -Wpedantic)
 
 add_subdirectory(${EXTERNAL_LIBS}/sockpp)
 add_subdirectory(${EXTERNAL_LIBS}/googletest) # warnings because of old cmake version, cant supress them
-
-include_directories(external/sockpp/include)
 
 find_package(wxWidgets COMPONENTS core base net REQUIRED)
 if (wxWidgets_FOUND)
@@ -112,16 +110,11 @@ add_subdirectory(unit_tests)
 add_executable(client_exe ${CLIENT_EXECUTABLE_SOURCES})
 include_client_lib(client_exe)
 include_shared_lib(client_exe)
-include_sockpp(client_exe)
-include_wxwidgets(client_exe)
-include_rapidjson(client_exe)
 
 add_executable(server_exe ${SERVER_EXECUTABLE_SOURCES})
 include_shared_lib(server_exe)
 include_server_lib(server_exe)
 include_sockpp(server_exe)
-include_wxwidgets(server_exe)
-include_rapidjson(server_exe)
 
 ################################
 # HELPERS

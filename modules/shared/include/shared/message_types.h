@@ -5,9 +5,9 @@
 #include <string>
 #include <vector>
 
-#include "action_decision.h"
-#include "game_state.h"
-
+#include <shared/action_decision.h>
+#include <shared/game/game_state/player_base.h>
+#include <shared/game/game_state/reduced_game_state.h>
 namespace shared
 {
 

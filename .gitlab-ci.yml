@@ -4,7 +4,6 @@ stages:
   - build
   - test
 
-# Stage: Code formatting with clang-format
 format:
   stage: format
   image: archlinux:latest # We use arch linux as the base image because it has a recent version of clang-format
@@ -17,7 +16,6 @@ format:
     - cmake --build . --target format
   allow_failure: true
 
-# Stage: Static analysis with cppcheck
 lint:
   stage: lint
   image: gcc:latest
@@ -38,6 +36,6 @@ test:
     - mkdir -p build
     - cd build
     - cmake ..
-    - cmake --build .
+    - cmake --build . -j $(nproc)
     - ctest --output-on-failure
   allow_failure: false

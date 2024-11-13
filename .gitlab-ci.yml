@@ -1,7 +1,6 @@
 stages:
   - format
   - lint
-  - build
   - test
 
 format:

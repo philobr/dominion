@@ -1,7 +1,8 @@
-#include <iostream>
+#include "server/server_network_manager.h"
 
 int main()
 {
-    std::cout << "hello" << std::endl;
+    // create server_network_manager, which listens endlessly for new connections
+    server::ServerNetworkManager server;
     return 0;
 }

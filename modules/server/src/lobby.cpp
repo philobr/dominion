@@ -20,7 +20,7 @@ void server::Lobby::join(MessageInterface &message_interface, shared::JoinLobbyR
                     // TODO: provide game_id and message_id
                     shared::ResultResponseMessage("game_id", "message_id", false, request.message_id,
                                                   "Player is already in the lobby");
-            message_interface.send_message(&failure_message, player_id);
+            message_interface.send_message(std::make_unique<shared::ResultResponseMessage>(failure_message));
             return;
         }
     }
@@ -28,7 +28,7 @@ void server::Lobby::join(MessageInterface &message_interface, shared::JoinLobbyR
         shared::ResultResponseMessage failure_message =
                 // TODO: provide game_id and message_id
                 shared::ResultResponseMessage("game_id", "message_id", false, request.message_id, "Lobby is full");
-        message_interface.send_message(&failure_message, player_id);
+        message_interface.send_message(std::make_unique<shared::ResultResponseMessage>(failure_message));
         return;
     }
     // Send JoinLobbyBroadcast to all players
@@ -36,7 +36,7 @@ void server::Lobby::join(MessageInterface &message_interface, shared::JoinLobbyR
         // TODO: provide game_id and message_id
         shared::JoinLobbyBroadcastMessage join_message =
                 shared::JoinLobbyBroadcastMessage("game_id", "message_id", player_id);
-        message_interface.send_message(&join_message, player.getId());
+        message_interface.send_message(std::make_unique<shared::JoinLobbyBroadcastMessage>(join_message));
     }
 
     // Add player to the lobby
@@ -47,7 +47,7 @@ void server::Lobby::join(MessageInterface &message_interface, shared::JoinLobbyR
     shared::ResultResponseMessage success_message =
             shared::ResultResponseMessage("game_id", "message_id", true, request.message_id);
 
-    message_interface.send_message(&success_message, player_id);
+    message_interface.send_message(std::make_unique<shared::ResultResponseMessage>(success_message));
     return;
 };
 
@@ -61,7 +61,7 @@ void server::Lobby::start_game(MessageInterface &message_interface, shared::Star
                 // TODO: provide game_id and message_id
                 shared::ResultResponseMessage("game_id", "message_id", false, request.message_id,
                                               "Only the game master can start the game");
-        message_interface.send_message(&failure_message, requestor_id);
+        message_interface.send_message(std::make_unique<shared::ResultResponseMessage>(failure_message));
         return;
     }
     // set board cards
@@ -70,13 +70,13 @@ void server::Lobby::start_game(MessageInterface &message_interface, shared::Star
     for ( Player player : game_state.get_players() ) {
         // TODO: provide game_id and message_id
         shared::StartGameBroadcastMessage start_message = shared::StartGameBroadcastMessage("game_id", "message_id");
-        message_interface.send_message(&start_message, player.getId());
+        message_interface.send_message(std::make_unique<shared::StartGameBroadcastMessage>(start_message));
         // TODO: reenable this
         // shared::ReducedGameState reduced_game_state = game_state.get_reduced_state(player.getId());
         // TODO: provide game_id and message_id
         shared::GameStateMessage game_state_message =
                 shared::GameStateMessage("game_id", "message_id" /*, reduced_game_state */);
-        message_interface.send_message(&game_state_message, player.getId());
+        message_interface.send_message(std::make_unique<shared::GameStateMessage>(game_state_message));
     }
     return;
 };

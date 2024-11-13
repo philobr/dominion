@@ -15,7 +15,7 @@ void server::Lobby::join(MessageInterface &message_interface, shared::JoinLobbyR
     const shared::PlayerBase::id_t requestor_id = request.player_id;
 
     // Check if player is already in the lobby
-    for ( const auto player_id : players ) {
+    for ( const auto &player_id : players ) {
         if ( player_id == requestor_id ) {
             shared::ResultResponseMessage failure_message =
                     // TODO: provide game_id and message_id
@@ -35,7 +35,7 @@ void server::Lobby::join(MessageInterface &message_interface, shared::JoinLobbyR
     }
 
     // Send JoinLobbyBroadcast to all players
-    for ( const auto player_id : players ) {
+    for ( const auto &player_id : players ) {
         // TODO: provide game_id and message_id
         shared::JoinLobbyBroadcastMessage join_message =
                 shared::JoinLobbyBroadcastMessage("game_id", "message_id", requestor_id);
@@ -70,7 +70,7 @@ void server::Lobby::start_game(MessageInterface &message_interface, shared::Star
     game_state = std::make_unique<GameState>(request.selected_cards, players);
     // set board cards
     // send game state to all players
-    for ( const auto player_id : players ) {
+    for ( const auto &player_id : players ) {
         // TODO: provide game_id and message_id
         shared::StartGameBroadcastMessage start_message = shared::StartGameBroadcastMessage("game_id", "message_id");
         message_interface.send_message(&start_message, player_id);

@@ -146,7 +146,7 @@ namespace server
             std::cout << "Received valid request : " << msg << std::endl;
 #endif
             // execute client request
-            MessageInterface::handle_request(std::move(req));
+            ImplementedMessageInterface::handle_request(std::move(req));
 
         } catch ( const std::exception &e ) {
             std::cerr << "Failed to execute client request. Content was :\n"

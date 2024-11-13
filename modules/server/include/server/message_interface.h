@@ -17,16 +17,10 @@ namespace server
         virtual ~MessageInterface() = default;
         
         /**
-         * @brief gets a response that has to be broadcast to all players except for the current player, passes it on to
-         * the network manager as json
-         */
-        static void broadcast_message(std::unique_ptr<shared::ServerToClientMessage> message);
-        
-        /**
          * @brief gets a response that has to be sent to a client and passes it to the network manager as json string
          */
         // TODO: I think this also needs to take in a player ID
-        virtual void send_message(std::unique_ptr<shared::ServerToClientMessage> message, const shared::PlayerBase::id_t& player_id);
+        virtual void send_message(std::unique_ptr<shared::ServerToClientMessage> message, const shared::PlayerBase::id_t& player_id) = 0;
         
         /**
          * @brief Handles the request from the client and passes it on

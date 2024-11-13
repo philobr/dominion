@@ -1,7 +1,11 @@
 ---
 Checks: |
   -*,
-  readability-*
+  readability-duplicate-include,
+  readability-implicit-bool-conversion,
+  readability-named-parameter,
+  readability-non-const-parameter,
+  readability-redundant-smartptr-get
 WarningsAsErrors: ''
 HeaderFileExtensions:
   - h

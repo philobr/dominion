@@ -28,12 +28,12 @@ namespace shared
         CardType getType() const { return type; }
         id_t getId() const { return id; }
 
-        bool isAction() const { return type & ACTION; }
-        bool isAttack() const { return type & ATTACK; }
-        bool isTreasure() const { return type & TREASURE; }
-        bool isReaction() const { return type & REACTION; }
-        bool isVictory() const { return type & VICTORY; }
-        bool isCurse() const { return type & CURSE; }
+        bool isAction() const { return (type & ACTION) != 0; }
+        bool isAttack() const { return (type & ATTACK) != 0; }
+        bool isTreasure() const { return (type & TREASURE) != 0; }
+        bool isReaction() const { return (type & REACTION) != 0; }
+        bool isVictory() const { return (type & VICTORY) != 0; }
+        bool isCurse() const { return (type & CURSE) != 0; }
 
     protected:
         id_t id;

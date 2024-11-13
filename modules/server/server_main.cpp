@@ -4,10 +4,11 @@
 
 int main()
 {
-    // create server_network_manager, which listens endlessly for new connections
-    //server::ServerNetworkManager server;
+    // create a message interface, which creates a server network manager, which listens endlessly for connections
     server::MessageInterface interface;
     interface.init();
+
+    // Purely for testing purposes
     std::string input;
     std::string player_id("Kevin");
     std::cin >> input;

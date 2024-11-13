@@ -67,6 +67,6 @@ namespace server
         static void send_message(std::unique_ptr<shared::ServerToClientMessage> message, const shared::PlayerBase::id_t& player_id);
 
     private:
-        static ServerNetworkManager *_network_manager;
+    static std::unique_ptr<ServerNetworkManager> _network_manager;
     };
 } // namespace server

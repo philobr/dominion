@@ -125,6 +125,7 @@ void ClientNetworkManager::receive_message(const std::string &message)
     try {
         std::unique_ptr<shared::ServerToClientMessage> res = shared::ServerToClientMessage::from_json(message);
         // TODO Process the server message
+        std::cout << "Received Messaged: " << message << std::endl;
         // res->Process();
 
     } catch ( std::exception &e ) {

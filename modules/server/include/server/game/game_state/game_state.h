@@ -7,7 +7,6 @@
 #include <server/game/game_state/server_board.h>
 #include <server/game/game_state/server_player.h>
 
-//#include <server/message_interface.h>
 #include <server/server_network_manager.h>
 #include <shared/action_decision.h>
 

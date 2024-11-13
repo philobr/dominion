@@ -39,6 +39,12 @@ int main()
    std::cout << "Waiting for exit signal(type exit):" << std::endl;
     while ( input != "exit" ) {
         std::cin >> input;
+        if(input == "another"){
+            std::cout << "sending another one" << std::endl;
+            network.sendRequest(std::make_unique<shared::CreateLobbyRequestMessage>(req));
+            input = "";
+        }
+        std::cout << input << std::endl;
     }
 
     network.shutdown();

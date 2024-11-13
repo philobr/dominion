@@ -4,7 +4,9 @@
 namespace server{
     ServerNetworkManager* MessageInterface::_network_manager = nullptr;
     void MessageInterface::init(){
+        std::cout << "initializing server" << std::endl;
         ServerNetworkManager server;
+        std::cout << "initialized server" << std::endl;
         MessageInterface::_network_manager = &server;
     }
     void MessageInterface::send_message(std::unique_ptr<shared::ServerToClientMessage> message, const shared::PlayerBase::id_t& player_id) {

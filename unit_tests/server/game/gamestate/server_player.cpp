@@ -202,9 +202,9 @@ TEST(PlayerTest, EndTurn)
     EXPECT_EQ(player.getAvailableBuys(), 1);
     EXPECT_EQ(player.getAvailableTreasure(), 0);
 
-    // Hand should be empty
-    EXPECT_TRUE(player.get_hand_cards().empty());
+    // hand should contain 5 cards again
+    EXPECT_EQ(player.get_hand_cards().size(), 4);
 
-    // Played cards should be moved to discard pile
-    ASSERT_EQ(player.get_discard_pile().size(), 4); // hand + played + pile
+    // discard pile should be empty as reshuffle was triggered
+    ASSERT_EQ(player.get_discard_pile().size(), 0); // hand + played + pile
 }

@@ -13,7 +13,7 @@ namespace server
         std::shuffle(discard_pile.begin(), discard_pile.end(), gen);
 
         draw_pile.insert(draw_pile.end(), discard_pile.begin(), discard_pile.end());
-        draw_pile.clear();
+        discard_pile.clear();
     }
 
     shared::ReducedPlayer Player::get_reduced_player()

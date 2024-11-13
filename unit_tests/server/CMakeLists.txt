@@ -6,6 +6,7 @@ add_executable(server_tests
 
     game/gamestate/server_player.cpp
     game/gamestate/server_board.cpp
+    game/gamestate/server_gamestate.cpp
 )
 
 include_gtest(server_tests)

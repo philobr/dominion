@@ -43,7 +43,7 @@ namespace server
 namespace server
 {
     GameState::GameState(const std::vector<shared::CardBase::id_t> &play_cards,
-                         const std::vector<Player::id_t> &player_ids)
+                         const std::vector<Player::id_t> &player_ids) : current_player_idx(0)
     {
         initialise_players(player_ids);
         initialise_board(play_cards);
@@ -73,6 +73,15 @@ namespace server
             }
 
             player_map[id] = std::make_unique<Player>(id);
+
+            for ( unsigned i = 0; i < 7; i++ ) {
+                if ( i < 3 ) {
+                    player_map[id]->add_to_discard_pile("Estate");
+                }
+                player_map[id]->add_to_discard_pile("Copper");
+            }
+
+            player_map[id]->draw(5);
         }
     }
 
@@ -114,23 +123,6 @@ namespace server
         auto &player = get_player(player_id);
         player.add(player.get_discard_pile(), card);
         return true;
-    }
-
-    void GameState::start_game()
-    {
-        std::for_each(player_map.begin(), player_map.end(),
-                      [](auto &entry)
-                      {
-                          auto &[player_id, player_ptr] = entry;
-                          for ( unsigned i = 0; i < 7; i++ ) {
-                              if ( i < 3 ) {
-                                  player_ptr->add_to_discard_pile("Estate");
-                              }
-                              player_ptr->add_to_discard_pile("Copper");
-                          }
-
-                          player_ptr->draw(5);
-                      });
     }
 
     void GameState::end_turn()

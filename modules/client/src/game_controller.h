@@ -4,6 +4,7 @@
 #include "panels/lobby_panel.h"
 #include "panels/main_game_panel.h"
 #include "windows/game_window.h"
+#include "client/client_network_manager.h"
 
 namespace client
 {
@@ -16,6 +17,8 @@ namespace client
 
         static void connectToServer();
         static void startGame();
+        static void send_request();
+        static void receive_message(std::unique_ptr<shared::ServerToClientMessage> msg);
 
         static void showError(const std::string &title, const std::string &message);
         static void showStatus(const std::string &message);
@@ -25,6 +28,7 @@ namespace client
         static ConnectionPanel *_connectionPanel;
         static MainGamePanel *_mainGamePanel;
         static LobbyPanel *_lobbyPanel;
+        static ClientNetworkManager *_clientNetworkManager;
     };
 
 } // namespace client

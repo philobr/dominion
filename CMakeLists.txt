@@ -150,8 +150,11 @@ add_custom_target(format
     COMMENT "Running clang-format and checking for formatting issues..."
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
     COMMAND clang-format --version
+    # This is a hacky workaround to return a non-zero exit code if there are formatting issues
+    COMMAND git diff --exit-code > /dev/null
+        || (echo "It seems you have some unstaged changes. Please commit or stash them before running this command." && git diff --stat && exit 1)
     COMMAND find modules unit_tests -name '*.cpp' -o -name '*.h' | xargs clang-format -i
-    COMMAND git diff --exit-code || (echo "Formatting issues found!" && exit 1)
+    COMMAND git diff --exit-code || (echo "Formatting issues found!" && exit 1) 
 )
 
 add_custom_target(check

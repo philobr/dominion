@@ -17,7 +17,8 @@ namespace server
 
     bool ServerBoard::buy(const shared::CardBase::id_t &card_id)
     {
-        auto buy_card = [&](const auto &card_id, auto &pile_vector) -> bool {
+        auto buy_card = [&](const auto &card_id, auto &pile_vector) -> bool
+        {
             return std::any_of(pile_vector.begin(), pile_vector.end(),
                                [card_id](auto &pile)
                                {
@@ -25,8 +26,8 @@ namespace server
                                        return false;
                                    }
 
-                                    --pile.count;
-                                    return true;
+                                   --pile.count;
+                                   return true;
                                });
         };
 

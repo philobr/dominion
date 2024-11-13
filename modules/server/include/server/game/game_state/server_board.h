@@ -16,8 +16,8 @@ namespace server
         ServerBoard(const std::vector<shared::CardBase::id_t> &kingdom_cards, size_t player_count);
         ~ServerBoard() = default;
 
-        bool buy(const shared::CardBase::id_t& card);
-        void trash_card(const shared::CardBase::id_t& card);
+        bool buy(const shared::CardBase::id_t &card);
+        void trash_card(const shared::CardBase::id_t &card);
     };
 
 } // namespace server

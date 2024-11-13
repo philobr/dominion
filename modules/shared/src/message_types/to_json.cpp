@@ -140,7 +140,7 @@ namespace shared
             ADD_ARRAY_OF_UINTS_MEMBER(choose_n_cards->cards, cards);
         } else {
             // This code should be unreachable
-            ASSERT_TRUE(false, "Unknown decision type");
+            _ASSERT_TRUE(false, "Unknown decision type");
         }
 
         return document_to_string(doc);

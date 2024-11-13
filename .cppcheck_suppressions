@@ -16,6 +16,3 @@ normalCheckLevelMaxBranches
 
 # Suppress warnings about cppcheck not being able to check all functions
 unusedFunction:unit_tests/shared/game_state.cpp
-
-
-unusedFunction:unit_tests/

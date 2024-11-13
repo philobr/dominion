@@ -143,7 +143,6 @@ add_custom_target(format
 )
 
 add_custom_target(check
-    COMMENT "Running cppcheck..."
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
     COMMAND cppcheck --version
     COMMAND cppcheck
@@ -155,8 +154,10 @@ add_custom_target(check
         --max-configs=100
         --suppressions-list=${CMAKE_SOURCE_DIR}/.cppcheck_suppressions
         modules unit_tests
-)
 
+    COMMAND clang-tidy --version
+    COMMAND find modules unit_tests -name '*.cpp' -o -name '*.h' | xargs clang-tidy -p ${CMAKE_BINARY_DIR} --warnings-as-errors=*
+)
 
 # copy assets (images) to binary directory
 file(INSTALL assets DESTINATION ${CMAKE_BINARY_DIR})

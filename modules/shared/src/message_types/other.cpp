@@ -38,7 +38,7 @@ namespace shared
     {
         // Due to a bug in the assert macro we need to cast the size to int
         // TODO: Fix the assert macro
-        ASSERT_EQ((int)selected_cards.size(), 10, "selected_cards must contain exactly 10 cards");
+        _ASSERT_EQ(selected_cards.size(), 10, "selected_cards must contain exactly 10 cards");
     }
 
     bool StartGameRequestMessage::operator==(const StartGameRequestMessage &other) const

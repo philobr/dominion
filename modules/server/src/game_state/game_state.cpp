@@ -109,7 +109,7 @@ namespace server
                       });
 
         Player::id_t active_player_id = get_current_player_id();
-        shared::Board reduced_board = *board.get(); // TODO:
+        shared::Board reduced_board = *board; // TODO:
 
         return shared::ReducedGameState(reduced_board, reduced_player, reduced_enemies, active_player_id);
     }

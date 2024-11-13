@@ -2,6 +2,7 @@
 #include <server/lobbies.h>
 #include <shared/game/game_state/reduced_game_state.h>
 #include <shared/utils/assert.h>
+#include <shared/utils/uuid_generator.h>
 
 const unsigned int MAX_PLAYERS = 4;
 

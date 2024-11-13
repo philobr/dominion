@@ -8,7 +8,6 @@
 
 #include <server/game/game_state/game_state.h>
 #include <server/message_interface.h>
-#include <shared/utils/uuid_generator.h>
 
 namespace server
 {

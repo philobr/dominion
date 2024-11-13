@@ -1,4 +1,5 @@
 #include <server/lobbies.h>
+#include <shared/utils/uuid_generator.h>
 
 void server::LobbyManager::create_lobby(shared::CreateLobbyRequestMessage request)
 {

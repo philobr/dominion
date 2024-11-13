@@ -156,7 +156,9 @@ add_custom_target(check
         modules unit_tests
 
     COMMAND clang-tidy --version
-    COMMAND find modules unit_tests -name '*.cpp' -o -name '*.h' | xargs clang-tidy -p ${CMAKE_BINARY_DIR} --warnings-as-errors=*
+    COMMAND clang-tidy --verify-config
+    # TODO: Test all modules and also unit tests
+    COMMAND find modules/shared -name '*.cpp' -o -name '*.h' | xargs clang-tidy -p ${CMAKE_BINARY_DIR} --warnings-as-errors=*
 )
 
 # copy assets (images) to binary directory

@@ -173,7 +173,7 @@ add_custom_target(check
     COMMAND clang-tidy --list-checks
     # TODO: Change this to test all subdirectories of modules
     COMMAND find modules/client modules/shared modules/server/src unit_tests -name '*.cpp' -o -name '*.h'
-        | xargs run-clang-tidy -p ${CMAKE_BINARY_DIR} -j ${NUM_PROCS} -quiet
+        | xargs run-clang-tidy -p ${CMAKE_BINARY_DIR} -j ${NUM_PROCS} -quiet -fix
             # TODO: Remove this whitelist
             -line-filter='[{"name":"card.cpp"}]'
 )

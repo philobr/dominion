@@ -13,7 +13,8 @@ namespace shared
         // Constructor to use on the server side
         ReducedGameState(Board board, ReducedPlayer player, std::vector<ReducedEnemy> enemies,
                          PlayerBase::id_t active_player) :
-            board(board), player(player), enemies(enemies), active_player(active_player)
+            board(board),
+            player(player), enemies(enemies), active_player(active_player)
         {}
 
         Board board;

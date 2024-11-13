@@ -17,16 +17,17 @@ namespace server
 
     bool ServerBoard::buy(const shared::CardBase::id_t &card_id)
     {
-        auto buy_card = [&, this](const auto &card_id, auto &pile_vector) -> bool
-        {
-            for ( auto &pile : pile_vector ) {
-                if ( pile.card == card_id && pile.count > 0 ) {
-                    --pile.count;
-                    return true;
-                }
-            }
+        auto buy_card = [&](const auto &card_id, auto &pile_vector) -> bool {
+            return std::any_of(pile_vector.begin(), pile_vector.end(),
+                               [card_id](auto &pile)
+                               {
+                                   if ( pile.card != card_id || pile.count == 0 ) {
+                                       return false;
+                                   }
 
-            return false;
+                                    --pile.count;
+                                    return true;
+                               });
         };
 
         return buy_card(card_id, treasure_cards) || buy_card(card_id, victory_cards) ||

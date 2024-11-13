@@ -14,16 +14,16 @@ void server::Lobby::join(MessageInterface &message_interface, shared::JoinLobbyR
 {
     const shared::PlayerBase::id_t requestor_id = request.player_id;
 
-    // Check if player is already in the lobby
-    for ( const auto &player_id : players ) {
-        if ( player_id == requestor_id ) {
-            shared::ResultResponseMessage failure_message =
-                    // TODO: provide game_id and message_id
-                    shared::ResultResponseMessage("game_id", "message_id", false, request.message_id,
-                                                  "Player is already in the lobby");
-            message_interface.send_message(&failure_message, requestor_id);
-            return;
-        }
+    const bool player_already_in_lobby = std::any_of(players.begin(), players.end(),
+                                              [&](const auto &player_id) { return player_id == requestor_id; });
+
+    if ( player_already_in_lobby ) {
+        shared::ResultResponseMessage failure_message =
+                // TODO: provide game_id and message_id
+                shared::ResultResponseMessage("game_id", "message_id", false, request.message_id,
+                                              "Player is already in the lobby");
+        message_interface.send_message(&failure_message, requestor_id);
+        return;
     }
 
     if ( players.size() >= MAX_PLAYERS ) {

@@ -43,7 +43,8 @@ namespace server
 namespace server
 {
     GameState::GameState(const std::vector<shared::CardBase::id_t> &play_cards,
-                         const std::vector<Player::id_t> &player_ids) : current_player_idx(0)
+                         const std::vector<Player::id_t> &player_ids) :
+        current_player_idx(0)
     {
         initialise_players(player_ids);
         initialise_board(play_cards);

@@ -21,8 +21,8 @@ namespace server
         using ptr_t = std::unique_ptr<Player>;
         using card_id = shared::CardBase::id_t;
 
-        Player() {};
-        Player(shared::PlayerBase::id_t id) : shared::PlayerBase(id) {};
+        Player(){};
+        Player(shared::PlayerBase::id_t id) : shared::PlayerBase(id){};
         Player(const Player &other) :
             shared::PlayerBase(other), // Copy base class data
             draw_pile(other.draw_pile), discard_pile(other.discard_pile), hand_cards(other.hand_cards),

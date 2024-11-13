@@ -26,7 +26,7 @@ namespace server
          *
          * @param game_master The player who created the lobby.
          */
-        Lobby(shared::PlayerBase::id_t game_master);
+        Lobby(shared::PlayerBase::id_t game_master, std::string lobby_id);
         /**
          * @brief Add a player to the lobby.
          */
@@ -45,6 +45,8 @@ namespace server
         shared::PlayerBase::id_t game_master;
 
         std::vector<shared::PlayerBase::id_t> players;
+
+        std::string lobby_id;
     };
 
     /**

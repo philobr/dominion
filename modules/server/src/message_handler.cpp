@@ -9,7 +9,8 @@ using namespace shared;
 
 namespace server
 {
-    void MessageHandler::HandleMessage(std::shared_ptr<MessageInterface> message_interface, std::unique_ptr<shared::ClientToServerMessage> message)
+    void MessageHandler::HandleMessage(std::shared_ptr<MessageInterface> message_interface,
+                                       std::unique_ptr<shared::ClientToServerMessage> message)
     {
         // Make sure that only one thread can access the message handler at a time
         // This is not very efficient, but it is the simplest way to make sure that
@@ -18,8 +19,7 @@ namespace server
 
         if ( GameStateRequestMessage *gsrm = dynamic_cast<GameStateRequestMessage *>(message.get()) ) {
             (void)gsrm; // TODO: Handle game state request message
-        } else if ( CreateLobbyRequestMessage *clrm =
-                            dynamic_cast<CreateLobbyRequestMessage *>(message.get()) ) {
+        } else if ( CreateLobbyRequestMessage *clrm = dynamic_cast<CreateLobbyRequestMessage *>(message.get()) ) {
             std::unique_ptr<CreateLobbyRequestMessage> clrm_ptr(clrm);
             this->lobby_manager_.create_lobby(*clrm_ptr.get());
         } else if ( JoinLobbyRequestMessage *jlrm = dynamic_cast<JoinLobbyRequestMessage *>(message.get()) ) {

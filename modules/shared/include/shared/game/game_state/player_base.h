@@ -74,7 +74,7 @@ namespace shared
     class ReducedEnemy : public PlayerBase
     {
     public:
-        ReducedEnemy() {};
+        ReducedEnemy(){};
         // Constructor to use on the server side
         ReducedEnemy(unsigned int hand) : PlayerBase() { hand_size = hand; }
         ReducedEnemy(const PlayerBase &player, unsigned int hand) : PlayerBase(player), hand_size(hand) {}
@@ -86,7 +86,7 @@ namespace shared
     class ReducedPlayer : public PlayerBase
     {
     public:
-        ReducedPlayer() {};
+        ReducedPlayer(){};
         // Constructor to use on the server side
         ReducedPlayer(std::vector<CardBase::id_t> hand) : PlayerBase() { hand_cards = hand; }
         ReducedPlayer(const PlayerBase &player, std::vector<CardBase::id_t> hand) : PlayerBase(player), hand_cards(hand)

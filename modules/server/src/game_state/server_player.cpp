@@ -77,15 +77,13 @@ namespace server
 
     void Player::trash(std::vector<Player::card_id> &affected_range, size_t trash_idx)
     {
-        _ASSERT_LT(trash_idx, affected_range.size(),
-                   std::format("idx={} >= size={} for player={}", trash_idx, affected_range.size(), player_id));
+        _ASSERT_LT(trash_idx, affected_range.size(), "index out of range");
         affected_range.erase(affected_range.begin() + trash_idx);
     }
 
     void Player::discard(std::vector<Player::card_id> &affected_range, size_t discard_idx)
     {
-        _ASSERT_LE(discard_idx, affected_range.size(),
-                   std::format("idx={} >= size={} for player={}", discard_idx, affected_range.size(), player_id));
+        _ASSERT_LE(discard_idx, affected_range.size(), "index out of range");
         discard_pile.push_back(affected_range[discard_idx]);
         affected_range.erase(affected_range.begin() + discard_idx);
     }

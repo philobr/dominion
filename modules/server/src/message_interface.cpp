@@ -1,15 +1,14 @@
-#include "server/message_interface.h"
+//#include "server/message_interface.h"
+#include <server/server_network_manager.h>
 
 namespace server{
-    MessageInterface::MessageInterface() = default;
-    MessageInterface::~MessageInterface() = default;
-
-    void MessageInterface::send_message(std::unique_ptr<shared::ServerToClientMessage> message, const shared::PlayerBase::id_t& player_id) {
-        //TODO Mathieu
+    ServerNetworkManager* MessageInterface::_network_manager = nullptr;
+    void MessageInterface::init(){
+        ServerNetworkManager server;
+        MessageInterface::_network_manager = &server;
     }
-
-    void MessageInterface::handle_request(std::unique_ptr<shared::ClientToServerMessage> request){
-        //TODO Nicholas
+    void MessageInterface::send_message(std::unique_ptr<shared::ServerToClientMessage> message, const shared::PlayerBase::id_t& player_id) {
+        _network_manager->send_message(std::move(message), player_id);
     }
 
 } // namespace server

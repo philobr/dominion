@@ -1,3 +1,5 @@
+#pragma once
+
 #include <server/game/cards/cards_core/behaviours.h>
 #include <server/game/game_state/game_state.h>
 

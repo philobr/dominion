@@ -4,13 +4,16 @@
 #include <memory>
 #include <string>
 
+//#include <server/message_interface.h>
+#include <server/server_network_manager.h>
 #include <shared/message_types.h>
 
 #include <server/game/game_state/game_state.h>
-#include <server/message_interface.h>
+
 
 namespace server
 {
+    class MessageInterface;
 
     /**
      * @brief A lobby is a container for a game that is being played.
@@ -60,7 +63,7 @@ namespace server
     public:
         // TODO: The message interface should not be passed to the constructor, but to the methods that need it.
         // Also, the message interface should definitely not be passed as a raw pointer.
-        LobbyManager(MessageInterface *message_interface) : message_interface(message_interface) {};
+        LobbyManager(MessageInterface *message_interface) : _message_interface(message_interface) {};
         /*message_interface(std::make_unique<MessageInterface>(message_interface))*/
 
         void create_lobby(std::unique_ptr<shared::CreateLobbyRequestMessage> request);
@@ -72,6 +75,6 @@ namespace server
 
     private:
         std::map<std::string, std::unique_ptr<Lobby>> games;
-        MessageInterface *message_interface; // THIS MUST BE UNIQUE
+        MessageInterface *_message_interface; // THIS MUST BE UNIQUE
     };
 } // namespace server

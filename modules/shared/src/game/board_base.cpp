@@ -5,7 +5,8 @@ namespace shared
 {
     size_t Board::countEmptyPiles() const
     {
-        auto count_empty = [](const auto &pile_vector) -> size_t {
+        auto count_empty = [](const auto &pile_vector) -> size_t
+        {
             return std::count_if(pile_vector.begin(), pile_vector.end(),
                                  [](const auto &pile) { return pile.count == 0; });
         };

@@ -11,13 +11,14 @@ namespace server
         initialise_victory_cards(player_count);
 
         for ( auto card_id : kingdom_cards ) {
-            this->kingdom_cards.emplace_back(card_id, 10);
+            this->kingdom_cards.push_back({card_id, 10});
         }
     }
 
     bool ServerBoard::buy(const shared::CardBase::id_t &card_id)
     {
-        auto buy_card = [&](const auto &card_id, auto &pile_vector) -> bool {
+        auto buy_card = [&](const auto &card_id, auto &pile_vector) -> bool
+        {
             return std::any_of(pile_vector.begin(), pile_vector.end(),
                                [card_id](auto &pile)
                                {
@@ -25,8 +26,8 @@ namespace server
                                        return false;
                                    }
 
-                                    --pile.count;
-                                    return true;
+                                   --pile.count;
+                                   return true;
                                });
         };
 

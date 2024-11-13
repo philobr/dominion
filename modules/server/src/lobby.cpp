@@ -15,7 +15,7 @@ void server::Lobby::join(MessageInterface &message_interface, shared::JoinLobbyR
     const shared::PlayerBase::id_t requestor_id = request.player_id;
 
     const bool player_already_in_lobby = std::any_of(players.begin(), players.end(),
-                                              [&](const auto &player_id) { return player_id == requestor_id; });
+                                                     [&](const auto &player_id) { return player_id == requestor_id; });
 
     if ( player_already_in_lobby ) {
         shared::ResultResponseMessage failure_message =

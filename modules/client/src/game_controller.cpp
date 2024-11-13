@@ -70,7 +70,7 @@ namespace client
 
         // send request to join game
         shared::CreateLobbyRequestMessage request("bob", "stuart", inputPlayerName.ToStdString());
-        GameController::_clientNetworkManager->sendRequest(std::make_unique<shared::ClientToServerMessage>(request));
+        GameController::send_request(std::make_unique<shared::ClientToServerMessage>(request));
 
     }
 
@@ -90,6 +90,10 @@ namespace client
 
 
     void GameController::showStatus(const std::string &message) { GameController::_gameWindow->setStatus(message); }
+
+    void GameController::send_request(std::unique_ptr<shared::ServerToClientMessage> req){
+        GameController::_clientNetworkManager->sendRequest(req);
+    }
 
     void GameController::receive_message(std::unique_ptr<shared::ServerToClientMessage> msg){
         if(*msg == shared::CreateLobbyResponseMessage){

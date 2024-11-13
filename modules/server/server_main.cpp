@@ -1,9 +1,4 @@
 #include <iostream>
-#include <server/example.h>
-#include <sockpp/tcp_connector.h>
+#include <server/game/cards/cards.h>
 
-int main()
-{
-    server::hello();
-    return 0;
-}
+int main() { return 0; }

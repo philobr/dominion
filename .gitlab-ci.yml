@@ -7,7 +7,7 @@ format:
   stage: format
   image: ubuntu:22.04
   script:
-    - apt-get update && apt-get install -y clang-format cmake libwxgtk3.0-gtk3-dev
+    - apt-get update && apt-get install -y clang clang-format cmake libwxgtk3.0-gtk3-dev
     - mkdir -p build
     - cd build
     - cmake ..

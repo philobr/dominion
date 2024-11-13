@@ -1,5 +1,5 @@
 add_executable(server_tests
-    lobby_lobbymanager.cpp
+    #lobby_lobbymanager.cpp
  
     game/cards/behaviour.cpp
     game/cards/card.cpp

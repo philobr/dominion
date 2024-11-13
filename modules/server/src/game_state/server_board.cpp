@@ -11,7 +11,7 @@ namespace server
         initialise_victory_cards(player_count);
 
         for ( auto card_id : kingdom_cards ) {
-            this->kingdom_cards.emplace_back(card_id, 10);
+            this->kingdom_cards.push_back({card_id, 10});
         }
     }
 

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <shared/message_types.h>
+#include <server/server_network_manager.h>
 
 namespace server
 {
@@ -14,20 +15,20 @@ namespace server
     class MessageInterface
     {
     public:
-        virtual ~MessageInterface() = default;
+        MessageInterface();
+        ~MessageInterface();
         
         /**
          * @brief gets a response that has to be sent to a client and passes it to the network manager as json string
          */
         // TODO: I think this also needs to take in a player ID
-        static void send_message(std::unique_ptr<shared::ServerToClientMessage> message, const shared::PlayerBase::id_t& player_id) {
-            return;
-        }
+        static void send_message(std::unique_ptr<shared::ServerToClientMessage> message, const shared::PlayerBase::id_t& player_id);
 
         /**
          * @brief Handles the request from the client and passes it on
          */
-        static void handle_request(std::unique_ptr<shared::ClientToServerMessage> request) { return; }
+        static void handle_request(std::unique_ptr<shared::ClientToServerMessage> request);
+    private:
     };
 
     /**

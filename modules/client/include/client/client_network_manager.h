@@ -8,9 +8,11 @@ class ClientNetworkManager
 public:
     static void init(const std::string &host, const uint16_t port);
 
-    static void sendRequest(const std::unique_ptr<shared::ClientToServerMessage> &request);
+    static void sendRequest(const std::unique_ptr<shared::ClientToServerMessage> request);
 
     static void receive_message(const std::string &message);
+
+    static void shutdown();
 
 private:
     static bool connect(const std::string &host, const uint16_t port);

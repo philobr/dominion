@@ -22,10 +22,7 @@ namespace server
         ServerNetworkManager();
         ~ServerNetworkManager();
 
-        static void broadcast_message(const std::string &msg, const std::string &address,
-                                      const std::vector<shared::PlayerBase::id_t> &players,
-                                      const shared::PlayerBase::id_t exclude);
-        static ssize_t send_message(const std::string &msg, const std::string &address);
+        static ssize_t send_message(std::unique_ptr<shared::ServerToClientMessage> message, shared::PlayerBase::id_t& player_id);
 
         static void player_disconnect(std::string player_id);
 

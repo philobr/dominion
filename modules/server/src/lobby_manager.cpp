@@ -8,18 +8,18 @@ void server::LobbyManager::create_lobby(std::unique_ptr<shared::CreateLobbyReque
     // Lobby already exists
     if ( (games.size() > 0) && (games.find(lobby_id) != games.end()) ) {
         shared::ResultResponseMessage failure_message = shared::ResultResponseMessage(
-                lobby_id, uuid_generator::generate_uuid_v4(), false, request.message_id, "Lobby already exists");
-        message_interface->send_message(&failure_message, game_master);
+                lobby_id, uuid_generator::generate_uuid_v4(), false, request->message_id, "Lobby already exists");
+        message_interface->send_message(std::make_unique<shared::ResultResponseMessage>(failure_message), game_master_id);
         return;
     }
 
-    games[lobby_id] = std::make_unique<Lobby>(game_master, lobby_id);
+    games[lobby_id] = std::make_unique<Lobby>(game_master_id, lobby_id);
 
     std::vector<shared::CardBase::id_t> available_cards =
             std::vector<shared::CardBase::id_t>(); // TODO implement available cards
     shared::CreateLobbyResponseMessage create_lobby_message = shared::CreateLobbyResponseMessage(
-            lobby_id, uuid_generator::generate_uuid_v4(), available_cards, request.message_id);
-    message_interface->send_message(&create_lobby_message, game_master);
+            lobby_id, uuid_generator::generate_uuid_v4(), available_cards, request->message_id);
+    message_interface->send_message(std::make_unique<shared::CreateLobbyResponseMessage>(create_lobby_message), game_master_id);
     return;
 };
 
@@ -31,8 +31,8 @@ void server::LobbyManager::join_lobby(std::unique_ptr<shared::JoinLobbyRequestMe
     if ( games.find(lobby_id) == games.end() ) {
         // TODO: Provide game_id and message_id
         shared::ResultResponseMessage failure_message = shared::ResultResponseMessage(
-                lobby_id, uuid_generator::generate_uuid_v4(), false, request.message_id, "Lobby does not exist");
-        message_interface->send_message(&failure_message, player_id);
+                lobby_id, uuid_generator::generate_uuid_v4(), false, request->message_id, "Lobby does not exist");
+        message_interface->send_message(std::make_unique<shared::ResultResponseMessage>(failure_message), player_id);
         return;
     }
 
@@ -46,8 +46,8 @@ void server::LobbyManager::start_game(std::unique_ptr<shared::StartGameRequestMe
     // Lobby does not exist
     if ( games.find(lobby_id) == games.end() ) {
         shared::ResultResponseMessage failure_message = shared::ResultResponseMessage(
-                lobby_id, uuid_generator::generate_uuid_v4(), false, request.message_id, "Lobby does not exist");
-        message_interface->send_message(&failure_message, requestor_id);
+                lobby_id, uuid_generator::generate_uuid_v4(), false, request->message_id, "Lobby does not exist");
+        message_interface->send_message(std::make_unique<shared::ResultResponseMessage>(failure_message), requestor_id);
         return;
     }
 

@@ -67,7 +67,7 @@ bool ClientNetworkManager::connect(const std::string &host, const uint16_t port)
 }
 
 
-void ClientNetworkManager::sendRequest(const std::unique_ptr<shared::ClientToServerMessage> &request)
+void ClientNetworkManager::sendRequest(const std::unique_ptr<shared::ClientToServerMessage> request)
 {
 
     // wait until network is connected (max. 5 seconds)
@@ -131,4 +131,8 @@ void ClientNetworkManager::receive_message(const std::string &message)
         //        GameController::showError("JSON parsing error", "Failed to parse message from server:\n" + message +
         //        "\n" + (std::string) e.what());
     }
+}
+
+void ClientNetworkManager::shutdown(){
+    ClientNetworkManager::_connection->shutdown();
 }

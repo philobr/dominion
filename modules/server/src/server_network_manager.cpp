@@ -166,33 +166,14 @@ namespace server
     }
 
 
-    ssize_t ServerNetworkManager::send_message(const std::string &msg, const std::string &address)
+    ssize_t ServerNetworkManager::send_message(std::unique_ptr<shared::ServerToClientMessage> message, shared::PlayerBase::id_t &player_id)
     {
+        std::string address = _player_id_to_address[player_id];
+        std::string msg  = message->to_json();
+
         std::stringstream ss_msg;
         ss_msg << std::to_string(msg.size()) << ':' << msg; // prepend message length
         return _address_to_socket.at(address).write(ss_msg.str());
-    }
-
-    void ServerNetworkManager::broadcast_message(const std::string &msg, const std::string &address,
-                                                 const std::vector<shared::PlayerBase::id_t> &players,
-                                                 const shared::PlayerBase::id_t exclude)
-    {
-#ifdef PRINT_NETWORK_MESSAGES
-        std::cout << "Broadcasting message : " << msg_string << std::endl;
-#endif
-
-        _rw_lock.lock_shared();
-        // send object_diff to all requested players
-        try {
-            for ( auto &player_id : players ) {
-                if ( player_id != exclude ) {
-                    send_message(msg, _player_id_to_address.at(player_id));
-                }
-            }
-        } catch ( std::exception &e ) {
-            std::cerr << "Encountered error when sending state update: " << e.what() << std::endl;
-        }
-        _rw_lock.unlock_shared();
     }
 
 } // namespace server

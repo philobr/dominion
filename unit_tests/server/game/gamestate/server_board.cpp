@@ -12,6 +12,7 @@
 class ServerBoardTest : public ::testing::Test
 {
 protected:
+    // cppcheck-suppress unusedFunction
     void SetUp() override
     {
         // Initialize common test data
@@ -25,6 +26,7 @@ protected:
         board = std::make_unique<server::ServerBoard>(kingdom_cards, player_count);
     }
 
+    // cppcheck-suppress unusedFunction
     void TearDown() override
     {
         // Clean up if necessary

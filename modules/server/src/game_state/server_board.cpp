@@ -15,18 +15,25 @@ namespace server
         }
     }
 
-    bool ServerBoard::buy(shared::CardBase::id_t card)
+    bool ServerBoard::buy(const shared::CardBase::id_t &card_id)
     {
-        for ( unsigned i = 0; i < this->kingdom_cards.size(); i++ ) {
-            if ( this->kingdom_cards[i].card == card && this->kingdom_cards[i].count > 0 ) {
-                this->kingdom_cards[i].count--;
-                return true;
+        auto buy_card = [&, this](const auto &card_id, auto &pile_vector) -> bool
+        {
+            for ( auto &pile : pile_vector ) {
+                if ( pile.card == card_id && pile.count > 0 ) {
+                    --pile.count;
+                    return true;
+                }
             }
-        }
-        return false;
+
+            return false;
+        };
+
+        return buy_card(card_id, treasure_cards) || buy_card(card_id, victory_cards) ||
+                buy_card(card_id, kingdom_cards);
     }
 
-    void ServerBoard::trash_card(shared::CardBase::id_t card)
+    void ServerBoard::trash_card(const shared::CardBase::id_t &card)
     {
         this->trash.push_back(card);
         return;

@@ -1,7 +1,11 @@
 add_executable(server_tests
     lobby_lobbymanager.cpp
+ 
+    game/cards/behaviour.cpp
+    game/cards/card.cpp
+
     game/gamestate/server_player.cpp
-    game/cards/behaviour_tests.cpp
+    game/gamestate/server_board.cpp
 )
 
 include_gtest(server_tests)

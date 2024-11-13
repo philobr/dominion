@@ -20,7 +20,7 @@ lint:
   stage: lint
   image: ubuntu:22.04
   script:
-    - apt-get update && apt-get install -y cmake cppcheck libwxgtk3.0-gtk3-dev
+    - apt-get update && apt-get install -y clang cmake cppcheck libwxgtk3.0-gtk3-dev
     - mkdir -p build
     - cd build
     - cmake ..
@@ -33,7 +33,7 @@ test:
   stage: test
   image: ubuntu:22.04
   script:
-    - apt-get update && apt-get install -y cmake libwxgtk3.0-gtk-dev
+    - apt-get update && apt-get install -y clang cmake libwxgtk3.0-gtk-dev
     - mkdir -p build
     - cd build
     - cmake ..

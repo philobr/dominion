@@ -2,7 +2,7 @@
 
 #include "../uiElements/image_panel.h"
 
-#include <shared/game_state.h>
+#include <shared/game/game_state/reduced_game_state.h>
 
 #include <wx/wx.h>
 

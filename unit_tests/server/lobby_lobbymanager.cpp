@@ -19,22 +19,21 @@ class MockMessageInterface : public server::MessageInterface
 {
 public:
     // Mock the send_message method, assuming it takes these parameters
-    MOCK_METHOD(void, send_message, (shared::ServerToClientMessage * message, shared::PlayerBase::id_t player_id),
+    MOCK_METHOD(void, send_message, (std::unique_ptr<shared::ServerToClientMessage> message, const shared::PlayerBase::id_t &player_id),
                 (override));
 };
 
 TEST(ServerLibraryTest, CreateLobby)
 {
-    auto is_create_lobby_response_message = [](shared::ServerToClientMessage *message)
+    auto is_create_lobby_response_message = [](std::unique_ptr<shared::ServerToClientMessage> message)
     {
-        const shared::CreateLobbyResponseMessage *create_lobby_response_msg =
-                dynamic_cast<shared::CreateLobbyResponseMessage *>(message);
+        auto create_lobby_response_msg = dynamic_cast<shared::CreateLobbyResponseMessage*>(message.get());
         return create_lobby_response_msg != nullptr;
     };
 
-    auto is_failure_message = [](shared::ServerToClientMessage *message)
+    auto is_failure_message = [](std::unique_ptr<shared::ServerToClientMessage> message)
     {
-        const shared::ResultResponseMessage *result_msg = dynamic_cast<shared::ResultResponseMessage *>(message);
+        const shared::ResultResponseMessage *result_msg = dynamic_cast<shared::ResultResponseMessage *>(message.get());
         return result_msg && !result_msg->success;
     };
 
@@ -43,8 +42,8 @@ TEST(ServerLibraryTest, CreateLobby)
     shared::PlayerBase::id_t player_1 = "Max";
     shared::PlayerBase::id_t player_2 = "Peter";
 
-    shared::CreateLobbyRequestMessage request1("123", "456", player_1);
-    shared::CreateLobbyRequestMessage request2("123", "789", player_2);
+    auto request1 = std::make_unique<shared::CreateLobbyRequestMessage> ("123", "456", player_1);
+    auto request2 = std::make_unique<shared::CreateLobbyRequestMessage> ("123", "789", player_2);
 
     // All expected function calls of send_message
     {
@@ -58,7 +57,7 @@ TEST(ServerLibraryTest, CreateLobby)
     auto games = lobby_manager.get_games();
     ASSERT_EQ(games->empty(), true) << "LobbyManager should be empty at the beginning";
 
-    lobby_manager.create_lobby(request1);
+    lobby_manager.create_lobby(std::move(request1));
 
     ASSERT_EQ(games->size(), 1) << "LobbyManager should contain one lobby after creating one";
     ASSERT_EQ(games->find("123") != games->end(), true) << "Lobby with id 123 should exist";
@@ -66,7 +65,7 @@ TEST(ServerLibraryTest, CreateLobby)
     ASSERT_EQ(games->at("123")->get_players().size(), 1) << "There should be one player in the lobby";
 
     // No new lobby should be created, because game with id 123 already exists
-    lobby_manager.create_lobby(request2);
+    lobby_manager.create_lobby(std::move(request2));
     ASSERT_EQ(games->size(), 1);
     // Check if the lobby with id really 123 exists
     ASSERT_EQ(games->find("123") != games->end(), true);

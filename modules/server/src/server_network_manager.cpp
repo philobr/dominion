@@ -78,7 +78,7 @@ namespace server
             try {
                 int i = 0;
                 std::stringstream ss_msg_length;
-                while ( buffer[i] != ':' && i < count ) {
+                while ( i < count && buffer[i] != ':' ) {
                     ss_msg_length << buffer[i];
                     i++;
                 }
@@ -111,9 +111,8 @@ namespace server
                           << e.what() << std::endl;
             }
         }
-        if ( count <= 0 ) {
-            std::cout << "Read error [" << socket.last_error() << "]: " << socket.last_error_str() << std::endl;
-        }
+
+        std::cout << "Read error [" << socket.last_error() << "]: " << socket.last_error_str() << std::endl;
 
         std::cout << "Closing connection to " << socket.peer_address() << std::endl;
         socket.shutdown();

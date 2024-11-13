@@ -25,7 +25,7 @@ wxThread::ExitCode ClientListener::Entry()
                 // extract length of message in bytes (which is sent at the start of the message, and is separated by a
                 // ":")
                 std::stringstream messageLengthStream;
-                while ( buffer[pos] != ':' && pos < count ) {
+                while ( pos < count && buffer[pos] != ':' ) {
                     messageLengthStream << buffer[pos];
                     pos++;
                 }
@@ -65,11 +65,10 @@ wxThread::ExitCode ClientListener::Entry()
             }
         }
 
-        if ( count <= 0 ) {
-            this->outputError("Network error",
-                              "Read error [" + std::to_string(this->_connection->last_error()) +
-                                      "]: " + this->_connection->last_error_str());
-        }
+        this->outputError("Network error",
+                          "Read error [" + std::to_string(this->_connection->last_error()) +
+                                  "]: " + this->_connection->last_error_str());
+
 
     } catch ( const std::exception &e ) {
         this->outputError("Network error", "Error in listener thread: " + (std::string)e.what());

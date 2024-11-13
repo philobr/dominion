@@ -1,13 +1,16 @@
 
 #pragma once
 
-#include "game_state.h"
+#include <memory>
+#include <vector>
 
+#include <shared/game/cards/card_base.h>
 namespace shared
 {
     class ActionDecision
     {
     public:
+        virtual ~ActionDecision() = default;
         bool operator==(const ActionDecision &other) const;
         bool operator!=(const ActionDecision &other) const;
 
@@ -18,6 +21,7 @@ namespace shared
     class PlayActionCardDecision : public ActionDecision
     {
     public:
+        virtual ~PlayActionCardDecision() = default;
         bool operator==(const PlayActionCardDecision &other) const;
         bool operator!=(const PlayActionCardDecision &other) const;
         PlayActionCardDecision(unsigned int cardIndex) : cardIndex(cardIndex) {}
@@ -57,6 +61,7 @@ namespace shared
         bool operator!=(const ChooseNCardsFromHandDecision &other) const;
         ChooseNCardsFromHandDecision(std::vector<unsigned int> cards) : cards(cards) {}
         // TODO: Where do we enforce that these indices are unique?
+        // why dont we just use CardBase::id_t here? would make life easier in game_state
         std::vector<unsigned int> cards;
 
     protected:

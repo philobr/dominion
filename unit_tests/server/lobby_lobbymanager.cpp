@@ -1,9 +1,9 @@
-#include <gmock/gmock.h>
 #include <server/lobbies.h>
 #include <server/message_interface.h>
-#include <shared/game_state.h>
 #include <shared/message_types.h>
 #include <typeinfo>
+
+#include <gmock/gmock.h>
 #include "gtest/gtest.h"
 
 using ::testing::_;
@@ -62,9 +62,8 @@ TEST(ServerLibraryTest, CreateLobby)
 
     ASSERT_EQ(games->size(), 1) << "LobbyManager should contain one lobby after creating one";
     ASSERT_EQ(games->find("123") != games->end(), true) << "Lobby with id 123 should exist";
-    ASSERT_EQ(games->at("123").get_game_master(), player_1) << "Game master should be player_1";
-    ASSERT_EQ(games->at("123").get_full_game_state().get_players().size(), 1)
-            << "There should be one player in the lobby";
+    ASSERT_EQ(games->at("123")->get_game_master(), player_1) << "Game master should be player_1";
+    ASSERT_EQ(games->at("123")->get_players().size(), 1) << "There should be one player in the lobby";
 
     // No new lobby should be created, because game with id 123 already exists
     lobby_manager.create_lobby(request2);
@@ -72,8 +71,8 @@ TEST(ServerLibraryTest, CreateLobby)
     // Check if the lobby with id really 123 exists
     ASSERT_EQ(games->find("123") != games->end(), true);
     // Check if the game_master didn't change
-    ASSERT_EQ(games->at("123").get_game_master(), player_1);
-    ASSERT_EQ(games->at("123").get_full_game_state().get_players().size(), 1);
+    ASSERT_EQ(games->at("123")->get_game_master(), player_1);
+    ASSERT_EQ(games->at("123")->get_players().size(), 1);
 
     delete message_interface;
 }
@@ -135,20 +134,16 @@ TEST(ServerLibraryTest, JoinLobby)
         EXPECT_CALL(*message_interface, send_message(Truly(is_failure_message), player_5)).Times(1);
     }
     lobby_manager.join_lobby(request2);
-    ASSERT_EQ(games->at("123").get_full_game_state().get_players().size(), 2)
-            << "There should be two players in the lobby";
-    ASSERT_EQ(games->at("123").get_full_game_state().get_players().at(1).getId(), player_2)
-            << "Player 2 should be in the lobby";
+    ASSERT_EQ(games->at("123")->get_players().size(), 2) << "There should be two players in the lobby";
+    ASSERT_EQ(games->at("123")->get_players().at(1), player_2) << "Player 2 should be in the lobby";
 
     // Player 2 should not be added again
     lobby_manager.join_lobby(request2);
-    ASSERT_EQ(games->at("123").get_full_game_state().get_players().size(), 2)
-            << "There should still be two players in the lobby";
+    ASSERT_EQ(games->at("123")->get_players().size(), 2) << "There should still be two players in the lobby";
 
     // Player 3 should not be able to join the lobby with id 123
     lobby_manager.join_lobby(false_request3);
-    ASSERT_EQ(games->at("123").get_full_game_state().get_players().size(), 2)
-            << "There should still be two players in the lobby";
+    ASSERT_EQ(games->at("123")->get_players().size(), 2) << "There should still be two players in the lobby";
 
     // Player 3 should be able to join the lobby with id 123
     lobby_manager.join_lobby(corrected_request3);
@@ -158,8 +153,7 @@ TEST(ServerLibraryTest, JoinLobby)
 
     // Player 5 should not be able to join because the lobby is full
     lobby_manager.join_lobby(request5);
-    ASSERT_EQ(games->at("123").get_full_game_state().get_players().size(), 4)
-            << "There should still be four players in the lobby";
+    ASSERT_EQ(games->at("123")->get_players().size(), 4) << "There should still be four players in the lobby";
     delete message_interface;
 }
 

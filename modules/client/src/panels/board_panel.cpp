@@ -9,8 +9,8 @@ namespace client
     {
         wxGridSizer *sizer = new wxGridSizer(3, 10, 0, 0);
 
-        PilePanel *EstatePanel = new PilePanel(this, shared::Pile("Estate", 10));
-        PilePanel *DuchyPanel = new PilePanel(this, shared::Pile("Duchy", 10));
+        PilePanel *EstatePanel = new PilePanel(this, {"Estate", 10});
+        PilePanel *DuchyPanel = new PilePanel(this, {"Duchy", 10});
 
         sizer->Add(EstatePanel, 0, wxALIGN_CENTER_HORIZONTAL);
         sizer->Add(DuchyPanel, 0, wxALIGN_CENTER_HORIZONTAL);

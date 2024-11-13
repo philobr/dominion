@@ -1,4 +1,8 @@
-#include <iostream>
-#include <server/game/cards/cards.h>
+#include "server/server_network_manager.h"
 
-int main() { return 0; }
+int main()
+{
+    // create server_network_manager, which listens endlessly for new connections
+    server::ServerNetworkManager server;
+    return 0;
+}

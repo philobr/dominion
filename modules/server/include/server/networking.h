@@ -2,9 +2,9 @@
 
 #include <string>
 
-#include "shared/message_types.h"
+#include <shared/message_types.h>
 
-#include "lobbies.h"
+#include <server/lobbies.h>
 
 namespace server
 {

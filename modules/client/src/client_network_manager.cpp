@@ -1,4 +1,4 @@
-#include "client/client_network_manager.h"
+#include <client/client_network_manager.h>
 
 #include <sockpp/exception.h>
 #include "rapidjson/document.h"
@@ -13,7 +13,6 @@ bool ClientNetworkManager::_failedToConnect = false;
 
 void ::ClientNetworkManager::init(const std::string &host, const uint16_t port)
 {
-
     // initialize sockpp framework
     sockpp::socket_initializer sockInit;
 
@@ -27,17 +26,17 @@ void ::ClientNetworkManager::init(const std::string &host, const uint16_t port)
         delete ClientNetworkManager::_connection;
     }
     ClientNetworkManager::_connection = new sockpp::tcp_connector();
-
+    
     // try to connect to server
     if ( ClientNetworkManager::connect(host, port) ) {
-    //        GameController::showStatus("Connected to " + host + ":" + std::to_string(port));
-    ClientNetworkManager::_connectionSuccess = true;
+        //        GameController::showStatus("Connected to " + host + ":" + std::to_string(port));
+        ClientNetworkManager::_connectionSuccess = true;
+        // start network thread
+        ClientListener *clientlistener = new ClientListener(ClientNetworkManager::_connection);
 
-    // start network thread
-    ClientListener *clientlistener = new ClientListener(ClientNetworkManager::_connection);
-    if ( clientlistener->Run() != wxTHREAD_NO_ERROR ) {
-        //            GameController::showError("Connection error", "Could not create client network thread");
-    }
+        if ( clientlistener->Run() != wxTHREAD_NO_ERROR ) {
+            //            GameController::showError("Connection error", "Could not create client network thread");
+        }
 
     } else {
         ClientNetworkManager::_failedToConnect = true;

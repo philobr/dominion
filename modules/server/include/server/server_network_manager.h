@@ -11,9 +11,8 @@
 #include "sockpp/tcp_acceptor.h"
 #include "sockpp/tcp_socket.h"
 
-#include "shared/message_types.h"
-
-#include "lobbies.h"
+#include <shared/message_types.h>
+#include <server/lobbies.h>
 
 namespace server
 {
@@ -38,6 +37,7 @@ namespace server
         inline static ServerNetworkManager *_instance;
         inline static std::shared_mutex _rw_lock;
         inline static sockpp::tcp_acceptor _acc;
+        static MessageInterface _messageInterface;
 
         inline static std::unordered_map<std::string, std::string> _player_id_to_address;
         inline static std::unordered_map<std::string, sockpp::tcp_socket> _address_to_socket;

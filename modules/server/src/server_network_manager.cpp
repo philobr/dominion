@@ -1,9 +1,9 @@
 #include <iostream>
 #include <sstream>
 
-#include "server/server_network_manager.h"
+#include <server/server_network_manager.h>
 
-#include "shared/message_types.h"
+#include <shared/message_types.h>
 
 
 namespace server
@@ -146,7 +146,7 @@ namespace server
             std::cout << "Received valid request : " << msg << std::endl;
 #endif
             // execute client request
-            ImplementedMessageInterface::handle_request(std::move(req));
+            _messageInterface.handle_request(std::move(req));
 
         } catch ( const std::exception &e ) {
             std::cerr << "Failed to execute client request. Content was :\n"

@@ -3,6 +3,7 @@ FROM ubuntu:22.04 AS install
 # Install dependencies
 RUN apt-get update && apt-get install -y \
     clang \
+    clang-format \
     cmake \
     cppcheck \
     git \

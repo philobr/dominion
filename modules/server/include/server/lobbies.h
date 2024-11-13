@@ -30,8 +30,8 @@ namespace server
         /**
          * @brief Add a player to the lobby.
          */
-        void join(MessageInterface &message_interface, shared::JoinLobbyRequestMessage request);
-        void start_game(MessageInterface &message_interface, shared::StartGameRequestMessage request);
+        void join(MessageInterface &message_interface, std::unique_ptr<shared::JoinLobbyRequestMessage> request);
+        void start_game(MessageInterface &message_interface, std::unique_ptr<shared::StartGameRequestMessage> request);
         void receive_action(std::unique_ptr<shared::ActionDecisionMessage> action, MessageInterface &message_interface);
 
         shared::ReducedGameState get_game_state(shared::PlayerBase::id_t player) const;
@@ -61,9 +61,9 @@ namespace server
         LobbyManager(MessageInterface *message_interface) : message_interface(message_interface) {};
         /*message_interface(std::make_unique<MessageInterface>(message_interface))*/
 
-        void create_lobby(shared::CreateLobbyRequestMessage request);
-        void join_lobby(shared::JoinLobbyRequestMessage request);
-        void start_game(shared::StartGameRequestMessage request);
+        void create_lobby(std::unique_ptr<shared::CreateLobbyRequestMessage> request);
+        void join_lobby(std::unique_ptr<shared::JoinLobbyRequestMessage> request);
+        void start_game(std::unique_ptr<shared::StartGameRequestMessage> request);
         void receive_action(std::unique_ptr<shared::ActionDecisionMessage> action, MessageInterface &message_interface);
         shared::ReducedGameState get_game_state(std::string game_id, shared::PlayerBase::id_t player);
         const std::map<std::string, std::unique_ptr<Lobby>> *get_games() { return &games; };

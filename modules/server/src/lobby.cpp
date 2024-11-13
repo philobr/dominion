@@ -10,9 +10,9 @@ server::Lobby::Lobby(shared::PlayerBase::id_t game_master) : game_master(game_ma
     players.push_back(game_master);
 };
 
-void server::Lobby::join(MessageInterface &message_interface, shared::JoinLobbyRequestMessage request)
+void server::Lobby::join(MessageInterface &message_interface, std::unique_ptr<shared::JoinLobbyRequestMessage> request)
 {
-    const shared::PlayerBase::id_t requestor_id = request.player_id;
+    const shared::PlayerBase::id_t requestor_id = request->player_id;
 
     const bool player_already_in_lobby = std::any_of(players.begin(), players.end(),
                                                      [&](const auto &player_id) { return player_id == requestor_id; });
@@ -20,7 +20,7 @@ void server::Lobby::join(MessageInterface &message_interface, shared::JoinLobbyR
     if ( player_already_in_lobby ) {
         shared::ResultResponseMessage failure_message =
                 // TODO: provide game_id and message_id
-                shared::ResultResponseMessage("game_id", "message_id", false, request.message_id,
+                shared::ResultResponseMessage("game_id", "message_id", false, request->message_id,
                                               "Player is already in the lobby");
 
         message_interface.send_message(std::make_unique<shared::ResultResponseMessage>(failure_message), requestor_id);
@@ -30,7 +30,7 @@ void server::Lobby::join(MessageInterface &message_interface, shared::JoinLobbyR
     if ( players.size() >= MAX_PLAYERS ) {
         shared::ResultResponseMessage failure_message =
                 // TODO: provide game_id and message_id
-                shared::ResultResponseMessage("game_id", "message_id", false, request.message_id, "Lobby is full");
+                shared::ResultResponseMessage("game_id", "message_id", false, request->message_id, "Lobby is full");
         message_interface.send_message(std::make_unique<shared::ResultResponseMessage>(failure_message), requestor_id);
         return;
     }
@@ -48,27 +48,27 @@ void server::Lobby::join(MessageInterface &message_interface, shared::JoinLobbyR
 
     // TODO: provide game_id and message_id
     shared::ResultResponseMessage success_message =
-            shared::ResultResponseMessage("game_id", "message_id", true, request.message_id);
+            shared::ResultResponseMessage("game_id", "message_id", true, request->message_id);
 
     message_interface.send_message(std::make_unique<shared::ResultResponseMessage>(success_message), requestor_id);
     return;
 };
 
 // PRE: selected_cards are validated in message parsing
-void server::Lobby::start_game(MessageInterface &message_interface, shared::StartGameRequestMessage request)
+void server::Lobby::start_game(MessageInterface &message_interface, std::unique_ptr<shared::StartGameRequestMessage> request)
 {
     // Check if gamemaster is starting the game
-    shared::PlayerBase::id_t requestor_id = request.player_id;
+    shared::PlayerBase::id_t requestor_id = request->player_id;
     if ( requestor_id != game_master ) {
         shared::ResultResponseMessage failure_message =
                 // TODO: provide game_id and message_id
-                shared::ResultResponseMessage("game_id", "message_id", false, request.message_id,
+                shared::ResultResponseMessage("game_id", "message_id", false, request->message_id,
                                               "Only the game master can start the game");
         message_interface.send_message(std::make_unique<shared::ResultResponseMessage>(failure_message), requestor_id);
         return;
     }
 
-    game_state = std::make_unique<GameState>(request.selected_cards, players);
+    game_state = std::make_unique<GameState>(request->selected_cards, players);
     // set board cards
     // send game state to all players
     for ( const auto &player_id : players ) {

@@ -168,7 +168,8 @@ add_custom_target(check
         modules unit_tests
 
     COMMAND clang-tidy --version
-    COMMAND clang-tidy --verify-config
+    # The `|| true` is necessary if we're running a version of clang-tidy that does not yet support `--verify-config`
+    COMMAND clang-tidy --verify-config || true
     COMMAND clang-tidy --list-checks
     # TODO: Change this to test all subdirectories of modules
     COMMAND find modules/client modules/shared modules/server/src unit_tests -name '*.cpp' -o -name '*.h'

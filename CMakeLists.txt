@@ -26,6 +26,18 @@ else()
     message(FATAL_ERROR "wxWidgets not found; ensure it is installed! (use './install_wx_widgets.sh')")
 endif()
 
+# Parallel builds by default
+
+include(ProcessorCount)
+ProcessorCount(NUM_PROCS)
+
+if (NUM_PROCS EQUAL 0)
+    message(WARNING "Processor count could not be determined; defaulting to 1.")
+    set(NUM_PROCS 1)
+endif()
+
+message(STATUS "Number of processors: ${NUM_PROCS}")
+
 ################################
 # MACROS
 ################################
@@ -160,9 +172,9 @@ add_custom_target(check
     COMMAND clang-tidy --list-checks
     # TODO: Change this to test all subdirectories of modules
     COMMAND find modules/client modules/shared modules/server/src unit_tests -name '*.cpp' -o -name '*.h'
-        | xargs clang-tidy -p ${CMAKE_BINARY_DIR}
+        | xargs run-clang-tidy -p ${CMAKE_BINARY_DIR} -j ${NUM_PROCS} -quiet
             # TODO: Remove this whitelist
-            --line-filter='[{"name":"card.cpp"}]'
+            -line-filter='[{"name":"card.cpp"}]'
 )
 
 # copy assets (images) to binary directory

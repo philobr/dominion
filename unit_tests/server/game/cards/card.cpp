@@ -9,7 +9,7 @@
 
 // Helper function to create a card with specified behaviors
 template <typename CardType>
-std::unique_ptr<CardType> createCard(const std::string &id, shared::CardType type, unsigned int cost)
+std::unique_ptr<CardType> CreateCard(const std::string &id, shared::CardType type, unsigned int cost)
 {
     return std::make_unique<CardType>(id, type, cost);
 }
@@ -30,7 +30,7 @@ TEST(CardServerTest, GainCoinsBehaviourTest)
     // Create a card with GainCoins<3> behavior
     using GainCoinsCard = server::Card<server::behaviour::GainCoins<3>>;
 
-    auto card = createCard<GainCoinsCard>("GainCoinsCard", shared::TREASURE, 5);
+    auto card = CreateCard<GainCoinsCard>("GainCoinsCard", shared::TREASURE, 5);
 
     // Before playing the card
     auto &player = game_state.get_player(affected_player_id);
@@ -58,7 +58,7 @@ TEST(CardServerTest, GainBuysBehaviourTest)
     // Create a card with GainBuys<2> behavior
     using GainBuysCard = server::Card<server::behaviour::GainBuys<2>>;
 
-    auto card = createCard<GainBuysCard>("GainBuysCard", shared::ACTION, 4);
+    auto card = CreateCard<GainBuysCard>("GainBuysCard", shared::ACTION, 4);
 
     // Before playing the card
     auto &player = game_state.get_player(affected_player_id);
@@ -86,7 +86,7 @@ TEST(CardServerTest, GainActionsBehaviourTest)
     // Create a card with GainActions<1> behavior
     using GainActionsCard = server::Card<server::behaviour::GainActions<1>>;
 
-    auto card = createCard<GainActionsCard>("GainActionsCard", shared::ACTION, 3);
+    auto card = CreateCard<GainActionsCard>("GainActionsCard", shared::ACTION, 3);
 
     // Before playing the card
     auto &player = game_state.get_player(affected_player_id);
@@ -114,7 +114,7 @@ TEST(CardServerTest, GainPointsBehaviourTest)
     // Create a card with GainPoints<2> behavior
     using GainPointsCard = server::Card<server::behaviour::GainPoints<2>>;
 
-    auto card = createCard<GainPointsCard>("GainPointsCard", shared::VICTORY, 2);
+    auto card = CreateCard<GainPointsCard>("GainPointsCard", shared::VICTORY, 2);
 
     // Before playing the card
     auto &player = game_state.get_player(affected_player_id);
@@ -143,7 +143,7 @@ TEST(CardServerTest, MultipleBehavioursTest)
     using MultiBehaviourCard = server::Card<server::behaviour::GainActions<1>, server::behaviour::GainBuys<1>,
                                             server::behaviour::GainCoins<1>>;
 
-    auto card = createCard<MultiBehaviourCard>("MultiBehaviourCard", shared::ACTION, 4);
+    auto card = CreateCard<MultiBehaviourCard>("MultiBehaviourCard", shared::ACTION, 4);
 
     auto &player = game_state.get_player(affected_player_id);
 
@@ -179,7 +179,7 @@ TEST(CardServerTest, InvalidBehaviourIndexTest)
     // Create a card with GainCoins<2> behavior
     using GainCoinsCard = server::Card<server::behaviour::GainCoins<2>>;
 
-    auto card = createCard<GainCoinsCard>("GainCoinsCard", shared::TREASURE, 5);
+    auto card = CreateCard<GainCoinsCard>("GainCoinsCard", shared::TREASURE, 5);
 
     auto &player = game_state.get_player(affected_player_id);
 
@@ -217,7 +217,7 @@ TEST(CardServerTest, BehaviourNotDoneYetTest)
     // Create a card with the mock behaviour
     using MockCard = server::Card<MockBehaviourNotDoneYet>;
 
-    auto card = createCard<MockCard>("MockCard", shared::ACTION, 1);
+    auto card = CreateCard<MockCard>("MockCard", shared::ACTION, 1);
 
     // Play the card
     int next_behaviour_idx = card->play(game_state, affected_player_id, 0);
@@ -240,7 +240,7 @@ TEST(CardServerTest, ApplyBehaviourAtIndexTest)
     using MultiBehaviourCard = server::Card<server::behaviour::GainActions<1>, server::behaviour::GainBuys<1>,
                                             server::behaviour::GainCoins<1>>;
 
-    auto card = createCard<MultiBehaviourCard>("MultiBehaviourCard", shared::ACTION, 4);
+    auto card = CreateCard<MultiBehaviourCard>("MultiBehaviourCard", shared::ACTION, 4);
 
     auto &player = game_state.get_player(affected_player_id);
 

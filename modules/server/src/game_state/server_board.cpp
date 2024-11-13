@@ -10,23 +10,25 @@ namespace server
         initialise_treasure_cards(player_count);
         initialise_victory_cards(player_count);
 
+        const auto kingdom_card_pile_size = 10;
         for ( auto card_id : kingdom_cards ) {
-            this->kingdom_cards.push_back({card_id, 10});
+            this->kingdom_cards.push_back({card_id, kingdom_card_pile_size});
         }
     }
 
     bool ServerBoard::buy(const shared::CardBase::id_t &card_id)
     {
+        // helper to search the card in each pile
         auto buy_card = [&](const auto &card_id, auto &pile_vector) -> bool
         {
             return std::any_of(pile_vector.begin(), pile_vector.end(),
-                               [card_id](auto &pile)
+                               [card_id](auto &card_pile)
                                {
-                                   if ( pile.card != card_id || pile.count == 0 ) {
+                                   if ( card_pile.card != card_id || card_pile.count == 0 ) {
                                        return false;
                                    }
 
-                                   --pile.count;
+                                   --card_pile.count;
                                    return true;
                                });
         };

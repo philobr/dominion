@@ -11,7 +11,11 @@ RUN apt-get update && apt-get install -y \
     make \
     vim
 
+# This is necessary since the container is run as root while the dominion directory is owned by the host user
+RUN git config --global --add safe.directory /dominion
+
 WORKDIR /dominion
+
 CMD [ "/bin/bash" ]
 
 FROM install AS build

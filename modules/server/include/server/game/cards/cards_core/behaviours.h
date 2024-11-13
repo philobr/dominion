@@ -25,6 +25,30 @@ namespace server
              */
             virtual bool apply(server::GameState &gamestate, server::Player::id_t &affected_player) = 0;
         };
+
+        template <int coins>
+        struct GainCoins : public BehaviourBase
+        {
+            bool apply(server::GameState &gamestate, server::Player::id_t &affected_player);
+        };
+
+        template <int buys>
+        struct GainBuys : public BehaviourBase
+        {
+            bool apply(server::GameState &gamestate, server::Player::id_t &affected_player);
+        };
+
+        template <int actions>
+        struct GainActions : public BehaviourBase
+        {
+            bool apply(server::GameState &gamestate, server::Player::id_t &affected_player);
+        };
+
+        template <int points>
+        struct GainPoints : public BehaviourBase
+        {
+            bool apply(server::GameState &gamestate, server::Player::id_t &affected_player);
+        };
     } // namespace behaviour
 } // namespace server
 

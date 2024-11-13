@@ -40,6 +40,7 @@ namespace server
 
         // probably nume das
         // either return message, or construct through msg interface
+        // NOT IMPLEMENTED, DONT TEST YET
         void receive_action(std::unique_ptr<shared::ActionDecision> action, MessageInterface &message_interface);
 
         const Player::id_t &get_current_player_id() const { return player_order[current_player_idx]; }
@@ -50,6 +51,7 @@ namespace server
         shared::ReducedGameState get_reduced_state(const Player::id_t &affected_player);
 
         void start_game();
+        // NOT IMPLEMENTED, DONT TEST YET
         void end_game() { return; }
 
         void initialise_players(const std::vector<Player::id_t> &player_ids);

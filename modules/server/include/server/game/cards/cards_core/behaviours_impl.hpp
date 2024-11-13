@@ -9,30 +9,6 @@ namespace server
         static constexpr bool NOT_DONE_YET = false;
 
         template <int coins>
-        struct GainCoins : public BehaviourBase
-        {
-            bool apply(server::GameState &gamestate, server::Player::id_t &affected_player);
-        };
-
-        template <int buys>
-        struct GainBuys : public BehaviourBase
-        {
-            bool apply(server::GameState &gamestate, server::Player::id_t &affected_player);
-        };
-
-        template <int actions>
-        struct GainActions : public BehaviourBase
-        {
-            bool apply(server::GameState &gamestate, server::Player::id_t &affected_player);
-        };
-
-        template <int points>
-        struct GainPoints : public BehaviourBase
-        {
-            bool apply(server::GameState &gamestate, server::Player::id_t &affected_player);
-        };
-
-        template <int coins>
         bool GainCoins<coins>::apply(server::GameState &gamestate, server::Player::id_t &affected_player)
         {
             gamestate.get_player(affected_player).increase_treasure(coins);

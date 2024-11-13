@@ -4,6 +4,7 @@ FROM ubuntu:22.04 AS install
 RUN apt-get update && apt-get install -y \
     clang \
     clang-format \
+    clang-tidy \
     cmake \
     cppcheck \
     git \
@@ -26,6 +27,6 @@ RUN ls -la
 
 RUN mkdir -p build
 WORKDIR /dominion/build
-RUN cmake .. && make
+RUN cmake .. && make -j $(nproc)
 
 CMD [ "./server_exe" ]

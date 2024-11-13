@@ -26,6 +26,18 @@ else()
     message(FATAL_ERROR "wxWidgets not found; ensure it is installed! (use './install_wx_widgets.sh')")
 endif()
 
+# Parallel builds by default
+
+include(ProcessorCount)
+ProcessorCount(NUM_PROCS)
+
+if (NUM_PROCS EQUAL 0)
+    message(WARNING "Processor count could not be determined; defaulting to 1.")
+    set(NUM_PROCS 1)
+endif()
+
+message(STATUS "Number of processors: ${NUM_PROCS}")
+
 ################################
 # MACROS
 ################################
@@ -143,7 +155,6 @@ add_custom_target(format
 )
 
 add_custom_target(check
-    COMMENT "Running cppcheck..."
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
     COMMAND cppcheck --version
     COMMAND cppcheck
@@ -155,8 +166,17 @@ add_custom_target(check
         --max-configs=100
         --suppressions-list=${CMAKE_SOURCE_DIR}/.cppcheck_suppressions
         modules unit_tests
-)
 
+    COMMAND clang-tidy --version
+    # The `|| true` is necessary if we're running a version of clang-tidy that does not yet support `--verify-config`
+    COMMAND clang-tidy --verify-config || true
+    COMMAND clang-tidy --list-checks
+    # TODO: Change this to test all subdirectories of modules
+    COMMAND find modules/client modules/shared modules/server/src unit_tests -name '*.cpp' -o -name '*.h'
+        | xargs run-clang-tidy -p ${CMAKE_BINARY_DIR} -j ${NUM_PROCS} -quiet -fix
+            # TODO: Remove this whitelist
+            -line-filter='[{"name":"card.cpp"}]'
+)
 
 # copy assets (images) to binary directory
 file(INSTALL assets DESTINATION ${CMAKE_BINARY_DIR})

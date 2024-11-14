@@ -30,7 +30,7 @@ namespace shared
     class ClientToServerMessage : public Message
     {
     public:
-        ~ClientToServerMessage() = default;
+        virtual ~ClientToServerMessage() = default;
         virtual std::string to_json() = 0;
         static std::unique_ptr<ClientToServerMessage> from_json(const std::string &json);
 
@@ -43,7 +43,7 @@ namespace shared
         bool operator==(const ClientToServerMessage &other) const;
     };
 
-    class GameStateRequestMessage : public ClientToServerMessage
+    class GameStateRequestMessage final : public ClientToServerMessage
     {
     public:
         GameStateRequestMessage(std::string game_id, std::string message_id, PlayerBase::id_t player_id) :
@@ -54,7 +54,7 @@ namespace shared
         bool operator==(const GameStateRequestMessage &other) const;
     };
 
-    class CreateLobbyRequestMessage : public ClientToServerMessage
+    class CreateLobbyRequestMessage final : public ClientToServerMessage
     {
     public:
         CreateLobbyRequestMessage(std::string game_id, std::string message_id, PlayerBase::id_t player_id) :
@@ -65,7 +65,7 @@ namespace shared
         bool operator==(const CreateLobbyRequestMessage &other) const;
     };
 
-    class JoinLobbyRequestMessage : public ClientToServerMessage
+    class JoinLobbyRequestMessage final : public ClientToServerMessage
     {
     public:
         ~JoinLobbyRequestMessage() = default;
@@ -76,7 +76,7 @@ namespace shared
         bool operator==(const JoinLobbyRequestMessage &other) const;
     };
 
-    class StartGameRequestMessage : public ClientToServerMessage
+    class StartGameRequestMessage final : public ClientToServerMessage
     {
     public:
         ~StartGameRequestMessage() = default;
@@ -92,7 +92,7 @@ namespace shared
         std::vector<CardBase::id_t> selected_cards;
     };
 
-    class ActionDecisionMessage : public ClientToServerMessage
+    class ActionDecisionMessage final : public ClientToServerMessage
     {
     public:
         ~ActionDecisionMessage() = default;
@@ -114,7 +114,7 @@ namespace shared
     class ServerToClientMessage : public Message
     {
     public:
-        ~ServerToClientMessage() = default;
+        virtual ~ServerToClientMessage() = default;
         /**
          * Parse a JSON string representing the message.
          *
@@ -128,7 +128,7 @@ namespace shared
         bool operator==(const ServerToClientMessage &other) const;
     };
 
-    class GameStateMessage : public ServerToClientMessage
+    class GameStateMessage final : public ServerToClientMessage
     {
     public:
         ~GameStateMessage() = default;
@@ -145,7 +145,7 @@ namespace shared
         std::optional<std::string> in_response_to;
     };
 
-    class CreateLobbyResponseMessage : public ServerToClientMessage
+    class CreateLobbyResponseMessage final : public ServerToClientMessage
     {
     public:
         ~CreateLobbyResponseMessage() = default;
@@ -162,7 +162,7 @@ namespace shared
         std::optional<std::string> in_response_to;
     };
 
-    class JoinLobbyBroadcastMessage : public ServerToClientMessage
+    class JoinLobbyBroadcastMessage final : public ServerToClientMessage
     {
     public:
         ~JoinLobbyBroadcastMessage() = default;
@@ -174,7 +174,7 @@ namespace shared
         PlayerBase::id_t player_id;
     };
 
-    class StartGameBroadcastMessage : public ServerToClientMessage
+    class StartGameBroadcastMessage final : public ServerToClientMessage
     {
     public:
         ~StartGameBroadcastMessage() = default;
@@ -185,7 +185,7 @@ namespace shared
         bool operator==(const StartGameBroadcastMessage &other) const;
     };
 
-    class EndGameBroadcastMessage : public ServerToClientMessage
+    class EndGameBroadcastMessage final : public ServerToClientMessage
     {
     public:
         ~EndGameBroadcastMessage() = default;
@@ -197,7 +197,7 @@ namespace shared
         // TODO add player_scores
     };
 
-    class ResultResponseMessage : public ServerToClientMessage
+    class ResultResponseMessage final : public ServerToClientMessage
     {
     public:
         ~ResultResponseMessage() = default;
@@ -215,7 +215,7 @@ namespace shared
         std::optional<std::string> additional_information;
     };
 
-    class ActionOrderMessage : public ServerToClientMessage
+    class ActionOrderMessage final : public ServerToClientMessage
     {
     public:
         ~ActionOrderMessage() = default;

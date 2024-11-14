@@ -11,7 +11,7 @@ namespace client
     public:
         BoardPanel(wxWindow *parent, wxSize size);
 
-        void DrawBoard(shared::Board& Board) {};
+        void DrawBoard(shared::Board &Board){};
 
     private:
     };

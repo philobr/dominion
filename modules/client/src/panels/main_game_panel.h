@@ -24,9 +24,9 @@ namespace client
     private:
         // define key constant layout values
         //
-        BoardPanel* Board;
-        PlayerPanel* Player;
-        EnemyInfoPanel* EnemyInfo;
+        BoardPanel *Board;
+        PlayerPanel *Player;
+        EnemyInfoPanel *EnemyInfo;
 
         const wxSize VerticalBaseSize = wxSize(1024, 100);
         const wxSize PanelSize = wxSize(1024, 1024);

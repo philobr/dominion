@@ -11,7 +11,7 @@ namespace client
     public:
         PlayerPanel(wxWindow *parent, wxSize size);
 
-        void DrawPlayer(shared::ReducedPlayer& Player) {};
+        void DrawPlayer(shared::ReducedPlayer &Player){};
 
     private:
     };

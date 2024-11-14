@@ -21,13 +21,13 @@ namespace server
             (void)gsrm; // TODO: Handle game state request message
         } else if ( CreateLobbyRequestMessage *clrm = dynamic_cast<CreateLobbyRequestMessage *>(message.get()) ) {
             std::unique_ptr<CreateLobbyRequestMessage> clrm_ptr(clrm);
-            this->lobby_manager_.create_lobby(*clrm_ptr.get());
+            this->lobby_manager_.create_lobby(*clrm_ptr);
         } else if ( JoinLobbyRequestMessage *jlrm = dynamic_cast<JoinLobbyRequestMessage *>(message.get()) ) {
             std::unique_ptr<JoinLobbyRequestMessage> jlrm_ptr(jlrm);
-            this->lobby_manager_.join_lobby(*jlrm_ptr.get());
+            this->lobby_manager_.join_lobby(*jlrm_ptr);
         } else if ( StartGameRequestMessage *sgrm = dynamic_cast<StartGameRequestMessage *>(message.get()) ) {
             std::unique_ptr<StartGameRequestMessage> sgrm_ptr(sgrm);
-            this->lobby_manager_.start_game(*sgrm_ptr.get());
+            this->lobby_manager_.start_game(*sgrm_ptr);
         } else if ( ActionDecisionMessage *adm = dynamic_cast<ActionDecisionMessage *>(message.get()) ) {
             std::unique_ptr<ActionDecisionMessage> adm_ptr(adm);
             this->lobby_manager_.receive_action(std::move(adm_ptr), *message_interface);

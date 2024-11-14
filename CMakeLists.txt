@@ -15,11 +15,17 @@ list(APPEND CMAKE_CTEST_ARGUMENTS "--output-on-failure")
 
 add_compile_options(
     -Wall
-    -Wpedantic
     -Werror
+    -Wextra
+    -Wpedantic
+    -Wreturn-type
+    -Wshadow
+    -Wuninitialized
     # In order to be able to use -Werror, we need to suppress this warning
     # TODO: Remove this suppression
     -Wno-deprecated-enum-enum-conversion
+    # TODO: There are some unused parameters in the codebase that we should fix
+    -Wno-unused-parameter
 )
 
 add_subdirectory(${EXTERNAL_LIBS}/sockpp)
@@ -181,11 +187,13 @@ add_custom_target(check
     # The `|| true` is necessary if we're running a version of clang-tidy that does not yet support `--verify-config`
     COMMAND clang-tidy --verify-config || true
     COMMAND clang-tidy --list-checks
-    # TODO: Change this to test all subdirectories of modules
-    COMMAND find modules/client modules/shared modules/server/src unit_tests -name '*.cpp' -o -name '*.h'
-        | xargs run-clang-tidy -p ${CMAKE_BINARY_DIR} -j ${NUM_PROCS} -quiet -fix
-            # TODO: Remove this whitelist
-            -line-filter='[{"name":"card.cpp"}]'
+    COMMAND run-clang-tidy
+        -p ${CMAKE_BINARY_DIR}
+        -j ${NUM_PROCS}
+        -quiet
+        -fix
+        # TODO: Change this to test all subdirectories of modules
+        modules/client modules/shared modules/server/src unit_tests
 )
 
 # copy assets (images) to binary directory

@@ -68,7 +68,7 @@ namespace server
     void GameState::initialise_players(const std::vector<Player::id_t> &player_ids)
     {
         player_order = player_ids; // for now the player order will be the same as the list of player ids
-        for ( auto &id : player_ids ) {
+        for ( const auto &id : player_ids ) {
             if ( player_map.contains(id) ) {
                 throw std::runtime_error("cant add the same player twice!");
             }

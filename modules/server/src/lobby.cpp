@@ -1,6 +1,5 @@
 
-#include <server/lobbies.h>
-#include <shared/game/game_state/reduced_game_state.h>
+#include <server/lobby.h>
 #include <shared/utils/assert.h>
 #include <shared/utils/uuid_generator.h>
 

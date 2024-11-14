@@ -1,6 +1,6 @@
 #include <string>
 
-#include "server/server_network_manager.h"
+#include "server/message_interface.h"
 
 int main()
 {

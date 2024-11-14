@@ -3,19 +3,17 @@
 
 #include <server/server_network_manager.h>
 
-#include <shared/message_types.h>
-
-
 namespace server
 {
     const std::string DEFAULT_SERVER_HOST = "127.0.0.1";
     const unsigned int DEFAULT_PORT = 50505;
 
-    ServerNetworkManager::ServerNetworkManager()
+    ServerNetworkManager::ServerNetworkManager(LobbyManager lobby_manager) : lobby_manager(lobby_manager)
     {
         if ( _instance == nullptr ) {
             _instance = this;
         }
+        this->_messageHandler = std::make_unique<MessageHandler>(MessageHandler(lobby_manager));
         sockpp::socket_initializer socket_initializer; // Required to initialise sockpp
         this->connect(DEFAULT_SERVER_HOST, DEFAULT_PORT);
     }

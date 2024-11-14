@@ -27,7 +27,6 @@ int main()
     ClientNetworkManager network;
     network.init(host, port);
 
-    /*
     //for testing purposes
     input = "";
     std::cout << "Initialized!" << std::endl;
@@ -48,7 +47,6 @@ int main()
         }
         std::cout << input << std::endl;
     }
-    */
 
     network.shutdown();
     std::cout << "Shutdown ClientNetworkManager" << std::endl;

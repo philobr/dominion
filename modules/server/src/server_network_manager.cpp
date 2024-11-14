@@ -8,7 +8,7 @@ namespace server
     const std::string DEFAULT_SERVER_HOST = "127.0.0.1";
     const unsigned int DEFAULT_PORT = 50505;
 
-    std::shared_ptr<BasicNetwork> ServerNetworkManager::basic_network; 
+    BasicNetwork* BasicNetwork::_instance = nullptr;
     std::shared_ptr<MessageInterface> ServerNetworkManager::_messageInterface;
     LobbyManager ServerNetworkManager::_lobby_manager(ServerNetworkManager::_messageInterface);
     std::unique_ptr<MessageHandler> ServerNetworkManager::_messageHandler;
@@ -18,8 +18,7 @@ namespace server
         if ( _instance == nullptr ) {
             _instance = this;
         }
-        basic_network = std::make_shared<BasicNetwork>();
-        _messageInterface = std::make_shared<MessageInterface>(basic_network);
+        _messageInterface = std::make_shared<MessageInterface>();
         _lobby_manager = LobbyManager(_messageInterface);
         _messageHandler = std::make_unique<MessageHandler>(MessageHandler(_lobby_manager));
         sockpp::socket_initializer socket_initializer; // Required to initialise sockpp
@@ -57,7 +56,7 @@ namespace server
                 std::cerr << "Error accepting incoming connection: " << _acc.last_error_str() << std::endl;
             } else {
                 std::string address = sock.peer_address().to_string();
-                basic_network->add_address_to_socket(address, std::move(sock.clone()));
+                BasicNetwork::getInstance()->add_address_to_socket(address, std::move(sock.clone()));
                 // Create a listener thread and transfer the new stream to it.
                 // Incoming messages will be passed to handle_message().
                 std::thread listener(read_loop, std::move(sock), handle_message);
@@ -139,7 +138,7 @@ namespace server
             // check if this is a connection to a new player
             shared::PlayerBase::id_t player_id = req->player_id;
             std::string address = peer_address.to_string();
-            basic_network->add_player_to_address(player_id, address);
+            BasicNetwork::getInstance()->add_player_to_address(player_id, address);
             std::cerr << "Received a message" << std::endl;
 #ifdef PRINT_NETWORK_MESSAGES
             std::cout << "Received valid request : " << msg << std::endl;
@@ -159,10 +158,10 @@ namespace server
     ssize_t ServerNetworkManager::send_message(std::unique_ptr<shared::ServerToClientMessage> message,
                                                shared::PlayerBase::id_t &player_id)
     {
-        std::string address = basic_network->get_address(player_id);
+        std::string address = BasicNetwork::getInstance()->get_address(player_id);
         std::string msg = message->to_json();
 
-        return basic_network->send_message(msg, address);
+        return BasicNetwork::getInstance()->send_message(msg, address);
     }
 
 } // namespace server

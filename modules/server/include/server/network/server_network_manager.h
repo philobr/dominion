@@ -43,9 +43,6 @@ namespace server
         //message interface gets passes to lobby manager etc. for the to send to clients later
         static std::shared_ptr<MessageInterface> _messageInterface;
 
-        //class shared by ServerNetworkManager and MessageInterface for both to be able to write to clients, send funciton is thread safe though
-        static std::shared_ptr<BasicNetwork> basic_network;
-
         //connect new clients
         void connect(const std::string &url, const uint16_t port);
 

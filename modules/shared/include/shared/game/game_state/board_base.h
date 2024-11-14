@@ -56,8 +56,9 @@ namespace shared
 
             this->kingdom_cards.reserve(kingdom_cards.size());
             std::transform(kingdom_cards.begin(), kingdom_cards.end(), std::back_inserter(this->kingdom_cards),
-                           [](const shared::CardBase::id_t &card_id)
-                           { return Pile{card_id, INITIAL_NUM_KINGDOM_CARDS}; });
+                           [](const shared::CardBase::id_t &card_id) {
+                               return Pile{card_id, INITIAL_NUM_KINGDOM_CARDS};
+                           });
 
             initialise_treasure_cards(player_count);
             initialise_victory_cards(player_count);

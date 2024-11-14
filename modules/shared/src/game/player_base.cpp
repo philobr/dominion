@@ -7,7 +7,7 @@ namespace shared
         draw_pile_size(0)
     {}
 
-    PlayerBase::PlayerBase(const PlayerBase &other)  = default;
+    PlayerBase::PlayerBase(const PlayerBase &other) = default;
 
     PlayerBase &PlayerBase::operator=(const PlayerBase &other)
     {

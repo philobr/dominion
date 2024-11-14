@@ -55,7 +55,7 @@ TEST(ServerLibraryTest, CreateLobby)
                 .Times(1); // Error for second time creating lobby
     }
 
-    const auto* games = lobby_manager.get_games();
+    const auto *games = lobby_manager.get_games();
     ASSERT_EQ(games->empty(), true) << "LobbyManager should be empty at the beginning";
 
     lobby_manager.create_lobby(request1);
@@ -111,7 +111,7 @@ TEST(ServerLibraryTest, JoinLobby)
     shared::JoinLobbyRequestMessage request4("123", "103", player_4);
     shared::JoinLobbyRequestMessage request5("123", "104", player_5);
 
-    const auto* games = lobby_manager.get_games();
+    const auto *games = lobby_manager.get_games();
 
     lobby_manager.create_lobby(request1);
 

@@ -92,7 +92,7 @@ namespace client
     void GameController::showStatus(const std::string &message) { GameController::_gameWindow->setStatus(message); }
 
     void GameController::send_request(std::unique_ptr<shared::ServerToClientMessage> req){
-        GameController::_clientNetworkManager->sendRequest(req);
+        GameController::_clientNetworkManager->sendRequest(std::move(req));
     }
 
     void GameController::receive_message(std::unique_ptr<shared::ServerToClientMessage> msg){

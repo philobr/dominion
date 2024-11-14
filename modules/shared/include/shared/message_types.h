@@ -14,7 +14,7 @@ namespace shared
     class Message
     {
     public:
-        ~Message() = default;
+        virtual ~Message() = default;
         virtual std::string to_json() = 0;
 
         std::string game_id;
@@ -30,7 +30,7 @@ namespace shared
     class ClientToServerMessage : public Message
     {
     public:
-        virtual ~ClientToServerMessage() = default;
+        ~ClientToServerMessage() = default;
         virtual std::string to_json() = 0;
         static std::unique_ptr<ClientToServerMessage> from_json(const std::string &json);
 
@@ -114,7 +114,7 @@ namespace shared
     class ServerToClientMessage : public Message
     {
     public:
-        virtual ~ServerToClientMessage() = default;
+        ~ServerToClientMessage() = default;
         /**
          * Parse a JSON string representing the message.
          *

@@ -6,13 +6,13 @@
 // Begin test cases
 TEST(PlayerTest, DefaultConstructor)
 {
-    server::Player player;
+    server::Player player("player");
 
-    EXPECT_EQ(player.getId(), "");
+    EXPECT_EQ(player.getId(), "player");
     EXPECT_EQ(player.getVictoryPoints(), 0);
-    EXPECT_EQ(player.getAvailableActions(), 1);
-    EXPECT_EQ(player.getAvailableBuys(), 1);
-    EXPECT_EQ(player.getAvailableTreasure(), 0);
+    EXPECT_EQ(player.getActions(), 1);
+    EXPECT_EQ(player.getBuys(), 1);
+    EXPECT_EQ(player.getTreasure(), 0);
 
     EXPECT_TRUE(player.get_draw_pile().empty());
     EXPECT_TRUE(player.get_discard_pile().empty());
@@ -32,24 +32,24 @@ TEST(PlayerTest, CopyConstructor)
     server::Player player(player_id);
 
     // initialise some properties
-    player.increase_actions(2);
-    player.increase_buys(1);
-    player.increase_treasure(3);
-    player.add_points(5);
+    player.incActions(2);
+    player.incBuys(1);
+    player.incTreasure(3);
+    player.incPoints(5);
 
     server::Player copy_player(player);
 
     // check that copy has the same properties
     EXPECT_EQ(copy_player.getId(), player.getId());
-    EXPECT_EQ(copy_player.getAvailableActions(), player.getAvailableActions());
-    EXPECT_EQ(copy_player.getAvailableBuys(), player.getAvailableBuys());
-    EXPECT_EQ(copy_player.getAvailableTreasure(), player.getAvailableTreasure());
+    EXPECT_EQ(copy_player.getActions(), player.getActions());
+    EXPECT_EQ(copy_player.getBuys(), player.getBuys());
+    EXPECT_EQ(copy_player.getTreasure(), player.getTreasure());
     EXPECT_EQ(copy_player.getVictoryPoints(), player.getVictoryPoints());
 }
 
 TEST(PlayerTest, PeekDrawPile)
 {
-    server::Player player;
+    server::Player player("player");
     // Set up draw_pile
     std::deque<std::string> draw_pile = {"Card1", "Card2", "Card3", "Card4", "Card5"};
     player.get_draw_pile() = draw_pile;
@@ -68,7 +68,7 @@ TEST(PlayerTest, PeekDrawPile)
 
 TEST(PlayerTest, DrawCards)
 {
-    server::Player player;
+    server::Player player("player");
 
     std::deque<std::string> draw_pile = {"Card1", "Card2", "Card3", "Card4", "Card5"};
     player.get_draw_pile() = draw_pile;
@@ -87,7 +87,7 @@ TEST(PlayerTest, DrawCards)
 
 TEST(PlayerTest, TrashCard)
 {
-    server::Player player;
+    server::Player player("player");
     std::vector<std::string> hand = {"Card1", "Card2", "Card3"};
     player.get_hand_cards() = hand;
 
@@ -100,7 +100,7 @@ TEST(PlayerTest, TrashCard)
 
 TEST(PlayerTest, DiscardCard)
 {
-    server::Player player;
+    server::Player player("player");
     std::vector<std::string> hand = {"Card1", "Card2", "Card3"};
     player.get_hand_cards() = hand;
 
@@ -119,7 +119,7 @@ TEST(PlayerTest, DiscardCard)
 
 TEST(PlayerTest, AddCard)
 {
-    server::Player player;
+    server::Player player("player");
     std::vector<std::string> hand = {"Card1", "Card2"};
     player.get_hand_cards() = hand;
 
@@ -133,7 +133,7 @@ TEST(PlayerTest, AddCard)
 
 TEST(PlayerTest, AddToDiscardPile)
 {
-    server::Player player;
+    server::Player player("player");
 
     // Discard pile is initially empty
     EXPECT_TRUE(player.get_discard_pile().empty());
@@ -148,48 +148,48 @@ TEST(PlayerTest, AddToDiscardPile)
 
 TEST(PlayerTest, IncreaseActions)
 {
-    server::Player player;
-    EXPECT_EQ(player.getAvailableActions(), 1);
+    server::Player player("player");
+    EXPECT_EQ(player.getActions(), 1);
 
-    player.increase_actions(2);
-    EXPECT_EQ(player.getAvailableActions(), 3);
+    player.incActions(2);
+    EXPECT_EQ(player.getActions(), 3);
 }
 
 TEST(PlayerTest, IncreaseBuys)
 {
-    server::Player player;
-    EXPECT_EQ(player.getAvailableBuys(), 1);
+    server::Player player("player");
+    EXPECT_EQ(player.getBuys(), 1);
 
-    player.increase_buys(3);
-    EXPECT_EQ(player.getAvailableBuys(), 4);
+    player.incBuys(3);
+    EXPECT_EQ(player.getBuys(), 4);
 }
 
 TEST(PlayerTest, IncreaseTreasure)
 {
-    server::Player player;
-    EXPECT_EQ(player.getAvailableTreasure(), 0);
+    server::Player player("player");
+    EXPECT_EQ(player.getTreasure(), 0);
 
-    player.increase_treasure(5);
-    EXPECT_EQ(player.getAvailableTreasure(), 5);
+    player.incTreasure(5);
+    EXPECT_EQ(player.getTreasure(), 5);
 }
 
 TEST(PlayerTest, AddPoints)
 {
-    server::Player player;
+    server::Player player("player");
     EXPECT_EQ(player.getVictoryPoints(), 0);
 
-    player.add_points(7);
+    player.incPoints(7);
     EXPECT_EQ(player.getVictoryPoints(), 7);
 }
 
 TEST(PlayerTest, EndTurn)
 {
-    server::Player player;
+    server::Player player("player");
     // Set up some state
-    player.increase_actions(2);
-    player.increase_buys(1);
-    player.increase_treasure(3);
-    player.add_points(5);
+    player.incActions(2);
+    player.incBuys(1);
+    player.incTreasure(3);
+    player.incPoints(5);
     player.get_hand_cards() = {"Card1", "Card2"};
     player.get_played_cards() = {"Card3"};
     player.get_discard_pile() = {"Card4"};
@@ -198,9 +198,9 @@ TEST(PlayerTest, EndTurn)
     player.end_turn();
 
     // Check that values are reset
-    EXPECT_EQ(player.getAvailableActions(), 1);
-    EXPECT_EQ(player.getAvailableBuys(), 1);
-    EXPECT_EQ(player.getAvailableTreasure(), 0);
+    EXPECT_EQ(player.getActions(), 1);
+    EXPECT_EQ(player.getBuys(), 1);
+    EXPECT_EQ(player.getTreasure(), 0);
 
     // hand should contain 5 cards again
     EXPECT_EQ(player.get_hand_cards().size(), 4);

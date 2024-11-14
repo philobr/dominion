@@ -11,28 +11,28 @@ namespace server
         template <int coins>
         bool GainCoins<coins>::apply(server::GameState &gamestate, server::Player::id_t &affected_player)
         {
-            gamestate.get_player(affected_player).increase_treasure(coins);
+            gamestate.get_player(affected_player).incTreasure(coins);
             return DONE;
         }
 
         template <int buys>
         bool GainBuys<buys>::apply(server::GameState &gamestate, server::Player::id_t &affected_player)
         {
-            gamestate.get_player(affected_player).increase_buys(buys);
+            gamestate.get_player(affected_player).incBuys(buys);
             return DONE;
         }
 
         template <int actions>
         bool GainActions<actions>::apply(server::GameState &gamestate, server::Player::id_t &affected_player)
         {
-            gamestate.get_player(affected_player).increase_actions(actions);
+            gamestate.get_player(affected_player).incActions(actions);
             return DONE;
         }
 
         template <int points>
         bool GainPoints<points>::apply(server::GameState &gamestate, server::Player::id_t &affected_player)
         {
-            gamestate.get_player(affected_player).add_points(points);
+            gamestate.get_player(affected_player).incPoints(points);
             return DONE;
         }
 

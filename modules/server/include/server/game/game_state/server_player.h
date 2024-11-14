@@ -19,8 +19,6 @@ namespace server
         using ptr_t = std::unique_ptr<Player>;
         using card_id = shared::CardBase::id_t;
 
-        Player(){}; // TODO: why is this necessary?
-
         /**
          * @brief Creates a new player based on an id.
          * @param id the new players name
@@ -107,10 +105,10 @@ namespace server
         auto &get_current_card() { return currently_playing_card; }
         auto &get_played_cards() { return played_cards; }
 
-        void increase_actions(int n) { available_actions += n; }
-        void increase_buys(int n) { available_buys += n; }
-        void increase_treasure(int n) { available_treasure += n; }
-        void add_points(int n) { victory_points += n; }
+        void incActions(int n) { available_actions += n; }
+        void incBuys(int n) { available_buys += n; }
+        void incTreasure(int n) { available_treasure += n; }
+        void incPoints(int n) { victory_points += n; }
 
     private:
         /**

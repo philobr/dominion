@@ -94,21 +94,18 @@ namespace server
 
     shared::ReducedGameState GameState::get_reduced_state(const Player::id_t &target_player)
     {
-        shared::ReducedPlayer reduced_player;
         std::vector<shared::ReducedEnemy> reduced_enemies;
-
         std::for_each(player_map.begin(), player_map.end(),
                       [&](auto &entry)
                       {
                           auto &[player_id, player_ptr] = entry;
 
-                          if ( player_id == target_player ) {
-                              reduced_player = player_ptr->get_reduced_player();
-                          } else {
+                          if ( player_id != target_player ) {
                               reduced_enemies.push_back(player_ptr->get_reduced_enemy());
                           }
                       });
 
+        shared::ReducedPlayer reduced_player = get_player(target_player).get_reduced_player();
         Player::id_t active_player_id = get_current_player_id();
         shared::Board reduced_board = *board; // TODO:
 

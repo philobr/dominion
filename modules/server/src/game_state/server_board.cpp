@@ -3,18 +3,9 @@
 
 namespace server
 {
-    ServerBoard::ServerBoard(const std::vector<shared::CardBase::id_t> &kingdom_cards, size_t player_count)
-    {
-        _ASSERT_EQ(kingdom_cards.size(), size_t(10), "A Game needs to have exactly 10 kingdom cards!");
-
-        initialise_treasure_cards(player_count);
-        initialise_victory_cards(player_count);
-
-        const auto kingdom_card_pile_size = 10;
-        for ( auto card_id : kingdom_cards ) {
-            this->kingdom_cards.push_back({card_id, kingdom_card_pile_size});
-        }
-    }
+    ServerBoard::ServerBoard(const std::vector<shared::CardBase::id_t> &kingdom_cards, size_t player_count) :
+        shared::Board(kingdom_cards, player_count)
+    {}
 
     bool ServerBoard::buy(const shared::CardBase::id_t &card_id)
     {

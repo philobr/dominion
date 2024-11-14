@@ -24,33 +24,32 @@ namespace shared
 
         virtual ~PlayerBase() = default;
 
+        bool operator==(const PlayerBase &other) const;
+
         id_t getId() const { return player_id; }
 
         unsigned int getVictoryPoints() const { return victory_points; }
-        unsigned int getActions() const { return available_actions; }
-        unsigned int getBuys() const { return available_buys; }
-        unsigned int getTreasure() const { return available_treasure; }
+        unsigned int getActions() const { return actions; }
+        unsigned int getBuys() const { return buys; }
+        unsigned int getTreasure() const { return treasure; }
 
         void decActions();
         void decBuys();
         void decTreasure(const unsigned int dec_amount);
 
     protected:
-        // these are not used, as played cards will be stored in the board
-        // and gained cards are directly added to the discard pile, as per game rules
-        /*
-        std::vector<CardBase::id_t> played_cards;
-        std::vector<CardBase::id_t> gained_cards;
-        */
-
         id_t player_id;
+
         unsigned int victory_points;
-        unsigned int available_actions;
-        unsigned int available_buys;
-        unsigned int available_treasure;
+        unsigned int actions;
+        unsigned int buys;
+        unsigned int treasure;
+
         CardBase::id_t current_card;
-        std::pair<CardBase::id_t, unsigned int> discard_pile;
+        std::pair<CardBase::id_t, unsigned int> discard_pile; // top card id, discard_pile size
         unsigned int draw_pile_size;
+
+        std::vector<CardBase::id_t> played_cards;
     };
 
     class ReducedEnemy : public PlayerBase

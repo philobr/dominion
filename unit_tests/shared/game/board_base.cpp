@@ -15,9 +15,9 @@ public:
     {}
 
     // Expose protected methods as public for testing
-    using shared::Board::countEmptyPiles;
-    using shared::Board::initialise_treasure_cards;
-    using shared::Board::initialise_victory_cards;
+    using shared::Board::getEmptyPilesCount;
+    using shared::Board::initialiseTreasureCards;
+    using shared::Board::initialiseVictoryCards;
     using shared::Board::isGameOver;
 
     // Expose protected member variables for testing access
@@ -35,7 +35,7 @@ TEST(BoardTest, InitialiseVictoryCardsThreePlayers)
     size_t player_count = 3;
     TestableSharedBoard board(kingdom_cards, player_count);
 
-    board.initialise_victory_cards(player_count);
+    board.initialiseVictoryCards(player_count);
 
     ASSERT_EQ(board.getVictoryCards().size(), 4); // Estate, Duchy, Province, Curse
 
@@ -91,7 +91,7 @@ TEST(BoardTest, CountEmptyPiles)
             pile.count = 30;
     }
 
-    size_t empty_piles = board.countEmptyPiles();
+    size_t empty_piles = board.getEmptyPilesCount();
 
     // Empty piles: Village, Mine, Moat, Duchy, Copper => total 5 empty piles
     EXPECT_EQ(empty_piles, 5);
@@ -106,7 +106,7 @@ TEST(BoardTest, IsGameOverProvinceEmpty)
     size_t player_count = 2;
     TestableSharedBoard board(kingdom_cards, player_count);
 
-    board.initialise_victory_cards(player_count);
+    board.initialiseVictoryCards(player_count);
 
     // Set Province count to 0
     auto &victory_piles = board.getVictoryCards();

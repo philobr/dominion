@@ -19,7 +19,7 @@ public:
 
     // Expose private/protected methods for testing
     using server::ServerBoard::buy;
-    using server::ServerBoard::countEmptyPiles;
+    using server::ServerBoard::getEmptyPilesCount;
     using server::ServerBoard::isGameOver;
     using server::ServerBoard::trash_card;
 
@@ -295,7 +295,7 @@ TEST(ServerBoardTest, CountEmptyPiles)
     treasure_piles[2].count = 0; // 3 empty piles
 
     // Count empty piles
-    size_t empty_piles = board.countEmptyPiles();
+    size_t empty_piles = board.getEmptyPilesCount();
     EXPECT_EQ(empty_piles, 3);
 }
 

@@ -3,9 +3,20 @@
 
 namespace server
 {
+    ServerBoard::ptr_t ServerBoard::make(const std::vector<shared::CardBase::id_t> &kingdom_cards, size_t player_count)
+    {
+        _ASSERT_TRUE((2 <= player_count && player_count <= 4), "Players must be in [2, 4]");
+        return ptr_t(new ServerBoard(kingdom_cards, player_count));
+    }
+
     ServerBoard::ServerBoard(const std::vector<shared::CardBase::id_t> &kingdom_cards, size_t player_count) :
         shared::Board(kingdom_cards, player_count)
     {}
+
+    shared::Board::ptr_t ServerBoard::getReduced()
+    {
+        return std::static_pointer_cast<shared::Board>(shared_from_this());
+    }
 
     bool ServerBoard::buy(const shared::CardBase::id_t &card_id)
     {

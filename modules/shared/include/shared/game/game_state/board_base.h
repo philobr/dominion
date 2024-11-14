@@ -16,25 +16,45 @@ namespace shared
     {
     public:
         static constexpr size_t INITIAL_NUM_KINGDOM_CARDS = 10;
+
+        /**
+         * @brief We use a shared_ptr instead of a unique_ptr because the reduced board and the server board have
+         * exactly the same contents. This way we dont copy the contents each time we create a message.
+         */
         using ptr_t = std::shared_ptr<Board>;
 
-        virtual ~Board() = default;
+        /**
+         * @brief Constructs a shared_ptr on a ServerBoard for a given number of players and 10 kingdom cards.
+         *
+         * @param kingdom_cards 10 kingdom cards
+         * @param player_count integer in range [2, 4]
+         */
+        static ptr_t make(const std::vector<shared::CardBase::id_t> &kingdom_cards, size_t player_count);
 
-        // disable copy constructor and assignment
-        Board(const Board &) = delete;
-        Board &operator=(const Board &) = delete;
+        virtual ~Board() = default;
 
         // enable move semantics
         Board(Board &&) noexcept = default;
         Board &operator=(Board &&) noexcept = default;
 
-        static ptr_t make(const std::vector<shared::CardBase::id_t> &kingdom_cards, size_t player_count)
-        {
-            return ptr_t(new Board(kingdom_cards, player_count));
-        }
+        // disable copy constructor and assignment
+        Board(const Board &) = delete;
+        Board &operator=(const Board &) = delete;
 
+        /**
+         * @brief Checks if provinces or at least 3 piles are emptied.
+         *
+         * @return true
+         * @return false
+         */
         bool isGameOver() const;
-        size_t countEmptyPiles() const;
+
+        /**
+         * @brief Counts how many piles are empty overall.
+         *
+         * @return size_t
+         */
+        size_t getEmptyPilesCount() const;
 
     protected:
         std::vector<Pile> victory_cards;
@@ -49,23 +69,27 @@ namespace shared
          * @param kingdom_cards 10 valid kingdom cards
          * @param player_count number of players in [2, 4]
          */
-        Board(const std::vector<shared::CardBase::id_t> &kingdom_cards, size_t player_count)
-        {
-            _ASSERT_EQ(kingdom_cards.size(), 10, "Board must be initialised with 10 kingdom cards!");
-            _ASSERT_TRUE((2 <= player_count && player_count <= 4), "Players must be in [2, 4]");
+        Board(const std::vector<shared::CardBase::id_t> &kingdom_cards, size_t player_count);
 
-            this->kingdom_cards.reserve(kingdom_cards.size());
-            std::transform(kingdom_cards.begin(), kingdom_cards.end(), std::back_inserter(this->kingdom_cards),
-                           [](const shared::CardBase::id_t &card_id) {
-                               return Pile{card_id, INITIAL_NUM_KINGDOM_CARDS};
-                           });
+        /**
+         * @brief Initialised the treasure cards as follows:
+         * copper_count     60 - (7 * player_count)
+         * silver_count     40
+         * gold_count       30
+         *
+         * @param player_count
+         */
+        void initialiseTreasureCards(size_t player_count);
 
-            initialise_treasure_cards(player_count);
-            initialise_victory_cards(player_count);
-        }
-
-        void initialise_treasure_cards(size_t player_count);
-        void initialise_victory_cards(size_t player_count);
+        /**
+         * @brief Initialised the victory cards as follows:
+         * card_count   8   player_count < 3
+         *              12  player_count >= 3
+         * curse_count  (player_count - 1) * 10;
+         *
+         * @param player_count
+         */
+        void initialiseVictoryCards(size_t player_count);
     };
 
 } // namespace shared

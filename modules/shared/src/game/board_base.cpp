@@ -3,7 +3,25 @@
 
 namespace shared
 {
-    size_t Board::countEmptyPiles() const
+    Board::Board(const std::vector<shared::CardBase::id_t> &kingdom_cards, size_t player_count)
+    {
+        _ASSERT_EQ(kingdom_cards.size(), 10, "Board must be initialised with 10 kingdom cards!");
+        _ASSERT_TRUE((2 <= player_count && player_count <= 4), "Players must be in [2, 4]");
+
+        this->kingdom_cards.reserve(kingdom_cards.size());
+        std::transform(kingdom_cards.begin(), kingdom_cards.end(), std::back_inserter(this->kingdom_cards),
+                       [](const shared::CardBase::id_t &card_id) { return Pile{card_id, INITIAL_NUM_KINGDOM_CARDS}; });
+
+        initialiseTreasureCards(player_count);
+        initialiseVictoryCards(player_count);
+    }
+
+    Board::ptr_t Board::make(const std::vector<shared::CardBase::id_t> &kingdom_cards, size_t player_count)
+    {
+        return ptr_t(new Board(kingdom_cards, player_count));
+    }
+
+    size_t Board::getEmptyPilesCount() const
     {
         auto count_empty = [](const auto &pile_vector) -> size_t {
             return std::count_if(pile_vector.begin(), pile_vector.end(),
@@ -15,13 +33,12 @@ namespace shared
 
     bool Board::isGameOver() const
     {
-        // any_of is recommended by linter, dont blame me
         return std::any_of(victory_cards.begin(), victory_cards.end(),
                            [](auto pile) { return pile.card == "Province" && pile.count == 0; }) ||
-                countEmptyPiles() >= 3;
+                getEmptyPilesCount() >= 3;
     }
 
-    void Board::initialise_treasure_cards(size_t player_count)
+    void Board::initialiseTreasureCards(size_t player_count)
     {
         const size_t copper_count = 60 - (7 * player_count);
         const size_t silver_count = 40;
@@ -30,7 +47,7 @@ namespace shared
         treasure_cards = {{"Copper", copper_count}, {"Silver", silver_count}, {"Gold", gold_count}};
     }
 
-    void Board::initialise_victory_cards(size_t player_count)
+    void Board::initialiseVictoryCards(size_t player_count)
     {
         const size_t card_count = (player_count < 3) ? 8 : 12;
         const size_t curse_count = (player_count - 1) * 10;

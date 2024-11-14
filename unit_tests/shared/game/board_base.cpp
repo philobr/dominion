@@ -63,32 +63,35 @@ TEST(BoardTest, CountEmptyPiles)
     // Manually set counts for kingdom cards
     auto &kingdom_piles = board.getKingdomCards();
     for ( auto &pile : kingdom_piles ) {
-        if ( pile.card == "Village" || pile.card == "Smithy" || pile.card == "Market" )
+        if ( pile.card == "Village" || pile.card == "Smithy" || pile.card == "Market" ) {
             pile.count = 0;
-        else
+        } else {
             pile.count = 10; // Default count
+        }
     }
 
     // Manually set counts for victory cards
     auto &victory_piles = board.getVictoryCards();
     for ( auto &pile : victory_piles ) {
-        if ( pile.card == "Estate" )
+        if ( pile.card == "Estate" ) {
             pile.count = 5;
-        else if ( pile.card == "Duchy" )
+        } else if ( pile.card == "Duchy" ) {
             pile.count = 0;
-        else if ( pile.card == "Province" )
+        } else if ( pile.card == "Province" ) {
             pile.count = 3;
+        }
     }
 
     // Manually set counts for treasure cards
     auto &treasure_piles = board.getTreasureCards();
     for ( auto &pile : treasure_piles ) {
-        if ( pile.card == "Copper" )
+        if ( pile.card == "Copper" ) {
             pile.count = 0;
-        else if ( pile.card == "Silver" )
+        } else if ( pile.card == "Silver" ) {
             pile.count = 40;
-        else if ( pile.card == "Gold" )
+        } else if ( pile.card == "Gold" ) {
             pile.count = 30;
+        }
     }
 
     size_t empty_piles = board.getEmptyPilesCount();
@@ -132,10 +135,11 @@ TEST(BoardTest, IsGameOverThreeEmptyPiles)
     // Manually set counts for kingdom cards
     auto &kingdom_piles = board.getKingdomCards();
     for ( auto &pile : kingdom_piles ) {
-        if ( pile.card == "Smithy" || pile.card == "Village" || pile.card == "Market" )
+        if ( pile.card == "Smithy" || pile.card == "Village" || pile.card == "Market" ) {
             pile.count = 0;
-        else
+        } else {
             pile.count = 10; // Default count
+        }
     }
 
     // Manually set counts for victory cards
@@ -147,12 +151,13 @@ TEST(BoardTest, IsGameOverThreeEmptyPiles)
     // Manually set counts for treasure cards
     auto &treasure_piles = board.getTreasureCards();
     for ( auto &pile : treasure_piles ) {
-        if ( pile.card == "Copper" )
+        if ( pile.card == "Copper" ) {
             pile.count = 46;
-        else if ( pile.card == "Silver" )
+        } else if ( pile.card == "Silver" ) {
             pile.count = 40;
-        else if ( pile.card == "Gold" )
+        } else if ( pile.card == "Gold" ) {
             pile.count = 30;
+        }
     }
 
     // Since three kingdom card piles are empty, the game should be over
@@ -183,12 +188,13 @@ TEST(BoardTest, IsGameOverNotOver)
     // Manually set counts for treasure cards
     auto &treasure_piles = board.getTreasureCards();
     for ( auto &pile : treasure_piles ) {
-        if ( pile.card == "Copper" )
+        if ( pile.card == "Copper" ) {
             pile.count = 46;
-        else if ( pile.card == "Silver" )
+        } else if ( pile.card == "Silver" ) {
             pile.count = 40;
-        else if ( pile.card == "Gold" )
+        } else if ( pile.card == "Gold" ) {
             pile.count = 30;
+        }
     }
 
     // No empty province pile and less than three empty piles

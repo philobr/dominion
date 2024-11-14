@@ -1,3 +1,5 @@
+#pragma once
+
 #include <string>
 #include "client/client_listener.h"
 #include "shared/message_types.h"

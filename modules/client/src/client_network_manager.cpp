@@ -2,7 +2,7 @@
 
 #include <sockpp/exception.h>
 #include "rapidjson/document.h"
-
+#include "game_controller.h"
 
 // initialize static members
 sockpp::tcp_connector *ClientNetworkManager::_connection = nullptr;
@@ -123,7 +123,7 @@ void ClientNetworkManager::receive_message(const std::string &message)
         std::unique_ptr<shared::ServerToClientMessage> res = shared::ServerToClientMessage::from_json(message);
         // TODO Process the server message
         std::cout << "Received Messaged: " << message << std::endl;
-        // res->Process();
+        client::GameController::receive_message(std::move(res));
 
     } catch ( std::exception &e ) {
         //        GameController::showError("JSON parsing error", "Failed to parse message from server:\n" + message +

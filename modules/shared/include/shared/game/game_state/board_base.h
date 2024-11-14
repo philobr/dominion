@@ -16,7 +16,6 @@ namespace shared
         std::vector<Pile> victory_cards;
         std::vector<Pile> treasure_cards;
         std::vector<Pile> kingdom_cards;
-        std::vector<shared::CardBase::id_t> played_cards;
         std::vector<shared::CardBase::id_t> trash;
 
         bool isGameOver() const;

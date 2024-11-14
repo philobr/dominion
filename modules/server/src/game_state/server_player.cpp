@@ -20,14 +20,14 @@ namespace server
         discard_pile.clear();
     }
 
-    shared::ReducedPlayer Player::get_reduced_player()
+    shared::ReducedPlayer::ptr_t Player::get_reduced_player()
     {
-        return shared::ReducedPlayer(static_cast<shared::PlayerBase>(*this), hand_cards);
+        return shared::ReducedPlayer::make(static_cast<shared::PlayerBase>(*this), hand_cards);
     }
 
-    shared::ReducedEnemy Player::get_reduced_enemy()
+    shared::ReducedEnemy::ptr_t Player::get_reduced_enemy()
     {
-        return shared::ReducedEnemy(static_cast<shared::PlayerBase>(*this), hand_cards.size());
+        return shared::ReducedEnemy::make(static_cast<shared::PlayerBase>(*this), hand_cards.size());
     }
 
     void Player::reset_values()

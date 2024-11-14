@@ -94,22 +94,21 @@ namespace server
 
     shared::ReducedGameState GameState::get_reduced_state(const Player::id_t &target_player)
     {
-        std::vector<shared::ReducedEnemy> reduced_enemies;
+        std::vector<shared::ReducedEnemy::ptr_t> reduced_enemies;
         std::for_each(player_map.begin(), player_map.end(),
                       [&](auto &entry)
                       {
-                          auto &[player_id, player_ptr] = entry;
-
-                          if ( player_id != target_player ) {
-                              reduced_enemies.push_back(player_ptr->get_reduced_enemy());
+                          if ( auto &[player_id, player_ptr] = entry; player_id != target_player ) {
+                              reduced_enemies.emplace_back(player_ptr->get_reduced_enemy());
                           }
                       });
 
-        shared::ReducedPlayer reduced_player = get_player(target_player).get_reduced_player();
+        auto reduced_player = get_player(target_player).get_reduced_player();
         Player::id_t active_player_id = get_current_player_id();
         shared::Board reduced_board = *board; // TODO:
 
-        return shared::ReducedGameState(reduced_board, reduced_player, reduced_enemies, active_player_id);
+        return shared::ReducedGameState(reduced_board, std::move(reduced_player), std::move(reduced_enemies),
+                                        active_player_id);
     }
 
     bool GameState::try_buy(const Player::id_t player_id, const shared::CardBase::id_t &card)

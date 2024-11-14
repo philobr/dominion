@@ -5,6 +5,7 @@
 
 #include <iomanip> // for operator<<
 #include <iostream> // for operator<<
+#include <memory>
 
 #include <shared/game/cards/card_base.h>
 namespace shared
@@ -55,20 +56,34 @@ namespace shared
     class ReducedEnemy : public PlayerBase
     {
     public:
-        ReducedEnemy(const PlayerBase &player, unsigned int hand) : PlayerBase(player), hand_size(hand) {}
+        using ptr_t = std::unique_ptr<ReducedEnemy>;
+        static ptr_t make(const PlayerBase &player, unsigned int hand_size)
+        {
+            return ptr_t(new ReducedEnemy(player, hand_size));
+        }
 
     protected:
+        ReducedEnemy(const PlayerBase &player, unsigned int hand) : PlayerBase(player), hand_size(hand) {}
+
         unsigned int hand_size;
     };
 
     class ReducedPlayer : public PlayerBase
     {
     public:
-        ReducedPlayer(const PlayerBase &player, std::vector<CardBase::id_t> hand) : PlayerBase(player), hand_cards(hand)
-        {}
+        using ptr_t = std::unique_ptr<ReducedPlayer>;
+
+        static ptr_t make(const PlayerBase &player, std::vector<CardBase::id_t> hand_cards)
+        {
+            return ptr_t(new ReducedPlayer(player, hand_cards));
+        }
 
     protected:
-        std::vector<CardBase::id_t> hand_cards;
+        ReducedPlayer(const PlayerBase &player, const std::vector<CardBase::id_t> &hand_cards) :
+            PlayerBase(player), hand_cards(std::move(hand_cards))
+        {}
+
+        const std::vector<CardBase::id_t> hand_cards;
     };
 
 } // namespace shared

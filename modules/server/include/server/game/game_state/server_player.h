@@ -42,8 +42,8 @@ namespace server
         // bool operator==(const Player &other);
         // friend std::ostream &operator<<(std::ostream &os, const Player &player); // is this overkill (logging, etc)
 
-        shared::ReducedPlayer get_reduced_player();
-        shared::ReducedEnemy get_reduced_enemy();
+        shared::ReducedPlayer::ptr_t get_reduced_player();
+        shared::ReducedEnemy::ptr_t get_reduced_enemy();
 
         /**
          * @brief Peek the min(n, draw_pile_size) top cards from the deck.

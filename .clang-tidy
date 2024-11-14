@@ -1,13 +1,15 @@
 ---
-# TODO: enforce const correctness (misc-const-correctness)
+# Unfortunately, we can't use misc-const-correctness since this is not available in clang-tidy 14.0.0
 Checks: |
   -*,
   cppcoreguidelines-prefer-member-initializer,
-  readability-avoid-return-with-void-value,
+  misc-definitions-in-headers,
+  misc-redundant-expression,
   readability-braces-around-statements,
   readability-duplicate-include,
   readability-identifier-naming,
   readability-implicit-bool-conversion,
+  readability-isolate-declaration,
   readability-named-parameter,
   readability-non-const-parameter,
   readability-redundant-smartptr-get

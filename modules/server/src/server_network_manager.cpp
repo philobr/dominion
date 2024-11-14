@@ -56,7 +56,7 @@ namespace server
                 std::cerr << "Error accepting incoming connection: " << _acc.last_error_str() << std::endl;
             } else {
                 std::string address = sock.peer_address().to_string();
-                BasicNetwork::getInstance()->add_address_to_socket(address, std::move(sock.clone()));
+                BasicNetwork::getInstance()->add_address_to_socket(address, sock.clone());
                 // Create a listener thread and transfer the new stream to it.
                 // Incoming messages will be passed to handle_message().
                 std::thread listener(read_loop, std::move(sock), handle_message);

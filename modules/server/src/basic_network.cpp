@@ -28,7 +28,7 @@ namespace server{
 
         void BasicNetwork::add_address_to_socket(std::string &address, sockpp::tcp_socket socket){
             _rw_lock.lock();
-            _address_to_socket.emplace(address, std::move(socket.clone()));
+            _address_to_socket.emplace(address, socket.clone());
             _rw_lock.unlock();
         }
 

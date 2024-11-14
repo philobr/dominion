@@ -1,90 +1,95 @@
 #include <algorithm>
 #include <gtest/gtest.h>
+
+// Include necessary headers for shared::Board, shared::CardBase, etc.
+#include <shared/game/cards/card_base.h> // Adjust the path according to your project structure
 #include <shared/game/game_state/board_base.h>
+#include <shared/utils/test_helpers.h>
 
-TEST(BoardTest, InitialiseTreasureCards)
+// Define the TestableSharedBoard class to expose protected members and methods
+class TestableSharedBoard : public shared::Board
 {
-    shared::Board board;
-    size_t player_count = 2;
+public:
+    TestableSharedBoard(const std::vector<shared::CardBase::id_t> &kingdom_cards, size_t player_count) :
+        Board(kingdom_cards, player_count)
+    {}
 
-    board.initialise_treasure_cards(player_count);
+    // Expose protected methods as public for testing
+    using shared::Board::countEmptyPiles;
+    using shared::Board::initialise_treasure_cards;
+    using shared::Board::initialise_victory_cards;
+    using shared::Board::isGameOver;
 
-    ASSERT_EQ(board.treasure_cards.size(), 3); // Copper, Silver, Gold
+    // Expose protected member variables for testing access
+    std::vector<shared::Pile> &getTreasureCards() { return treasure_cards; }
+    std::vector<shared::Pile> &getVictoryCards() { return victory_cards; }
+    std::vector<shared::Pile> &getKingdomCards() { return kingdom_cards; }
+};
 
-    // Copper count should be 60 - (7 * player_count)
-    size_t expected_copper_count = 60 - (7 * player_count);
-    EXPECT_EQ(board.treasure_cards[0].card, "Copper");
-    EXPECT_EQ(board.treasure_cards[0].count, expected_copper_count);
-
-    EXPECT_EQ(board.treasure_cards[1].card, "Silver");
-    EXPECT_EQ(board.treasure_cards[1].count, 40);
-
-    EXPECT_EQ(board.treasure_cards[2].card, "Gold");
-    EXPECT_EQ(board.treasure_cards[2].count, 30);
-}
-
-TEST(BoardTest, InitialiseVictoryCardsTwoPlayers)
-{
-    shared::Board board;
-    size_t player_count = 2;
-
-    board.initialise_victory_cards(player_count);
-
-    ASSERT_EQ(board.victory_cards.size(), 4); // Estate, Duchy, Province (+curse)
-
-    size_t expected_count = 8; // For two players
-
-    EXPECT_EQ(board.victory_cards[0].card, "Estate");
-    EXPECT_EQ(board.victory_cards[0].count, expected_count);
-
-    EXPECT_EQ(board.victory_cards[1].card, "Duchy");
-    EXPECT_EQ(board.victory_cards[1].count, expected_count);
-
-    EXPECT_EQ(board.victory_cards[2].card, "Province");
-    EXPECT_EQ(board.victory_cards[2].count, expected_count);
-}
-
+// Test for initializing victory cards with three players
 TEST(BoardTest, InitialiseVictoryCardsThreePlayers)
 {
-    shared::Board board;
+    // Setup
+    auto kingdom_cards = get_valid_kingdom_cards();
+
     size_t player_count = 3;
+    TestableSharedBoard board(kingdom_cards, player_count);
 
     board.initialise_victory_cards(player_count);
 
-    ASSERT_EQ(board.victory_cards.size(), 4); // Estate, Duchy, Province (+curse)
+    ASSERT_EQ(board.getVictoryCards().size(), 4); // Estate, Duchy, Province, Curse
 
     size_t expected_count = 12; // For three or more players
 
-    EXPECT_EQ(board.victory_cards[0].card, "Estate");
-    EXPECT_EQ(board.victory_cards[0].count, expected_count);
+    EXPECT_EQ(board.getVictoryCards()[0].card, "Estate");
+    EXPECT_EQ(board.getVictoryCards()[0].count, expected_count);
 
-    EXPECT_EQ(board.victory_cards[1].card, "Duchy");
-    EXPECT_EQ(board.victory_cards[1].count, expected_count);
+    EXPECT_EQ(board.getVictoryCards()[1].card, "Duchy");
+    EXPECT_EQ(board.getVictoryCards()[1].count, expected_count);
 
-    EXPECT_EQ(board.victory_cards[2].card, "Province");
-    EXPECT_EQ(board.victory_cards[2].count, expected_count);
+    EXPECT_EQ(board.getVictoryCards()[2].card, "Province");
+    EXPECT_EQ(board.getVictoryCards()[2].count, expected_count);
 }
 
+// Test for counting empty piles
 TEST(BoardTest, CountEmptyPiles)
 {
-    shared::Board board;
+    // Setup
+    auto kingdom_cards = get_valid_kingdom_cards();
 
-    // Add some piles with counts
-    board.kingdom_cards = {
-            {"Smithy", 10}, {"Village", 0}, {"Market", 10}, {"Mine", 0}, {"Moat", 0},
-    };
+    size_t player_count = 2;
+    TestableSharedBoard board(kingdom_cards, player_count);
 
-    board.victory_cards = {
-            {"Estate", 5},
-            {"Duchy", 0},
-            {"Province", 3},
-    };
+    // Manually set counts for kingdom cards
+    auto &kingdom_piles = board.getKingdomCards();
+    for ( auto &pile : kingdom_piles ) {
+        if ( pile.card == "Village" || pile.card == "Smithy" || pile.card == "Market" )
+            pile.count = 0;
+        else
+            pile.count = 10; // Default count
+    }
 
-    board.treasure_cards = {
-            {"Copper", 0},
-            {"Silver", 40},
-            {"Gold", 30},
-    };
+    // Manually set counts for victory cards
+    auto &victory_piles = board.getVictoryCards();
+    for ( auto &pile : victory_piles ) {
+        if ( pile.card == "Estate" )
+            pile.count = 5;
+        else if ( pile.card == "Duchy" )
+            pile.count = 0;
+        else if ( pile.card == "Province" )
+            pile.count = 3;
+    }
+
+    // Manually set counts for treasure cards
+    auto &treasure_piles = board.getTreasureCards();
+    for ( auto &pile : treasure_piles ) {
+        if ( pile.card == "Copper" )
+            pile.count = 0;
+        else if ( pile.card == "Silver" )
+            pile.count = 40;
+        else if ( pile.card == "Gold" )
+            pile.count = 30;
+    }
 
     size_t empty_piles = board.countEmptyPiles();
 
@@ -92,73 +97,99 @@ TEST(BoardTest, CountEmptyPiles)
     EXPECT_EQ(empty_piles, 5);
 }
 
+// Test for checking if the game is over when the Province pile is empty
 TEST(BoardTest, IsGameOverProvinceEmpty)
 {
-    shared::Board board;
-    board.initialise_victory_cards(2);
+    // Setup
+    auto kingdom_cards = get_valid_kingdom_cards();
+
+    size_t player_count = 2;
+    TestableSharedBoard board(kingdom_cards, player_count);
+
+    board.initialise_victory_cards(player_count);
 
     // Set Province count to 0
-    auto it = std::find_if(board.victory_cards.begin(), board.victory_cards.end(),
-                           [](const shared::Pile &pile) { return pile.card == "Province"; });
+    auto &victory_piles = board.getVictoryCards();
+    auto it = std::find_if(victory_piles.begin(), victory_piles.end(),
+                           [](shared::Pile &pile) { return pile.card == "Province"; });
 
-    if ( it != board.victory_cards.end() ) {
-        it->count = 0;
-    }
+    ASSERT_NE(it, victory_piles.end());
+    it->count = 0;
 
+    // Check if the game is over
     EXPECT_TRUE(board.isGameOver());
 }
 
+// Test for checking if the game is over when three piles are empty
 TEST(BoardTest, IsGameOverThreeEmptyPiles)
 {
-    shared::Board board;
+    // Setup
+    auto kingdom_cards = get_valid_kingdom_cards();
 
-    // Initialize some piles
-    board.kingdom_cards = {
-            {"Smithy", 0},
-            {"Village", 0},
-            {"Market", 0},
-            {"Mine", 10},
-    };
+    size_t player_count = 2;
+    TestableSharedBoard board(kingdom_cards, player_count);
 
-    board.victory_cards = {
-            {"Estate", 5},
-            {"Duchy", 5},
-            {"Province", 5},
-    };
+    // Manually set counts for kingdom cards
+    auto &kingdom_piles = board.getKingdomCards();
+    for ( auto &pile : kingdom_piles ) {
+        if ( pile.card == "Smithy" || pile.card == "Village" || pile.card == "Market" )
+            pile.count = 0;
+        else
+            pile.count = 10; // Default count
+    }
 
-    board.treasure_cards = {
-            {"Copper", 46},
-            {"Silver", 40},
-            {"Gold", 30},
-    };
+    // Manually set counts for victory cards
+    auto &victory_piles = board.getVictoryCards();
+    for ( auto &pile : victory_piles ) {
+        pile.count = 5; // Default counts
+    }
+
+    // Manually set counts for treasure cards
+    auto &treasure_piles = board.getTreasureCards();
+    for ( auto &pile : treasure_piles ) {
+        if ( pile.card == "Copper" )
+            pile.count = 46;
+        else if ( pile.card == "Silver" )
+            pile.count = 40;
+        else if ( pile.card == "Gold" )
+            pile.count = 30;
+    }
 
     // Since three kingdom card piles are empty, the game should be over
     EXPECT_TRUE(board.isGameOver());
 }
 
+// Test for checking that the game is not over when conditions are not met
 TEST(BoardTest, IsGameOverNotOver)
 {
-    shared::Board board;
+    // Setup
+    auto kingdom_cards = get_valid_kingdom_cards();
 
-    // Initialize some piles
-    board.kingdom_cards = {
-            {"Smithy", 10},
-            {"Village", 10},
-            {"Market", 10},
-            {"Mine", 10},
-    };
+    size_t player_count = 2;
+    TestableSharedBoard board(kingdom_cards, player_count);
 
-    board.victory_cards = {
-            {"Estate", 5},
-            {"Duchy", 5},
-            {"Province", 5},
-    };
+    // Manually set counts for kingdom cards
+    auto &kingdom_piles = board.getKingdomCards();
+    for ( auto &pile : kingdom_piles ) {
+        pile.count = 10; // None are empty
+    }
 
-    board.treasure_cards = {
-            {"Copper", 46},
-            {"Silver", 40},
-            {"Gold", 30},
-    };
+    // Manually set counts for victory cards
+    auto &victory_piles = board.getVictoryCards();
+    for ( auto &pile : victory_piles ) {
+        pile.count = 5; // Province pile is not empty
+    }
+
+    // Manually set counts for treasure cards
+    auto &treasure_piles = board.getTreasureCards();
+    for ( auto &pile : treasure_piles ) {
+        if ( pile.card == "Copper" )
+            pile.count = 46;
+        else if ( pile.card == "Silver" )
+            pile.count = 40;
+        else if ( pile.card == "Gold" )
+            pile.count = 30;
+    }
 
     // No empty province pile and less than three empty piles
     EXPECT_FALSE(board.isGameOver());

@@ -25,27 +25,37 @@ namespace server
         ServerNetworkManager();
         ~ServerNetworkManager();
 
+        //function to send via the BasicNetwork class
         static ssize_t send_message(std::unique_ptr<shared::ServerToClientMessage> message,
                                     shared::PlayerBase::id_t &player_id);
 
     private:
+        //Lobby object to pass received messages to
         static LobbyManager _lobby_manager;
 
+        //Might get removed later, tbd
         inline static ServerNetworkManager *_instance;
+        
         inline static std::shared_mutex _rw_lock;
         inline static sockpp::tcp_acceptor _acc;
-        static std::shared_ptr<MessageHandler> _messageHandler;
+        //messageHandler does the logic for received messages
+        static std::unique_ptr<MessageHandler> _messageHandler;
+        //message interface gets passes to lobby manager etc. for the to send to clients later
         static std::shared_ptr<MessageInterface> _messageInterface;
 
+        //class shared by ServerNetworkManager and MessageInterface for both to be able to write to clients, send funciton is thread safe though
         static std::shared_ptr<BasicNetwork> basic_network;
 
+        //connect new clients
         void connect(const std::string &url, const uint16_t port);
 
+        //function that listens to new clients
         static void listener_loop();
         static void
         read_loop(sockpp::tcp_socket socket,
                   const std::function<void(const std::string &, const sockpp::tcp_socket::addr_t &)> &message_handler);
 
+        //might get removed later
         static void handle_message(const std::string &, const sockpp::tcp_socket::addr_t &);
     };
 } // namespace server

@@ -11,7 +11,7 @@ namespace server
     std::shared_ptr<BasicNetwork> ServerNetworkManager::basic_network; 
     std::shared_ptr<MessageInterface> ServerNetworkManager::_messageInterface;
     LobbyManager ServerNetworkManager::_lobby_manager(ServerNetworkManager::_messageInterface);
-    std::shared_ptr<MessageHandler> ServerNetworkManager::_messageHandler;
+    std::unique_ptr<MessageHandler> ServerNetworkManager::_messageHandler;
 
     ServerNetworkManager::ServerNetworkManager()
         {
@@ -21,7 +21,7 @@ namespace server
         basic_network = std::make_shared<BasicNetwork>();
         _messageInterface = std::make_shared<MessageInterface>(basic_network);
         _lobby_manager = LobbyManager(_messageInterface);
-        _messageHandler = std::make_shared<MessageHandler>(MessageHandler(_lobby_manager));
+        _messageHandler = std::make_unique<MessageHandler>(MessageHandler(_lobby_manager));
         sockpp::socket_initializer socket_initializer; // Required to initialise sockpp
         this->connect(DEFAULT_SERVER_HOST, DEFAULT_PORT);
     }

@@ -13,7 +13,14 @@ enable_testing()
 # always provide test output on failure
 list(APPEND CMAKE_CTEST_ARGUMENTS "--output-on-failure")
 
-add_compile_options(-Wall -Wpedantic)
+add_compile_options(
+    -Wall
+    -Wpedantic
+    -Werror
+    # In order to be able to use -Werror, we need to suppress this warning
+    # TODO: Remove this suppression
+    -Wno-deprecated-enum-enum-conversion
+)
 
 add_subdirectory(${EXTERNAL_LIBS}/sockpp)
 add_subdirectory(${EXTERNAL_LIBS}/googletest) # warnings because of old cmake version, cant supress them

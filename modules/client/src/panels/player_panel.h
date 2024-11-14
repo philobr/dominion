@@ -1,5 +1,7 @@
 #pragma once
 
+#include <shared/game/game_state/player_base.h>
+
 #include <wx/wx.h>
 
 namespace client
@@ -8,6 +10,8 @@ namespace client
     {
     public:
         PlayerPanel(wxWindow *parent, wxSize size);
+
+        void DrawPlayer(shared::ReducedPlayer& Player) {};
 
     private:
     };

@@ -1,6 +1,8 @@
-
 #pragma once
 
+#include <shared/game/game_state/reduced_game_state.h>
+
+#include <vector>
 #include <wx/wx.h>
 
 namespace client
@@ -9,6 +11,8 @@ namespace client
     {
     public:
         EnemyInfoPanel(wxWindow *parent, wxSize size);
+
+        void DrawEnemies(std::vector<shared::ReducedEnemy>& Enemies) {};
 
     private:
     };

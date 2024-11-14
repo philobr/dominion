@@ -32,9 +32,9 @@ namespace server
 
     void Player::reset_values()
     {
-        available_actions = 1;
-        available_buys = 1;
-        available_treasure = 0;
+        actions = 1;
+        buys = 1;
+        treasure = 0;
         victory_points = 0;
     }
 

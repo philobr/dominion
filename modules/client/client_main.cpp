@@ -20,6 +20,7 @@ int main()
         return -1;
     }
 
+
     std::string input, host = "127.0.0.1";
     uint16_t port = 50505;
     std::cout << "Host: 127.0.0.1, Port: 50505" << std::endl;

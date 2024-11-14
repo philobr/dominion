@@ -37,9 +37,8 @@ namespace server
         }
 
         std::cout << "Awaiting connections on port " << port << "..." << std::endl;
-        std::thread listen(listener_loop);
-        ; // start endless loop
-        listen.detach();
+        listener_loop();
+        // start endless loop
     }
 
     void ServerNetworkManager::listener_loop()

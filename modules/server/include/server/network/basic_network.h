@@ -25,10 +25,14 @@ namespace server{
 
         void player_disconnect(std::string player_id);
 
+        static BasicNetwork* getInstance();
+
     private:
         std::unordered_map<std::string, std::string> _player_id_to_address;
         std::unordered_map<std::string, sockpp::tcp_socket> _address_to_socket;
 
         std::shared_mutex _rw_lock;
+
+        static BasicNetwork* _instance;
     };
 } // namespace server

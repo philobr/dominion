@@ -3,6 +3,7 @@
 
 void server::LobbyManager::create_lobby(std::unique_ptr<shared::CreateLobbyRequestMessage> request)
 {
+    std::cerr << "Got in LobbyManager" << std::endl;
     std::string lobby_id = request->game_id;
     shared::PlayerBase::id_t game_master_id = request->player_id;
     // Lobby already exists
@@ -10,7 +11,6 @@ void server::LobbyManager::create_lobby(std::unique_ptr<shared::CreateLobbyReque
         shared::ResultResponseMessage failure_message = shared::ResultResponseMessage(
                 lobby_id, uuid_generator::generate_uuid_v4(), false, request->message_id, "Lobby already exists");
         message_interface->send_message(std::make_unique<shared::ResultResponseMessage>(failure_message), game_master_id);
-        return;
     }
 
     games[lobby_id] = std::make_shared<Lobby>(game_master_id, lobby_id);
@@ -20,6 +20,7 @@ void server::LobbyManager::create_lobby(std::unique_ptr<shared::CreateLobbyReque
     shared::CreateLobbyResponseMessage create_lobby_message = shared::CreateLobbyResponseMessage(
             lobby_id, uuid_generator::generate_uuid_v4(), available_cards, request->message_id);
     message_interface->send_message(std::make_unique<shared::CreateLobbyResponseMessage>(create_lobby_message), game_master_id);
+    std::cerr << "Got done with create lobby" << std::endl;
     return;
 };
 
@@ -33,7 +34,6 @@ void server::LobbyManager::join_lobby(std::unique_ptr<shared::JoinLobbyRequestMe
         shared::ResultResponseMessage failure_message = shared::ResultResponseMessage(
                 lobby_id, uuid_generator::generate_uuid_v4(), false, request->message_id, "Lobby does not exist");
         message_interface->send_message(std::make_unique<shared::ResultResponseMessage>(failure_message), player_id);
-        return;
     }
 
     games.at(lobby_id)->join(*message_interface, std::move(request));

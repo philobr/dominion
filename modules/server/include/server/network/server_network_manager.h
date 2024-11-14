@@ -34,7 +34,7 @@ namespace server
         inline static ServerNetworkManager *_instance;
         inline static std::shared_mutex _rw_lock;
         inline static sockpp::tcp_acceptor _acc;
-        static std::unique_ptr<MessageHandler> _messageHandler;
+        static std::shared_ptr<MessageHandler> _messageHandler;
         static std::shared_ptr<MessageInterface> _messageInterface;
 
         static std::shared_ptr<BasicNetwork> basic_network;

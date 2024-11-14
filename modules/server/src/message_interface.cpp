@@ -12,10 +12,12 @@ namespace server{
      * @brief Initializes the Message interface and thereby starts the server listener loop
      */
     void MessageInterface::send_message(std::unique_ptr<shared::ServerToClientMessage> message, const shared::PlayerBase::id_t& player_id) {
+        std::cerr << "Got into send message" << std::endl;
         std::string address = basic_network.get()->get_address(player_id);
         std::string msg = message->to_json();
 
         basic_network.get()->send_message(msg, address);
+        std::cerr << "Got done with send message" << std::endl;
     }
 
 } // namespace server

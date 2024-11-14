@@ -1,5 +1,6 @@
 #include <client/client_network_manager.h>
 
+#include <sstream>
 #include <sockpp/exception.h>
 #include "rapidjson/document.h"
 #include "game_controller.h"

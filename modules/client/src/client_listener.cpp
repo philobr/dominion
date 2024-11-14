@@ -1,5 +1,6 @@
 
 #include <iostream>
+#include <sstream>
 #include <string>
 
 #include "client/client_listener.h"

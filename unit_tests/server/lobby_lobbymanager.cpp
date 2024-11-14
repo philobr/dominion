@@ -33,11 +33,11 @@ TEST(ServerLibraryTest, CreateLobby)
 
     auto is_failure_message = [](std::unique_ptr<shared::ServerToClientMessage> message)
     {
-        const shared::ResultResponseMessage *result_msg = dynamic_cast<shared::ResultResponseMessage *>(message.get());
-        return result_msg && !result_msg->success;
+        const shared::ResultResponseMessage *result_msg = dynamic_cast<shared::ResultResponseMessage *>(message);
+        return (result_msg != nullptr) && !result_msg->success;
     };
 
-    MockMessageInterface *message_interface = new MockMessageInterface();
+    std::shared_ptr<MockMessageInterface> message_interface = std::make_shared<MockMessageInterface>();
     server::LobbyManager lobby_manager(message_interface);
     shared::PlayerBase::id_t player_1 = "Max";
     shared::PlayerBase::id_t player_2 = "Peter";
@@ -72,8 +72,6 @@ TEST(ServerLibraryTest, CreateLobby)
     // Check if the game_master didn't change
     ASSERT_EQ(games->at("123")->get_game_master(), player_1);
     ASSERT_EQ(games->at("123")->get_players().size(), 1);
-
-    delete message_interface;
 }
 
 TEST(ServerLibraryTest, JoinLobby)
@@ -81,13 +79,13 @@ TEST(ServerLibraryTest, JoinLobby)
     auto is_success_message = [](shared::ServerToClientMessage *message)
     {
         const shared::ResultResponseMessage *result_msg = dynamic_cast<shared::ResultResponseMessage *>(message);
-        return result_msg && result_msg->success;
+        return (result_msg != nullptr) && result_msg->success;
     };
 
     auto is_failure_message = [](shared::ServerToClientMessage *message)
     {
         const shared::ResultResponseMessage *result_msg = dynamic_cast<shared::ResultResponseMessage *>(message);
-        return result_msg && !result_msg->success;
+        return (result_msg != nullptr) && !result_msg->success;
     };
 
     auto is_join_lobby_broadcast_message = [](shared::ServerToClientMessage *message)
@@ -97,7 +95,7 @@ TEST(ServerLibraryTest, JoinLobby)
         return join_lobby_broadcast_msg != nullptr;
     };
 
-    MockMessageInterface *message_interface = new MockMessageInterface();
+    std::shared_ptr<MockMessageInterface> message_interface = std::make_shared<MockMessageInterface>();
     server::LobbyManager lobby_manager(message_interface);
     shared::PlayerBase::id_t player_1 = "Max";
     shared::PlayerBase::id_t player_2 = "Peter";
@@ -153,7 +151,6 @@ TEST(ServerLibraryTest, JoinLobby)
     // Player 5 should not be able to join because the lobby is full
     lobby_manager.join_lobby(request5);
     ASSERT_EQ(games->at("123")->get_players().size(), 4) << "There should still be four players in the lobby";
-    delete message_interface;
 }
 
 TEST(ServerLibraryTest, StartGame)
@@ -161,10 +158,10 @@ TEST(ServerLibraryTest, StartGame)
     auto is_failure_message = [](shared::ServerToClientMessage *message)
     {
         const shared::ResultResponseMessage *result_msg = dynamic_cast<shared::ResultResponseMessage *>(message);
-        return result_msg && !result_msg->success;
+        return (result_msg != nullptr) && !result_msg->success;
     };
 
-    MockMessageInterface *message_interface = new MockMessageInterface();
+    std::shared_ptr<MockMessageInterface> message_interface = std::make_shared<MockMessageInterface>();
     server::LobbyManager lobby_manager(message_interface);
     shared::PlayerBase::id_t player_1 = "Max";
     shared::PlayerBase::id_t player_2 = "Peter";
@@ -202,5 +199,4 @@ TEST(ServerLibraryTest, StartGame)
     lobby_manager.start_game(request4);
     lobby_manager.start_game(request5);
     // TODO: Check if the game started correctly
-    delete message_interface;
 }

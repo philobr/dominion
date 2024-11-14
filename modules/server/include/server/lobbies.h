@@ -62,7 +62,7 @@ namespace server
     public:
         // TODO: The message interface should not be passed to the constructor, but to the methods that need it.
         // Also, the message interface should definitely not be passed as a raw pointer.
-        LobbyManager(MessageInterface *message_interface) : _message_interface(message_interface) {};
+        LobbyManager(std::shared_ptr<MessageInterface> message_interface) : message_interface(message_interface){};
         /*message_interface(std::make_unique<MessageInterface>(message_interface))*/
 
         void create_lobby(std::unique_ptr<shared::CreateLobbyRequestMessage> request);
@@ -74,6 +74,6 @@ namespace server
 
     private:
         std::map<std::string, std::unique_ptr<Lobby>> games;
-        MessageInterface *_message_interface; // THIS MUST BE UNIQUE
+        std::shared_ptr<MessageInterface> message_interface;
     };
 } // namespace server

@@ -5,10 +5,9 @@ stages:
 
 format:
   stage: format
-  image: archlinux:latest # We use arch linux as the base image because it has a recent version of clang-format
+  image: ubuntu:22.04
   script:
-    - pacman -Syu --noconfirm  # Update the package list and upgrade system
-    - pacman -S --noconfirm cmake make git clang wxgtk3  # Install the required packages
+    - apt-get update && apt-get install -y clang clang-format cmake git libwxgtk3.0-gtk3-dev
     - mkdir -p build
     - cd build
     - cmake ..
@@ -19,9 +18,9 @@ format:
 
 lint:
   stage: lint
-  image: gcc:latest
+  image: ubuntu:22.04
   script:
-    - apt-get update && apt-get install -y cmake cppcheck libwxgtk3.2-dev
+    - apt-get update && apt-get install -y clang clang-tidy cmake cppcheck libwxgtk3.0-gtk3-dev
     - mkdir -p build
     - cd build
     - cmake ..
@@ -32,10 +31,9 @@ lint:
 
 test:
   stage: test
-  image: gcc:latest
-  before_script:
-    - apt-get update && apt-get install -y cmake libwxgtk3.2-dev
+  image: ubuntu:22.04
   script:
+    - apt-get update && apt-get install -y clang cmake libwxgtk3.0-gtk3-dev
     - mkdir -p build
     - cd build
     - cmake ..

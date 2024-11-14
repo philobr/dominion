@@ -5,14 +5,6 @@
 
 #include <server/game/cards/cards.h>
 
-// Helper function to create a card with specified behaviors
-template <typename CardType>
-std::unique_ptr<CardType> createCard(const std::string &id, shared::CardType type, unsigned int cost)
-{
-    return std::make_unique<CardType>(id, type, cost);
-}
-
-
 shared::PlayerBase::id_t get_affected_player() { return "player1"; }
 
 server::GameState get_gamestate()

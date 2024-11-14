@@ -14,6 +14,7 @@ namespace shared
     class Message
     {
     public:
+        ~Message() = default;
         virtual std::string to_json() = 0;
 
         std::string game_id;
@@ -29,6 +30,7 @@ namespace shared
     class ClientToServerMessage : public Message
     {
     public:
+        ~ClientToServerMessage() = default;
         virtual std::string to_json() = 0;
         static std::unique_ptr<ClientToServerMessage> from_json(const std::string &json);
 
@@ -47,6 +49,7 @@ namespace shared
         GameStateRequestMessage(std::string game_id, std::string message_id, PlayerBase::id_t player_id) :
             ClientToServerMessage(game_id, message_id, player_id)
         {}
+        ~GameStateRequestMessage() = default;
         std::string to_json() override;
         bool operator==(const GameStateRequestMessage &other) const;
     };
@@ -57,6 +60,7 @@ namespace shared
         CreateLobbyRequestMessage(std::string game_id, std::string message_id, PlayerBase::id_t player_id) :
             ClientToServerMessage(game_id, message_id, player_id)
         {}
+        ~CreateLobbyRequestMessage() = default;
         std::string to_json() override;
         bool operator==(const CreateLobbyRequestMessage &other) const;
     };
@@ -64,6 +68,7 @@ namespace shared
     class JoinLobbyRequestMessage : public ClientToServerMessage
     {
     public:
+        ~JoinLobbyRequestMessage() = default;
         JoinLobbyRequestMessage(std::string game_id, std::string message_id, PlayerBase::id_t player_id) :
             ClientToServerMessage(game_id, message_id, player_id)
         {}
@@ -74,6 +79,7 @@ namespace shared
     class StartGameRequestMessage : public ClientToServerMessage
     {
     public:
+        ~StartGameRequestMessage() = default;
         /**
          * @param selected_cards The 10 cards selected by the game master to play with.
          * The size of the vector must be 10. Otherwise, an assertion will fail.
@@ -89,11 +95,12 @@ namespace shared
     class ActionDecisionMessage : public ClientToServerMessage
     {
     public:
+        ~ActionDecisionMessage() = default;
         ActionDecisionMessage(std::string game_id, std::string message_id, PlayerBase::id_t player_id,
                               std::unique_ptr<ActionDecision> decision,
                               std::optional<std::string> in_response_to = std::nullopt) :
-            ClientToServerMessage(game_id, message_id, player_id), decision(std::move(decision)),
-            in_response_to(in_response_to)
+            ClientToServerMessage(game_id, message_id, player_id),
+            decision(std::move(decision)), in_response_to(in_response_to)
         {}
         std::string to_json() override;
         bool operator==(const ActionDecisionMessage &other) const;
@@ -107,6 +114,7 @@ namespace shared
     class ServerToClientMessage : public Message
     {
     public:
+        ~ServerToClientMessage() = default;
         /**
          * Parse a JSON string representing the message.
          *
@@ -123,9 +131,11 @@ namespace shared
     class GameStateMessage : public ServerToClientMessage
     {
     public:
+        ~GameStateMessage() = default;
         GameStateMessage(std::string game_id, std::string message_id, /* ReducedGameState game_state, */
                          std::optional<std::string> in_response_to = std::nullopt) :
-            ServerToClientMessage(game_id, message_id), /* game_state(game_state), */ in_response_to(in_response_to)
+            ServerToClientMessage(game_id, message_id),
+            /* game_state(game_state), */ in_response_to(in_response_to)
         {}
         std::string to_json() override;
         bool operator==(const GameStateMessage &other) const;
@@ -138,10 +148,12 @@ namespace shared
     class CreateLobbyResponseMessage : public ServerToClientMessage
     {
     public:
+        ~CreateLobbyResponseMessage() = default;
         CreateLobbyResponseMessage(std::string game_id, std::string message_id,
                                    std::vector<CardBase::id_t> available_cards,
                                    std::optional<std::string> in_response_to = std::nullopt) :
-            ServerToClientMessage(game_id, message_id), available_cards(available_cards), in_response_to(in_response_to)
+            ServerToClientMessage(game_id, message_id),
+            available_cards(available_cards), in_response_to(in_response_to)
         {}
         std::string to_json() override;
         bool operator==(const CreateLobbyResponseMessage &other) const;
@@ -153,6 +165,7 @@ namespace shared
     class JoinLobbyBroadcastMessage : public ServerToClientMessage
     {
     public:
+        ~JoinLobbyBroadcastMessage() = default;
         JoinLobbyBroadcastMessage(std::string game_id, std::string message_id, PlayerBase::id_t player_id) :
             ServerToClientMessage(game_id, message_id), player_id(player_id)
         {}
@@ -164,6 +177,7 @@ namespace shared
     class StartGameBroadcastMessage : public ServerToClientMessage
     {
     public:
+        ~StartGameBroadcastMessage() = default;
         StartGameBroadcastMessage(std::string game_id, std::string message_id) :
             ServerToClientMessage(game_id, message_id)
         {}
@@ -174,6 +188,7 @@ namespace shared
     class EndGameBroadcastMessage : public ServerToClientMessage
     {
     public:
+        ~EndGameBroadcastMessage() = default;
         EndGameBroadcastMessage(std::string game_id, std::string message_id) :
             ServerToClientMessage(game_id, message_id)
         {}
@@ -185,11 +200,12 @@ namespace shared
     class ResultResponseMessage : public ServerToClientMessage
     {
     public:
+        ~ResultResponseMessage() = default;
         ResultResponseMessage(std::string game_id, std::string message_id, bool success,
                               std::optional<std::string> in_response_to = std::nullopt,
                               std::optional<std::string> additional_information = std::nullopt) :
-            ServerToClientMessage(game_id, message_id), success(success), in_response_to(in_response_to),
-            additional_information(additional_information)
+            ServerToClientMessage(game_id, message_id),
+            success(success), in_response_to(in_response_to), additional_information(additional_information)
         {}
         std::string to_json() override;
         bool operator==(const ResultResponseMessage &other) const;
@@ -202,9 +218,11 @@ namespace shared
     class ActionOrderMessage : public ServerToClientMessage
     {
     public:
+        ~ActionOrderMessage() = default;
         ActionOrderMessage(std::string game_id, std::string message_id,
                            std::optional<std::string> description = std::nullopt) :
-            ServerToClientMessage(game_id, message_id), description(description)
+            ServerToClientMessage(game_id, message_id),
+            description(description)
         {}
         std::string to_json() override;
         bool operator==(const ActionOrderMessage &other) const;

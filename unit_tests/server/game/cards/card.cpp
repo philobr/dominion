@@ -153,7 +153,7 @@ TEST(CardServerTest, MultipleBehavioursTest)
     EXPECT_EQ(player.getTreasure(), 0);
 
     // Play the card, step through each behaviour
-    int behaviour_idx = 0;
+    unsigned int behaviour_idx = 0;
     while ( behaviour_idx < card->size() ) {
         behaviour_idx = card->play(game_state, affected_player_id, behaviour_idx);
     }

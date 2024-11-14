@@ -2,13 +2,14 @@
 #include <thread>
 #include <wx/wx.h>
 
-#include "client/client_listener.h"
-#include "client/client_network_manager.h"
-#include "shared/message_types.h"
+#include <client/client_listener.h>
+#include <client/client_network_manager.h>
+#include <shared/message_types.h>
+#include <client/dominion.h>
 
 
-// wxIMPLEMENT_APP(client::Dominion);
-
+wxIMPLEMENT_APP(client::Dominion);
+/*
 // Temporary test function
 int main()
 {
@@ -34,7 +35,7 @@ int main()
    shared::CreateLobbyRequestMessage req("Bob", "Stuart", "Kevin");
    std::cout << "Created CreateLobbyRequestMessage" << std::endl;
 
-   network.sendRequest(std::make_unique<shared::CreateLobbyRequestMessage>(req));
+   network.sendRequest(req.to_json());
    std::cout << "Sent Request" << std::endl;
 
    std::cout << "Waiting for exit signal(type exit):" << std::endl;
@@ -42,7 +43,7 @@ int main()
         std::cin >> input;
         if(input == "another"){
             std::cout << "sending another one" << std::endl;
-            network.sendRequest(std::make_unique<shared::CreateLobbyRequestMessage>(req));
+            network.sendRequest(req.to_json());
             input = "";
         }
         std::cout << input << std::endl;
@@ -53,3 +54,4 @@ int main()
 
     return 0;
 }
+*/

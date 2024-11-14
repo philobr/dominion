@@ -1,4 +1,4 @@
-#include "dominion.h"
+#include "client/dominion.h"
 
 #include "game_controller.h"
 #include "windows/game_window.h"

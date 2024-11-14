@@ -8,13 +8,13 @@ namespace server
     const std::string DEFAULT_SERVER_HOST = "127.0.0.1";
     const unsigned int DEFAULT_PORT = 50505;
 
-    BasicNetwork* BasicNetwork::_instance = nullptr;
+    BasicNetwork *BasicNetwork::_instance = nullptr;
     std::shared_ptr<MessageInterface> ServerNetworkManager::_messageInterface;
     LobbyManager ServerNetworkManager::_lobby_manager(ServerNetworkManager::_messageInterface);
     std::unique_ptr<MessageHandler> ServerNetworkManager::_messageHandler;
 
     ServerNetworkManager::ServerNetworkManager()
-        {
+    {
         if ( _instance == nullptr ) {
             _instance = this;
         }

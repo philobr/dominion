@@ -18,8 +18,8 @@ namespace server
     class MessageHandler
     {
     public:
-        MessageHandler(LobbyManager lobby_manager) : lobby_manager_(lobby_manager) {};
-        MessageHandler(const MessageHandler& msg_handler) : lobby_manager_(msg_handler.lobby_manager_) {};
+        MessageHandler(LobbyManager lobby_manager) : lobby_manager_(lobby_manager){};
+        MessageHandler(const MessageHandler &msg_handler) : lobby_manager_(msg_handler.lobby_manager_){};
         ~MessageHandler() = default;
 
         /**

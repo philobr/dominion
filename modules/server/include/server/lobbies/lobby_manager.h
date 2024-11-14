@@ -5,12 +5,13 @@
 #include <memory>
 #include <string>
 
-#include <shared/message_types.h>
 #include <server/lobbies/lobby.h>
 #include <server/network/message_interface.h>
 #include <shared/game/game_state/reduced_game_state.h>
+#include <shared/message_types.h>
 
-namespace server{
+namespace server
+{
     /**
      * @brief The lobby manager contains all the running games / lobbies.
      *

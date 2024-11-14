@@ -50,7 +50,7 @@ namespace server
 
     private:
         shared::ReducedGameState get_reduced_state(const Player::id_t &affected_player);
-        //TODO Probably want to add the message interface as an attribute that gets initialized upon construction
+        // TODO Probably want to add the message interface as an attribute that gets initialized upon construction
 
         void start_game();
         // NOT IMPLEMENTED, DONT TEST YET
@@ -62,7 +62,9 @@ namespace server
         void start_turn();
         void end_turn();
 
-        void switch_player() { /*current_player_idx = ++current_player_idx % player_map.size();*/ }
+        void switch_player()
+        { /*current_player_idx = ++current_player_idx % player_map.size();*/
+        }
         bool is_game_over() const;
 
         bool try_buy(const Player::id_t player_id, const shared::CardBase::id_t &card);

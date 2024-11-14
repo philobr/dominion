@@ -4,8 +4,8 @@
 
 #include <client/client_listener.h>
 #include <client/client_network_manager.h>
-#include <shared/message_types.h>
 #include <client/dominion.h>
+#include <shared/message_types.h>
 
 
 wxIMPLEMENT_APP(client::Dominion);

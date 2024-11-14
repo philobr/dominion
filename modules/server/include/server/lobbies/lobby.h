@@ -4,11 +4,12 @@
 #include <memory>
 #include <string>
 
-#include <shared/message_types.h>
-#include <server/network/message_interface.h>
 #include <server/game/game_state/game_state.h>
+#include <server/network/message_interface.h>
+#include <shared/message_types.h>
 
-namespace server{
+namespace server
+{
     /**
      * @brief A lobby is a container for a game that is being played.
      *

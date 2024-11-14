@@ -19,7 +19,8 @@ class MockMessageInterface : public server::MessageInterface
 {
 public:
     // Mock the send_message method, assuming it takes these parameters
-    MOCK_METHOD(void, send_message, (std::unique_ptr<shared::ServerToClientMessage> message, const shared::PlayerBase::id_t &player_id),
+    MOCK_METHOD(void, send_message,
+                (std::unique_ptr<shared::ServerToClientMessage> message, const shared::PlayerBase::id_t &player_id),
                 (override));
 };
 
@@ -27,7 +28,7 @@ TEST(ServerLibraryTest, CreateLobby)
 {
     auto is_create_lobby_response_message = [](std::unique_ptr<shared::ServerToClientMessage> message)
     {
-        auto create_lobby_response_msg = dynamic_cast<shared::CreateLobbyResponseMessage*>(message.get());
+        auto create_lobby_response_msg = dynamic_cast<shared::CreateLobbyResponseMessage *>(message.get());
         return create_lobby_response_msg != nullptr;
     };
 
@@ -42,8 +43,8 @@ TEST(ServerLibraryTest, CreateLobby)
     shared::PlayerBase::id_t player_1 = "Max";
     shared::PlayerBase::id_t player_2 = "Peter";
 
-    auto request1 = std::make_unique<shared::CreateLobbyRequestMessage> ("123", "456", player_1);
-    auto request2 = std::make_unique<shared::CreateLobbyRequestMessage> ("123", "789", player_2);
+    auto request1 = std::make_unique<shared::CreateLobbyRequestMessage>("123", "456", player_1);
+    auto request2 = std::make_unique<shared::CreateLobbyRequestMessage>("123", "789", player_2);
 
     // All expected function calls of send_message
     {

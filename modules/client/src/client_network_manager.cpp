@@ -1,9 +1,9 @@
 #include <client/client_network_manager.h>
 
-#include <sstream>
 #include <sockpp/exception.h>
-#include "rapidjson/document.h"
+#include <sstream>
 #include "game_controller.h"
+#include "rapidjson/document.h"
 
 // initialize static members
 sockpp::tcp_connector *ClientNetworkManager::_connection = nullptr;

@@ -52,7 +52,8 @@ void server::Lobby::join(MessageInterface &message_interface, std::unique_ptr<sh
 };
 
 // PRE: selected_cards are validated in message parsing
-void server::Lobby::start_game(MessageInterface &message_interface, std::unique_ptr<shared::StartGameRequestMessage> request)
+void server::Lobby::start_game(MessageInterface &message_interface,
+                               std::unique_ptr<shared::StartGameRequestMessage> request)
 {
     // Check if gamemaster is starting the game
     shared::PlayerBase::id_t requestor_id = request->player_id;

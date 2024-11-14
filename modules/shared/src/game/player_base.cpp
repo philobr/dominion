@@ -7,11 +7,7 @@ namespace shared
         draw_pile_size(0)
     {}
 
-    PlayerBase::PlayerBase(const PlayerBase &other) :
-        player_id(other.player_id), victory_points(other.victory_points), available_actions(other.available_actions),
-        available_buys(other.available_buys), available_treasure(other.available_treasure),
-        current_card(other.current_card), discard_pile(other.discard_pile), draw_pile_size(other.draw_pile_size)
-    {}
+    PlayerBase::PlayerBase(const PlayerBase &other)  = default;
 
     PlayerBase &PlayerBase::operator=(const PlayerBase &other)
     {

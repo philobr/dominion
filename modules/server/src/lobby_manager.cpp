@@ -1,4 +1,4 @@
-#include <server/lobby_manager.h>
+#include <server/lobbies/lobby_manager.h>
 #include <shared/utils/uuid_generator.h>
 
 void server::LobbyManager::create_lobby(std::unique_ptr<shared::CreateLobbyRequestMessage> request)
@@ -53,3 +53,8 @@ void server::LobbyManager::start_game(std::unique_ptr<shared::StartGameRequestMe
 
     games.at(lobby_id)->start_game(*message_interface, std::move(request));
 };
+
+void server::LobbyManager::receive_action(std::unique_ptr<shared::ActionDecisionMessage> action){
+    //TODO Implement this
+    return;
+}

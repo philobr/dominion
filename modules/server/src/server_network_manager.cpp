@@ -1,19 +1,27 @@
 #include <iostream>
 #include <sstream>
 
-#include <server/server_network_manager.h>
+#include <server/network/server_network_manager.h>
 
 namespace server
 {
     const std::string DEFAULT_SERVER_HOST = "127.0.0.1";
     const unsigned int DEFAULT_PORT = 50505;
 
-    ServerNetworkManager::ServerNetworkManager(LobbyManager lobby_manager) : lobby_manager(lobby_manager)
-    {
+    std::shared_ptr<BasicNetwork> ServerNetworkManager::basic_network; 
+    std::shared_ptr<MessageInterface> ServerNetworkManager::_messageInterface;
+    LobbyManager ServerNetworkManager::_lobby_manager(ServerNetworkManager::_messageInterface);
+    std::unique_ptr<MessageHandler> ServerNetworkManager::_messageHandler;
+
+    ServerNetworkManager::ServerNetworkManager()
+        {
         if ( _instance == nullptr ) {
             _instance = this;
         }
-        this->_messageHandler = std::make_unique<MessageHandler>(MessageHandler(lobby_manager));
+        basic_network = std::make_shared<BasicNetwork>();
+        _messageInterface = std::make_shared<MessageInterface>(basic_network);
+        _lobby_manager = LobbyManager(_messageInterface);
+        _messageHandler = std::make_unique<MessageHandler>(MessageHandler(_lobby_manager));
         sockpp::socket_initializer socket_initializer; // Required to initialise sockpp
         this->connect(DEFAULT_SERVER_HOST, DEFAULT_PORT);
     }
@@ -48,9 +56,8 @@ namespace server
             if ( !sock ) {
                 std::cerr << "Error accepting incoming connection: " << _acc.last_error_str() << std::endl;
             } else {
-                _rw_lock.lock();
-                _address_to_socket.emplace(sock.peer_address().to_string(), std::move(sock.clone()));
-                _rw_lock.unlock();
+                std::string address = sock.peer_address().to_string();
+                basic_network->add_address_to_socket(address, std::move(sock.clone()));
                 // Create a listener thread and transfer the new stream to it.
                 // Incoming messages will be passed to handle_message().
                 std::thread listener(read_loop, std::move(sock), handle_message);
@@ -131,23 +138,15 @@ namespace server
 
             // check if this is a connection to a new player
             shared::PlayerBase::id_t player_id = req->player_id;
-            _rw_lock.lock_shared();
-            if ( _player_id_to_address.find(player_id) == _player_id_to_address.end() ) {
-                // save connection to this client
-                _rw_lock.unlock_shared();
-                std::cout << "New client with id " << player_id << std::endl;
-                _rw_lock.lock();
-                _player_id_to_address.emplace(player_id, peer_address.to_string());
-                _rw_lock.unlock();
-            } else {
-                _rw_lock.unlock_shared();
-            }
+            std::string address = peer_address.to_string();
+            basic_network->add_player_to_address(player_id, address);
+            std::cout << "Received a message" << std::endl;
 #ifdef PRINT_NETWORK_MESSAGES
             std::cout << "Received valid request : " << msg << std::endl;
 #endif
             // execute client request
             // TODO Change to message handler
-            //_messageInterface->handle_request(std::move(req));
+            _messageHandler->HandleMessage(std::move(req));
 
         } catch ( const std::exception &e ) {
             std::cerr << "Failed to execute client request. Content was :\n"
@@ -156,30 +155,13 @@ namespace server
         }
     }
 
-
-    void ServerNetworkManager::player_disconnect(std::string player_id)
-    {
-        _rw_lock.lock();
-        std::string address = _player_id_to_address[player_id];
-        _player_id_to_address.erase(player_id);
-        _address_to_socket.erase(address);
-        _rw_lock.unlock();
-    }
-
-
     ssize_t ServerNetworkManager::send_message(std::unique_ptr<shared::ServerToClientMessage> message,
-                                               const shared::PlayerBase::id_t &player_id)
+                                               shared::PlayerBase::id_t &player_id)
     {
-        _rw_lock.lock();
-        std::string address = _player_id_to_address[player_id];
+        std::string address = basic_network->get_address(player_id);
         std::string msg = message->to_json();
 
-        std::stringstream ss_msg;
-        ss_msg << std::to_string(msg.size()) << ':' << msg; // prepend message length
-        ssize_t ret = _address_to_socket.at(address).write(ss_msg.str());
-
-        _rw_lock.unlock();
-        return ret;
+        return basic_network->send_message(msg, address);
     }
 
 } // namespace server

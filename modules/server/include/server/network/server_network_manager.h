@@ -11,33 +11,33 @@
 #include "sockpp/tcp_acceptor.h"
 #include "sockpp/tcp_socket.h"
 
-#include <server/message_handler.h>
-#include <server/lobby_manager.h>
+#include <server/network/message_handler.h>
+#include <server/lobbies/lobby_manager.h>
 #include <shared/message_types.h>
+#include <server/network/basic_network.h>
+#include <server/network/message_interface.h>
 
 namespace server
 {
     class ServerNetworkManager
     {
     public:
-        ServerNetworkManager(LobbyManager lobby_manager);
+        ServerNetworkManager();
         ~ServerNetworkManager();
 
         static ssize_t send_message(std::unique_ptr<shared::ServerToClientMessage> message,
-                                    const shared::PlayerBase::id_t &player_id);
-
-        static void player_disconnect(std::string player_id);
+                                    shared::PlayerBase::id_t &player_id);
 
     private:
-        LobbyManager lobby_manager;
+        static LobbyManager _lobby_manager;
 
         inline static ServerNetworkManager *_instance;
         inline static std::shared_mutex _rw_lock;
         inline static sockpp::tcp_acceptor _acc;
-        inline static std::unique_ptr<MessageHandler> _messageHandler;
+        static std::unique_ptr<MessageHandler> _messageHandler;
+        static std::shared_ptr<MessageInterface> _messageInterface;
 
-        inline static std::unordered_map<std::string, std::string> _player_id_to_address;
-        inline static std::unordered_map<std::string, sockpp::tcp_socket> _address_to_socket;
+        static std::shared_ptr<BasicNetwork> basic_network;
 
         void connect(const std::string &url, const uint16_t port);
 

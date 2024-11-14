@@ -5,7 +5,7 @@
 #include <string>
 
 #include <shared/message_types.h>
-#include <server/message_interface.h>
+#include <server/network/message_interface.h>
 #include <server/game/game_state/game_state.h>
 
 namespace server{

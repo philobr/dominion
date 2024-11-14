@@ -3,7 +3,7 @@
 #include <memory>
 #include <mutex>
 
-#include <server/lobby_manager.h>
+#include <server/lobbies/lobby_manager.h>
 #include <shared/message_types.h>
 
 namespace server
@@ -18,8 +18,9 @@ namespace server
     class MessageHandler
     {
     public:
-        MessageHandler(LobbyManager lobby_manager) : lobby_manager_(lobby_manager) {}
-        ~MessageHandler() {}
+        MessageHandler(LobbyManager lobby_manager) : lobby_manager_(lobby_manager) {};
+        MessageHandler(const MessageHandler& msg_handler) : lobby_manager_(msg_handler.lobby_manager_) {};
+        ~MessageHandler() = default;
 
         /**
          * @brief Handle a JSON message

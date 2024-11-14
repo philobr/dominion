@@ -1,7 +1,7 @@
 #pragma once
 
-#include <server/server_network_manager.h>
 #include <shared/message_types.h>
+#include <server/network/basic_network.h>
 
 namespace server{
     /**
@@ -13,10 +13,8 @@ namespace server{
     class MessageInterface
     {
     public:
-        MessageInterface();
+        MessageInterface(std::shared_ptr<BasicNetwork> basic_network);
         ~MessageInterface();
-
-        static void init();
         /**
          * @brief gets a response that has to be sent to a client and passes it to the network manager as json string
          */
@@ -25,7 +23,6 @@ namespace server{
                                  const shared::PlayerBase::id_t &player_id);
 
     private:
-        static std::unique_ptr<ServerNetworkManager> _network_manager;
-        static std::shared_ptr<MessageInterface> _message_interface;
+        static std::shared_ptr<BasicNetwork> basic_network;
     };
 } // namespace server

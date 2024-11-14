@@ -1,7 +1,7 @@
 
 #include <memory>
 
-#include <server/message_handler.h>
+#include <server/network/message_handler.h>
 #include <shared/utils/assert.h>
 
 using namespace shared;

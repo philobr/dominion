@@ -1,23 +1,21 @@
-#include <server/message_interface.h>
-#include <server/lobby_manager.h>
+#include <server/network/message_interface.h>
 
 namespace server{
-    MessageInterface::MessageInterface(){
-        if(MessageInterface::_message_interface == nullptr){
-            MessageInterface::_message_interface = std::make_shared<MessageInterface>(this);
+    std::shared_ptr<BasicNetwork> MessageInterface::basic_network = nullptr;
+    MessageInterface::MessageInterface(std::shared_ptr<BasicNetwork> _basic_network)  {
+        if(basic_network == nullptr){
+            basic_network = _basic_network;
         }
     }
-    std::unique_ptr<ServerNetworkManager> MessageInterface::_network_manager = nullptr;
+    MessageInterface::~MessageInterface() = default;
     /**
      * @brief Initializes the Message interface and thereby starts the server listener loop
      */
-    void MessageInterface::init(){
-        LobbyManager lobby_manager(MessageInterface::_message_interface);
-        ServerNetworkManager server(lobby_manager);
-        MessageInterface::_network_manager = std::make_unique<ServerNetworkManager>(server);
-    }
     void MessageInterface::send_message(std::unique_ptr<shared::ServerToClientMessage> message, const shared::PlayerBase::id_t& player_id) {
-        _network_manager->send_message(std::move(message), player_id);
+        std::string address = basic_network.get()->get_address(player_id);
+        std::string msg = message->to_json();
+
+        basic_network.get()->send_message(msg, address);
     }
 
 } // namespace server

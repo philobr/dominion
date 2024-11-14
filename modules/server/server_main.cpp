@@ -1,12 +1,11 @@
 #include <string>
 
-#include "server/message_interface.h"
+#include "server/network/server_network_manager.h"
 
 int main()
 {
     // create a message interface, which creates a server network manager, which listens endlessly for connections
-    server::MessageInterface interface;
-    interface.init();
+    server::ServerNetworkManager server;
 
 /*
     // Purely for testing purposes

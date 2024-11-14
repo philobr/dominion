@@ -8,6 +8,7 @@ int main()
     server::MessageInterface interface;
     interface.init();
 
+/*
     // Purely for testing purposes
     std::string input;
     std::string player_id("Kevin");
@@ -20,5 +21,8 @@ int main()
     while ( input != "exit" ) {
         std::cin >> input;
     }
+*/
+    //endless loop to keep the server running
+    while(true);
     return 0;
 }

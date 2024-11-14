@@ -46,7 +46,7 @@ TEST(ServerBoardTest, ConstructorInitializesPiles)
     TestableServerBoard board(kingdom_cards, player_count);
 
     // Check that victory cards are initialized correctly
-    size_t expected_victory_card_count = (player_count == 2) ? 8 : 12;
+    size_t expected_victory_card_count = 8;
 
     const auto &victory_cards = board.getVictoryCards();
 
@@ -190,7 +190,7 @@ TEST(ServerBoardTest, BuyCardFromEmptyPile)
     // Find the pile and set count to 0
     auto &kingdom_piles = board.getMutableKingdomCards();
     auto it = std::find_if(kingdom_piles.begin(), kingdom_piles.end(),
-                           [&card_to_buy](shared::Pile &pile) { return pile.card == card_to_buy; });
+                           [&card_to_buy](const shared::Pile &pile) { return pile.card == card_to_buy; });
     ASSERT_NE(it, kingdom_piles.end());
     it->count = 0;
 
@@ -235,7 +235,7 @@ TEST(ServerBoardTest, IsGameOverProvinceEmpty)
     // Set Province pile to 0
     auto &victory_piles = board.getMutableVictoryCards();
     auto it = std::find_if(victory_piles.begin(), victory_piles.end(),
-                           [](shared::Pile &pile) { return pile.card == "Province"; });
+                           [](const shared::Pile &pile) { return pile.card == "Province"; });
     ASSERT_NE(it, victory_piles.end());
     it->count = 0;
 
@@ -337,7 +337,7 @@ TEST(ServerBoardTest, InitialiseVictoryCards)
     EXPECT_EQ(victory_piles[2].card, "Province");
 
     // Counts should be 8 for 2 players
-    size_t expected_count = (player_count == 2) ? 8 : 12;
+    size_t expected_count = 8;
     EXPECT_EQ(victory_piles[0].count, expected_count);
     EXPECT_EQ(victory_piles[1].count, expected_count);
     EXPECT_EQ(victory_piles[2].count, expected_count);

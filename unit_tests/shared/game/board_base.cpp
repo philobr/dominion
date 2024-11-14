@@ -111,7 +111,7 @@ TEST(BoardTest, IsGameOverProvinceEmpty)
     // Set Province count to 0
     auto &victory_piles = board.getVictoryCards();
     auto it = std::find_if(victory_piles.begin(), victory_piles.end(),
-                           [](shared::Pile &pile) { return pile.card == "Province"; });
+                           [](const auto &pile) { return pile.card == "Province"; });
 
     ASSERT_NE(it, victory_piles.end());
     it->count = 0;

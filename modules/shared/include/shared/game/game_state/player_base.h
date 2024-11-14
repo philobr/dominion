@@ -57,10 +57,13 @@ namespace shared
     {
     public:
         using ptr_t = std::unique_ptr<ReducedEnemy>;
+
         static ptr_t make(const PlayerBase &player, unsigned int hand_size)
         {
             return ptr_t(new ReducedEnemy(player, hand_size));
         }
+
+        unsigned int getHandSize() const { return hand_size; }
 
     protected:
         ReducedEnemy(const PlayerBase &player, unsigned int hand) : PlayerBase(player), hand_size(hand) {}
@@ -77,6 +80,8 @@ namespace shared
         {
             return ptr_t(new ReducedPlayer(player, hand_cards));
         }
+
+        const std::vector<CardBase::id_t> &getHandCards() const { return hand_cards; }
 
     protected:
         ReducedPlayer(const PlayerBase &player, const std::vector<CardBase::id_t> &hand_cards) :

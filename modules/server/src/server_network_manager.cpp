@@ -147,11 +147,8 @@ namespace server
             std::cout << "Received valid request : " << msg << std::endl;
 #endif
             // execute client request
+            //TODO Change to message handler
             //_messageInterface->handle_request(std::move(req));
-
-            //currently some testing stuff
-            shared::ResultResponseMessage response(req->game_id, req->message_id, true);
-            send_message(std::make_unique<shared::ResultResponseMessage>(response), player_id);
 
         } catch ( const std::exception &e ) {
             std::cerr << "Failed to execute client request. Content was :\n"
@@ -180,9 +177,6 @@ namespace server
         std::stringstream ss_msg;
         ss_msg << std::to_string(msg.size()) << ':' << msg; // prepend message length
         ssize_t ret = _address_to_socket.at(address).write(ss_msg.str());
-
-        //For testing at first
-        std::cout << "Sent message to client " << player_id << std::endl;
 
         _rw_lock.unlock();
         return ret; 

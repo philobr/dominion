@@ -21,13 +21,15 @@ int main()
 
     std::string input, host = "127.0.0.1";
     uint16_t port = 50505;
-    std::cout << "127.0.0.1 50505" << std::endl;
+    std::cout << "Host: 127.0.0.1, Port: 50505" << std::endl;
     //std::cin >> host >> port;
 
     ClientNetworkManager network;
     network.init(host, port);
 
-    input = ".";
+    /*
+    //for testing purposes
+    input = "";
     std::cout << "Initialized!" << std::endl;
 
    shared::CreateLobbyRequestMessage req("Bob", "Stuart", "Kevin");
@@ -46,6 +48,7 @@ int main()
         }
         std::cout << input << std::endl;
     }
+    */
 
     network.shutdown();
     std::cout << "Shutdown ClientNetworkManager" << std::endl;

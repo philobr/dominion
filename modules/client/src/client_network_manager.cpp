@@ -26,7 +26,7 @@ void ::ClientNetworkManager::init(const std::string &host, const uint16_t port)
         delete ClientNetworkManager::_connection;
     }
     ClientNetworkManager::_connection = new sockpp::tcp_connector();
-    
+
     // try to connect to server
     if ( ClientNetworkManager::connect(host, port) ) {
         //        GameController::showStatus("Connected to " + host + ":" + std::to_string(port));
@@ -134,6 +134,4 @@ void ClientNetworkManager::receive_message(const std::string &message)
     }
 }
 
-void ClientNetworkManager::shutdown(){
-    ClientNetworkManager::_connection->shutdown();
-}
+void ClientNetworkManager::shutdown() { ClientNetworkManager::_connection->shutdown(); }

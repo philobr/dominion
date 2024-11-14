@@ -32,7 +32,8 @@ namespace server
         }
 
         std::cout << "Awaiting connections on port " << port << "..." << std::endl;
-        std::thread listen(listener_loop);; // start endless loop
+        std::thread listen(listener_loop);
+        ; // start endless loop
         listen.detach();
     }
 
@@ -147,7 +148,7 @@ namespace server
             std::cout << "Received valid request : " << msg << std::endl;
 #endif
             // execute client request
-            //TODO Change to message handler
+            // TODO Change to message handler
             //_messageInterface->handle_request(std::move(req));
 
         } catch ( const std::exception &e ) {
@@ -168,18 +169,19 @@ namespace server
     }
 
 
-    ssize_t ServerNetworkManager::send_message(std::unique_ptr<shared::ServerToClientMessage> message, const shared::PlayerBase::id_t &player_id)
+    ssize_t ServerNetworkManager::send_message(std::unique_ptr<shared::ServerToClientMessage> message,
+                                               const shared::PlayerBase::id_t &player_id)
     {
         _rw_lock.lock();
         std::string address = _player_id_to_address[player_id];
-        std::string msg  = message->to_json();
+        std::string msg = message->to_json();
 
         std::stringstream ss_msg;
         ss_msg << std::to_string(msg.size()) << ':' << msg; // prepend message length
         ssize_t ret = _address_to_socket.at(address).write(ss_msg.str());
 
         _rw_lock.unlock();
-        return ret; 
+        return ret;
     }
 
 } // namespace server

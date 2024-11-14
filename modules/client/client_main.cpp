@@ -12,9 +12,9 @@
 // Temporary test function
 int main()
 {
-    //Initialize wxWidgets
+    // Initialize wxWidgets
     wxInitializer initializer;
-    if(!initializer){
+    if ( !initializer ) {
         std::cerr << "Failed to initialize wxWidgets, aborting." << std::endl;
         return -1;
     }
@@ -22,7 +22,7 @@ int main()
     std::string input, host = "127.0.0.1";
     uint16_t port = 50505;
     std::cout << "Host: 127.0.0.1, Port: 50505" << std::endl;
-    //std::cin >> host >> port;
+    // std::cin >> host >> port;
 
     ClientNetworkManager network;
     network.init(host, port);

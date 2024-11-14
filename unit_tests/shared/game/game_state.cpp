@@ -8,7 +8,9 @@ TEST(ReducedGameStateTest, ParameterizedConstructor)
     // Create a Board object
     shared::Board board;
 
-    shared::PlayerBase player("player"), enemy1("enemy1"), enemy2("enemy2");
+    shared::PlayerBase player("player");
+    shared::PlayerBase enemy1("enemy1");
+    shared::PlayerBase enemy2("enemy2");
 
     // Create a list of ReducedEnemies
     std::vector<shared::ReducedEnemy> enemies = {shared::ReducedEnemy(enemy1, 0), shared::ReducedEnemy(enemy2, 0)};

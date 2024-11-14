@@ -27,9 +27,9 @@ TEST(BehaviourTest, GainBuysTest)
 
     auto add_buys = server::behaviour::GainBuys<3>();
 
-    auto prev_buys = gamestate.get_player(affected_player).getAvailableBuys();
+    auto prev_buys = gamestate.get_player(affected_player).getBuys();
     add_buys.apply(gamestate, affected_player);
-    auto cur_buys = gamestate.get_player(affected_player).getAvailableBuys();
+    auto cur_buys = gamestate.get_player(affected_player).getBuys();
 
     ASSERT_EQ(prev_buys + 3, cur_buys);
 }

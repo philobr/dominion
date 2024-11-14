@@ -100,9 +100,9 @@ TEST(GameStateTest, StartTurn)
 
     // Check that the current player has the correct initial state
     server::Player &current_player = game_state.get_current_player();
-    EXPECT_EQ(current_player.getAvailableActions(), 1);
-    EXPECT_EQ(current_player.getAvailableBuys(), 1);
-    EXPECT_EQ(current_player.getAvailableTreasure(), 0);
+    EXPECT_EQ(current_player.getActions(), 1);
+    EXPECT_EQ(current_player.getBuys(), 1);
+    EXPECT_EQ(current_player.getTreasure(), 0);
 
     // Check that the player has drawn their initial hand (usually 5 cards)
     // This depends on how the draw method is implemented

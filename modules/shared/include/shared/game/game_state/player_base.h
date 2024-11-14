@@ -3,6 +3,9 @@
 #include <string>
 #include <vector>
 
+#include <iomanip> // for operator<<
+#include <iostream> // for operator<<
+
 #include <shared/game/cards/card_base.h>
 namespace shared
 {
@@ -11,47 +14,26 @@ namespace shared
     public:
         using id_t = std::string;
 
-        PlayerBase();
         PlayerBase(id_t player_id);
         PlayerBase(const PlayerBase &other);
 
-        // TODO: initialize victory_points, available_actions, available_buys, available_treasure, current_card,
-        // discard_pile, draw_pile_size
-        // i think this is done by the copy constructor
+        PlayerBase &operator=(const PlayerBase &other);
+
+        PlayerBase(PlayerBase &&other) noexcept;
+        PlayerBase &operator=(PlayerBase &&other) noexcept;
+
+        virtual ~PlayerBase() = default;
 
         id_t getId() const { return player_id; }
 
         unsigned int getVictoryPoints() const { return victory_points; }
-        unsigned int getAvailableActions() const { return available_actions; }
-        unsigned int getAvailableBuys() const { return available_buys; }
-        unsigned int getAvailableTreasure() const { return available_treasure; }
+        unsigned int getActions() const { return available_actions; }
+        unsigned int getBuys() const { return available_buys; }
+        unsigned int getTreasure() const { return available_treasure; }
 
-        void decreaseAvailableActions()
-        {
-            if ( available_actions == 0 ) {
-                // should we throw here?
-                return;
-            }
-            available_actions--;
-        }
-
-        void decreaseAvailableBuys()
-        {
-            if ( available_buys == 0 ) {
-                // should we throw here?
-                return;
-            }
-            available_buys--;
-        }
-
-        void decreaseAvailableTreasure(const unsigned int cost)
-        {
-            if ( available_treasure < cost ) {
-                // should we throw here?
-                return;
-            }
-            available_treasure = available_treasure - cost;
-        }
+        void decActions();
+        void decBuys();
+        void decTreasure(const unsigned int dec_amount);
 
     protected:
         // these are not used, as played cards will be stored in the board
@@ -74,9 +56,6 @@ namespace shared
     class ReducedEnemy : public PlayerBase
     {
     public:
-        ReducedEnemy(){};
-        // Constructor to use on the server side
-        ReducedEnemy(unsigned int hand) : PlayerBase() { hand_size = hand; }
         ReducedEnemy(const PlayerBase &player, unsigned int hand) : PlayerBase(player), hand_size(hand) {}
 
     protected:
@@ -86,9 +65,6 @@ namespace shared
     class ReducedPlayer : public PlayerBase
     {
     public:
-        ReducedPlayer(){};
-        // Constructor to use on the server side
-        ReducedPlayer(std::vector<CardBase::id_t> hand) : PlayerBase() { hand_cards = hand; }
         ReducedPlayer(const PlayerBase &player, std::vector<CardBase::id_t> hand) : PlayerBase(player), hand_cards(hand)
         {}
 

@@ -34,13 +34,13 @@ TEST(CardServerTest, GainCoinsBehaviourTest)
 
     // Before playing the card
     auto &player = game_state.get_player(affected_player_id);
-    EXPECT_EQ(player.getAvailableTreasure(), 0);
+    EXPECT_EQ(player.getTreasure(), 0);
 
     // Play the card
     int next_behaviour_idx = card->play(game_state, affected_player_id, 0);
 
     // After playing the card
-    EXPECT_EQ(player.getAvailableTreasure(), 3);
+    EXPECT_EQ(player.getTreasure(), 3);
 
     // Ensure that next_behaviour_idx indicates completion
     EXPECT_EQ(next_behaviour_idx, 1); // Since there is only one behaviour
@@ -62,13 +62,13 @@ TEST(CardServerTest, GainBuysBehaviourTest)
 
     // Before playing the card
     auto &player = game_state.get_player(affected_player_id);
-    EXPECT_EQ(player.getAvailableBuys(), 1);
+    EXPECT_EQ(player.getBuys(), 1);
 
     // Play the card
     int next_behaviour_idx = card->play(game_state, affected_player_id, 0);
 
     // After playing the card
-    EXPECT_EQ(player.getAvailableBuys(), 3);
+    EXPECT_EQ(player.getBuys(), 3);
 
     // Ensure that next_behaviour_idx indicates completion
     EXPECT_EQ(next_behaviour_idx, 1);
@@ -90,13 +90,13 @@ TEST(CardServerTest, GainActionsBehaviourTest)
 
     // Before playing the card
     auto &player = game_state.get_player(affected_player_id);
-    EXPECT_EQ(player.getAvailableActions(), 1);
+    EXPECT_EQ(player.getActions(), 1);
 
     // Play the card
     int next_behaviour_idx = card->play(game_state, affected_player_id, 0);
 
     // After playing the card
-    EXPECT_EQ(player.getAvailableActions(), 2);
+    EXPECT_EQ(player.getActions(), 2);
 
     // Ensure that next_behaviour_idx indicates completion
     EXPECT_EQ(next_behaviour_idx, 1);
@@ -148,9 +148,9 @@ TEST(CardServerTest, MultipleBehavioursTest)
     auto &player = game_state.get_player(affected_player_id);
 
     // Before playing the card
-    EXPECT_EQ(player.getAvailableActions(), 1);
-    EXPECT_EQ(player.getAvailableBuys(), 1);
-    EXPECT_EQ(player.getAvailableTreasure(), 0);
+    EXPECT_EQ(player.getActions(), 1);
+    EXPECT_EQ(player.getBuys(), 1);
+    EXPECT_EQ(player.getTreasure(), 0);
 
     // Play the card, step through each behaviour
     int behaviour_idx = 0;
@@ -159,9 +159,9 @@ TEST(CardServerTest, MultipleBehavioursTest)
     }
 
     // After playing the card
-    EXPECT_EQ(player.getAvailableActions(), 2);
-    EXPECT_EQ(player.getAvailableBuys(), 2);
-    EXPECT_EQ(player.getAvailableTreasure(), 1);
+    EXPECT_EQ(player.getActions(), 2);
+    EXPECT_EQ(player.getBuys(), 2);
+    EXPECT_EQ(player.getTreasure(), 1);
 
     // Ensure that behaviour_idx indicates completion
     EXPECT_EQ(behaviour_idx, 3); // There are three behaviours
@@ -190,7 +190,7 @@ TEST(CardServerTest, InvalidBehaviourIndexTest)
     EXPECT_EQ(next_behaviour_idx, card->size());
 
     // Player's treasure should remain unchanged
-    EXPECT_EQ(player.getAvailableTreasure(), 0);
+    EXPECT_EQ(player.getTreasure(), 0);
 }
 
 TEST(CardServerTest, BehaviourNotDoneYetTest)
@@ -248,10 +248,10 @@ TEST(CardServerTest, ApplyBehaviourAtIndexTest)
     int next_behaviour_idx = card->play(game_state, affected_player_id, 1);
 
     // After playing the second behaviour
-    EXPECT_EQ(player.getAvailableBuys(), 2);
+    EXPECT_EQ(player.getBuys(), 2);
     EXPECT_EQ(next_behaviour_idx, 2);
 
     // Actions and Treasure should remain unchanged
-    EXPECT_EQ(player.getAvailableActions(), 1);
-    EXPECT_EQ(player.getAvailableTreasure(), 0);
+    EXPECT_EQ(player.getActions(), 1);
+    EXPECT_EQ(player.getTreasure(), 0);
 }

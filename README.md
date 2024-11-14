@@ -2,6 +2,22 @@
 
 ## Developing
 
+In order to develop on the project, it is best to use the provided `Dockerfile` to create a development environment.
+
+### Building the Docker Image
+
+To build the Docker image, run the following command in the root of the project:
+```bash
+cd docker
+docker compose run --rm dev
+```
+
+This will build the image if necessary, start a container with the project mounted at `/dominion`
+and drop you into a shell in the container.
+The image provides all the necessary tools to build and test the project.
+
+### Building and testing the Project
+
 Generate the build files:
 ```bash
 mkdir -p build

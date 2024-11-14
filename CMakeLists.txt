@@ -3,7 +3,7 @@
 cmake_minimum_required(VERSION 3.22)
 project(doMINION)
 
-set(CMAKE_CXX_STANDARD 23)
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(EXTERNAL_LIBS ${CMAKE_SOURCE_DIR}/external)
@@ -13,7 +13,14 @@ enable_testing()
 # always provide test output on failure
 list(APPEND CMAKE_CTEST_ARGUMENTS "--output-on-failure")
 
-add_compile_options(-Wall -Wpedantic)
+add_compile_options(
+    -Wall
+    -Wpedantic
+    -Werror
+    # In order to be able to use -Werror, we need to suppress this warning
+    # TODO: Remove this suppression
+    -Wno-deprecated-enum-enum-conversion
+)
 
 add_subdirectory(${EXTERNAL_LIBS}/sockpp)
 add_subdirectory(${EXTERNAL_LIBS}/googletest) # warnings because of old cmake version, cant supress them
@@ -25,6 +32,18 @@ if (wxWidgets_FOUND)
 else()
     message(FATAL_ERROR "wxWidgets not found; ensure it is installed! (use './install_wx_widgets.sh')")
 endif()
+
+# Parallel builds by default
+
+include(ProcessorCount)
+ProcessorCount(NUM_PROCS)
+
+if (NUM_PROCS EQUAL 0)
+    message(WARNING "Processor count could not be determined; defaulting to 1.")
+    set(NUM_PROCS 1)
+endif()
+
+message(STATUS "Number of processors: ${NUM_PROCS}")
 
 ################################
 # MACROS
@@ -54,6 +73,15 @@ macro(include_gtest target)
     target_include_directories(${target} PRIVATE
         ${EXTERNAL_LIBS}/googletest/include
         ${EXTERNAL_LIBS}/googletest/lib
+    )
+endmacro()
+
+macro(include_gmock target)
+    message(STATUS "Including gmock in ${target}")
+    target_link_libraries(${target} PRIVATE gmock gmock_main)
+    target_include_directories(${target} PRIVATE
+        ${EXTERNAL_LIBS}/googlemock/include
+        ${EXTERNAL_LIBS}/googlemock/lib
     )
 endmacro()
 
@@ -128,12 +156,15 @@ add_custom_target(run_client
 add_custom_target(format
     COMMENT "Running clang-format and checking for formatting issues..."
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+    COMMAND clang-format --version
+    # This is a hacky workaround to return a non-zero exit code if there are formatting issues
+    COMMAND git diff --exit-code > /dev/null
+        || (echo "It seems you have some unstaged changes. Please commit or stash them before running this command." && git diff --stat && exit 1)
     COMMAND find modules unit_tests -name '*.cpp' -o -name '*.h' | xargs clang-format -i
-    COMMAND git diff --exit-code || (echo "Formatting issues found!" && exit 1)
+    COMMAND git diff --exit-code || (echo "Formatting issues found!" && exit 1) 
 )
 
 add_custom_target(check
-    COMMENT "Running cppcheck..."
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
     COMMAND cppcheck --version
     COMMAND cppcheck
@@ -145,8 +176,17 @@ add_custom_target(check
         --max-configs=100
         --suppressions-list=${CMAKE_SOURCE_DIR}/.cppcheck_suppressions
         modules unit_tests
-)
 
+    COMMAND clang-tidy --version
+    # The `|| true` is necessary if we're running a version of clang-tidy that does not yet support `--verify-config`
+    COMMAND clang-tidy --verify-config || true
+    COMMAND clang-tidy --list-checks
+    # TODO: Change this to test all subdirectories of modules
+    COMMAND find modules/client modules/shared modules/server/src unit_tests -name '*.cpp' -o -name '*.h'
+        | xargs run-clang-tidy -p ${CMAKE_BINARY_DIR} -j ${NUM_PROCS} -quiet -fix
+            # TODO: Remove this whitelist
+            -line-filter='[{"name":"card.cpp"}]'
+)
 
 # copy assets (images) to binary directory
 file(INSTALL assets DESTINATION ${CMAKE_BINARY_DIR})

@@ -21,13 +21,13 @@ namespace client
         wxGBSpan span = wxGBSpan(1, 1);
 
 
-        PilePanel *EstatePanel = new PilePanel(this, shared::Pile("Estate", 10));
-        PilePanel *DuchyPanel = new PilePanel(this, shared::Pile("Duchy", 10));
-        PilePanel *ProvincePanel = new PilePanel(this, shared::Pile("Province", 10));
+        PilePanel *EstatePanel = new PilePanel(this, {"Estate", 10});
+        PilePanel *DuchyPanel = new PilePanel(this, {"Duchy", 10});
+        PilePanel *ProvincePanel = new PilePanel(this, {"Province", 10});
 
-        PilePanel *CopperPanel = new PilePanel(this, shared::Pile("Copper", 10));
-        PilePanel *SilverPanel = new PilePanel(this, shared::Pile("Silver", 10));
-        PilePanel *GoldPanel = new PilePanel(this, shared::Pile("Gold", 10));
+        PilePanel *CopperPanel = new PilePanel(this, {"Copper", 10});
+        PilePanel *SilverPanel = new PilePanel(this, {"Silver", 10});
+        PilePanel *GoldPanel = new PilePanel(this, {"Gold", 10});
 
         sizer->Add(EstatePanel, EstatePosition, span, wxALIGN_CENTER_HORIZONTAL);
         sizer->Add(DuchyPanel, DuchyPosition, span, wxALIGN_CENTER_HORIZONTAL);

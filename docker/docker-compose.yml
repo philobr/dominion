@@ -1,0 +1,19 @@
+
+services:
+  dev:
+    build:
+      context: ..
+      target: install
+      dockerfile: docker/Dockerfile
+    container_name: dominion-dev
+    stdin_open: true
+    tty: true
+    volumes:
+      - ..:/dominion
+
+  prod:
+    build:
+      context: ..
+      target: build
+      dockerfile: docker/Dockerfile
+    container_name: dominion-prod

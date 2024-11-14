@@ -40,6 +40,7 @@ namespace server{
             if(_player_id_to_address.find(player_id) != _player_id_to_address.end()){
                 return _player_id_to_address[player_id];
             }
+            return "";
         }
 
         void BasicNetwork::player_disconnect(std::string player_id){
@@ -48,5 +49,12 @@ namespace server{
             _player_id_to_address.erase(player_id);
             _address_to_socket.erase(address);
             _rw_lock.unlock();
+        }
+        
+        BasicNetwork* BasicNetwork::getInstance(){
+            if(!_instance){
+                _instance = new BasicNetwork();
+            }
+            return _instance;
         }
 } // namespace server

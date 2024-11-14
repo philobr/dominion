@@ -13,7 +13,7 @@ namespace server{
     class MessageInterface
     {
     public:
-        MessageInterface(std::shared_ptr<BasicNetwork> basic_network);
+        MessageInterface();
         ~MessageInterface();
         /**
          * @brief gets a response that has to be sent to a client and passes it to the network manager as json string
@@ -22,7 +22,5 @@ namespace server{
         static void send_message(std::unique_ptr<shared::ServerToClientMessage> message,
                                  const shared::PlayerBase::id_t &player_id);
 
-    private:
-        static std::shared_ptr<BasicNetwork> basic_network;
     };
 } // namespace server

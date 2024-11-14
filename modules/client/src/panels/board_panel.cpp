@@ -8,35 +8,42 @@ namespace client
 
     BoardPanel::BoardPanel(wxWindow *parent, wxSize size) : wxPanel(parent, wxID_ANY, wxDefaultPosition, size)
     {
-        wxGridBagSizer *sizer = new wxGridBagSizer(10, 10);
 
-        wxGBPosition EstatePosition = wxGBPosition(0, 0);
-        wxGBPosition DuchyPosition = wxGBPosition(1, 0);
-        wxGBPosition ProvincePosition = wxGBPosition(2, 0);
-
-        wxGBPosition CopperPosition = wxGBPosition(0, 1);
-        wxGBPosition SilverPosition = wxGBPosition(1, 1);
-        wxGBPosition GoldPosition = wxGBPosition(2, 1);
-
-        wxGBSpan span = wxGBSpan(1, 1);
-
-
-        PilePanel *EstatePanel = new PilePanel(this, {"Estate", 10});
-        PilePanel *DuchyPanel = new PilePanel(this, {"Duchy", 10});
-        PilePanel *ProvincePanel = new PilePanel(this, {"Province", 10});
-
-        PilePanel *CopperPanel = new PilePanel(this, {"Copper", 10});
-        PilePanel *SilverPanel = new PilePanel(this, {"Silver", 10});
-        PilePanel *GoldPanel = new PilePanel(this, {"Gold", 10});
-
-        sizer->Add(EstatePanel, EstatePosition, span, wxALIGN_CENTER_HORIZONTAL);
-        sizer->Add(DuchyPanel, DuchyPosition, span, wxALIGN_CENTER_HORIZONTAL);
-        sizer->Add(ProvincePanel, ProvincePosition, span, wxALIGN_CENTER_HORIZONTAL);
-        sizer->Add(CopperPanel, CopperPosition, span, wxALIGN_CENTER_HORIZONTAL);
-        sizer->Add(SilverPanel, SilverPosition, span, wxALIGN_CENTER_HORIZONTAL);
-        sizer->Add(GoldPanel, GoldPosition, span, wxALIGN_CENTER_HORIZONTAL);
-        this->SetSizer(sizer);
+      shared::Board board;
+      board.initialise_treasure_cards(2);
+      board.initialise_victory_cards(2);
+      board.kingdom_cards = {{"Chapel", 8}, {"Village", 8}, {"Laboratory", 8}, {"Artisan", 8}};
+      this->DrawBoard(board);
     }
+
+
+    void BoardPanel::DrawBoard(shared::Board &Board) {
+      this->DestroyChildren();
+
+      auto *sizer = new wxGridBagSizer(10, 10);
+
+      for (unsigned i = 0; i < Board.victory_cards.size(); i++) {
+        PilePanel *Pile = new PilePanel(this, Board.victory_cards[i]);
+        wxGBPosition position = wxGBPosition(i, 0);
+        wxGBSpan span = wxGBSpan(1, 1);
+        sizer->Add(Pile, position, span, wxALIGN_CENTER_HORIZONTAL);
+      }
+      for (unsigned i = 0; i < Board.treasure_cards.size(); i++) {
+        PilePanel *Pile = new PilePanel(this, Board.treasure_cards[i]);
+        wxGBPosition position = wxGBPosition(i, 1);
+        wxGBSpan span = wxGBSpan(1, 1);
+        sizer->Add(Pile, position, span, wxALIGN_CENTER_HORIZONTAL);
+      }
+      for (unsigned i = 0; i < Board.kingdom_cards.size(); i++) {
+        PilePanel *Pile = new PilePanel(this, Board.kingdom_cards[i]);
+        wxGBPosition position = wxGBPosition(i%2, 2 + i/2);
+        wxGBSpan span = wxGBSpan(1, 1);
+        sizer->Add(Pile, position, span, wxALIGN_CENTER_HORIZONTAL);
+      }
+      sizer->Layout();
+      this->SetSizer(sizer, true);
+    }
+    
 
 
 } // namespace client

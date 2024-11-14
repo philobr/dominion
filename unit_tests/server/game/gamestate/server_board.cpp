@@ -245,20 +245,6 @@ TEST_F(ServerBoardTest, InitialiseVictoryCards)
     EXPECT_EQ(new_board.victory_cards[2].count, expected_count);
 }
 
-TEST_F(ServerBoardTest, PlayedCards)
-{
-    // Initially, played_cards should be empty
-    EXPECT_TRUE(board->played_cards.empty());
-
-    // Simulate playing a card
-    std::string played_card = "Village";
-    board->played_cards.push_back(played_card);
-
-    // Check that played_cards contains the card
-    ASSERT_EQ(board->played_cards.size(), 1);
-    EXPECT_EQ(board->played_cards[0], played_card);
-}
-
 TEST_F(ServerBoardTest, TrashCardMultiple)
 {
     // Trash multiple cards

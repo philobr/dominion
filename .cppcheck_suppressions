@@ -10,11 +10,17 @@ missingIncludeSystem
 # We use an old version of cppcheck in CI, so we need to suppress unknown suppressions
 unmatchedSuppression
 
-unusedFunction:modules/client/src/dominion.cpp
 # Suppress warnings about cppcheck not being able to check all branches
 normalCheckLevelMaxBranches
 
-# Suppress warnings about cppcheck not being able to check all functions
+# Suppress warnings about unusedFunction
+unusedFunction:modules/client/src/dominion.cpp
 unusedFunction:unit_tests/shared/game_state.cpp
-
 unusedFunction:unit_tests/server/game/gamestate/server_board.cpp
+
+# Suppress warnings about unusedStructMember
+unusedStructMember:unit_tests/server/game/gamestate/server_board.cpp
+unusedStructMember:unit_tests/shared/game/board_base.cpp
+
+# Suppress warnings about unreadVariable
+unreadVariable:unit_tests/shared/game/board_base.cpp

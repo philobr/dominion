@@ -3,12 +3,41 @@
 
 namespace shared
 {
+    namespace BoardConfig
+    {
+        static constexpr size_t getCopperCount(size_t num_players) { return TREASURE_COPPER_COUNT - (7 * num_players); }
+
+        static constexpr size_t getVictoryCardCount(size_t num_players)
+        {
+            return num_players == 2 ? VICTORY_CARDS_SMALL_GAME : VICTORY_CARDS_LARGE_GAME;
+        }
+
+        static constexpr bool validatePlayerCount(size_t num_players)
+        {
+            return MIN_PLAYER_COUNT <= num_players && num_players <= MAX_PLAYER_COUNT;
+        }
+
+        static constexpr size_t getCurseCardCount(size_t num_players) { return CURSE_MULTIPLIER * (num_players - 1); }
+
+    } // namespace BoardConfig
+
+    Pile Pile::makeKingdomCard(const shared::CardBase::id_t &kingdom_card_id)
+    {
+        return Pile(kingdom_card_id, BoardConfig::KINGDOM_CARD_COUNT);
+    }
+
+    Pile Pile::make(const shared::CardBase::id_t &card_id, size_t pile_size) { return Pile(card_id, pile_size); }
+
     Board::Board(const std::vector<shared::CardBase::id_t> &kingdom_cards, size_t player_count)
     {
         _ASSERT_EQ(kingdom_cards.size(), BoardConfig::KINGDOM_CARD_COUNT,
-                   "Board must be initialised with 10 kingdom cards!");
-        _ASSERT_TRUE((BoardConfig::MIN_PLAYER_COUNT <= player_count && player_count <= BoardConfig::MAX_PLAYER_COUNT),
-                     "Players must be in [2, 4]");
+                   std::string_view{"Board must be initialised with 10 kingdom cards, but was initialised with " +
+                                    std::to_string(kingdom_cards.size()) + " cards"});
+
+        _ASSERT_TRUE(BoardConfig::validatePlayerCount(player_count),
+                     std::string_view{"player_count must be in [" + std::to_string(BoardConfig::MIN_PLAYER_COUNT) +
+                                      ", " + std::to_string(BoardConfig::MAX_PLAYER_COUNT) + "], but is " +
+                                      std::to_string(player_count)});
 
         std::transform(kingdom_cards.begin(), kingdom_cards.end(),
                        std::inserter(this->kingdom_cards, this->kingdom_cards.end()),
@@ -33,24 +62,22 @@ namespace shared
 
     bool Board::isGameOver() const
     {
-        static constexpr size_t MAX_NUM_EMPTY_PILES = 3;
         auto province_pile = victory_cards.find("Province");
         return ((province_pile != victory_cards.end()) && (province_pile->count == 0)) ||
-                (getEmptyPilesCount() >= MAX_NUM_EMPTY_PILES);
+                (getEmptyPilesCount() >= BoardConfig::MAX_NUM_EMPTY_PILES);
     }
 
     void Board::initialiseTreasureCards(size_t player_count)
     {
-        const size_t copper_count = BoardConfig::TREASURE_COPPER_COUNT - (7 * player_count);
-        treasure_cards = {Pile::make("Copper", copper_count), Pile::make("Silver", BoardConfig::TREASURE_SILVER_COUNT),
+        treasure_cards = {Pile::make("Copper", BoardConfig::getCopperCount(player_count)),
+                          Pile::make("Silver", BoardConfig::TREASURE_SILVER_COUNT),
                           Pile::make("Gold", BoardConfig::TREASURE_GOLD_COUNT)};
     }
 
     void Board::initialiseVictoryCards(size_t player_count)
     {
-        const size_t card_count =
-                (player_count < 3) ? BoardConfig::VICTORY_CARDS_SMALL_GAME : BoardConfig::VICTORY_CARDS_LARGE_GAME;
-        const size_t curse_count = (player_count - 1) * BoardConfig::CURSE_MULTIPLIER;
+        const size_t card_count = BoardConfig::getVictoryCardCount(player_count);
+        const size_t curse_count = BoardConfig::getCurseCardCount(player_count);
 
         victory_cards = {Pile::make("Estate", card_count), Pile::make("Duchy", card_count),
                          Pile::make("Province", card_count), Pile::make("Curse", curse_count)};

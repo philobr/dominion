@@ -15,13 +15,19 @@ namespace shared
         static constexpr size_t TREASURE_SILVER_COUNT = 40;
         static constexpr size_t TREASURE_GOLD_COUNT = 30;
 
+        static constexpr size_t VICTORY_CARDS_SMALL_GAME = 8; // for player count == 2
+        static constexpr size_t VICTORY_CARDS_LARGE_GAME = 12; // for player count > 2
         static constexpr size_t CURSE_MULTIPLIER = 10; // 10 curse cards per player
-        static constexpr size_t VICTORY_CARDS_SMALL_GAME = 8; // for player count < 3
-        static constexpr size_t VICTORY_CARDS_LARGE_GAME = 12; // for player count > 3
 
         static constexpr size_t MIN_PLAYER_COUNT = 2;
         static constexpr size_t MAX_PLAYER_COUNT = 4;
 
+        static constexpr size_t MAX_NUM_EMPTY_PILES = 3;
+
+        static constexpr size_t getCopperCount(size_t num_players);
+        static constexpr size_t getVictoryCardCount(size_t num_players);
+        static constexpr size_t getCurseCardCount(size_t num_players);
+        static constexpr bool validatePlayerCount(size_t num_players);
     } // namespace BoardConfig
 
     struct Pile
@@ -29,15 +35,22 @@ namespace shared
         shared::CardBase::id_t card_id;
         mutable size_t count; // `mutable` allows modification const contexts
 
-        static Pile makeKingdomCard(const shared::CardBase::id_t &kingdom_card_id)
-        {
-            return Pile(kingdom_card_id, BoardConfig::KINGDOM_CARD_COUNT);
-        }
+        /**
+         * @brief Creates a new kingdom card pile with size 10; defined by shared::BoardConfig::KINGDOM_CARD_COUNT
+         *
+         * @param kingdom_card_id The ID of the kingdom card.
+         * @return Pile
+         */
+        static Pile makeKingdomCard(const shared::CardBase::id_t &kingdom_card_id);
 
-        static Pile make(const shared::CardBase::id_t &kingdom_card_id, size_t pile_size)
-        {
-            return Pile(kingdom_card_id, pile_size);
-        }
+        /**
+         * @brief Creates a new card pile with size the given size
+         *
+         * @param card_id The ID of the kingdom card.
+         * @param pile_size Amount of cards in the pile
+         * @return Pile
+         */
+        static Pile make(const shared::CardBase::id_t &card_id, size_t pile_size);
 
         struct PileComparator
         {
@@ -80,19 +93,7 @@ namespace shared
         Board(const Board &) = delete;
         Board &operator=(const Board &) = delete;
 
-        /**
-         * @brief Checks if provinces or at least 3 piles are emptied.
-         *
-         * @return true
-         * @return false
-         */
         bool isGameOver() const;
-
-        /**
-         * @brief Counts how many piles are empty overall.
-         *
-         * @return size_t
-         */
         size_t getEmptyPilesCount() const;
 
     protected:
@@ -112,9 +113,9 @@ namespace shared
 
         /**
          * @brief Initialised the treasure cards as follows:
-         * copper_count     60 - (7 * player_count)
-         * silver_count     40
-         * gold_count       30
+         * copper_count     shared::BoardConfig::TREASURE_COPPER_COUNT - (7 * player_count)
+         * silver_count     shared::BoardConfig::TREASURE_SILVER_COUNT
+         * gold_count       shared::BoardConfig::TREASURE_GOLD_COUNT
          *
          * @param player_count
          */
@@ -122,9 +123,10 @@ namespace shared
 
         /**
          * @brief Initialised the victory cards as follows:
-         * card_count   8   player_count < 3
-         *              12  player_count >= 3
-         * curse_count  (player_count - 1) * 10;
+         * card_count
+         *      if player_count < 3:    shared::BoardConfig::VICTORY_CARDS_SMALL_GAME
+         *      if player_count >= 3:   shared::BoardConfig::VICTORY_CARDS_LARGE_GAME
+         * curse_count  shared::BoardConfig::CURSE_MULTIPLIER * (player_count - 1);
          *
          * @param player_count
          */

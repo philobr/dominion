@@ -9,7 +9,7 @@ In order to develop on the project, it is best to use the provided `Dockerfile` 
 To build the Docker image, run the following command in the root of the project:
 ```bash
 cd docker
-docker compose run --rm dev
+docker compose run --build --rm dev
 ```
 
 This will build the image if necessary, start a container with the project mounted at `/dominion`

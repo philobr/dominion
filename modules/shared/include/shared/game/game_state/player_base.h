@@ -34,8 +34,21 @@ namespace shared
         unsigned int getBuys() const { return buys; }
         unsigned int getTreasure() const { return treasure; }
 
+        /**
+         * @brief Decrements actions by one, or keeps it at 0.
+         */
         void decActions();
+
+        /**
+         * @brief Decrements buys by one, or keeps it at 0.
+         */
         void decBuys();
+
+        /**
+         * @brief Decrements treasure by min(dec_amount, treasure_amount)
+         *
+         * @param dec_amount
+         */
         void decTreasure(const unsigned int dec_amount);
 
     protected:
@@ -58,16 +71,11 @@ namespace shared
     public:
         using ptr_t = std::unique_ptr<ReducedEnemy>;
 
-        static ptr_t make(const PlayerBase &player, unsigned int hand_size)
-        {
-            return ptr_t(new ReducedEnemy(player, hand_size));
-        }
-
-        unsigned int getHandSize() const { return hand_size; }
+        static ptr_t make(const PlayerBase &player, unsigned int hand_size);
+        unsigned int getHandSize() const;
 
     protected:
-        ReducedEnemy(const PlayerBase &player, unsigned int hand) : PlayerBase(player), hand_size(hand) {}
-
+        ReducedEnemy(const PlayerBase &player, unsigned int hand);
         unsigned int hand_size;
     };
 
@@ -76,18 +84,11 @@ namespace shared
     public:
         using ptr_t = std::unique_ptr<ReducedPlayer>;
 
-        static ptr_t make(const PlayerBase &player, std::vector<CardBase::id_t> hand_cards)
-        {
-            return ptr_t(new ReducedPlayer(player, hand_cards));
-        }
-
-        const std::vector<CardBase::id_t> &getHandCards() const { return hand_cards; }
+        static ptr_t make(const PlayerBase &player, std::vector<CardBase::id_t> hand_cards);
+        const std::vector<CardBase::id_t> &getHandCards() const;
 
     protected:
-        ReducedPlayer(const PlayerBase &player, const std::vector<CardBase::id_t> &hand_cards) :
-            PlayerBase(player), hand_cards(std::move(hand_cards))
-        {}
-
+        ReducedPlayer(const PlayerBase &player, const std::vector<CardBase::id_t> &hand_cards);
         const std::vector<CardBase::id_t> hand_cards;
     };
 

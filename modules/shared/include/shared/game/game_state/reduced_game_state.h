@@ -18,7 +18,6 @@ namespace shared
             active_player(active_player)
         {}
 
-
         Board::ptr_t board;
         const ReducedPlayer::ptr_t reduced_player;
         const std::vector<ReducedEnemy::ptr_t> reduced_enemies;

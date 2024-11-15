@@ -12,9 +12,9 @@ format:
     - cd build
     - cmake ..
     - cmake --build . --target format
-  allow_failure: true
+  allow_failure: false
   rules:
-    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
+    - if: $CI_PIPELINE_SOURCE == 'merge_request_event' || ($CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_REF_NAME == 'main')
 
 lint:
   stage: lint
@@ -25,9 +25,9 @@ lint:
     - cd build
     - cmake ..
     - cmake --build . --target check
-  allow_failure: true
+  allow_failure: false
   rules:
-    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
+    - if: $CI_PIPELINE_SOURCE == 'merge_request_event' || ($CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_REF_NAME == 'main')
 
 test:
   stage: test
@@ -41,4 +41,4 @@ test:
     - ctest --output-on-failure
   allow_failure: false
   rules:
-    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
+    - if: $CI_PIPELINE_SOURCE == 'merge_request_event' || ($CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_REF_NAME == 'main')

@@ -347,8 +347,8 @@ protected:
         board = new TestableSharedBoard(kingdom_cards, player_count);
 
         // Set invalid victory card counts
-        auto &victory_piles = board->getVictoryCards();
-        for ( auto &pile : victory_piles ) {
+        const auto &victory_piles = board->getVictoryCards();
+        for ( const auto &pile : victory_piles ) {
             if ( pile.card_id != "Curse" ) // Skip Curse cards
             {
                 pile.count = param.victory_card_count;

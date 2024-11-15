@@ -49,7 +49,6 @@ wxThread::ExitCode ClientListener::Entry()
                 // process message (if we've received entire message)
                 if ( bytesReadSoFar == messageLength ) {
                     std::string message = messageStream.str();
-                    // TODO Use the received message to do stuff
                     // GameController::getMainThreadEventHandler()->CallAfter([message]{
                     ClientNetworkManager::receive_message(message);
                     //});

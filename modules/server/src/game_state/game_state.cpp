@@ -46,6 +46,8 @@ namespace server
                          const std::vector<Player::id_t> &player_ids) :
         current_player_idx(0)
     {
+        _ASSERT_TRUE((2 <= player_ids.size() && player_ids.size() <= 4), "Player count must be in [2, 4]");
+
         initialise_players(player_ids);
         initialise_board(play_cards);
     }
@@ -61,7 +63,7 @@ namespace server
         }
 
         if ( other.board ) {
-            board = std::make_unique<ServerBoard>(*other.board);
+            board = other.board;
         }
     }
 
@@ -89,7 +91,7 @@ namespace server
     void GameState::initialise_board(const std::vector<shared::CardBase::id_t> &selected_cards)
     {
         _ASSERT_EQ(selected_cards.size(), size_t(10), "the game must be played with 10 kingdom cards!");
-        board = std::make_unique<server::ServerBoard>(selected_cards, player_map.size());
+        board = server::ServerBoard::make(selected_cards, player_map.size());
     }
 
     shared::ReducedGameState GameState::get_reduced_state(const Player::id_t &target_player)
@@ -105,7 +107,7 @@ namespace server
 
         auto reduced_player = get_player(target_player).get_reduced_player();
         Player::id_t active_player_id = get_current_player_id();
-        shared::Board reduced_board = *board; // TODO:
+        shared::Board::ptr_t reduced_board = board->getReduced();
 
         return shared::ReducedGameState(reduced_board, std::move(reduced_player), std::move(reduced_enemies),
                                         active_player_id);
@@ -133,5 +135,18 @@ namespace server
     }
 
     bool GameState::is_game_over() const { return board->isGameOver(); }
+
+    bool GameState::validateKingdomCardTypes(const std::vector<shared::CardBase::id_t> &kingdom_cards)
+    {
+        return std::all_of(kingdom_cards.begin(), kingdom_cards.end(),
+                           [](const auto &card_id)
+                           {
+                               if ( const auto &card = CardFactory::getCard(card_id); card != nullptr ) {
+                                   return card->isAction() || card->isAttack() || card->isReaction();
+                               } else {
+                                   return false;
+                               }
+                           });
+    }
 
 } // namespace server

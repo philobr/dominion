@@ -22,10 +22,10 @@ TEST(CardServerTest, GainCoinsBehaviourTest)
 
     std::vector<shared::CardBase::id_t> playing_cards = {"GainCoinsCard", "card2", "card3", "card4", "card5",
                                                          "card6",         "card7", "card8", "card9", "card10"};
-    std::vector<shared::PlayerBase::id_t> players = {"player1"};
-    server::GameState game_state(playing_cards, players);
 
     server::Player::id_t affected_player_id = "player1";
+    std::vector<shared::PlayerBase::id_t> players = {affected_player_id, "player2"};
+    server::GameState game_state(playing_cards, players);
 
     // Create a card with GainCoins<3> behavior
     using GainCoinsCard = server::Card<server::behaviour::GainCoins<3>>;
@@ -49,10 +49,11 @@ TEST(CardServerTest, GainCoinsBehaviourTest)
 TEST(CardServerTest, GainBuysBehaviourTest)
 {
     // Initialize game state and players
-    server::Player::id_t affected_player_id = "player1";
     std::vector<shared::CardBase::id_t> playing_cards = {"GainBuysCard", "card2", "card3", "card4", "card5",
                                                          "card6",        "card7", "card8", "card9", "card10"};
-    std::vector<shared::PlayerBase::id_t> players = {affected_player_id};
+
+    server::Player::id_t affected_player_id = "player1";
+    std::vector<shared::PlayerBase::id_t> players = {affected_player_id, "player2"};
     server::GameState game_state(playing_cards, players);
 
     // Create a card with GainBuys<2> behavior
@@ -77,10 +78,11 @@ TEST(CardServerTest, GainBuysBehaviourTest)
 TEST(CardServerTest, GainActionsBehaviourTest)
 {
     // Initialize game state and players
+    std::vector<shared::CardBase::id_t> playing_cards = {"GainBuysCard", "card2", "card3", "card4", "card5",
+                                                         "card6",        "card7", "card8", "card9", "card10"};
+
     server::Player::id_t affected_player_id = "player1";
-    std::vector<shared::CardBase::id_t> playing_cards = {"GainActionsCard", "card2", "card3", "card4", "card5",
-                                                         "card6",           "card7", "card8", "card9", "card10"};
-    std::vector<shared::PlayerBase::id_t> players = {affected_player_id};
+    std::vector<shared::PlayerBase::id_t> players = {affected_player_id, "player2"};
     server::GameState game_state(playing_cards, players);
 
     // Create a card with GainActions<1> behavior
@@ -105,10 +107,12 @@ TEST(CardServerTest, GainActionsBehaviourTest)
 TEST(CardServerTest, GainPointsBehaviourTest)
 {
     // Initialize game state and players
-    server::Player::id_t affected_player_id = "player1";
     std::vector<shared::CardBase::id_t> playing_cards = {"GainPointsCard", "card2", "card3", "card4", "card5",
                                                          "card6",          "card7", "card8", "card9", "card10"};
-    std::vector<shared::PlayerBase::id_t> players = {affected_player_id};
+
+    server::Player::id_t affected_player_id = "player1";
+
+    std::vector<shared::PlayerBase::id_t> players = {affected_player_id, "player2"};
     server::GameState game_state(playing_cards, players);
 
     // Create a card with GainPoints<2> behavior
@@ -136,7 +140,7 @@ TEST(CardServerTest, MultipleBehavioursTest)
     server::Player::id_t affected_player_id = "player1";
     std::vector<shared::CardBase::id_t> playing_cards = {
             "MultiBehaviourCard", "card2", "card3", "card4", "card5", "card6", "card7", "card8", "card9", "card10"};
-    std::vector<shared::PlayerBase::id_t> players = {affected_player_id};
+    std::vector<shared::PlayerBase::id_t> players = {affected_player_id, "player2"};
     server::GameState game_state(playing_cards, players);
 
     // Create a card with multiple behaviors: GainActions<1>, GainBuys<1>, GainCoins<1>
@@ -170,10 +174,11 @@ TEST(CardServerTest, MultipleBehavioursTest)
 TEST(CardServerTest, InvalidBehaviourIndexTest)
 {
     // Initialize game state and players
-    server::Player::id_t affected_player_id = "player1";
     std::vector<shared::CardBase::id_t> playing_cards = {"GainCoinsCard", "card2", "card3", "card4", "card5",
                                                          "card6",         "card7", "card8", "card9", "card10"};
-    std::vector<shared::PlayerBase::id_t> players = {affected_player_id};
+
+    server::Player::id_t affected_player_id = "player1";
+    std::vector<shared::PlayerBase::id_t> players = {affected_player_id, "player2"};
     server::GameState game_state(playing_cards, players);
 
     // Create a card with GainCoins<2> behavior
@@ -196,10 +201,10 @@ TEST(CardServerTest, InvalidBehaviourIndexTest)
 TEST(CardServerTest, BehaviourNotDoneYetTest)
 {
     // Initialize game state and players
-    server::Player::id_t affected_player_id = "player1";
     std::vector<shared::CardBase::id_t> playing_cards = {"MockCard", "card2", "card3", "card4", "card5",
                                                          "card6",    "card7", "card8", "card9", "card10"};
-    std::vector<shared::PlayerBase::id_t> players = {affected_player_id};
+    server::Player::id_t affected_player_id = "player1";
+    std::vector<shared::PlayerBase::id_t> players = {affected_player_id, "player2"};
     server::GameState game_state(playing_cards, players);
 
     // For this test, we need a behaviour that returns NOT_DONE_YET
@@ -229,10 +234,11 @@ TEST(CardServerTest, BehaviourNotDoneYetTest)
 TEST(CardServerTest, ApplyBehaviourAtIndexTest)
 {
     // Initialize game state and players
-    server::Player::id_t affected_player_id = "player1";
     std::vector<shared::CardBase::id_t> playing_cards = {
             "MultiBehaviourCard", "card2", "card3", "card4", "card5", "card6", "card7", "card8", "card9", "card10"};
-    std::vector<shared::PlayerBase::id_t> players = {affected_player_id};
+
+    server::Player::id_t affected_player_id = "player1";
+    std::vector<shared::PlayerBase::id_t> players = {affected_player_id, "player2"};
     server::GameState game_state(playing_cards, players);
 
 

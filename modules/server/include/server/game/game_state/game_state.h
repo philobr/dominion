@@ -16,9 +16,6 @@
 
 namespace server
 {
-    // forward declaration
-    class ServerBoard;
-
     /**
      * @brief This holds the complete game stae on the server.
      *
@@ -30,7 +27,7 @@ namespace server
         std::vector<Player::id_t> player_order;
         unsigned int current_player_idx;
 
-        std::unique_ptr<server::ServerBoard> board;
+        ServerBoard::ptr_t board;
 
     public:
         GameState();
@@ -65,6 +62,16 @@ namespace server
 
         bool try_buy(const Player::id_t player_id, const shared::CardBase::id_t &card);
         bool try_play(const Player::id_t &affected_player, size_t hand_index, size_t behaviour_index);
+
+        /**
+         * @brief Checks if all ids exist and if the CardType is one of:
+         * shared::CardType::ACTION | shared::CardType::ATTACK | shared::CardType::REACTION
+         *
+         * @param kingdom_cards 10 valid kingdom cards id
+         * @return true all cards exist and have valid type
+         * @return false
+         */
+        static bool validateKingdomCardTypes(const std::vector<shared::CardBase::id_t> &kingdom_cards);
     };
 
 } // namespace server

@@ -2,12 +2,10 @@
 
 #include <gtest/gtest.h>
 #include <shared/game/game_state/reduced_game_state.h>
+#include <shared/utils/test_helpers.h>
 
 TEST(ReducedGameStateTest, ParameterizedConstructor)
 {
-    // Create a Board object
-    shared::Board board;
-
     // Create a list of ReducedEnemies
     shared::PlayerBase enemy1("enemy1");
     shared::PlayerBase enemy2("enemy2");
@@ -19,6 +17,10 @@ TEST(ReducedGameStateTest, ParameterizedConstructor)
     shared::PlayerBase::id_t active_player = "player";
     shared::PlayerBase player(active_player);
     shared::ReducedPlayer::ptr_t reduced_player = shared::ReducedPlayer::make(player, {});
+
+    // Create a Board object
+    auto kingdom_cards = get_valid_kingdom_cards();
+    shared::Board::ptr_t board = shared::Board::make(kingdom_cards, 2);
 
     // Create the ReducedGameState
     shared::ReducedGameState game_state(board, std::move(reduced_player), std::move(enemies), active_player);

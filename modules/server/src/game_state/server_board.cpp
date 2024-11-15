@@ -3,28 +3,30 @@
 
 namespace server
 {
-    ServerBoard::ServerBoard(const std::vector<shared::CardBase::id_t> &kingdom_cards, size_t player_count)
+    ServerBoard::ptr_t ServerBoard::make(const std::vector<shared::CardBase::id_t> &kingdom_cards, size_t player_count)
     {
-        _ASSERT_EQ(kingdom_cards.size(), size_t(10), "A Game needs to have exactly 10 kingdom cards!");
-
-        initialise_treasure_cards(player_count);
-        initialise_victory_cards(player_count);
-
-        const auto kingdom_card_pile_size = 10;
-        for ( auto card_id : kingdom_cards ) {
-            this->kingdom_cards.push_back({card_id, kingdom_card_pile_size});
-        }
+        _ASSERT_TRUE((2 <= player_count && player_count <= 4), "Players must be in [2, 4]");
+        return ptr_t(new ServerBoard(kingdom_cards, player_count));
     }
 
-    bool ServerBoard::buy(const shared::CardBase::id_t &card_id)
+    ServerBoard::ServerBoard(const std::vector<shared::CardBase::id_t> &kingdom_cards, size_t player_count) :
+        shared::Board(kingdom_cards, player_count)
+    {}
+
+    shared::Board::ptr_t ServerBoard::getReduced()
+    {
+        return std::static_pointer_cast<shared::Board>(shared_from_this());
+    }
+
+    bool ServerBoard::buy(const shared::CardBase::id_t &key)
     {
         // helper to search the card in each pile
-        auto buy_card = [&](const auto &card_id, auto &pile_vector) -> bool
+        auto buy_card = [key](auto &pile_vector) -> bool
         {
             return std::any_of(pile_vector.begin(), pile_vector.end(),
-                               [card_id](auto &card_pile)
+                               [key](auto &card_pile)
                                {
-                                   if ( card_pile.card != card_id || card_pile.count == 0 ) {
+                                   if ( card_pile.card_id != key || card_pile.count == 0 ) {
                                        return false;
                                    }
 
@@ -33,13 +35,8 @@ namespace server
                                });
         };
 
-        return buy_card(card_id, treasure_cards) || buy_card(card_id, victory_cards) ||
-                buy_card(card_id, kingdom_cards);
+        return buy_card(treasure_cards) || buy_card(victory_cards) || buy_card(kingdom_cards);
     }
 
-    void ServerBoard::trash_card(const shared::CardBase::id_t &card)
-    {
-        this->trash.push_back(card);
-        return;
-    }
+    void ServerBoard::trash_card(const shared::CardBase::id_t &card) { this->trash.push_back(card); }
 } // namespace server

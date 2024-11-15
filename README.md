@@ -1,4 +1,7 @@
-# doMINION
+<h1>
+  <img src="assets/logo.png" alt="Dominion Minion Logo" width="200" style="vertical-align: middle;">
+  doMINION
+</h1>
 
 ## Developing
 
@@ -53,3 +56,43 @@ Before pushing your changes, make sure to:
  - Run the tests
  - Format the code
  - Run the linter
+
+## Documentation
+
+Documentation is provided in form of a Doxyfile.
+
+### How to
+Create the documentation:
+```
+doxygen doxygen/Doxyfile
+```
+
+Open the documentation:
+- on OSX:
+    ```
+    open doxygen/html/index.html
+    ```
+- on linux:
+    ```
+    xdg-open doxygen/html/index.html
+    ```
+
+### Debugging
+- `warning: Graphviz is not installed or found.`
+    - Ubuntu/Debian:
+        ```bash
+        sudo apt install graphviz
+        ```
+    - OSX:
+        ```bash
+        brew install graphviz
+        ```
+- `warning: pdflatex not found, unable to generate LaTeX output`
+    - Ubuntu/Debian:
+       ```
+       sudo apt install graphviz
+       ```
+    - OSX
+        ```
+        brew install graphviz
+        ```

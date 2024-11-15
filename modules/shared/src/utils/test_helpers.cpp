@@ -9,9 +9,10 @@ std::vector<shared::CardBase::id_t> get_valid_kingdom_cards()
 void set_n_piles_to_empty(shared::Board::pile_container_t &pile_container, size_t n)
 {
     size_t i = 0;
-    for ( auto &pile : pile_container ) {
-        if ( i >= n )
+    for ( const auto &pile : pile_container ) {
+        if ( i >= n ) {
             break;
+        }
         pile.count = 0;
         ++i;
     }

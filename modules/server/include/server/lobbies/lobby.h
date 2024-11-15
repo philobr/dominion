@@ -30,7 +30,7 @@ namespace server
          */
         void join(MessageInterface &message_interface, std::unique_ptr<shared::JoinLobbyRequestMessage> request);
         void start_game(MessageInterface &message_interface, std::unique_ptr<shared::StartGameRequestMessage> request);
-        void receive_action(std::unique_ptr<shared::ActionDecisionMessage> action, MessageInterface &message_interface);
+        void receive_action(MessageInterface &message_interface, std::unique_ptr<shared::ActionDecisionMessage> action);
 
         shared::ReducedGameState get_game_state(shared::PlayerBase::id_t player) const;
         std::vector<shared::PlayerBase::id_t> get_players() const { return players; }

@@ -3,6 +3,8 @@
 
 #include <server/network/server_network_manager.h>
 
+using handler = std::function<void(const std::string &, const sockpp::tcp_socket::addr_t &)>;
+
 namespace server
 {
     const std::string DEFAULT_SERVER_HOST = "127.0.0.1";
@@ -69,7 +71,7 @@ namespace server
     // Once a message is fully received, the string is passed on to the 'handle_message()' function
     void ServerNetworkManager::read_loop(
             sockpp::tcp_socket socket,
-            const std::function<void(const std::string &, const sockpp::tcp_socket::addr_t &)> &message_handler)
+            const handler &message_handler)
     {
         sockpp::socket_initializer sockInit; // initializes socket framework underneath
 
@@ -155,7 +157,7 @@ namespace server
     }
 
     ssize_t ServerNetworkManager::send_message(std::unique_ptr<shared::ServerToClientMessage> message,
-                                               shared::PlayerBase::id_t &player_id)
+                                               const shared::PlayerBase::id_t &player_id)
     {
         std::string address = BasicNetwork::getInstance()->get_address(player_id);
         std::string msg = message->to_json();

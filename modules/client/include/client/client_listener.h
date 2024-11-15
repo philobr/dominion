@@ -17,7 +17,7 @@ protected:
     virtual ExitCode Entry();
 
 private:
-    void outputError(std::string title, std::string message);
+    void outputError(const std::string title, std::string message);
 
 
     sockpp::tcp_connector *_connection;

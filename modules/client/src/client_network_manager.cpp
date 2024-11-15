@@ -68,7 +68,7 @@ bool ClientNetworkManager::connect(const std::string &host, const uint16_t port)
 }
 
 
-void ClientNetworkManager::sendRequest(std::string message)
+void ClientNetworkManager::sendRequest(const std::string message)
 {
 
     // wait until network is connected (max. 5 seconds)
@@ -89,7 +89,7 @@ void ClientNetworkManager::sendRequest(std::string message)
         // turn message into stream and prepend message length
         std::stringstream messageStream;
         messageStream << std::to_string(message.size()) << ':' << message;
-        msg = messageStream.str();
+        std::string msg = messageStream.str();
 
         // output message for debugging purposes
 #ifdef PRINT_NETWORK_MESSAGES
@@ -123,7 +123,7 @@ void ClientNetworkManager::receive_message(const std::string &message)
     try {
         std::unique_ptr<shared::ServerToClientMessage> res = shared::ServerToClientMessage::from_json(message);
         // TODO Process the server message
-        std::cout << "Received Messaged: " << message << std::endl;
+        std::cout << "Received Message: " << message << std::endl;
         client::GameController::receive_message(std::move(res));
 
     } catch ( std::exception &e ) {

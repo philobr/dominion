@@ -17,6 +17,8 @@
 #include <server/network/message_interface.h>
 #include <shared/message_types.h>
 
+using handler = std::function<void(const std::string &, const sockpp::tcp_socket::addr_t &)>;
+
 namespace server
 {
     class ServerNetworkManager
@@ -27,7 +29,7 @@ namespace server
 
         // function to send via the BasicNetwork class
         static ssize_t send_message(std::unique_ptr<shared::ServerToClientMessage> message,
-                                    shared::PlayerBase::id_t &player_id);
+                                    const shared::PlayerBase::id_t &player_id);
 
     private:
         // Lobby object to pass received messages to
@@ -50,7 +52,7 @@ namespace server
         static void listener_loop();
         static void
         read_loop(sockpp::tcp_socket socket,
-                  const std::function<void(const std::string &, const sockpp::tcp_socket::addr_t &)> &message_handler);
+                  const handler &message_handler);
 
         // might get removed later
         static void handle_message(const std::string &, const sockpp::tcp_socket::addr_t &);

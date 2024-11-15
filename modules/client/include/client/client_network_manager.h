@@ -10,7 +10,7 @@ class ClientNetworkManager
 public:
     static void init(const std::string &host, const uint16_t port);
 
-    static void sendRequest(std::string message);
+    static void sendRequest(const std::string message);
 
     static void receive_message(const std::string &message);
 

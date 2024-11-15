@@ -80,7 +80,7 @@ wxThread::ExitCode ClientListener::Entry()
 }
 
 
-void ClientListener::outputError(std::string title, std::string message)
+void ClientListener::outputError(const std::string title, std::string message)
 {
     // GameController::getMainThreadEventHandler()->CallAfter([title, message]{
     //     GameController::showError(title, message);

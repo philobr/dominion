@@ -9,6 +9,23 @@
 #include <shared/game/game_state/board_base.h>
 #include <shared/utils/test_helpers.h>
 
+void set_n_piles_to_empty(server::ServerBoard::pile_container_t &pile_container, size_t n)
+{
+    size_t i = 0;
+    for ( auto pile_it = pile_container.begin(); i < n && pile_it != pile_container.end(); ++pile_it, ++i ) {
+        pile_it->count = 0;
+    }
+}
+
+#define EXPECT_PILE(pile_set, key, expected_count)                                                                     \
+    do {                                                                                                               \
+        auto it = (pile_set).find((key));                                                                              \
+        EXPECT_NE(it, (pile_set).end());                                                                               \
+        if ( it != (pile_set).end() ) {                                                                                \
+            EXPECT_EQ(it->count, (expected_count));                                                                    \
+        }                                                                                                              \
+    } while ( 0 )
+
 class TestableServerBoard : protected server::ServerBoard
 {
 public:
@@ -24,58 +41,60 @@ public:
     using server::ServerBoard::trash_card;
 
     // Accessors for protected data members
-    const std::vector<shared::Pile> &getKingdomCards() const { return kingdom_cards; }
-    const std::vector<shared::Pile> &getTreasureCards() const { return treasure_cards; }
-    const std::vector<shared::Pile> &getVictoryCards() const { return victory_cards; }
+    const server::ServerBoard::pile_container_t &getKingdomCards() const { return kingdom_cards; }
+    const server::ServerBoard::pile_container_t &getTreasureCards() const { return treasure_cards; }
+    const server::ServerBoard::pile_container_t &getVictoryCards() const { return victory_cards; }
     const std::vector<shared::CardBase::id_t> &getTrash() const { return trash; }
 
     // Mutable accessors for testing purposes
-    std::vector<shared::Pile> &getMutableKingdomCards() { return kingdom_cards; }
-    std::vector<shared::Pile> &getMutableTreasureCards() { return treasure_cards; }
-    std::vector<shared::Pile> &getMutableVictoryCards() { return victory_cards; }
+    server::ServerBoard::pile_container_t &getMutableKingdomCards() { return kingdom_cards; }
+    server::ServerBoard::pile_container_t &getMutableTreasureCards() { return treasure_cards; }
+    server::ServerBoard::pile_container_t &getMutableVictoryCards() { return victory_cards; }
     std::vector<shared::CardBase::id_t> &getMutableTrash() { return trash; }
 };
 
-TEST(ServerBoardTest, ConstructorInitializesPiles)
+class ServerBoardParamTest : public ::testing::TestWithParam<size_t>
 {
-    // Setup
-    auto kingdom_cards = get_valid_kingdom_cards();
+protected:
+    void SetUp() override { kingdom_cards = get_valid_kingdom_cards(); }
 
-    size_t player_count = 2;
+    std::vector<shared::CardBase::id_t> kingdom_cards;
+};
+
+TEST_P(ServerBoardParamTest, ConstructorInitializesPilesForDifferentPlayerCounts)
+{
+    size_t player_count = GetParam();
 
     TestableServerBoard board(kingdom_cards, player_count);
 
-    // Check that victory cards are initialized correctly
-    size_t expected_victory_card_count = 8;
-
+    // check victory cards
     const auto &victory_cards = board.getVictoryCards();
-
     ASSERT_EQ(victory_cards.size(), 4); // Estate, Duchy, Province, Curse
-    EXPECT_EQ(victory_cards[0].card, "Estate");
-    EXPECT_EQ(victory_cards[0].count, expected_victory_card_count);
 
-    EXPECT_EQ(victory_cards[1].card, "Duchy");
-    EXPECT_EQ(victory_cards[1].count, expected_victory_card_count);
+    const size_t expected_victory_count = (player_count == 2) ? 8 : 12;
+    EXPECT_PILE(victory_cards, "Estate", expected_victory_count);
+    EXPECT_PILE(victory_cards, "Duchy", expected_victory_count);
+    EXPECT_PILE(victory_cards, "Province", (player_count == 2) ? 8 : 12);
 
-    EXPECT_EQ(victory_cards[2].card, "Province");
-    EXPECT_EQ(victory_cards[2].count, expected_victory_card_count);
-
-    // Check that treasure cards are initialized correctly
+    // check treasure cards
     const auto &treasure_cards = board.getTreasureCards();
     ASSERT_EQ(treasure_cards.size(), 3); // Copper, Silver, Gold
-    EXPECT_EQ(treasure_cards[0].card, "Copper");
-    EXPECT_EQ(treasure_cards[1].card, "Silver");
-    EXPECT_EQ(treasure_cards[2].card, "Gold");
 
-    // Check that kingdom cards are initialized correctly
+    const size_t expected_copper_count = 60 - (player_count * 7);
+    EXPECT_PILE(treasure_cards, "Copper", expected_copper_count);
+    EXPECT_PILE(treasure_cards, "Silver", 40); // default val
+    EXPECT_PILE(treasure_cards, "Gold", 30); // default val
+
+    // check kingdom cards
     const auto &kingdom_piles = board.getKingdomCards();
     ASSERT_EQ(kingdom_piles.size(), kingdom_cards.size());
-    for ( size_t i = 0; i < kingdom_cards.size(); ++i ) {
-        EXPECT_EQ(kingdom_piles[i].card, kingdom_cards[i]);
-        // Assuming each kingdom card pile starts with 10 cards
-        EXPECT_EQ(kingdom_piles[i].count, 10);
+
+    for ( const auto &card_id : kingdom_cards ) {
+        EXPECT_PILE(kingdom_piles, card_id, 10);
     }
 }
+
+INSTANTIATE_TEST_SUITE_P(PlayerCountTests, ServerBoardParamTest, ::testing::Values(2, 3, 4));
 
 TEST(ServerBoardTest, BuyCardFromKingdomPile)
 {
@@ -92,7 +111,7 @@ TEST(ServerBoardTest, BuyCardFromKingdomPile)
     // Before buying, check the count
     const auto &kingdom_piles = board.getKingdomCards();
     auto it = std::find_if(kingdom_piles.begin(), kingdom_piles.end(),
-                           [&card_to_buy](const shared::Pile &pile) { return pile.card == card_to_buy; });
+                           [&card_to_buy](const shared::Pile &pile) { return pile.card_id == card_to_buy; });
     ASSERT_NE(it, kingdom_piles.end());
     EXPECT_EQ(it->count, 10);
 
@@ -119,7 +138,7 @@ TEST(ServerBoardTest, BuyCardFromTreasurePile)
     // Before buying, check the count
     const auto &treasure_piles = board.getTreasureCards();
     auto it = std::find_if(treasure_piles.begin(), treasure_piles.end(),
-                           [&card_to_buy](const shared::Pile &pile) { return pile.card == card_to_buy; });
+                           [&card_to_buy](const shared::Pile &pile) { return pile.card_id == card_to_buy; });
     ASSERT_NE(it, treasure_piles.end());
     size_t initial_count = it->count;
 
@@ -146,7 +165,7 @@ TEST(ServerBoardTest, BuyCardFromVictoryPile)
     // Before buying, check the count
     const auto &victory_piles = board.getVictoryCards();
     auto it = std::find_if(victory_piles.begin(), victory_piles.end(),
-                           [&card_to_buy](const shared::Pile &pile) { return pile.card == card_to_buy; });
+                           [&card_to_buy](const shared::Pile &pile) { return pile.card_id == card_to_buy; });
     ASSERT_NE(it, victory_piles.end());
     size_t initial_count = it->count;
 
@@ -190,7 +209,7 @@ TEST(ServerBoardTest, BuyCardFromEmptyPile)
     // Find the pile and set count to 0
     auto &kingdom_piles = board.getMutableKingdomCards();
     auto it = std::find_if(kingdom_piles.begin(), kingdom_piles.end(),
-                           [&card_to_buy](const shared::Pile &pile) { return pile.card == card_to_buy; });
+                           [&card_to_buy](const shared::Pile &pile) { return pile.card_id == card_to_buy; });
     ASSERT_NE(it, kingdom_piles.end());
     it->count = 0;
 
@@ -235,7 +254,7 @@ TEST(ServerBoardTest, IsGameOverProvinceEmpty)
     // Set Province pile to 0
     auto &victory_piles = board.getMutableVictoryCards();
     auto it = std::find_if(victory_piles.begin(), victory_piles.end(),
-                           [](const shared::Pile &pile) { return pile.card == "Province"; });
+                           [](const shared::Pile &pile) { return pile.card_id == "Province"; });
     ASSERT_NE(it, victory_piles.end());
     it->count = 0;
 
@@ -254,9 +273,7 @@ TEST(ServerBoardTest, IsGameOverThreeEmptyPiles)
 
     // Empty three kingdom card piles
     auto &kingdom_piles = board.getMutableKingdomCards();
-    kingdom_piles[0].count = 0;
-    kingdom_piles[1].count = 0;
-    kingdom_piles[2].count = 0;
+    set_n_piles_to_empty(kingdom_piles, 3);
 
     // Check if game is over
     EXPECT_TRUE(board.isGameOver());
@@ -290,9 +307,7 @@ TEST(ServerBoardTest, CountEmptyPiles)
     auto &victory_piles = board.getMutableVictoryCards();
     auto &treasure_piles = board.getMutableTreasureCards();
 
-    kingdom_piles[0].count = 0; // 1 empty pile
-    victory_piles[1].count = 0; // 2 empty piles
-    treasure_piles[2].count = 0; // 3 empty piles
+    set_n_piles_to_empty(kingdom_piles, 3);
 
     // Count empty piles
     size_t empty_piles = board.getEmptyPilesCount();
@@ -310,9 +325,9 @@ TEST(ServerBoardTest, InitialiseTreasureCards)
     // Verify treasure cards
     const auto &treasure_piles = board.getTreasureCards();
     ASSERT_EQ(treasure_piles.size(), 3);
-    EXPECT_EQ(treasure_piles[0].card, "Copper");
-    EXPECT_EQ(treasure_piles[1].card, "Silver");
-    EXPECT_EQ(treasure_piles[2].card, "Gold");
+    EXPECT_EQ(treasure_piles[0].card_id, "Copper");
+    EXPECT_EQ(treasure_piles[1].card_id, "Silver");
+    EXPECT_EQ(treasure_piles[2].card_id, "Gold");
 
     // Assuming counts are set as per Dominion rules
     // For simplicity, check that counts are greater than zero
@@ -332,9 +347,9 @@ TEST(ServerBoardTest, InitialiseVictoryCards)
     // Verify victory cards
     const auto &victory_piles = board.getVictoryCards();
     ASSERT_EQ(victory_piles.size(), 4); // Estate, Duchy, Province, Curse
-    EXPECT_EQ(victory_piles[0].card, "Estate");
-    EXPECT_EQ(victory_piles[1].card, "Duchy");
-    EXPECT_EQ(victory_piles[2].card, "Province");
+    EXPECT_EQ(victory_piles[0].card_id, "Estate");
+    EXPECT_EQ(victory_piles[1].card_id, "Duchy");
+    EXPECT_EQ(victory_piles[2].card_id, "Province");
 
     // Counts should be 8 for 2 players
     size_t expected_count = 8;

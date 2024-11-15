@@ -21,9 +21,9 @@ public:
     using shared::Board::isGameOver;
 
     // Expose protected member variables for testing access
-    std::vector<shared::Pile> &getTreasureCards() { return treasure_cards; }
-    std::vector<shared::Pile> &getVictoryCards() { return victory_cards; }
-    std::vector<shared::Pile> &getKingdomCards() { return kingdom_cards; }
+    shared::Board::pile_container_t &getTreasureCards() { return treasure_cards; }
+    shared::Board::pile_container_t &getVictoryCards() { return victory_cards; }
+    shared::Board::pile_container_t &getKingdomCards() { return kingdom_cards; }
 };
 
 // Test for initializing victory cards with three players
@@ -41,14 +41,14 @@ TEST(BoardTest, InitialiseVictoryCardsThreePlayers)
 
     size_t expected_count = 12; // For three or more players
 
-    EXPECT_EQ(board.getVictoryCards()[0].card, "Estate");
-    EXPECT_EQ(board.getVictoryCards()[0].count, expected_count);
+    EXPECT_NE(board.getVictoryCards().find("Estate"), board.getVictoryCards().end());
+    EXPECT_EQ(board.getVictoryCards().find("Estate")->count, expected_count);
 
-    EXPECT_EQ(board.getVictoryCards()[1].card, "Duchy");
-    EXPECT_EQ(board.getVictoryCards()[1].count, expected_count);
+    EXPECT_NE(board.getVictoryCards().find("Duchy"), board.getVictoryCards().end());
+    EXPECT_EQ(board.getVictoryCards().find("Duchy")->count, expected_count);
 
-    EXPECT_EQ(board.getVictoryCards()[2].card, "Province");
-    EXPECT_EQ(board.getVictoryCards()[2].count, expected_count);
+    EXPECT_NE(board.getVictoryCards().find("Province"), board.getVictoryCards().end());
+    EXPECT_EQ(board.getVictoryCards().find("Province")->count, expected_count);
 }
 
 // Test for counting empty piles
@@ -63,7 +63,7 @@ TEST(BoardTest, CountEmptyPiles)
     // Manually set counts for kingdom cards
     auto &kingdom_piles = board.getKingdomCards();
     for ( auto &pile : kingdom_piles ) {
-        if ( pile.card == "Village" || pile.card == "Smithy" || pile.card == "Market" ) {
+        if ( pile.card_id == "Village" || pile.card_id == "Smithy" || pile.card_id == "Market" ) {
             pile.count = 0;
         } else {
             pile.count = 10; // Default count
@@ -73,11 +73,11 @@ TEST(BoardTest, CountEmptyPiles)
     // Manually set counts for victory cards
     auto &victory_piles = board.getVictoryCards();
     for ( auto &pile : victory_piles ) {
-        if ( pile.card == "Estate" ) {
+        if ( pile.card_id == "Estate" ) {
             pile.count = 5;
-        } else if ( pile.card == "Duchy" ) {
+        } else if ( pile.card_id == "Duchy" ) {
             pile.count = 0;
-        } else if ( pile.card == "Province" ) {
+        } else if ( pile.card_id == "Province" ) {
             pile.count = 3;
         }
     }
@@ -85,11 +85,11 @@ TEST(BoardTest, CountEmptyPiles)
     // Manually set counts for treasure cards
     auto &treasure_piles = board.getTreasureCards();
     for ( auto &pile : treasure_piles ) {
-        if ( pile.card == "Copper" ) {
+        if ( pile.card_id == "Copper" ) {
             pile.count = 0;
-        } else if ( pile.card == "Silver" ) {
+        } else if ( pile.card_id == "Silver" ) {
             pile.count = 40;
-        } else if ( pile.card == "Gold" ) {
+        } else if ( pile.card_id == "Gold" ) {
             pile.count = 30;
         }
     }
@@ -114,7 +114,7 @@ TEST(BoardTest, IsGameOverProvinceEmpty)
     // Set Province count to 0
     auto &victory_piles = board.getVictoryCards();
     auto it = std::find_if(victory_piles.begin(), victory_piles.end(),
-                           [](const auto &pile) { return pile.card == "Province"; });
+                           [](const auto &pile) { return pile.card_id == "Province"; });
 
     ASSERT_NE(it, victory_piles.end());
     it->count = 0;
@@ -135,7 +135,7 @@ TEST(BoardTest, IsGameOverThreeEmptyPiles)
     // Manually set counts for kingdom cards
     auto &kingdom_piles = board.getKingdomCards();
     for ( auto &pile : kingdom_piles ) {
-        if ( pile.card == "Smithy" || pile.card == "Village" || pile.card == "Market" ) {
+        if ( pile.card_id == "Smithy" || pile.card_id == "Village" || pile.card_id == "Market" ) {
             pile.count = 0;
         } else {
             pile.count = 10; // Default count
@@ -151,11 +151,11 @@ TEST(BoardTest, IsGameOverThreeEmptyPiles)
     // Manually set counts for treasure cards
     auto &treasure_piles = board.getTreasureCards();
     for ( auto &pile : treasure_piles ) {
-        if ( pile.card == "Copper" ) {
+        if ( pile.card_id == "Copper" ) {
             pile.count = 46;
-        } else if ( pile.card == "Silver" ) {
+        } else if ( pile.card_id == "Silver" ) {
             pile.count = 40;
-        } else if ( pile.card == "Gold" ) {
+        } else if ( pile.card_id == "Gold" ) {
             pile.count = 30;
         }
     }
@@ -188,11 +188,11 @@ TEST(BoardTest, IsGameOverNotOver)
     // Manually set counts for treasure cards
     auto &treasure_piles = board.getTreasureCards();
     for ( auto &pile : treasure_piles ) {
-        if ( pile.card == "Copper" ) {
+        if ( pile.card_id == "Copper" ) {
             pile.count = 46;
-        } else if ( pile.card == "Silver" ) {
+        } else if ( pile.card_id == "Silver" ) {
             pile.count = 40;
-        } else if ( pile.card == "Gold" ) {
+        } else if ( pile.card_id == "Gold" ) {
             pile.count = 30;
         }
     }

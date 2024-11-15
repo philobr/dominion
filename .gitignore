@@ -4,6 +4,11 @@
 .DS_Store
 Thumbs.db
 
+# Ignore everything in the doxygen directory
+doxygen/*
+# Unignore the Doxyfile
+!doxygen/Doxyfile
+
 # Ignore build directories
 cmake-build-debug/
 cmake-build-release/

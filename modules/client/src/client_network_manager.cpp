@@ -48,19 +48,19 @@ void ::ClientNetworkManager::init(const std::string &host, const uint16_t port)
 
 bool ClientNetworkManager::connect(const std::string &host, const uint16_t port)
 {
-
-    // create sockpp address and catch any errors
-    sockpp::inet_address address;
     try {
-        address = sockpp::inet_address(host, port);
+
+        // create sockpp address and catch any errors
+        sockpp::inet_address address = sockpp::inet_address(host, port);
+
+        // establish connection to given address
+        if ( !ClientNetworkManager::_connection->connect(address) ) {
+            //        GameController::showError("Connection error", "Failed to connect to server " +
+            //        address.to_string());
+            return false;
+        }
     } catch ( const sockpp::getaddrinfo_error &e ) {
         //        GameController::showError("Connection error", "Failed to resolve address " + e.hostname());
-        return false;
-    }
-
-    // establish connection to given address
-    if ( !ClientNetworkManager::_connection->connect(address) ) {
-        //        GameController::showError("Connection error", "Failed to connect to server " + address.to_string());
         return false;
     }
 

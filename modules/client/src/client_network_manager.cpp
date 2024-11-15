@@ -89,7 +89,7 @@ void ClientNetworkManager::sendRequest(std::string message)
         // turn message into stream and prepend message length
         std::stringstream messageStream;
         messageStream << std::to_string(message.size()) << ':' << message;
-        message = messageStream.str();
+        msg = messageStream.str();
 
         // output message for debugging purposes
 #ifdef PRINT_NETWORK_MESSAGES
@@ -97,10 +97,10 @@ void ClientNetworkManager::sendRequest(std::string message)
 #endif
 
         // send message to server
-        ssize_t bytesSent = ClientNetworkManager::_connection->write(message);
+        ssize_t bytesSent = ClientNetworkManager::_connection->write(msg);
 
-        // if the number of bytes sent does not match the length of the message, probably something went wrong
-        if ( bytesSent != ssize_t(message.length()) ) {
+        // if the number of bytes sent does not match the length of the msg, probably something went wrong
+        if ( bytesSent != ssize_t(msg.length()) ) {
             // TODO Stuff for the gui team
             // GameController::showError("Network error", "Error writing to the TCP stream: " +
             // ClientNetworkManager::_connection->last_error_str());

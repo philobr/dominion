@@ -61,7 +61,7 @@ wxThread::ExitCode ClientListener::Entry()
 
             } catch ( std::exception &e ) {
                 // Make sure the connection isn't terminated only because of a read error
-                this->outputError("Network error", "Error while reading message: " + (std::string)e.what());
+                this->outputError("Network error", "Error while reading message: " + std::string(e.what()));
             }
         }
 
@@ -71,7 +71,7 @@ wxThread::ExitCode ClientListener::Entry()
 
 
     } catch ( const std::exception &e ) {
-        this->outputError("Network error", "Error in listener thread: " + (std::string)e.what());
+        this->outputError("Network error", "Error in listener thread: " + std::string(e.what()));
     }
 
     this->_connection->shutdown();

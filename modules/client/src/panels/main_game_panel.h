@@ -11,23 +11,30 @@
 
 namespace client
 {
-
+    /**
+     * @brief The main panel that displays the game state
+     *
+     */
     class MainGamePanel : public wxPanel
     {
 
     public:
         explicit MainGamePanel(wxWindow *parent);
 
+        /**
+         * @brief Draw the game state
+         *
+         * @param GameState
+         */
         void DrawGameState(std::shared_ptr<shared::ReducedGameState> GameState);
 
 
     private:
-        // define key constant layout values
-        //
         BoardPanel *Board;
         PlayerPanel *Player;
         EnemyInfoPanel *EnemyInfo;
 
+        // define key constant layout values
         const wxSize VerticalBaseSize = wxSize(1024, 100);
         const wxSize PanelSize = wxSize(1024, 1024);
     };

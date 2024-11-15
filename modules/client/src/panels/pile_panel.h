@@ -9,6 +9,9 @@
 
 namespace client
 {
+    /**
+     * @brief A utility panel that displays a pile of cards
+     */
     class PilePanel : public wxPanel
     {
     public:

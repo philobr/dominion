@@ -7,6 +7,10 @@
 
 namespace client
 {
+    /**
+     * @brief The panel that displays the information about the enemies
+     * This includes the number of cards in the deck, hand and discard pile
+     */
     class EnemyInfoPanel : public wxPanel
     {
     public:

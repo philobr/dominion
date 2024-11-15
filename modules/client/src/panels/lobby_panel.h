@@ -18,7 +18,6 @@ namespace client
          */
         explicit LobbyPanel(wxWindow *parent);
 
-        ///
         /// @brief Adds a player visually to the lobby
         /// This is specifically not doing any logic
         /// @pre playerCount < 4

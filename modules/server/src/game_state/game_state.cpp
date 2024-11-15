@@ -6,27 +6,40 @@
 
 namespace server
 {
-    void GameState::PlayAction_handler(std::unique_ptr<shared::PlayActionCardDecision> message,
+    void GameState::PlayAction_handler(std::unique_ptr<shared::ActionDecisionMessage> message,
                                        MessageInterface &message_interface)
-    {}
+    {
+        const auto &affected_player = message->player_id;
+        auto decision = std::make_unique<shared::PlayActionCardDecision>(message->decision.release());
+    }
 
-    void GameState::BuyAction_handler(std::unique_ptr<shared::BuyCardDecision> message,
+    void GameState::BuyAction_handler(std::unique_ptr<shared::ActionDecisionMessage> message,
                                       MessageInterface &message_interface)
-    {}
+    {
+        const auto &affected_player = message->player_id;
+        auto decision = std::make_unique<shared::BuyCardDecision>(message->decision.release());
+    }
 
-    void GameState::EndTurn_handler(std::unique_ptr<shared::EndTurnDecision> message,
+    void GameState::EndTurn_handler(std::unique_ptr<shared::ActionDecisionMessage> message,
                                     MessageInterface &message_interface)
-    {}
+    {
+        const auto &affected_player = message->player_id;
+        auto decision = std::make_unique<shared::EndTurnDecision>(message->decision.release());
+    }
 
-    void GameState::ChooseCards_handler(std::unique_ptr<shared::ChooseNCardsFromHandDecision> message,
+    void GameState::ChooseCards_handler(std::unique_ptr<shared::ActionDecisionMessage> message,
                                         MessageInterface &message_interface)
-    {}
+    {
+        const auto &affected_player = message->player_id;
+        auto decision = std::make_unique<shared::ChooseNCardsFromHandDecision>(message->decision.release());
+    }
 
-    void GameState::receive_action(std::unique_ptr<shared::ActionDecision> message, MessageInterface &message_interface)
+    void GameState::receive_action(std::unique_ptr<shared::ActionDecisionMessage> message,
+                                   MessageInterface &message_interface)
     {
 #define HANDLE_ACTION(type, handler_func)                                                                              \
-    if ( auto casted_message = dynamic_cast<type *>(message.get()) ) {                                                 \
-        handler_func(std::unique_ptr<type>(static_cast<type *>(message.release())), message_interface);                \
+    if ( auto _ = dynamic_cast<type *>(message->decision.get()) ) {                                                    \
+        handler_func(std::move(message), message_interface);                                                           \
         return;                                                                                                        \
     }
 

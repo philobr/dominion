@@ -35,7 +35,9 @@ namespace server
         ~GameState();
         GameState(GameState &&other);
 
-        void receive_action(std::unique_ptr<shared::ActionDecision> message, MessageInterface &message_interface);
+        // TODO: this does not work, player id is deleted
+        void receive_action(std::unique_ptr<shared::ActionDecisionMessage> message,
+                            MessageInterface &message_interface);
 
         const Player::id_t &get_current_player_id() const { return player_order[current_player_idx]; }
         Player &get_current_player() { return *player_map[get_current_player_id()]; }
@@ -60,12 +62,17 @@ namespace server
         bool try_buy(const Player::id_t player_id, const shared::CardBase::id_t &card);
         bool try_play(const Player::id_t &affected_player, size_t hand_index, size_t behaviour_index);
 
-        void handlePlayAction(std::unique_ptr<shared::PlayActionCardDecision> message,
-                              MessageInterface &message_interface);
-        void handleBuyAction(std::unique_ptr<shared::BuyCardDecision> message, MessageInterface &message_interface);
-        void handleEndTurn(std::unique_ptr<shared::EndTurnDecision> message, MessageInterface &message_interface);
-        void handleChooseCards(std::unique_ptr<shared::ChooseNCardsFromHandDecision> message,
+        void PlayAction_handler(std::unique_ptr<shared::ActionDecisionMessage> message,
+                                MessageInterface &message_interface);
+
+        void BuyAction_handler(std::unique_ptr<shared::ActionDecisionMessage> message,
                                MessageInterface &message_interface);
+
+        void EndTurn_handler(std::unique_ptr<shared::ActionDecisionMessage> message,
+                             MessageInterface &message_interface);
+
+        void ChooseCards_handler(std::unique_ptr<shared::ActionDecisionMessage> message,
+                                 MessageInterface &message_interface);
 
         /**
          * @brief Checks if all ids exist and if the CardType is one of:

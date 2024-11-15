@@ -18,6 +18,7 @@ namespace server
          * exactly the same contents. This way we dont copy the contents each time we create a message.
          */
         using ptr_t = std::shared_ptr<ServerBoard>;
+        using pile_container_t = shared::Board::pile_container_t;
 
         /**
          * @brief Constructs a ServerBoard for a given number of players and 10 kingdom cards.

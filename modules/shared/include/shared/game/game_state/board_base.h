@@ -1,5 +1,6 @@
 #pragma once
 
+#include <set>
 #include <vector>
 
 #include <shared/game/cards/card_base.h>
@@ -8,8 +9,17 @@ namespace shared
 {
     struct Pile
     {
-        shared::CardBase::id_t card;
-        size_t count;
+        shared::CardBase::id_t card_id;
+        mutable size_t count; // `mutable` allows modification const contexts
+
+        struct PileComparator
+        {
+            using is_transparent = void; // enables heterogeneous lookup
+
+            bool operator()(const Pile &a, const Pile &b) const { return a.card_id < b.card_id; }
+            bool operator()(const Pile &a, const shared::CardBase::id_t &key) const { return a.card_id < key; }
+            bool operator()(const shared::CardBase::id_t &key, const Pile &b) const { return key < b.card_id; }
+        };
     };
 
     class Board
@@ -22,6 +32,7 @@ namespace shared
          * exactly the same contents. This way we dont copy the contents each time we create a message.
          */
         using ptr_t = std::shared_ptr<Board>;
+        using pile_container_t = std::set<Pile, Pile::PileComparator>;
 
         /**
          * @brief Constructs a shared_ptr on a ServerBoard for a given number of players and 10 kingdom cards.
@@ -57,9 +68,9 @@ namespace shared
         size_t getEmptyPilesCount() const;
 
     protected:
-        std::vector<Pile> victory_cards;
-        std::vector<Pile> treasure_cards;
-        std::vector<Pile> kingdom_cards;
+        pile_container_t victory_cards;
+        pile_container_t treasure_cards;
+        pile_container_t kingdom_cards;
         std::vector<shared::CardBase::id_t> trash;
 
         /**

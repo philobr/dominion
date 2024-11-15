@@ -8,11 +8,9 @@ namespace shared
         _ASSERT_EQ(kingdom_cards.size(), 10, "Board must be initialised with 10 kingdom cards!");
         _ASSERT_TRUE((2 <= player_count && player_count <= 4), "Players must be in [2, 4]");
 
-        this->kingdom_cards.reserve(kingdom_cards.size());
-        std::transform(kingdom_cards.begin(), kingdom_cards.end(), std::back_inserter(this->kingdom_cards),
-                       [](const shared::CardBase::id_t &card_id) {
-                           return Pile{card_id, INITIAL_NUM_KINGDOM_CARDS};
-                       });
+        std::transform(kingdom_cards.begin(), kingdom_cards.end(),
+                       std::inserter(this->kingdom_cards, this->kingdom_cards.end()),
+                       [](const shared::CardBase::id_t &card_id) { return Pile{card_id, INITIAL_NUM_KINGDOM_CARDS}; });
 
         initialiseTreasureCards(player_count);
         initialiseVictoryCards(player_count);
@@ -25,19 +23,16 @@ namespace shared
 
     size_t Board::getEmptyPilesCount() const
     {
-        auto count_empty = [](const auto &pile_vector) -> size_t {
-            return std::count_if(pile_vector.begin(), pile_vector.end(),
-                                 [](const auto &pile) { return pile.count == 0; });
-        };
+        auto count_empty = [](const auto &pile_set) -> size_t
+        { return std::count_if(pile_set.begin(), pile_set.end(), [](const auto &pile) { return pile.count == 0; }); };
 
         return count_empty(treasure_cards) + count_empty(victory_cards) + count_empty(kingdom_cards);
     }
 
     bool Board::isGameOver() const
     {
-        return std::any_of(victory_cards.begin(), victory_cards.end(),
-                           [](auto pile) { return pile.card == "Province" && pile.count == 0; }) ||
-                getEmptyPilesCount() >= 3;
+        auto province_pile = victory_cards.find("Province");
+        return ((province_pile != victory_cards.end()) && (province_pile->count == 0)) || (getEmptyPilesCount() >= 3);
     }
 
     void Board::initialiseTreasureCards(size_t player_count)

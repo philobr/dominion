@@ -18,15 +18,15 @@ namespace server
         return std::static_pointer_cast<shared::Board>(shared_from_this());
     }
 
-    bool ServerBoard::buy(const shared::CardBase::id_t &card_id)
+    bool ServerBoard::buy(const shared::CardBase::id_t &key)
     {
         // helper to search the card in each pile
-        auto buy_card = [&](const auto &card_id, auto &pile_vector) -> bool
+        auto buy_card = [key](auto &pile_vector) -> bool
         {
             return std::any_of(pile_vector.begin(), pile_vector.end(),
-                               [card_id](auto &card_pile)
+                               [key](auto &card_pile)
                                {
-                                   if ( card_pile.card != card_id || card_pile.count == 0 ) {
+                                   if ( card_pile.card_id != key || card_pile.count == 0 ) {
                                        return false;
                                    }
 
@@ -35,8 +35,7 @@ namespace server
                                });
         };
 
-        return buy_card(card_id, treasure_cards) || buy_card(card_id, victory_cards) ||
-                buy_card(card_id, kingdom_cards);
+        return buy_card(treasure_cards) || buy_card(victory_cards) || buy_card(kingdom_cards);
     }
 
     void ServerBoard::trash_card(const shared::CardBase::id_t &card)

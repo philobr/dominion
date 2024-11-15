@@ -1,4 +1,7 @@
-# doMINION
+<h1 style="display: flex; align-items: center;">
+  <img src="assets/logo.png" alt="Dominion Minion Logo" style="width: 200px; margin-right: 10px;">
+  doMINION
+</h1>
 
 ## Developing
 

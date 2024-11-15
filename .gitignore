@@ -6,8 +6,9 @@ Thumbs.db
 
 # Ignore everything in the doxygen directory
 doxygen/*
-# Unignore the Doxyfile
+# Unignore the Doxyfile and the logo styleguide
 !doxygen/Doxyfile
+!doxygen/logo.css
 
 # Ignore build directories
 cmake-build-debug/

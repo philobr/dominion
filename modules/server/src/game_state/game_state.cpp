@@ -6,7 +6,7 @@
 
 namespace server
 {
-    void GameState::receive_action(std::unique_ptr<shared::ActionDecision> action, MessageInterface &message_interface)
+    void GameState::receive_action(std::unique_ptr<shared::ActionDecision> action)
     {
         /*
         if ( auto play_action = dynamic_cast<shared::PlayActionCardDecision *>(action.get()) ) {

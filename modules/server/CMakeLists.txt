@@ -1,19 +1,11 @@
 # modules/server/CMakeLists.txt
 
-set(SERVER_EXECUTABLE_SOURCES
-    ${CMAKE_CURRENT_SOURCE_DIR}/server_main.cpp  
-    PARENT_SCOPE
-)
-
-
 ################################
 # BUILD LIBRARY
 ################################
 
 file(GLOB SERVER_LIBRARY_SOURCES
-    "${CMAKE_CURRENT_SOURCE_DIR}/src/lobby.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/src/lobby_manager.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/src/message_handler.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/game_state/*.cpp"
 )
 
@@ -29,3 +21,9 @@ target_include_directories(server_lib PUBLIC
 include_rapidjson(server_lib)   
 include_sockpp(server_lib)
 include_shared_lib(server_lib)
+
+set(SERVER_EXECUTABLE_SOURCES
+    ${CMAKE_CURRENT_SOURCE_DIR}/server_main.cpp 
+ 
+    PARENT_SCOPE
+)

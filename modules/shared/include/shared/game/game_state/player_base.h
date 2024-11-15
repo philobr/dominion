@@ -5,6 +5,7 @@
 
 #include <iomanip> // for operator<<
 #include <iostream> // for operator<<
+#include <memory>
 
 #include <shared/game/cards/card_base.h>
 namespace shared
@@ -33,8 +34,21 @@ namespace shared
         unsigned int getBuys() const { return buys; }
         unsigned int getTreasure() const { return treasure; }
 
+        /**
+         * @brief Decrements actions by one, or keeps it at 0.
+         */
         void decActions();
+
+        /**
+         * @brief Decrements buys by one, or keeps it at 0.
+         */
         void decBuys();
+
+        /**
+         * @brief Decrements treasure by min(dec_amount, treasure_amount)
+         *
+         * @param dec_amount
+         */
         void decTreasure(const unsigned int dec_amount);
 
     protected:
@@ -55,20 +69,27 @@ namespace shared
     class ReducedEnemy : public PlayerBase
     {
     public:
-        ReducedEnemy(const PlayerBase &player, unsigned int hand) : PlayerBase(player), hand_size(hand) {}
+        using ptr_t = std::unique_ptr<ReducedEnemy>;
+
+        static ptr_t make(const PlayerBase &player, unsigned int hand_size);
+        unsigned int getHandSize() const;
 
     protected:
+        ReducedEnemy(const PlayerBase &player, unsigned int hand);
         unsigned int hand_size;
     };
 
     class ReducedPlayer : public PlayerBase
     {
     public:
-        ReducedPlayer(const PlayerBase &player, std::vector<CardBase::id_t> hand) : PlayerBase(player), hand_cards(hand)
-        {}
+        using ptr_t = std::unique_ptr<ReducedPlayer>;
+
+        static ptr_t make(const PlayerBase &player, std::vector<CardBase::id_t> hand_cards);
+        const std::vector<CardBase::id_t> &getHandCards() const;
 
     protected:
-        std::vector<CardBase::id_t> hand_cards;
+        ReducedPlayer(const PlayerBase &player, const std::vector<CardBase::id_t> &hand_cards);
+        const std::vector<CardBase::id_t> hand_cards;
     };
 
 } // namespace shared

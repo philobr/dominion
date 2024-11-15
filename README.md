@@ -1,5 +1,5 @@
-<h1 style="display: flex; align-items: center;">
-  <img src="assets/logo.png" alt="Dominion Minion Logo" style="width: 200px; margin-right: 10px;">
+<h1>
+  <img src="assets/logo.png" alt="Dominion Minion Logo" width="50" style="vertical-align: middle;">
   doMINION
 </h1>
 

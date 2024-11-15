@@ -6,7 +6,7 @@ std::vector<shared::CardBase::id_t> get_valid_kingdom_cards()
             "Moat",    "Chapel", "Feast",  "Moneylender", "Remodel"};
 }
 
-void set_n_piles_to_empty(shared::Board::pile_container_t &pile_container, size_t n)
+void set_n_piles_to_empty(const shared::Board::pile_container_t &pile_container, size_t n)
 {
     size_t i = 0;
     for ( const auto &pile : pile_container ) {

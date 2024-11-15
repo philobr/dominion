@@ -1,5 +1,6 @@
 ---
-# Unfortunately, we can't use misc-const-correctness since this is not available in clang-tidy 14.0.0
+# misc-const-correctness: Unfortunately, this check is not available in clang-tidy 14.0.0
+# readability-qualified-auto: TODO: This check fails in some cases. Is this a bug in our code or a false positive?
 Checks: |
   -*,
   cppcoreguidelines-prefer-member-initializer,
@@ -14,7 +15,6 @@ Checks: |
   readability-isolate-declaration,
   readability-named-parameter,
   readability-non-const-parameter,
-  readability-qualified-auto,
   readability-redundant-smartptr-get
 CheckOptions:
   - key: readability-identifier-naming.NamespaceCase

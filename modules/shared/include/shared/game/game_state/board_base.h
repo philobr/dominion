@@ -24,16 +24,26 @@ namespace shared
 
         static constexpr size_t MAX_NUM_EMPTY_PILES = 3;
 
-        static constexpr size_t getCopperCount(size_t num_players);
-        static constexpr size_t getVictoryCardCount(size_t num_players);
-        static constexpr size_t getCurseCardCount(size_t num_players);
-        static constexpr bool validatePlayerCount(size_t num_players);
+        static constexpr size_t getCopperCount(size_t num_players) { return TREASURE_COPPER_COUNT - (7 * num_players); }
+        static constexpr size_t getCurseCardCount(size_t num_players) { return CURSE_MULTIPLIER * (num_players - 1); }
+        static constexpr size_t getVictoryCardCount(size_t num_players)
+        {
+            return num_players == 2 ? VICTORY_CARDS_SMALL_GAME : VICTORY_CARDS_LARGE_GAME;
+        }
+
+        static constexpr bool validatePlayerCount(size_t num_players)
+        {
+            return MIN_PLAYER_COUNT <= num_players && num_players <= MAX_PLAYER_COUNT;
+        }
+
     } // namespace BoardConfig
 
     struct Pile
     {
         shared::CardBase::id_t card_id;
         mutable size_t count; // `mutable` allows modification const contexts
+
+        Pile() = default;
 
         /**
          * @brief Creates a new kingdom card pile with size 10; defined by shared::BoardConfig::KINGDOM_CARD_COUNT
@@ -51,6 +61,8 @@ namespace shared
          * @return Pile
          */
         static Pile make(const shared::CardBase::id_t &card_id, size_t pile_size);
+
+        bool empty() const { return count == 0; }
 
         struct PileComparator
         {
@@ -100,6 +112,7 @@ namespace shared
         pile_container_t victory_cards;
         pile_container_t treasure_cards;
         pile_container_t kingdom_cards;
+        Pile curse_card_pile;
         std::vector<shared::CardBase::id_t> trash;
 
         /**
@@ -113,9 +126,12 @@ namespace shared
 
         /**
          * @brief Initialised the treasure cards as follows:
-         * copper_count     shared::BoardConfig::TREASURE_COPPER_COUNT - (7 * player_count)
-         * silver_count     shared::BoardConfig::TREASURE_SILVER_COUNT
-         * gold_count       shared::BoardConfig::TREASURE_GOLD_COUNT
+         *
+         * - copper_count = shared::BoardConfig::TREASURE_COPPER_COUNT - (7 * player_count)
+         *
+         * - silver_count = shared::BoardConfig::TREASURE_SILVER_COUNT
+         *
+         * - gold_count   = shared::BoardConfig::TREASURE_GOLD_COUNT
          *
          * @param player_count
          */
@@ -123,14 +139,23 @@ namespace shared
 
         /**
          * @brief Initialised the victory cards as follows:
-         * card_count
-         *      if player_count < 3:    shared::BoardConfig::VICTORY_CARDS_SMALL_GAME
-         *      if player_count >= 3:   shared::BoardConfig::VICTORY_CARDS_LARGE_GAME
-         * curse_count  shared::BoardConfig::CURSE_MULTIPLIER * (player_count - 1);
+         *
+         * - if player_count < 3:    shared::BoardConfig::VICTORY_CARDS_SMALL_GAME
+         *
+         * - if player_count >= 3:   shared::BoardConfig::VICTORY_CARDS_LARGE_GAME
          *
          * @param player_count
          */
         void initialiseVictoryCards(size_t player_count);
+
+        /**
+         * @brief Initialises the curse pile as:
+         *
+         * - curse_count = shared::BoardConfig::CURSE_MULTIPLIER * (player_count - 1)
+         *
+         * @param player_count
+         */
+        void initialiseCursePile(size_t player_count);
     };
 
 } // namespace shared

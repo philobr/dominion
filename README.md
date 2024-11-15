@@ -1,5 +1,5 @@
 <h1>
-  <img src="assets/logo.png" alt="Dominion Minion Logo" width="100" style="vertical-align: middle;">
+  <img src="assets/logo.png" alt="Dominion Minion Logo" width="200" style="vertical-align: middle;">
   doMINION
 </h1>
 

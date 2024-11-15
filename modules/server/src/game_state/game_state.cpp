@@ -6,39 +6,38 @@
 
 namespace server
 {
-    void GameState::receive_action(std::unique_ptr<shared::ActionDecision> action, MessageInterface &message_interface)
+    void GameState::PlayAction_handler(std::unique_ptr<shared::PlayActionCardDecision> message,
+                                       MessageInterface &message_interface)
+    {}
+
+    void GameState::BuyAction_handler(std::unique_ptr<shared::BuyCardDecision> message,
+                                      MessageInterface &message_interface)
+    {}
+
+    void GameState::EndTurn_handler(std::unique_ptr<shared::EndTurnDecision> message,
+                                    MessageInterface &message_interface)
+    {}
+
+    void GameState::ChooseCards_handler(std::unique_ptr<shared::ChooseNCardsFromHandDecision> message,
+                                        MessageInterface &message_interface)
+    {}
+
+    void GameState::receive_action(std::unique_ptr<shared::ActionDecision> message, MessageInterface &message_interface)
     {
-        /*
-        if ( auto play_action = dynamic_cast<shared::PlayActionCardDecision *>(action.get()) ) {
-            // Handle PlayActionCardDecision
-            // You can access play_action->cardIndex here
-        } else if ( auto buy_action = dynamic_cast<shared::BuyCardDecision *>(action.get()) ) {
-            // Handle BuyCardDecision
-            // You can access buy_action->card here
-            shared::CardBase::id_t card = buy_action->card;
-            if ( try_buy(get_current_player_id(), card) ) {
-                // Notify all players about the bought card
-                // TODO: There are no messages for this yet
-            } else {
-                // Notify the player that the card could not be bought
-                // TODO: There are no messages for this yet
-            }
-        } else if ( auto end_turn = dynamic_cast<shared::EndTurnDecision *>(action.get()) ) {
-            // Handle EndTurnDecision
-            this->end_turn();
-        } else if ( auto choose_cards = dynamic_cast<shared::ChooseNCardsFromHandDecision *>(action.get()) ) {
-            // Handle ChooseNCardsFromHandDecision
-            // You can access choose_cards->cards here
-        } else {
-            // Handle unknown action type
-            throw std::runtime_error("Unknown action type received");
-        }
-        */
+#define HANDLE_ACTION(type, handler_func)                                                                              \
+    if ( auto casted_message = dynamic_cast<type *>(message.get()) ) {                                                 \
+        handler_func(std::unique_ptr<type>(static_cast<type *>(message.release())), message_interface);                \
+        return;                                                                                                        \
+    }
+
+        HANDLE_ACTION(shared::PlayActionCardDecision, PlayAction_handler);
+        HANDLE_ACTION(shared::BuyCardDecision, BuyAction_handler);
+        HANDLE_ACTION(shared::EndTurnDecision, EndTurn_handler);
+        HANDLE_ACTION(shared::ChooseNCardsFromHandDecision, ChooseCards_handler);
+
+        throw std::runtime_error("Unknown action type received");
     }
 } // namespace server
-
-
-// OKISH
 
 namespace server
 {

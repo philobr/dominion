@@ -7,10 +7,37 @@
 #include <shared/utils/assert.h>
 namespace shared
 {
+    namespace BoardConfig
+    {
+        static constexpr size_t KINGDOM_CARD_COUNT = 10;
+
+        static constexpr size_t TREASURE_COPPER_COUNT = 60;
+        static constexpr size_t TREASURE_SILVER_COUNT = 40;
+        static constexpr size_t TREASURE_GOLD_COUNT = 30;
+
+        static constexpr size_t CURSE_MULTIPLIER = 10; // 10 curse cards per player
+        static constexpr size_t VICTORY_CARDS_SMALL_GAME = 8; // for player count < 3
+        static constexpr size_t VICTORY_CARDS_LARGE_GAME = 12; // for player count > 3
+
+        static constexpr size_t MIN_PLAYER_COUNT = 2;
+        static constexpr size_t MAX_PLAYER_COUNT = 4;
+
+    } // namespace BoardConfig
+
     struct Pile
     {
         shared::CardBase::id_t card_id;
         mutable size_t count; // `mutable` allows modification const contexts
+
+        static Pile makeKingdomCard(const shared::CardBase::id_t &kingdom_card_id)
+        {
+            return Pile(kingdom_card_id, BoardConfig::KINGDOM_CARD_COUNT);
+        }
+
+        static Pile make(const shared::CardBase::id_t &kingdom_card_id, size_t pile_size)
+        {
+            return Pile(kingdom_card_id, pile_size);
+        }
 
         struct PileComparator
         {
@@ -20,16 +47,17 @@ namespace shared
             bool operator()(const Pile &a, const shared::CardBase::id_t &key) const { return a.card_id < key; }
             bool operator()(const shared::CardBase::id_t &key, const Pile &b) const { return key < b.card_id; }
         };
+
+    private:
+        Pile(const shared::CardBase::id_t &new_card_id, size_t pile_size) : card_id(new_card_id), count(pile_size) {}
     };
 
     class Board
     {
     public:
-        static constexpr size_t INITIAL_NUM_KINGDOM_CARDS = 10;
-
         /**
-         * @brief We use a shared_ptr instead of a unique_ptr because the reduced board and the server board have
-         * exactly the same contents. This way we dont copy the contents each time we create a message.
+         * @brief We use a shared_ptr instead of a unique_ptr because the reduced board and the server board
+         * have exactly the same contents. This way we dont copy the contents each time we create a message.
          */
         using ptr_t = std::shared_ptr<Board>;
         using pile_container_t = std::set<Pile, Pile::PileComparator>;

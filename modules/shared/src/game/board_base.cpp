@@ -5,12 +5,14 @@ namespace shared
 {
     Board::Board(const std::vector<shared::CardBase::id_t> &kingdom_cards, size_t player_count)
     {
-        _ASSERT_EQ(kingdom_cards.size(), 10, "Board must be initialised with 10 kingdom cards!");
-        _ASSERT_TRUE((2 <= player_count && player_count <= 4), "Players must be in [2, 4]");
+        _ASSERT_EQ(kingdom_cards.size(), BoardConfig::KINGDOM_CARD_COUNT,
+                   "Board must be initialised with 10 kingdom cards!");
+        _ASSERT_TRUE((BoardConfig::MIN_PLAYER_COUNT <= player_count && player_count <= BoardConfig::MAX_PLAYER_COUNT),
+                     "Players must be in [2, 4]");
 
         std::transform(kingdom_cards.begin(), kingdom_cards.end(),
                        std::inserter(this->kingdom_cards, this->kingdom_cards.end()),
-                       [](const shared::CardBase::id_t &card_id) { return Pile{card_id, INITIAL_NUM_KINGDOM_CARDS}; });
+                       [](const shared::CardBase::id_t &card_id) { return Pile::makeKingdomCard(card_id); });
 
         initialiseTreasureCards(player_count);
         initialiseVictoryCards(player_count);
@@ -31,25 +33,27 @@ namespace shared
 
     bool Board::isGameOver() const
     {
+        static constexpr size_t MAX_NUM_EMPTY_PILES = 3;
         auto province_pile = victory_cards.find("Province");
-        return ((province_pile != victory_cards.end()) && (province_pile->count == 0)) || (getEmptyPilesCount() >= 3);
+        return ((province_pile != victory_cards.end()) && (province_pile->count == 0)) ||
+                (getEmptyPilesCount() >= MAX_NUM_EMPTY_PILES);
     }
 
     void Board::initialiseTreasureCards(size_t player_count)
     {
-        const size_t copper_count = 60 - (7 * player_count);
-        const size_t silver_count = 40;
-        const size_t gold_count = 30;
-
-        treasure_cards = {{"Copper", copper_count}, {"Silver", silver_count}, {"Gold", gold_count}};
+        const size_t copper_count = BoardConfig::TREASURE_COPPER_COUNT - (7 * player_count);
+        treasure_cards = {Pile::make("Copper", copper_count), Pile::make("Silver", BoardConfig::TREASURE_SILVER_COUNT),
+                          Pile::make("Gold", BoardConfig::TREASURE_GOLD_COUNT)};
     }
 
     void Board::initialiseVictoryCards(size_t player_count)
     {
-        const size_t card_count = (player_count < 3) ? 8 : 12;
-        const size_t curse_count = (player_count - 1) * 10;
-        victory_cards = {
-                {"Estate", card_count}, {"Duchy", card_count}, {"Province", card_count}, {"Curse", curse_count}};
+        const size_t card_count =
+                (player_count < 3) ? BoardConfig::VICTORY_CARDS_SMALL_GAME : BoardConfig::VICTORY_CARDS_LARGE_GAME;
+        const size_t curse_count = (player_count - 1) * BoardConfig::CURSE_MULTIPLIER;
+
+        victory_cards = {Pile::make("Estate", card_count), Pile::make("Duchy", card_count),
+                         Pile::make("Province", card_count), Pile::make("Curse", curse_count)};
     }
 
 } // namespace shared

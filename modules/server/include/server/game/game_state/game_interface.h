@@ -1,6 +1,6 @@
 #pragma once
 #include <server/game/game.h>
-#include <server/message_interface.h>
+#include <server/network/message_interface.h> // TODO: should be removed later!
 
 #include <unordered_map>
 

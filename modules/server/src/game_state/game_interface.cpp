@@ -17,7 +17,7 @@ namespace server
                 : handle_response(std::move(action_decision), affected_player_id, in_response_to.value());
 
         // TODO: MESSAGE_INTERFACE HAS TO ACCEPT UNIQUE PTRS NOT RAW POINTERES
-        message_interface.send_message(response.release(), affected_player_id);
+        message_interface.send_message(std::move(response), affected_player_id);
     }
 
     GameInterface::response_t GameInterface::handle_action(std::unique_ptr<shared::ActionDecision> action_decision,

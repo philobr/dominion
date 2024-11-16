@@ -7,7 +7,8 @@
 namespace server
 {
     GameState::GameState(const std::vector<shared::CardBase::id_t> &play_cards,
-                         const std::vector<Player::id_t> &player_ids) : current_player_idx(0)
+                         const std::vector<Player::id_t> &player_ids) :
+        current_player_idx(0)
     {
         _ASSERT_TRUE((2 <= player_ids.size() && player_ids.size() <= 4), "Player count must be in [2, 4]");
 

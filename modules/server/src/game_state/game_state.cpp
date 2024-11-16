@@ -6,54 +6,6 @@
 
 namespace server
 {
-    void GameState::PlayAction_handler(std::unique_ptr<shared::ActionDecisionMessage> message,
-                                       MessageInterface &message_interface)
-    {
-        const auto &affected_player = message->player_id;
-        auto decision = std::make_unique<shared::PlayActionCardDecision>(message->decision.release());
-    }
-
-    void GameState::BuyAction_handler(std::unique_ptr<shared::ActionDecisionMessage> message,
-                                      MessageInterface &message_interface)
-    {
-        const auto &affected_player = message->player_id;
-        auto decision = std::make_unique<shared::BuyCardDecision>(message->decision.release());
-    }
-
-    void GameState::EndTurn_handler(std::unique_ptr<shared::ActionDecisionMessage> message,
-                                    MessageInterface &message_interface)
-    {
-        const auto &affected_player = message->player_id;
-        auto decision = std::make_unique<shared::EndTurnDecision>(message->decision.release());
-    }
-
-    void GameState::ChooseCards_handler(std::unique_ptr<shared::ActionDecisionMessage> message,
-                                        MessageInterface &message_interface)
-    {
-        const auto &affected_player = message->player_id;
-        auto decision = std::make_unique<shared::ChooseNCardsFromHandDecision>(message->decision.release());
-    }
-
-    void GameState::receive_action(std::unique_ptr<shared::ActionDecisionMessage> message,
-                                   MessageInterface &message_interface)
-    {
-#define HANDLE_ACTION(type, handler_func)                                                                              \
-    if ( auto _ = dynamic_cast<type *>(message->decision.get()) ) {                                                    \
-        handler_func(std::move(message), message_interface);                                                           \
-        return;                                                                                                        \
-    }
-
-        HANDLE_ACTION(shared::PlayActionCardDecision, PlayAction_handler);
-        HANDLE_ACTION(shared::BuyCardDecision, BuyAction_handler);
-        HANDLE_ACTION(shared::EndTurnDecision, EndTurn_handler);
-        HANDLE_ACTION(shared::ChooseNCardsFromHandDecision, ChooseCards_handler);
-
-        throw std::runtime_error("Unknown action type received");
-    }
-} // namespace server
-
-namespace server
-{
     GameState::GameState(const std::vector<shared::CardBase::id_t> &play_cards,
                          const std::vector<Player::id_t> &player_ids) :
         current_player_idx(0)
@@ -125,14 +77,22 @@ namespace server
                                         active_player_id);
     }
 
-    bool GameState::try_buy(const Player::id_t player_id, const shared::CardBase::id_t &card)
+    bool GameState::try_buy(const Player::id_t player_id, const shared::CardBase::id_t &card_id)
     {
-        if ( !board->buy(card) ) {
+        auto &player = get_player(player_id);
+        const auto card_cost = CardFactory::getCard(card_id)->getCost();
+
+        if ( player.getTreasure() < card_cost ) {
             return false;
         }
 
-        auto &player = get_player(player_id);
-        player.add(player.get_discard_pile(), card);
+        if ( !board->buy(card_id) ) {
+            return false;
+        }
+
+        player.add_to_discard_pile(card_id);
+        player.decTreasure(card_cost);
+
         return true;
     }
 

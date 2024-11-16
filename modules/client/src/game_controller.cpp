@@ -62,11 +62,12 @@ namespace client
             return;
         }
 
-        // connect to network
-        GameController::_gameWindow->showPanel(GameController::_lobbyPanel);
-        GameController::_lobbyPanel->AddPlayer(inputPlayerName);
+        // connect to the server
+        _clientNetworkManager->init(inputServerAddress.ToStdString(), portAsLong);
 
         // send request to join game
+        shared::CreateLobbyRequestMessage request("bob", "stuart", inputPlayerName.ToStdString());
+        GameController::send_request(request.to_json());
     }
 
     void GameController::startGame()
@@ -86,5 +87,17 @@ namespace client
 
     void GameController::showStatus(const std::string &message) { GameController::_gameWindow->setStatus(message); }
 
+    void GameController::send_request(const std::string &req)
+    {
+        GameController::_clientNetworkManager->sendRequest(req);
+    }
+
+    void GameController::receive_message(std::unique_ptr<shared::ServerToClientMessage> msg)
+    {
+        // Show the lobby screen
+        GameController::_gameWindow->showPanel(GameController::_lobbyPanel);
+        // TODO maybe add player_id to the ServerToClientMessage ?
+        GameController::_lobbyPanel->AddPlayer(msg->game_id);
+    }
 
 } // namespace client

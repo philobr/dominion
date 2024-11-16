@@ -1,5 +1,5 @@
 ---
-# Unfortunately, we can't use misc-const-correctness since this is not available in clang-tidy 14.0.0
+# misc-const-correctness: Unfortunately, this check is not available in clang-tidy 14.0.0
 Checks: |
   -*,
   cppcoreguidelines-prefer-member-initializer,

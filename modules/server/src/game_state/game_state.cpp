@@ -7,8 +7,7 @@
 namespace server
 {
     GameState::GameState(const std::vector<shared::CardBase::id_t> &play_cards,
-                         const std::vector<Player::id_t> &player_ids) :
-        current_player_idx(0)
+                         const std::vector<Player::id_t> &player_ids) : current_player_idx(0)
     {
         _ASSERT_TRUE((2 <= player_ids.size() && player_ids.size() <= 4), "Player count must be in [2, 4]");
 
@@ -35,7 +34,7 @@ namespace server
     {
         player_order = player_ids; // for now the player order will be the same as the list of player ids
         for ( const auto &id : player_ids ) {
-            if ( player_map.contains(id) ) {
+            if ( player_map.count(id) != 0u ) {
                 throw std::runtime_error("cant add the same player twice!");
             }
 

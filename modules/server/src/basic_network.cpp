@@ -60,7 +60,7 @@ namespace server
 
     BasicNetwork *BasicNetwork::getInstance()
     {
-        if ( !_instance ) {
+        if ( _instance == nullptr ) {
             _instance = new BasicNetwork();
         }
         return _instance;

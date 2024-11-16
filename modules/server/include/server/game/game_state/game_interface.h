@@ -25,12 +25,28 @@ namespace server
         using ptr_t = std::unique_ptr<GameInterface>;
         using response_t = std::unique_ptr<shared::ResultResponseMessage>;
 
+        GameInterface(const GameInterface &other) = default;
+        GameInterface(GameInterface &&other) = default;
+        ~GameInterface() = default;
+
         static ptr_t make(const std::vector<shared::CardBase::id_t> &play_cards,
                           const std::vector<Player::id_t> &player_ids);
 
+        // this is for mvp only, maybe remove it completely
         void receive_action(std::unique_ptr<shared::ActionDecision> action_decision,
                             MessageInterface &message_interface, const Player::id_t &affected_player_id,
                             const std::optional<std::string> &in_response_to);
+
+        // this mostly serves as a placeholder to convey the idea
+        struct MessageMetadata
+        {
+            const Player::id_t &affected_player_id;
+            const std::string game_id;
+            const std::optional<std::string> in_response_to;
+        };
+
+        response_t receive_action(std::unique_ptr<shared::ActionDecision> action_decision,
+                                  const MessageMetadata &meatdata);
 
     private:
         GameInterface(const std::vector<shared::CardBase::id_t> &play_cards,

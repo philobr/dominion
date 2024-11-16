@@ -2,6 +2,12 @@
 
 namespace server
 {
+    GameInterface::ptr_t GameInterface::make(const std::vector<shared::CardBase::id_t> &play_cards,
+                                             const std::vector<Player::id_t> &player_ids)
+    {
+        return ptr_t(new GameInterface(play_cards, player_ids));
+    }
+
     void GameInterface::receive_action(std::unique_ptr<shared::ActionDecision> action_decision,
                                        MessageInterface &message_interface, const Player::id_t &affected_player_id,
                                        const std::optional<std::string> &in_response_to)

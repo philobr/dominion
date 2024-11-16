@@ -22,8 +22,10 @@ constParameter:modules/shared/src/utils/test_helpers.cpp
 
 # TODO: reenable
 # Suppress warnings about unusedFunction
-unusedFunction:modules/client/src/dominion.cpp
 unusedFunction:unit_tests/shared/game_state.cpp
+unusedFunction:unit_tests/server/game/gamestate/server_board.cpp
+
+# TODO: reenable
 unusedFunction:unit_tests/server/game/gamestate/server_board.cpp
 
 # TODO: reenable

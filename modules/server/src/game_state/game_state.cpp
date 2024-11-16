@@ -6,7 +6,7 @@
 
 namespace server
 {
-    void GameState::receive_action(std::unique_ptr<shared::ActionDecision> action, MessageInterface &message_interface)
+    void GameState::receive_action(std::unique_ptr<shared::ActionDecision> action)
     {
         /*
         if ( auto play_action = dynamic_cast<shared::PlayActionCardDecision *>(action.get()) ) {
@@ -71,7 +71,7 @@ namespace server
     {
         player_order = player_ids; // for now the player order will be the same as the list of player ids
         for ( const auto &id : player_ids ) {
-            if ( player_map.contains(id) ) {
+            if ( player_map.count(id) != 0u ) {
                 throw std::runtime_error("cant add the same player twice!");
             }
 

@@ -24,7 +24,7 @@ namespace server
                                                            const Player::id_t &affected_player_id)
     {
 #define HANDLE_ACTION(type)                                                                                            \
-    if ( auto *specific_decision = dynamic_cast<shared::type *>(action_decision.get()) ) {                             \
+    if ( dynamic_cast<shared::type *>(action_decision.get()) ) {                                                       \
         return type##_handler(std::unique_ptr<shared::type>(static_cast<shared::type *>(action_decision.release())),   \
                               affected_player_id);                                                                     \
     }
@@ -43,7 +43,7 @@ namespace server
                                                              const std::string &in_response_to)
     {
 #define HANDLE_RESPONSE(type)                                                                                          \
-    if ( auto *specific_decision = dynamic_cast<shared::type *>(action_decision.get()) ) {                             \
+    if ( dynamic_cast<shared::type *>(action_decision.get()) ) {                                                       \
         return type##_response_handler(                                                                                \
                 std::unique_ptr<shared::type>(static_cast<shared::type *>(action_decision.release())),                 \
                 affected_player_id, in_response_to);                                                                   \

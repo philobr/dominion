@@ -69,9 +69,7 @@ namespace server
 
     // Runs in a thread and reads anything coming in on the 'socket'.
     // Once a message is fully received, the string is passed on to the 'handle_message()' function
-    void ServerNetworkManager::read_loop(
-            sockpp::tcp_socket socket,
-            const handler &message_handler)
+    void ServerNetworkManager::read_loop(sockpp::tcp_socket socket, const handler &message_handler)
     {
         sockpp::socket_initializer sockInit; // initializes socket framework underneath
 

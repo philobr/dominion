@@ -50,9 +50,7 @@ namespace server
 
         // function that listens to new clients
         static void listener_loop();
-        static void
-        read_loop(sockpp::tcp_socket socket,
-                  const handler &message_handler);
+        static void read_loop(sockpp::tcp_socket socket, const handler &message_handler);
 
         // might get removed later
         static void handle_message(const std::string &, const sockpp::tcp_socket::addr_t &);

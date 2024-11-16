@@ -70,7 +70,7 @@ namespace server
                       });
 
         auto reduced_player = get_player(target_player).get_reduced_player();
-        Player::id_t active_player_id = get_current_player_id();
+        Player::id_t active_player_id = getCurrentPlayerId();
         shared::Board::ptr_t reduced_board = board->getReduced();
 
         return shared::ReducedGameState(reduced_board, std::move(reduced_player), std::move(reduced_enemies),

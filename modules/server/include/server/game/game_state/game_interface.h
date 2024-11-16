@@ -25,7 +25,8 @@ namespace server
         using ptr_t = std::unique_ptr<GameInterface>;
         using response_t = std::unique_ptr<shared::ResultResponseMessage>;
 
-        GameInterface(const GameInterface &other) = default;
+        GameInterface operator=(const GameInterface &other) = delete;
+        GameInterface(const GameInterface &other) = delete;
         GameInterface(GameInterface &&other) = default;
         ~GameInterface() = default;
 

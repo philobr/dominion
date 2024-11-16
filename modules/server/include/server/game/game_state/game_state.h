@@ -35,10 +35,11 @@ namespace server
         ~GameState();
         GameState(GameState &&other);
 
-        const Player::id_t &get_current_player_id() const { return player_order[current_player_idx]; }
-        Player &get_current_player() { return *player_map[get_current_player_id()]; }
-        Player &get_player(const Player::id_t &id) { return *player_map.at(id); }
         shared::ReducedGameState get_reduced_state(const Player::id_t &affected_player);
+
+        const Player::id_t &getCurrentPlayerId() const { return player_order[current_player_idx]; }
+        Player &get_current_player() { return *player_map[getCurrentPlayerId()]; }
+        Player &get_player(const Player::id_t &id) { return *player_map.at(id); }
 
         void start_game();
         void end_game() { return; }

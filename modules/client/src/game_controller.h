@@ -17,7 +17,7 @@ namespace client
 
         static void connectToServer();
         static void startGame();
-        static void send_request(const std::string req);
+        static void send_request(const std::string &req);
         static void receive_message(std::unique_ptr<shared::ServerToClientMessage> msg);
 
         static void showError(const std::string &title, const std::string &message);

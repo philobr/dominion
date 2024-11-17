@@ -2,22 +2,20 @@
 
 namespace server
 {
-    GameInterface::ptr_t GameInterface::make(const std::vector<shared::CardBase::id_t> &play_cards,
+    GameInterface::ptr_t GameInterface::make(const std::string &game_id,
+                                             const std::vector<shared::CardBase::id_t> &play_cards,
                                              const std::vector<Player::id_t> &player_ids)
     {
-        return ptr_t(new GameInterface(play_cards, player_ids));
+        return ptr_t(new GameInterface(game_id, play_cards, player_ids));
     }
 
-    void GameInterface::receive_action(std::unique_ptr<shared::ActionDecision> action_decision,
-                                       MessageInterface &message_interface, const Player::id_t &affected_player_id,
-                                       const std::optional<std::string> &in_response_to)
+    GameInterface::response_t GameInterface::receive_action(std::unique_ptr<shared::ActionDecision> action_decision,
+                                                            const std::optional<std::string> &in_response_to,
+                                                            const Player::id_t &affected_player_id)
     {
-        response_t response = in_response_to.has_value()
+        return in_response_to.has_value()
                 ? handle_action(std::move(action_decision), affected_player_id)
                 : handle_response(std::move(action_decision), affected_player_id, in_response_to.value());
-
-        // TODO: MESSAGE_INTERFACE HAS TO ACCEPT UNIQUE PTRS NOT RAW POINTERES
-        message_interface.send_message(std::move(response), affected_player_id);
     }
 
     GameInterface::response_t GameInterface::handle_action(std::unique_ptr<shared::ActionDecision> action_decision,
@@ -39,8 +37,8 @@ namespace server
     }
 
     GameInterface::response_t GameInterface::handle_response(std::unique_ptr<shared::ActionDecision> action_decision,
-                                                             const Player::id_t &affected_player_id,
-                                                             const std::string &in_response_to)
+                                                             const std::string &in_response_to,
+                                                             const Player::id_t &affected_player_id)
     {
 #define HANDLE_RESPONSE(type)                                                                                          \
     if ( dynamic_cast<shared::type *>(action_decision.get()) ) {                                                       \

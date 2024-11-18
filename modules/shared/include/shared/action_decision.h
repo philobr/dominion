@@ -1,10 +1,10 @@
 
 #pragma once
 
-#include <memory>
 #include <vector>
 
 #include <shared/game/cards/card_base.h>
+
 namespace shared
 {
     class ActionDecision
@@ -21,7 +21,6 @@ namespace shared
     class PlayActionCardDecision : public ActionDecision
     {
     public:
-        virtual ~PlayActionCardDecision() = default;
         bool operator==(const PlayActionCardDecision &other) const;
         bool operator!=(const PlayActionCardDecision &other) const;
         PlayActionCardDecision(unsigned int cardIndex) : cardIndex(cardIndex) {}

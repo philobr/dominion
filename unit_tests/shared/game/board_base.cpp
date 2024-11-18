@@ -148,7 +148,7 @@ protected:
 
         // Empty the Province pile if required
         if ( param.empty_province_pile ) {
-            auto &victory_piles = board->getVictoryCards();
+            const auto &victory_piles = board->getVictoryCards();
             auto it = victory_piles.find("Province");
             if ( it != victory_piles.end() ) {
                 it->count = 0;

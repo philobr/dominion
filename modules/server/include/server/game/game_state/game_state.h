@@ -39,21 +39,13 @@ namespace server
         ~GameState();
         GameState(GameState &&other);
 
-        // probably nume das
-        // either return message, or construct through msg interface
-        // NOT IMPLEMENTED, DONT TEST YET
-        void receive_action(std::unique_ptr<shared::ActionDecision> action);
+        shared::ReducedGameState get_reduced_state(const Player::id_t &affected_player);
 
-        const Player::id_t &get_current_player_id() const { return player_order[current_player_idx]; }
-        Player &get_current_player() { return *player_map[get_current_player_id()]; }
+        const Player::id_t &getCurrentPlayerId() const { return player_order[current_player_idx]; }
+        Player &get_current_player() { return *player_map[getCurrentPlayerId()]; }
         Player &get_player(const Player::id_t &id) { return *player_map.at(id); }
 
-    private:
-        shared::ReducedGameState get_reduced_state(const Player::id_t &affected_player);
-        // TODO Probably want to add the message interface as an attribute that gets initialized upon construction
-
         void start_game();
-        // NOT IMPLEMENTED, DONT TEST YET
         void end_game() { return; }
 
         void initialise_players(const std::vector<Player::id_t> &player_ids);
@@ -62,13 +54,13 @@ namespace server
         void start_turn();
         void end_turn();
 
-        void switch_player()
-        { /*current_player_idx = ++current_player_idx % player_map.size();*/
-        }
         bool is_game_over() const;
 
         bool try_buy(const Player::id_t player_id, const shared::CardBase::id_t &card);
         bool try_play(const Player::id_t &affected_player, size_t hand_index, size_t behaviour_index);
+
+    private:
+        void switch_player() { current_player_idx = ++current_player_idx % player_map.size(); }
 
         /**
          * @brief Checks if all ids exist and if the CardType is one of:
@@ -80,7 +72,6 @@ namespace server
          */
         static bool validateKingdomCardTypes(const std::vector<shared::CardBase::id_t> &kingdom_cards);
     };
-
 } // namespace server
 
 // this is down here because the cards need the gamestate at compiletime, but the gamestate does not need the cards at

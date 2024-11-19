@@ -5,15 +5,13 @@ namespace client
 {
 
     GameWindow::GameWindow(const wxString &title, const wxPoint &pos, const wxSize &size) :
-        wxFrame(nullptr, wxID_ANY, title, pos, size)
+        wxFrame(nullptr, wxID_ANY, title, pos, size), _mainLayout(new wxBoxSizer(wxVERTICAL)), _currentPanel(nullptr)
     {
         // Set up layout that will contain and center all content
 
-        this->_mainLayout = new wxBoxSizer(wxVERTICAL);
         wxBoxSizer *outerLayout = new wxBoxSizer(wxHORIZONTAL);
         outerLayout->Add(this->_mainLayout, 1, wxCENTER);
         this->SetSizerAndFit(outerLayout);
-        this->_currentPanel = nullptr;
 
         // Set up status bar
         this->_statusBar = this->CreateStatusBar(1);

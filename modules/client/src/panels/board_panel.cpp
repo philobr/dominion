@@ -15,6 +15,10 @@ namespace client
         board.kingdom_cards = {{"Chapel", 8}, {"Village", 8}, {"Laboratory", 8}, {"Artisan", 8}};
         this->DrawBoard(board);
     }
+        PilePanel *EstatePanel =
+                new PilePanel(this, shared::Pile::make("Estate", shared::BoardConfig::VICTORY_CARDS_SMALL_GAME));
+        PilePanel *DuchyPanel =
+                new PilePanel(this, shared::Pile::make("Duchy", shared::BoardConfig::VICTORY_CARDS_SMALL_GAME));
 
 
     void BoardPanel::DrawBoard(shared::Board &Board)

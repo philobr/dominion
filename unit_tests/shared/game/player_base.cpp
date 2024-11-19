@@ -2,79 +2,155 @@
 
 #include <gtest/gtest.h>
 
-TEST(PlayerBaseTest, ConstructorWithId)
+class TestablePlayerBase : public shared::PlayerBase
 {
-    std::string player_id = "player1";
-    shared::PlayerBase player(player_id);
+public:
+    using shared::PlayerBase::PlayerBase;
+
+    // Expose protected variables through public getters
+    const shared::CardBase::id_t getCurrentCard() const { return current_card; }
+    const std::pair<shared::CardBase::id_t, unsigned int> getDiscardPile() const { return discard_pile; }
+    unsigned int getDrawPileSize() const { return draw_pile_size; }
+    const std::vector<shared::CardBase::id_t> getPlayedCards() const { return played_cards; }
+
+    void setVictoryPoints(unsigned int points) { victory_points = points; }
+    void setActions(unsigned int action_count) { actions = action_count; }
+    void setBuys(unsigned int buy_count) { buys = buy_count; }
+    void setTreasure(unsigned int treasure_count) { treasure = treasure_count; }
+};
+
+TEST(PlayerBaseTest, Constructor)
+{
+    const std::string player_id = "player1";
+    TestablePlayerBase player(player_id);
+
     EXPECT_EQ(player.getId(), player_id);
+
     EXPECT_EQ(player.getVictoryPoints(), 0);
+    EXPECT_EQ(player.getActions(), 1);
+    EXPECT_EQ(player.getBuys(), 1);
+    EXPECT_EQ(player.getTreasure(), 0);
+
+    // testing private variables
+    EXPECT_EQ(player.getCurrentCard(), "");
+    EXPECT_EQ(player.getDiscardPile().first, "");
+    EXPECT_EQ(player.getDiscardPile().second, 0);
+    EXPECT_EQ(player.getDrawPileSize(), 0);
+    EXPECT_EQ(player.getPlayedCards().size(), 0);
 }
 
 TEST(PlayerBaseTest, CopyConstructor)
 {
     shared::PlayerBase original("player1");
-
     shared::PlayerBase copy(original);
 
-    EXPECT_EQ(copy.getId(), original.getId());
-    EXPECT_EQ(copy.getVictoryPoints(), original.getVictoryPoints());
-    EXPECT_EQ(copy.getActions(), original.getActions());
-    EXPECT_EQ(copy.getBuys(), original.getBuys());
-    EXPECT_EQ(copy.getTreasure(), original.getTreasure());
+    EXPECT_EQ(copy, original);
 }
 
 TEST(PlayerBaseTest, DecreaseAvailableActions)
 {
     shared::PlayerBase player("player");
+
+    EXPECT_EQ(player.getActions(), 1); // initialised correctly?
+
     player.decActions();
-    EXPECT_EQ(player.getActions(), 0);
+    EXPECT_EQ(player.getActions(), 0); // should dec by one -> 0
+
+    player.decActions();
+    EXPECT_EQ(player.getActions(), 0); // cant decrease again, still zero
 }
 
 TEST(PlayerBaseTest, DecreaseAvailableBuys)
 {
     shared::PlayerBase player("player");
+
+    EXPECT_EQ(player.getBuys(), 1); // initialised correctly?
+
     player.decBuys();
-    EXPECT_EQ(player.getBuys(), 0);
+    EXPECT_EQ(player.getBuys(), 0); // should dec by one -> 0
+
+    player.decBuys();
+    EXPECT_EQ(player.getBuys(), 0); // cant decrease again, still zero
 }
 
-TEST(PlayerBaseTest, DecreaseAvailableTreasure)
+TEST(PlayerBaseTest, DecreaseAvailableTreasureBasic)
 {
     shared::PlayerBase player("player");
+
+    EXPECT_EQ(player.getTreasure(), 0); // initialised correctly?
+
     player.decTreasure(1);
-    EXPECT_EQ(player.getTreasure(), 0);
+    EXPECT_EQ(player.getTreasure(), 0); // should still be zero
 }
 
-TEST(PlayerBaseTest, ReducedEnemyDefaultConstructor)
+TEST(PlayerBaseTest, DecreaseAvailableTreasureHardcore)
 {
-    shared::ReducedEnemy enemy(shared::PlayerBase("player"), 0);
-    EXPECT_EQ(enemy.getId(), "player");
-    EXPECT_EQ(enemy.getVictoryPoints(), 0);
+    TestablePlayerBase player("player");
+
+    EXPECT_EQ(player.getTreasure(), 0); // initialised correctly?
+
+    player.setTreasure(100);
+    EXPECT_EQ(player.getTreasure(), 100);
+
+    player.decTreasure(1);
+    EXPECT_EQ(player.getTreasure(), 99);
+
+    player.decTreasure(9);
+    EXPECT_EQ(player.getTreasure(), 90);
+
+    player.decTreasure(91);
+    EXPECT_EQ(player.getTreasure(), 90); // edge case (▀̿Ĺ̯▀̿ ̿)
+
+    player.decTreasure(-91);
+    EXPECT_EQ(player.getTreasure(), 90); // overflow safe ig?
 }
 
-TEST(PlayerBaseTest, ReducedEnemyConstructorWithHandSize)
+TEST(ReducedEnemyTest, Initialization)
 {
-    unsigned int hand_size = 5;
-    shared::ReducedEnemy enemy(shared::PlayerBase("player"), hand_size);
-    // We don't have a getter for hand_size, so we can't directly test it
-    EXPECT_EQ(enemy.getVictoryPoints(), 0);
+    // Set up a PlayerBase object
+    TestablePlayerBase base_player("test_player");
+    base_player.setVictoryPoints(10);
+    base_player.setActions(2);
+    base_player.setBuys(1);
+    base_player.setTreasure(5);
+
+    // Initialize ReducedEnemy with PlayerBase and specific hand_size
+    unsigned int hand_size = 3;
+    auto reduced_enemy = shared::ReducedEnemy::make(base_player, hand_size);
+
+    // Check that ReducedEnemy inherited PlayerBase attributes correctly
+    EXPECT_EQ(reduced_enemy->getId(), "test_player");
+    EXPECT_EQ(reduced_enemy->getVictoryPoints(), 10);
+    EXPECT_EQ(reduced_enemy->getActions(), 2);
+    EXPECT_EQ(reduced_enemy->getBuys(), 1);
+    EXPECT_EQ(reduced_enemy->getTreasure(), 5);
+
+    // Check that ReducedEnemy-specific attribute is set
+    EXPECT_EQ(reduced_enemy->getHandSize(), hand_size);
 }
 
-TEST(PlayerBaseTest, ReducedEnemyCopyConstructor)
+TEST(ReducedPlayerTest, Initialization)
 {
-    shared::PlayerBase base_player("enemy1");
-    shared::ReducedEnemy enemy(base_player, 5);
-    EXPECT_EQ(enemy.getId(), "enemy1");
-    EXPECT_EQ(enemy.getVictoryPoints(), 0);
-}
+    // Set up a PlayerBase object
+    TestablePlayerBase base_player("test_player_2");
+    base_player.setVictoryPoints(15);
+    base_player.setActions(3);
+    base_player.setBuys(2);
+    base_player.setTreasure(8);
 
-TEST(PlayerBaseTest, ReducedPlayerCopyConstructor)
-{
-    shared::PlayerBase base_player("player1");
-    std::vector<shared::CardBase::id_t> hand_cards = {"Card1", "Card2"};
-    shared::ReducedPlayer player(base_player, hand_cards);
-    EXPECT_EQ(player.getId(), "player1");
-    EXPECT_EQ(player.getVictoryPoints(), 0);
-}
+    // Define a hand of cards for ReducedPlayer
+    std::vector<shared::CardBase::id_t> hand_cards = {"card1", "card2", "card3"};
 
-// Since we don't have getters for 'hand_size' in ReducedEnemy or 'hand_cards' in ReducedPlayer,
-// we cannot write tests to directly check those attributes unless you add appropriate getters.
+    // Initialize ReducedPlayer with PlayerBase and specific hand_cards
+    auto reduced_player = shared::ReducedPlayer::make(base_player, hand_cards);
+
+    // Check that ReducedPlayer inherited PlayerBase attributes correctly
+    EXPECT_EQ(reduced_player->getId(), "test_player_2");
+    EXPECT_EQ(reduced_player->getVictoryPoints(), 15);
+    EXPECT_EQ(reduced_player->getActions(), 3);
+    EXPECT_EQ(reduced_player->getBuys(), 2);
+    EXPECT_EQ(reduced_player->getTreasure(), 8);
+
+    // Check that ReducedPlayer-specific attribute is set
+    EXPECT_EQ(reduced_player->getHandCards(), hand_cards);
+}

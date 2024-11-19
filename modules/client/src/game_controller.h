@@ -1,5 +1,6 @@
 #pragma once
 
+#include "client/client_network_manager.h"
 #include "panels/connection_panel.h"
 #include "panels/lobby_panel.h"
 #include "panels/main_game_panel.h"
@@ -31,6 +32,8 @@ namespace client
          *
          */
         static void startGame();
+        static void send_request(const std::string &req);
+        static void receive_message(std::unique_ptr<shared::ServerToClientMessage> msg);
 
         /**
          * @brief display an error message
@@ -49,6 +52,7 @@ namespace client
         static ConnectionPanel *_connectionPanel;
         static MainGamePanel *_mainGamePanel;
         static LobbyPanel *_lobbyPanel;
+        static ClientNetworkManager *_clientNetworkManager;
     };
 
 } // namespace client

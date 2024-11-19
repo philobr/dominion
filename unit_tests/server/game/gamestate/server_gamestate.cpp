@@ -48,7 +48,7 @@ TEST(GameStateTest, GetCurrentPlayerId)
     server::GameState game_state(selected_cards, player_ids);
 
     // Initially, the current player should be the first in the player_order
-    EXPECT_EQ(game_state.get_current_player_id(), "player1");
+    EXPECT_EQ(game_state.getCurrentPlayerId(), "player1");
 }
 
 TEST(GameStateTest, GetCurrentPlayer)

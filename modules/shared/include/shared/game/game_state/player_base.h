@@ -5,6 +5,7 @@
 
 #include <iomanip> // for operator<<
 #include <iostream> // for operator<<
+#include <memory>
 
 #include <shared/game/cards/card_base.h>
 namespace shared
@@ -24,52 +25,71 @@ namespace shared
 
         virtual ~PlayerBase() = default;
 
+        bool operator==(const PlayerBase &other) const;
+
         id_t getId() const { return player_id; }
 
         unsigned int getVictoryPoints() const { return victory_points; }
-        unsigned int getActions() const { return available_actions; }
-        unsigned int getBuys() const { return available_buys; }
-        unsigned int getTreasure() const { return available_treasure; }
+        unsigned int getActions() const { return actions; }
+        unsigned int getBuys() const { return buys; }
+        unsigned int getTreasure() const { return treasure; }
 
+        /**
+         * @brief Decrements actions by one, or keeps it at 0.
+         */
         void decActions();
+
+        /**
+         * @brief Decrements buys by one, or keeps it at 0.
+         */
         void decBuys();
+
+        /**
+         * @brief Decrements treasure by min(dec_amount, treasure_amount)
+         *
+         * @param dec_amount
+         */
         void decTreasure(const unsigned int dec_amount);
 
     protected:
-        // these are not used, as played cards will be stored in the board
-        // and gained cards are directly added to the discard pile, as per game rules
-        /*
-        std::vector<CardBase::id_t> played_cards;
-        std::vector<CardBase::id_t> gained_cards;
-        */
-
         id_t player_id;
+
         unsigned int victory_points;
-        unsigned int available_actions;
-        unsigned int available_buys;
-        unsigned int available_treasure;
+        unsigned int actions;
+        unsigned int buys;
+        unsigned int treasure;
+
         CardBase::id_t current_card;
-        std::pair<CardBase::id_t, unsigned int> discard_pile;
+        std::pair<CardBase::id_t, unsigned int> discard_pile; // top card id, discard_pile size
         unsigned int draw_pile_size;
+
+        std::vector<CardBase::id_t> played_cards;
     };
 
     class ReducedEnemy : public PlayerBase
     {
     public:
-        ReducedEnemy(const PlayerBase &player, unsigned int hand) : PlayerBase(player), hand_size(hand) {}
+        using ptr_t = std::unique_ptr<ReducedEnemy>;
+
+        static ptr_t make(const PlayerBase &player, unsigned int hand_size);
+        unsigned int getHandSize() const;
 
     protected:
+        ReducedEnemy(const PlayerBase &player, unsigned int hand);
         unsigned int hand_size;
     };
 
     class ReducedPlayer : public PlayerBase
     {
     public:
-        ReducedPlayer(const PlayerBase &player, std::vector<CardBase::id_t> hand) : PlayerBase(player), hand_cards(hand)
-        {}
+        using ptr_t = std::unique_ptr<ReducedPlayer>;
+
+        static ptr_t make(const PlayerBase &player, std::vector<CardBase::id_t> hand_cards);
+        const std::vector<CardBase::id_t> &getHandCards() const;
 
     protected:
-        std::vector<CardBase::id_t> hand_cards;
+        ReducedPlayer(const PlayerBase &player, const std::vector<CardBase::id_t> &hand_cards);
+        const std::vector<CardBase::id_t> hand_cards;
     };
 
 } // namespace shared

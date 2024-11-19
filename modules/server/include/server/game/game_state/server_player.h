@@ -42,8 +42,8 @@ namespace server
         // bool operator==(const Player &other);
         // friend std::ostream &operator<<(std::ostream &os, const Player &player); // is this overkill (logging, etc)
 
-        shared::ReducedPlayer get_reduced_player();
-        shared::ReducedEnemy get_reduced_enemy();
+        shared::ReducedPlayer::ptr_t get_reduced_player();
+        shared::ReducedEnemy::ptr_t get_reduced_enemy();
 
         /**
          * @brief Peek the min(n, draw_pile_size) top cards from the deck.
@@ -105,17 +105,17 @@ namespace server
         auto &get_current_card() { return currently_playing_card; }
         auto &get_played_cards() { return played_cards; }
 
-        void incActions(int n) { available_actions += n; }
-        void incBuys(int n) { available_buys += n; }
-        void incTreasure(int n) { available_treasure += n; }
+        void incActions(int n) { actions += n; }
+        void incBuys(int n) { buys += n; }
+        void incTreasure(int n) { treasure += n; }
         void incPoints(int n) { victory_points += n; }
 
     private:
         /**
          * @brief Resets the 'stats' to:
-         * - available_actions      1
-         * - available_buys         1
-         * - available_treasure     0
+         * - actions      1
+         * - buys         1
+         * - treasure     0
          * - victory_points         0
          */
         void reset_values();

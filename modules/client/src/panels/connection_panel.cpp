@@ -38,7 +38,7 @@ namespace client
                 new InputField(this, // parent element
                                "Server port:", // label
                                100, // width of label
-                               wxString::Format("%i", 8000), // default value (variable from "default.conf")
+                               wxString::Format("%i", 50505), // default value (variable from "default.conf")
                                240 // width of field
                 );
         VerticalLayout->Add(this->_serverPortField, 0, wxALIGN_CENTER | wxTOP | wxLEFT | wxRIGHT, 10);

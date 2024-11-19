@@ -1,15 +1,20 @@
 ---
-# TODO: enforce const correctness (misc-const-correctness)
+# misc-const-correctness: Unfortunately, this check is not available in clang-tidy 14.0.0
 Checks: |
   -*,
   cppcoreguidelines-prefer-member-initializer,
-  readability-avoid-return-with-void-value,
+  misc-definitions-in-headers,
+  misc-redundant-expression,
+  modernize-use-equals-default,
+  modernize-use-override,
   readability-braces-around-statements,
   readability-duplicate-include,
   readability-identifier-naming,
   readability-implicit-bool-conversion,
+  readability-isolate-declaration,
   readability-named-parameter,
   readability-non-const-parameter,
+  readability-qualified-auto,
   readability-redundant-smartptr-get
 CheckOptions:
   - key: readability-identifier-naming.NamespaceCase
@@ -20,8 +25,9 @@ CheckOptions:
     value: UPPER_CASE
   - key: readability-identifier-naming.EnumCase
     value: UPPER_CASE
-  - key: readability-identifier-naming.FunctionCase
-    value: CamelCase
+    # TODO: enforce
+    #  - key: readability-identifier-naming.FunctionCase
+    # value: CamelCase
 WarningsAsErrors: '*'
 ...
 

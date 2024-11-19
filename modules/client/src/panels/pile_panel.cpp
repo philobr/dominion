@@ -8,7 +8,7 @@ namespace client
     {
         wxBoxSizer *sizer = new wxBoxSizer(wxVERTICAL);
 
-        std::string CardPath = "assets/" + pile.card + ".png";
+        std::string CardPath = "assets/" + pile.card_id + ".png";
 
         ImagePanel *image_panel =
                 new ImagePanel(this, CardPath, wxBITMAP_TYPE_PNG, wxDefaultPosition, wxSize(100, 125));

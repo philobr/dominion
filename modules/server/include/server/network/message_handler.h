@@ -1,10 +1,10 @@
+#pragma once
 
 #include <memory>
 #include <mutex>
-#include <server/lobbies.h>
-#include <shared/message_types.h>
 
-#pragma once
+#include <server/lobbies/lobby_manager.h>
+#include <shared/message_types.h>
 
 namespace server
 {
@@ -18,16 +18,16 @@ namespace server
     class MessageHandler
     {
     public:
-        MessageHandler(std::shared_ptr<MessageInterface> message_interface) : lobby_manager_(message_interface) {}
-        ~MessageHandler() {}
+        MessageHandler(LobbyManager lobby_manager) : lobby_manager_(lobby_manager){};
+        MessageHandler(const MessageHandler &msg_handler) : lobby_manager_(msg_handler.lobby_manager_){};
+        ~MessageHandler() = default;
 
         /**
          * @brief Handle a JSON message
          *
          * This function will call the appropriate functions in the LobbyManager.
          */
-        void HandleMessage(std::shared_ptr<MessageInterface> message_interface,
-                           std::unique_ptr<shared::ClientToServerMessage> message);
+        void HandleMessage(std::unique_ptr<shared::ClientToServerMessage> message);
 
     private:
         LobbyManager lobby_manager_;

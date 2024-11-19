@@ -11,19 +11,27 @@ set(EXTERNAL_LIBS ${CMAKE_SOURCE_DIR}/external)
 enable_testing()
 
 # always provide test output on failure
-list(APPEND CMAKE_CTEST_ARGUMENTS "--output-on-failure")
+list(APPEND CMAKE_CTEST_ARGUMENTS "--output-on-failure" "--timeout" "10")
 
 add_compile_options(
     -Wall
-    -Wpedantic
     -Werror
+    -Wextra
+    -Wpedantic
+    -Wreturn-type
+    -Wshadow
+    -Wuninitialized
     # In order to be able to use -Werror, we need to suppress this warning
     # TODO: Remove this suppression
     -Wno-deprecated-enum-enum-conversion
+    # TODO: There are some unused parameters in the codebase that we should fix
+    -Wno-unused-parameter
 )
 
 add_subdirectory(${EXTERNAL_LIBS}/sockpp)
 add_subdirectory(${EXTERNAL_LIBS}/googletest) # warnings because of old cmake version, cant supress them
+
+include_directories(external/sockpp/include)
 
 find_package(wxWidgets COMPONENTS core base net REQUIRED)
 if (wxWidgets_FOUND)
@@ -129,11 +137,16 @@ add_subdirectory(unit_tests)
 add_executable(client_exe ${CLIENT_EXECUTABLE_SOURCES})
 include_client_lib(client_exe)
 include_shared_lib(client_exe)
+include_sockpp(client_exe)
+include_wxwidgets(client_exe)
+include_rapidjson(client_exe)
 
 add_executable(server_exe ${SERVER_EXECUTABLE_SOURCES})
 include_shared_lib(server_exe)
 include_server_lib(server_exe)
 include_sockpp(server_exe)
+include_wxwidgets(server_exe)
+include_rapidjson(server_exe)
 
 ################################
 # HELPERS
@@ -181,11 +194,13 @@ add_custom_target(check
     # The `|| true` is necessary if we're running a version of clang-tidy that does not yet support `--verify-config`
     COMMAND clang-tidy --verify-config || true
     COMMAND clang-tidy --list-checks
-    # TODO: Change this to test all subdirectories of modules
-    COMMAND find modules/client modules/shared modules/server/src unit_tests -name '*.cpp' -o -name '*.h'
-        | xargs run-clang-tidy -p ${CMAKE_BINARY_DIR} -j ${NUM_PROCS} -quiet -fix
-            # TODO: Remove this whitelist
-            -line-filter='[{"name":"card.cpp"}]'
+    COMMAND run-clang-tidy
+        -p ${CMAKE_BINARY_DIR}
+        -j ${NUM_PROCS}
+        -quiet
+        -fix
+        # TODO: Change this to test all subdirectories of modules
+        modules/client modules/shared modules/server/src unit_tests
 )
 
 # copy assets (images) to binary directory

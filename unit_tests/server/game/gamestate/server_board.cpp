@@ -1,3 +1,6 @@
+/**
+ * @note We only test buy() and trash() here. The other functions are tested in unit_tests/shared/game/board_base.cpp
+ */
 #include <algorithm>
 #include <string>
 #include <vector>
@@ -5,272 +8,250 @@
 
 #include <server/game/game_state/server_board.h>
 
-// Include the header files for the classes we are testing
-#include <shared/game/cards/card_base.h> // Adjust the path according to your project structure
-#include <shared/game/game_state/board_base.h> // Adjust the path according to your project structure
+#include <shared/game/cards/card_base.h>
+#include <shared/game/game_state/board_base.h>
+#include <shared/utils/test_helpers.h>
 
-// Begin test cases
-class ServerBoardTest : public ::testing::Test
+// ================================
+// HELPERS
+// ================================
+#define EXPECT_PILE(pile_set, key, expected_count)                                                                     \
+    do {                                                                                                               \
+        auto it = (pile_set).find((key));                                                                              \
+        EXPECT_NE(it, (pile_set).end());                                                                               \
+        if ( it != (pile_set).end() ) {                                                                                \
+            EXPECT_EQ(it->count, (expected_count));                                                                    \
+        }                                                                                                              \
+    } while ( 0 )
+
+// ================================
+// TESTABLE BASE CLASS
+// ================================
+class TestableServerBoard : public server::ServerBoard
 {
-protected:
-    // cppcheck-suppress unusedFunction
-    void SetUp() override
-    {
-        // Initialize common test data
-        player_count = 2;
+public:
+    // Inherit constructor from ServerBoard
+    TestableServerBoard(const std::vector<shared::CardBase::id_t> &kingdom_cards, size_t player_count) :
+        server::ServerBoard(kingdom_cards, player_count)
+    {}
 
-        // Define some kingdom card IDs (assuming card IDs are strings)
-        kingdom_cards = {"Smithy",  "Village",  "Market", "Mine",   "Moat",
-                         "Militia", "Workshop", "Cellar", "Chapel", "Woodcutter"};
+    // Expose protected methods as public for testing
+    using server::ServerBoard::buy;
+    using server::ServerBoard::trash_card;
 
-        // Create a ServerBoard instance
-        board = std::make_unique<server::ServerBoard>(kingdom_cards, player_count);
-    }
+    // Accessors for protected data members
+    const server::ServerBoard::pile_container_t &getKingdomCards() const { return kingdom_cards; }
+    const server::ServerBoard::pile_container_t &getTreasureCards() const { return treasure_cards; }
+    const server::ServerBoard::pile_container_t &getVictoryCards() const { return victory_cards; }
+    const std::vector<shared::CardBase::id_t> &getTrash() const { return trash; }
 
-    // cppcheck-suppress unusedFunction
-    void TearDown() override
-    {
-        // Clean up if necessary
-    }
-
-    size_t player_count;
-    std::vector<shared::CardBase::id_t> kingdom_cards;
-    std::unique_ptr<server::ServerBoard> board;
+    // Mutable accessors for testing purposes
+    server::ServerBoard::pile_container_t &getMutableKingdomCards() { return kingdom_cards; }
+    server::ServerBoard::pile_container_t &getMutableTreasureCards() { return treasure_cards; }
+    server::ServerBoard::pile_container_t &getMutableVictoryCards() { return victory_cards; }
+    std::vector<shared::CardBase::id_t> &getMutableTrash() { return trash; }
 };
 
-TEST_F(ServerBoardTest, ConstructorInitializesPiles)
+// ================================
+// BEGIN TESTS
+// ================================
+
+// --------------------------------
+// BuyCard Test
+// --------------------------------
+struct BuyCardTestParam
 {
-    // Check that victory cards are initialized correctly
-    size_t expected_victory_card_count = (player_count == 2) ? 8 : 12;
+    size_t player_count;
+    shared::CardBase::id_t card_to_buy;
+    std::string pile_type; // "Kingdom", "Treasure", "Victory", "NonExistent"
+    bool should_succeed;
+    bool empty_pile; // Whether to empty the pile before buying
+};
 
-    ASSERT_EQ(board->victory_cards.size(), 4); // Estate, Duchy, Province, (+curse)
-    EXPECT_EQ(board->victory_cards[0].card, "Estate");
-    EXPECT_EQ(board->victory_cards[0].count, expected_victory_card_count);
+class ServerBoardBuyCardTest : public ::testing::TestWithParam<BuyCardTestParam>
+{
+protected:
+    void SetUp() override
+    {
+        kingdom_cards = get_valid_kingdom_cards();
+        const auto &param = GetParam();
+        player_count = param.player_count;
+        board = new TestableServerBoard(kingdom_cards, player_count);
 
-    EXPECT_EQ(board->victory_cards[1].card, "Duchy");
-    EXPECT_EQ(board->victory_cards[1].count, expected_victory_card_count);
+        if ( param.empty_pile ) {
+            // Empty the specified pile
+            if ( param.pile_type == "Kingdom" ) {
+                auto &kingdom_piles = board->getMutableKingdomCards();
+                auto it = kingdom_piles.find(param.card_to_buy);
+                if ( it != kingdom_piles.end() ) {
+                    it->count = 0;
+                }
+            } else if ( param.pile_type == "Treasure" ) {
+                auto &treasure_piles = board->getMutableTreasureCards();
+                auto it = treasure_piles.find(param.card_to_buy);
+                if ( it != treasure_piles.end() ) {
+                    it->count = 0;
+                }
+            } else if ( param.pile_type == "Victory" ) {
+                auto &victory_piles = board->getMutableVictoryCards();
+                auto it = victory_piles.find(param.card_to_buy);
+                if ( it != victory_piles.end() ) {
+                    it->count = 0;
+                }
+            }
+        }
+    }
 
-    EXPECT_EQ(board->victory_cards[2].card, "Province");
-    EXPECT_EQ(board->victory_cards[2].count, expected_victory_card_count);
+    void TearDown() override { delete board; }
 
-    // Check that treasure cards are initialized correctly
-    ASSERT_EQ(board->treasure_cards.size(), 3); // Copper, Silver, Gold
-    EXPECT_EQ(board->treasure_cards[0].card, "Copper");
-    EXPECT_EQ(board->treasure_cards[1].card, "Silver");
-    EXPECT_EQ(board->treasure_cards[2].card, "Gold");
+    TestableServerBoard *board;
+    std::vector<shared::CardBase::id_t> kingdom_cards;
+    size_t player_count;
+};
 
-    // Check that kingdom cards are initialized correctly
-    ASSERT_EQ(board->kingdom_cards.size(), kingdom_cards.size());
-    for ( size_t i = 0; i < kingdom_cards.size(); ++i ) {
-        EXPECT_EQ(board->kingdom_cards[i].card, kingdom_cards[i]);
-        // Assuming each kingdom card pile starts with 10 cards
-        EXPECT_EQ(board->kingdom_cards[i].count, 10);
+TEST_P(ServerBoardBuyCardTest, BuyCardTest)
+{
+    const auto &param = GetParam();
+    const auto &card_to_buy = param.card_to_buy;
+    const auto &pile_type = param.pile_type;
+    bool should_succeed = param.should_succeed;
+
+    // Before buying, check the count if the card exists
+    bool card_exists = false;
+    size_t initial_count = 0;
+    auto it = server::ServerBoard::pile_container_t::iterator();
+
+    if ( pile_type == "Kingdom" ) {
+        const auto &kingdom_piles = board->getKingdomCards();
+        it = kingdom_piles.find(card_to_buy);
+        if ( it != kingdom_piles.end() ) {
+            card_exists = true;
+            initial_count = it->count;
+        }
+    } else if ( pile_type == "Treasure" ) {
+        const auto &treasure_piles = board->getTreasureCards();
+        it = treasure_piles.find(card_to_buy);
+        if ( it != treasure_piles.end() ) {
+            card_exists = true;
+            initial_count = it->count;
+        }
+    } else if ( pile_type == "Victory" ) {
+        const auto &victory_piles = board->getVictoryCards();
+        it = victory_piles.find(card_to_buy);
+        if ( it != victory_piles.end() ) {
+            card_exists = true;
+            initial_count = it->count;
+        }
+    }
+
+    // Perform the buy operation
+    bool success = board->buy(card_to_buy);
+    EXPECT_EQ(success, should_succeed);
+
+    if ( should_succeed && card_exists ) {
+        // After buying, check the count has decreased
+        EXPECT_EQ(it->count, initial_count - 1);
+    } else if ( !should_succeed && card_exists ) {
+        // Count should remain the same
+        EXPECT_EQ(it->count, initial_count);
     }
 }
 
-TEST_F(ServerBoardTest, BuyCardFromKingdomPile)
+INSTANTIATE_TEST_SUITE_P(BuyCardTests, ServerBoardBuyCardTest,
+                         ::testing::Values(
+                                 // Successful buys from each pile
+                                 BuyCardTestParam{2, "Village", "Kingdom", true, false},
+                                 BuyCardTestParam{2, "Silver", "Treasure", true, false},
+                                 BuyCardTestParam{2, "Estate", "Victory", true, false},
+
+                                 // Attempt to buy a non-existent card
+                                 BuyCardTestParam{2, "NonExistentCard", "", false, false},
+
+                                 // Attempt to buy from an empty pile
+                                 BuyCardTestParam{2, "Moat", "Kingdom", false, true},
+                                 BuyCardTestParam{2, "Gold", "Treasure", false, true},
+                                 BuyCardTestParam{2, "Duchy", "Victory", false, true}));
+
+// --------------------------------
+// TrashCard Test
+// --------------------------------
+
+struct TrashCardTestParam
 {
-    // Attempt to buy a kingdom card
-    std::string card_to_buy = "Village";
+    size_t player_count;
+    std::vector<shared::CardBase::id_t> cards_to_trash;
+};
 
-    // Before buying, check the count
-    auto it = std::find_if(board->kingdom_cards.begin(), board->kingdom_cards.end(),
-                           [&card_to_buy](const shared::Pile &pile) { return pile.card == card_to_buy; });
-    ASSERT_NE(it, board->kingdom_cards.end());
-    EXPECT_EQ(it->count, 10);
-
-    // Perform the buy operation
-    bool success = board->buy(card_to_buy);
-    EXPECT_TRUE(success);
-
-    // After buying, check the count has decreased
-    EXPECT_EQ(it->count, 9);
-}
-
-TEST_F(ServerBoardTest, BuyCardFromTreasurePile)
+class ServerBoardTrashCardTest : public ::testing::TestWithParam<TrashCardTestParam>
 {
-    // Attempt to buy a treasure card
-    std::string card_to_buy = "Silver";
+protected:
+    void SetUp() override
+    {
+        kingdom_cards = get_valid_kingdom_cards();
+        player_count = GetParam().player_count;
+        board = new TestableServerBoard(kingdom_cards, player_count);
+    }
 
-    // Before buying, check the count
-    auto it = std::find_if(board->treasure_cards.begin(), board->treasure_cards.end(),
-                           [&card_to_buy](const shared::Pile &pile) { return pile.card == card_to_buy; });
-    ASSERT_NE(it, board->treasure_cards.end());
-    size_t initial_count = it->count;
+    void TearDown() override { delete board; }
 
-    // Perform the buy operation
-    bool success = board->buy(card_to_buy);
-    EXPECT_TRUE(success);
+    TestableServerBoard *board;
+    std::vector<shared::CardBase::id_t> kingdom_cards;
+    size_t player_count;
+};
 
-    // After buying, check the count has decreased
-    EXPECT_EQ(it->count, initial_count - 1);
-}
-
-TEST_F(ServerBoardTest, BuyCardFromVictoryPile)
+TEST_P(ServerBoardTrashCardTest, TrashCardTest)
 {
-    // Attempt to buy a victory card
-    std::string card_to_buy = "Estate";
-
-    // Before buying, check the count
-    auto it = std::find_if(board->victory_cards.begin(), board->victory_cards.end(),
-                           [&card_to_buy](const shared::Pile &pile) { return pile.card == card_to_buy; });
-    ASSERT_NE(it, board->victory_cards.end());
-    size_t initial_count = it->count;
-
-    // Perform the buy operation
-    bool success = board->buy(card_to_buy);
-    EXPECT_TRUE(success);
-
-    // After buying, check the count has decreased
-    EXPECT_EQ(it->count, initial_count - 1);
-}
-
-TEST_F(ServerBoardTest, BuyCardNotInPiles)
-{
-    // Attempt to buy a card that doesn't exist
-    std::string card_to_buy = "NonExistentCard";
-
-    // Perform the buy operation
-    bool success = board->buy(card_to_buy);
-    EXPECT_FALSE(success);
-}
-
-TEST_F(ServerBoardTest, BuyCardFromEmptyPile)
-{
-    // Empty a pile first
-    std::string card_to_buy = "Moat";
-
-    // Find the pile and set count to 0
-    auto it = std::find_if(board->kingdom_cards.begin(), board->kingdom_cards.end(),
-                           [&card_to_buy](const shared::Pile &pile) { return pile.card == card_to_buy; });
-    ASSERT_NE(it, board->kingdom_cards.end());
-    it->count = 0;
-
-    // Attempt to buy the card
-    bool success = board->buy(card_to_buy);
-    EXPECT_FALSE(success);
-}
-
-TEST_F(ServerBoardTest, TrashCard)
-{
-    // Trash a card
-    std::string card_to_trash = "Curse"; // Assuming "Curse" is a card in the game
+    const auto &param = GetParam();
+    const auto &cards_to_trash = param.cards_to_trash;
 
     // Before trashing, trash pile should be empty
-    EXPECT_TRUE(board->trash.empty());
+    EXPECT_TRUE(board->getTrash().empty());
 
-    // Perform the trash operation
-    board->trash_card(card_to_trash);
-
-    // After trashing, trash pile should contain the card
-    ASSERT_EQ(board->trash.size(), 1);
-    EXPECT_EQ(board->trash[0], card_to_trash);
-}
-
-TEST_F(ServerBoardTest, IsGameOverProvinceEmpty)
-{
-    // Set Province pile to 0
-    auto it = std::find_if(board->victory_cards.begin(), board->victory_cards.end(),
-                           [](const shared::Pile &pile) { return pile.card == "Province"; });
-    ASSERT_NE(it, board->victory_cards.end());
-    it->count = 0;
-
-    // Check if game is over
-    EXPECT_TRUE(board->isGameOver());
-}
-
-TEST_F(ServerBoardTest, IsGameOverThreeEmptyPiles)
-{
-    // Empty three kingdom card piles
-    board->kingdom_cards[0].count = 0;
-    board->kingdom_cards[1].count = 0;
-    board->kingdom_cards[2].count = 0;
-
-    // Check if game is over
-    EXPECT_TRUE(board->isGameOver());
-}
-
-TEST_F(ServerBoardTest, IsGameOverNotOver)
-{
-    // Ensure that less than three piles are empty and Province pile is not empty
-    // Check if game is over
-    EXPECT_FALSE(board->isGameOver());
-}
-
-TEST_F(ServerBoardTest, CountEmptyPiles)
-{
-    // Empty some piles
-    board->kingdom_cards[0].count = 0; // 1 empty pile
-    board->victory_cards[1].count = 0; // 2 empty piles
-    board->treasure_cards[2].count = 0; // 3 empty piles
-
-    // Count empty piles
-    size_t empty_piles = board->countEmptyPiles();
-    EXPECT_EQ(empty_piles, 3);
-}
-
-TEST_F(ServerBoardTest, InitialiseTreasureCards)
-{
-    // Create a new ServerBoard instance to test initialization
-    server::ServerBoard new_board(kingdom_cards, player_count);
-
-    // Verify treasure cards
-    ASSERT_EQ(new_board.treasure_cards.size(), 3);
-    EXPECT_EQ(new_board.treasure_cards[0].card, "Copper");
-    EXPECT_EQ(new_board.treasure_cards[1].card, "Silver");
-    EXPECT_EQ(new_board.treasure_cards[2].card, "Gold");
-
-    // Assuming counts are set as per Dominion rules
-    // For simplicity, check that counts are greater than zero
-    EXPECT_GT(new_board.treasure_cards[0].count, 0);
-    EXPECT_GT(new_board.treasure_cards[1].count, 0);
-    EXPECT_GT(new_board.treasure_cards[2].count, 0);
-}
-
-TEST_F(ServerBoardTest, InitialiseVictoryCards)
-{
-    // Create a new ServerBoard instance to test initialization
-    server::ServerBoard new_board(kingdom_cards, player_count);
-
-    // Verify victory cards
-    ASSERT_EQ(new_board.victory_cards.size(), 4); // estate, duchy, province, (+curse)
-    EXPECT_EQ(new_board.victory_cards[0].card, "Estate");
-    EXPECT_EQ(new_board.victory_cards[1].card, "Duchy");
-    EXPECT_EQ(new_board.victory_cards[2].card, "Province");
-
-    // Counts should be 8 for 2 players
-    size_t expected_count = (player_count == 2) ? 8 : 12;
-    EXPECT_EQ(new_board.victory_cards[0].count, expected_count);
-    EXPECT_EQ(new_board.victory_cards[1].count, expected_count);
-    EXPECT_EQ(new_board.victory_cards[2].count, expected_count);
-}
-
-TEST_F(ServerBoardTest, PlayedCards)
-{
-    // Initially, played_cards should be empty
-    EXPECT_TRUE(board->played_cards.empty());
-
-    // Simulate playing a card
-    std::string played_card = "Village";
-    board->played_cards.push_back(played_card);
-
-    // Check that played_cards contains the card
-    ASSERT_EQ(board->played_cards.size(), 1);
-    EXPECT_EQ(board->played_cards[0], played_card);
-}
-
-TEST_F(ServerBoardTest, TrashCardMultiple)
-{
-    // Trash multiple cards
-    std::vector<std::string> cards_to_trash = {"Curse", "Estate", "Copper"};
-
+    // Perform the trash operations
     for ( const auto &card : cards_to_trash ) {
         board->trash_card(card);
     }
 
-    // Check that trash pile contains all the cards
-    ASSERT_EQ(board->trash.size(), cards_to_trash.size());
+    // After trashing, trash pile should contain all the cards
+    const auto &trash = board->getTrash();
+    ASSERT_EQ(trash.size(), cards_to_trash.size());
     for ( size_t i = 0; i < cards_to_trash.size(); ++i ) {
-        EXPECT_EQ(board->trash[i], cards_to_trash[i]);
+        EXPECT_EQ(trash[i], cards_to_trash[i]);
     }
+}
+
+INSTANTIATE_TEST_SUITE_P(TrashCardTests, ServerBoardTrashCardTest,
+                         ::testing::Values(TrashCardTestParam{2, {"Curse"}},
+                                           TrashCardTestParam{2, {"Curse", "Estate", "Copper"}},
+                                           TrashCardTestParam{3, {"Gold", "Silver", "Province"}},
+                                           TrashCardTestParam{4, {"Village", "Smithy", "Market", "Moat"}}));
+
+// --------------------------------
+// BuyAllCards Test
+// --------------------------------
+TEST(ServerBoardTest, BuyAllCopiesOfCard)
+{
+    // Setup
+    auto kingdom_cards = get_valid_kingdom_cards();
+    size_t player_count = 2;
+    TestableServerBoard board(kingdom_cards, player_count);
+
+    // Buy all copies of a kingdom card
+    shared::CardBase::id_t card_to_buy = "Village";
+    const size_t total_copies = shared::BoardConfig::KINGDOM_CARD_COUNT;
+
+    for ( size_t i = 0; i < total_copies; ++i ) {
+        bool success = board.buy(card_to_buy);
+        EXPECT_TRUE(success);
+    }
+
+    // Attempt to buy one more, should fail
+    bool success = board.buy(card_to_buy);
+    EXPECT_FALSE(success);
+
+    // Check that the pile count is zero
+    const auto &kingdom_piles = board.getKingdomCards();
+    auto it = kingdom_piles.find(card_to_buy);
+    ASSERT_NE(it, kingdom_piles.end());
+    EXPECT_EQ(it->count, 0);
 }

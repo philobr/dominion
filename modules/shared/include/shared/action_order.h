@@ -3,14 +3,49 @@
 
 namespace shared
 {
+    /**
+     * @brief A request to a player to perform an action.
+     *
+     * An action order is a request to a player to perform an action. The player
+     * must respond with an `ActionDecision` that satisfies the order.
+     *
+     * The order is a polymorphic type that can represent different types of
+     * phases of the game.
+     */
     class ActionOrder
     {
     public:
         virtual ~ActionOrder() = default;
+        /**
+         * @brief Check if this order is equal to another order.
+         *
+         * Two orders are equal if they are of the same type and have the same
+         * values.
+         *
+         * @param other The other order to compare to.
+         * @return True if the orders are equal, false otherwise.
+         */
         bool operator==(const ActionOrder &other) const;
+        /**
+         * @brief Check if this order is not equal to another order.
+         *
+         * @see operator==
+         */
         bool operator!=(const ActionOrder &other) const;
 
     protected:
+        /**
+         * @brief Virtual function to check if this order is equal to another order.
+         *
+         * Any derived class must implement this function to compare itself to
+         * another order of the same type.
+         * This function is called by the `operator==` function.
+         * The `operator==` function checks if the orders are of the same type
+         * and then calls this function to check if the fields of the orders are equal.
+         *
+         * @param other The other order to compare to. Must be of the same type. Otherwise, the result is undefined.
+         * @return True if the orders are equal, false otherwise.
+         */
         virtual bool equals(const ActionOrder &other) const = 0;
     };
 

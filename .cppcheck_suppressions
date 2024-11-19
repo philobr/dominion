@@ -3,11 +3,6 @@
 # TODO: Find out why this is happening and remove this suppression
 missingInclude
 
-# False positive: This container be mutable
-# See the discussion on merge request !51
-# Talk to @amazzetta if you want to know more
-constParameter:modules/shared/src/utils/test_helpers.cpp
-
 # Suppress "The function 'SetUp' is never used."
 unusedFunction:unit_tests/server/game/gamestate/server_board.cpp:73
 # Suppress "The function 'TearDown' is never used."

@@ -58,20 +58,22 @@ namespace server
         throw std::runtime_error("Unreachable code");
     }
 
-    GameInterface::response_t GameInterface::PlayActionCardDecision_handler(
-            std::unique_ptr<shared::PlayActionCardDecision> action_decision,
-            const Player::id_t &player_id) {
+    GameInterface::response_t
+    GameInterface::PlayActionCardDecision_handler(std::unique_ptr<shared::PlayActionCardDecision> action_decision,
+                                                  const Player::id_t &player_id)
+    {
         // TODO: Implement for MVP 3
         throw std::runtime_error("Not implemented yet");
     }
 
-    GameInterface::response_t GameInterface::BuyCardDecision_handler(
-            std::unique_ptr<shared::BuyCardDecision> action_decision,
-            const Player::id_t &player_id) {
-        switch (phase) {
+    GameInterface::response_t
+    GameInterface::BuyCardDecision_handler(std::unique_ptr<shared::BuyCardDecision> action_decision,
+                                           const Player::id_t &player_id)
+    {
+        switch ( phase ) {
             case GamePhase::BUY_PHASE:
             case GamePhase::ACTION_PHASE:
-                if (!game_state->try_buy(player_id, action_decision->card)) {
+                if ( !game_state->try_buy(player_id, action_decision->card) ) {
                     // TODO: Log error
                 }
                 return std::make_unique<shared::BuyPhaseOrder>();
@@ -84,10 +86,11 @@ namespace server
         }
     }
 
-    GameInterface::response_t GameInterface::EndTurnDecision_handler(
-            std::unique_ptr<shared::EndTurnDecision> action_decision,
-            const Player::id_t &player_id) {
-        switch (phase) {
+    GameInterface::response_t
+    GameInterface::EndTurnDecision_handler(std::unique_ptr<shared::EndTurnDecision> action_decision,
+                                           const Player::id_t &player_id)
+    {
+        switch ( phase ) {
             case GamePhase::BUY_PHASE:
             case GamePhase::ACTION_PHASE:
                 // We end the turn of the current player
@@ -104,8 +107,8 @@ namespace server
     }
 
     GameInterface::response_t GameInterface::ChooseNCardsFromHandDecision_handler(
-            std::unique_ptr<shared::ChooseNCardsFromHandDecision> action_decision,
-            const Player::id_t &player_id) {
+            std::unique_ptr<shared::ChooseNCardsFromHandDecision> action_decision, const Player::id_t &player_id)
+    {
         // TODO: Implement for MVP 3
         throw std::runtime_error("Not implemented yet");
     }

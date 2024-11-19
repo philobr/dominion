@@ -1,16 +1,25 @@
 #pragma once
+
 #include <server/game/game.h>
 
 namespace server
 {
+    enum class GamePhase
+    {
+        ACTION_PHASE,
+        BUY_PHASE,
+        PLAYING_ACTION_CARD,
+    };
+
     class GameInterface
     {
         std::unique_ptr<GameState> game_state;
         const std::string game_id;
+        GamePhase phase;
 
     public:
         using ptr_t = std::unique_ptr<GameInterface>;
-        using response_t = std::unique_ptr<shared::ServerToClientMessage>;
+        using response_t = std::unique_ptr<ActionOrder>;
 
         GameInterface operator=(const GameInterface &other) = delete;
         GameInterface(const GameInterface &other) = delete;

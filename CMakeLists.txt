@@ -58,7 +58,7 @@ message(STATUS "Number of processors: ${NUM_PROCS}")
 ################################
 macro(include_rapidjson target)
     message(STATUS "Including rapidjson in ${target}")
-    target_include_directories(${target} PRIVATE ${EXTERNAL_LIBS}/rapidjson/include)
+    target_include_directories(${target} PUBLIC ${EXTERNAL_LIBS}/rapidjson/include)
 endmacro()
 
 macro(include_sockpp target)

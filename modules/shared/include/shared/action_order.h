@@ -1,6 +1,9 @@
 
 #pragma once
 
+#include <memory>
+#include <rapidjson/document.h>
+
 namespace shared
 {
     /**
@@ -32,6 +35,15 @@ namespace shared
          * @see operator==
          */
         bool operator!=(const ActionOrder &other) const;
+
+        /**
+         * @brief Create an `ActionOrder` from a JSON object.
+         */
+        static std::unique_ptr<ActionOrder> from_json(const rapidjson::Value &json);
+        /**
+         * @brief Convert this order to a JSON object.
+         */
+        rapidjson::Document to_json() const;
 
     protected:
         /**

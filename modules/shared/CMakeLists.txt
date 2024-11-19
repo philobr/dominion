@@ -2,6 +2,7 @@
 
 add_library(shared_lib STATIC
     src/action_decision.cpp
+    src/action_order.cpp
     src/message_types/from_json.cpp
     src/message_types/to_json.cpp
     src/message_types/other.cpp

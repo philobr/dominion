@@ -35,9 +35,10 @@ fi
 # Get the include paths from the compile_commands.json file
 # INCLUDE_PATHS=$(jq -r '.[] | .command' $COMPILE_CMDS | grep -oE '(-I[^ ]+)' | sort -u | sed 's/-I/--include=/g')
 
-cd $SRC_DIR
+cppcheck --version
 
 # Run cppcheck
+cd $SRC_DIR
 cppcheck \
     --check-config \
     --enable=all \

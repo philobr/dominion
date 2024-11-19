@@ -191,8 +191,6 @@ add_custom_target(check
         modules unit_tests
 
     COMMAND clang-tidy --version
-    # The `|| true` is necessary if we're running a version of clang-tidy that does not yet support `--verify-config`
-    COMMAND clang-tidy --verify-config || true
     COMMAND clang-tidy --list-checks
     COMMAND run-clang-tidy
         -p ${CMAKE_BINARY_DIR}

@@ -69,14 +69,13 @@ namespace server
             std::unique_ptr<shared::BuyCardDecision> action_decision,
             const Player::id_t &player_id) {
         switch (phase) {
-            case Phase::BUY_PHASE:
-            case Phase::ACTION_PHASE:
-                const bool success = game_state->try_buy(player_id, action_decision->card);
-                if (!success) {
+            case GamePhase::BUY_PHASE:
+            case GamePhase::ACTION_PHASE:
+                if (!game_state->try_buy(player_id, action_decision->card)) {
                     // TODO: Log error
                 }
                 return std::make_unique<shared::BuyPhaseOrder>();
-            case Phase::PLAYING_ACTION_CARD:
+            case GamePhase::PLAYING_ACTION_CARD:
                 // TODO: Log error
                 // TODO: Implement for MVP 3
                 throw std::runtime_error("Not implemented yet");
@@ -89,13 +88,13 @@ namespace server
             std::unique_ptr<shared::EndTurnDecision> action_decision,
             const Player::id_t &player_id) {
         switch (phase) {
-            case Phase::BUY_PHASE:
-            case Phase::ACTION_PHASE:
+            case GamePhase::BUY_PHASE:
+            case GamePhase::ACTION_PHASE:
                 // We end the turn of the current player
-                game_state->end_turn(player_id);
+                game_state->end_turn();
                 // We put the next player into action phase
                 return std::make_unique<shared::ActionPhaseOrder>();
-            case Phase::PLAYING_ACTION_CARD:
+            case GamePhase::PLAYING_ACTION_CARD:
                 // TODO: Log error
                 // TODO: Implement for MVP 3
                 throw std::runtime_error("Not implemented yet");

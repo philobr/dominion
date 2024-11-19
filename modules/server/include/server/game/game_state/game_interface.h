@@ -19,7 +19,7 @@ namespace server
 
     public:
         using ptr_t = std::unique_ptr<GameInterface>;
-        using response_t = std::unique_ptr<ActionOrder>;
+        using response_t = std::unique_ptr<shared::ActionOrder>;
 
         GameInterface operator=(const GameInterface &other) = delete;
         GameInterface(const GameInterface &other) = delete;

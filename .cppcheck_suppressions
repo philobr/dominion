@@ -8,10 +8,11 @@ missingInclude
 # Talk to @amazzetta if you want to know more
 constParameter:modules/shared/src/utils/test_helpers.cpp
 
-# TODO: reenable
-unusedFunction:unit_tests/server/game/gamestate/server_board.cpp
+# Suppress "The function 'SetUp' is never used."
+unusedFunction:unit_tests/server/game/gamestate/server_board.cpp:73
+# Suppress "The function 'TearDown' is never used."
+unusedFunction:unit_tests/server/game/gamestate/server_board.cpp:104
 
-# TODO: reenable
-# Suppress warnings about unusedStructMember
+# We are in fact using these struct members, but cppcheck is not able to detect it
 unusedStructMember:unit_tests/server/game/gamestate/server_board.cpp
 unusedStructMember:unit_tests/shared/game/board_base.cpp

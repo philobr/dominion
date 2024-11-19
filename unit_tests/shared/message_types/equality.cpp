@@ -251,18 +251,31 @@ TEST(SharedLibraryTest, ResultResponseMessageEquality)
 
 TEST(SharedLibraryTest, ActionOrderMessageEquality)
 {
-    ActionOrderMessage message1("game1", "message1", "message0");
+    std::unique_ptr<ActionOrder> order1 = std::make_unique<ChooseNCardsFromHandOrder>(3);
+    ActionOrderMessage message1("game1", "message1", std::move(order1), "description");
     ASSERT_EQ(message1, message1);
 
-    ActionOrderMessage message2("game1", "message1", "message0");
+    std::unique_ptr<ActionOrder> order2 = std::make_unique<ChooseNCardsFromHandOrder>(3);
+    ActionOrderMessage message2("game1", "message1", std::move(order2), "description");
     ASSERT_EQ(message1, message2);
 
-    ActionOrderMessage message3("game2", "message1", "message0");
+    std::unique_ptr<ActionOrder> order3 = std::make_unique<ChooseNCardsFromHandOrder>(3);
+    ActionOrderMessage message3("game2", "message1", std::move(order3), "description");
     ASSERT_NE(message1, message3);
 
-    ActionOrderMessage message4("game1", "message2", "message0");
+    std::unique_ptr<ActionOrder> order4 = std::make_unique<ChooseNCardsFromHandOrder>(3);
+    ActionOrderMessage message4("game1", "message2", std::move(order4), "description");
     ASSERT_NE(message1, message4);
 
-    ActionOrderMessage message5("game1", "message1");
+    std::unique_ptr<ActionOrder> order5 = std::make_unique<ChooseNCardsFromHandOrder>(4);
+    ActionOrderMessage message5("game1", "message1", std::move(order5), "description");
     ASSERT_NE(message1, message5);
+
+    std::unique_ptr<ActionOrder> order6 = std::make_unique<ChooseNCardsFromHandOrder>(3);
+    ActionOrderMessage message6("game1", "message1", std::move(order6));
+    ASSERT_NE(message1, message6);
+
+    std::unique_ptr<ActionOrder> order7 = std::make_unique<ChooseNCardsFromHandOrder>(3);
+    ActionOrderMessage message7("game1", "message1", std::move(order7), "description0");
+    ASSERT_NE(message1, message7);
 }

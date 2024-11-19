@@ -72,9 +72,15 @@ static std::unique_ptr<ActionOrderMessage> parse_action_order(const Document &js
                                                               const std::string &message_id)
 {
     std::optional<std::string> description;
+
+    if ( !json.HasMember("order") && !json["order"].IsObject() ) {
+        return nullptr;
+    }
+    std::unique_ptr<ActionOrder> order = ActionOrder::from_json(json["order"]);
+
     GET_OPTIONAL_STRING_MEMBER(description, json, "description");
 
-    return std::make_unique<ActionOrderMessage>(game_id, message_id, description);
+    return std::make_unique<ActionOrderMessage>(game_id, message_id, std::move(order), description);
 }
 
 namespace shared

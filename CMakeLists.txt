@@ -21,7 +21,6 @@ add_compile_options(
     -Wreturn-type
     -Wshadow
     -Wuninitialized
-    # In order to be able to use -Werror, we need to suppress this warning
     # TODO: Remove this suppression
     -Wno-deprecated-enum-enum-conversion
 )

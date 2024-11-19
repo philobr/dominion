@@ -15,7 +15,3 @@ unusedFunction:unit_tests/server/game/gamestate/server_board.cpp
 # Suppress warnings about unusedStructMember
 unusedStructMember:unit_tests/server/game/gamestate/server_board.cpp
 unusedStructMember:unit_tests/shared/game/board_base.cpp
-
-# TODO: reenable
-# Suppress warnings about unreadVariable
-unreadVariable:unit_tests/shared/game/board_base.cpp

@@ -3,18 +3,6 @@
 # TODO: Find out why this is happening and remove this suppression
 missingInclude
 
-# This creates a lot of errors
-# TODO: Investigate and fix
-missingIncludeSystem
-
-# TODO: reenable
-# We use an old version of cppcheck in CI, so we need to suppress unknown suppressions
-unmatchedSuppression
-
-# TODO: do we really need this? Remove if not
-# Suppress warnings about cppcheck not being able to check all branches
-normalCheckLevelMaxBranches
-
 # False positive: This container be mutable
 # See the discussion on merge request !51
 # Talk to @amazzetta if you want to know more

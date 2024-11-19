@@ -199,8 +199,7 @@ add_custom_target(check
         -j ${NUM_PROCS}
         -quiet
         -fix
-        # TODO: Change this to test all subdirectories of modules
-        modules/client modules/shared modules/server/src unit_tests
+        modules
 )
 
 # copy assets (images) to binary directory

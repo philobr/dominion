@@ -221,12 +221,10 @@ namespace shared
     {
     public:
         ~ActionOrderMessage() = default;
-        ActionOrderMessage(std::string game_id, std::string message_id,
-                           std::unique_ptr<ActionOrder> order,
+        ActionOrderMessage(std::string game_id, std::string message_id, std::unique_ptr<ActionOrder> order,
                            std::optional<std::string> description = std::nullopt) :
             ServerToClientMessage(game_id, message_id),
-            order(std::move(order)),
-            description(description)
+            order(std::move(order)), description(description)
         {}
         std::string to_json() override;
         bool operator==(const ActionOrderMessage &other) const;

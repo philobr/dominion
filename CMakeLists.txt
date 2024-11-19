@@ -76,8 +76,7 @@ macro(include_gtest target)
     message(STATUS "Including gtest in ${target}")
     target_link_libraries(${target} PRIVATE gtest gtest_main)
     target_include_directories(${target} PRIVATE
-        ${EXTERNAL_LIBS}/googletest/include
-        ${EXTERNAL_LIBS}/googletest/lib
+        ${EXTERNAL_LIBS}/googletest/lib/googletest/include
     )
 endmacro()
 
@@ -85,8 +84,7 @@ macro(include_gmock target)
     message(STATUS "Including gmock in ${target}")
     target_link_libraries(${target} PRIVATE gmock gmock_main)
     target_include_directories(${target} PRIVATE
-        ${EXTERNAL_LIBS}/googlemock/include
-        ${EXTERNAL_LIBS}/googlemock/lib
+        ${EXTERNAL_LIBS}/googletest/lib/googlemock/include
     )
 endmacro()
 
@@ -176,16 +174,7 @@ add_custom_target(format
 
 add_custom_target(check
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-    COMMAND cppcheck --version
-    COMMAND cppcheck
-        --enable=all
-        --error-exitcode=1
-        # The --max-configs option limits the number of paths (branches) that
-        # cppcheck will analyze in complex functions.
-        # Increasing it might give cppcheck more flexibility in analyzing complex code paths.
-        --max-configs=100
-        --suppressions-list=${CMAKE_SOURCE_DIR}/.cppcheck_suppressions
-        modules unit_tests
+    COMMAND ${CMAKE_SOURCE_DIR}/scripts/run-cppcheck.sh ${CMAKE_SOURCE_DIR} ${CMAKE_BINARY_DIR}/compile_commands.json
 
     COMMAND clang-tidy --version
     # The `|| true` is necessary if we're running a version of clang-tidy that does not yet support `--verify-config`

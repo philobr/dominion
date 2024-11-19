@@ -3,11 +3,12 @@
 # TODO: Find out why this is happening and remove this suppression
 missingInclude
 
+# TODO: Why are these not being detected?
 # Suppress "The function 'SetUp' is never used."
-unusedFunction:unit_tests/server/game/gamestate/server_board.cpp:73
+# unusedFunction:unit_tests/server/game/gamestate/server_board.cpp:73
 # Suppress "The function 'TearDown' is never used."
-unusedFunction:unit_tests/server/game/gamestate/server_board.cpp:104
+# unusedFunction:unit_tests/server/game/gamestate/server_board.cpp:104
 
 # We are in fact using these struct members, but cppcheck is not able to detect it
-unusedStructMember:unit_tests/server/game/gamestate/server_board.cpp
-unusedStructMember:unit_tests/shared/game/board_base.cpp
+# unusedStructMember:unit_tests/server/game/gamestate/server_board.cpp
+# unusedStructMember:unit_tests/shared/game/board_base.cpp

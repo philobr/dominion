@@ -20,9 +20,9 @@ namespace client
     {
         this->DestroyChildren();
 
-        auto &VictoryCards = Board->getVictoryCards();
-        auto &TreasureCards = Board->getTreasureCards();
-        auto &KingdomCards = Board->getKingdomCards();
+        const auto &VictoryCards = Board->getVictoryCards();
+        const auto &TreasureCards = Board->getTreasureCards();
+        const auto &KingdomCards = Board->getKingdomCards();
 
         auto *sizer = new wxGridBagSizer(10, 10);
         unsigned int counter = 0;

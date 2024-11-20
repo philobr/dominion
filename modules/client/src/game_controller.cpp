@@ -104,12 +104,30 @@ namespace client
         GameController::_clientNetworkManager->sendRequest(req);
     }
 
+
     void GameController::receive_message(std::unique_ptr<shared::ServerToClientMessage> msg)
     {
         // Show the lobby screen
         GameController::_gameWindow->showPanel(GameController::_lobbyPanel);
         // TODO maybe add player_id to the ServerToClientMessage ?
-        GameController::_lobbyPanel->AddPlayer(msg->game_id);
+        
+
+        // TODO make compatible with different message types
+        
+        // in case of a JoinLobbyBroadcastMessage
+        RefreshPlayers(std::move(msg));
+    }
+
+    void GameController::RefreshPlayers(std::unique_ptr<shared::ServerToClientMessage> msg)
+    {
+        shared::JoinLobbyBroadcastMessage *join_msg = dynamic_cast<shared::JoinLobbyBroadcastMessage *>(msg.get());
+        delete GameController::_lobbyPanel;
+        GameController::_lobbyPanel = new LobbyPanel(GameController::_gameWindow);
+
+        for (auto player : join_msg->players)
+        {
+            GameController::_lobbyPanel->AddPlayer(player);
+        }
     }
 
 } // namespace client

@@ -47,6 +47,11 @@ namespace client
          */
         static void showStatus(const std::string &message);
 
+        /**
+         * @brief Override the lobby panel with a new one
+         */
+        static void RefreshPlayers(std::unique_ptr<shared::ServerToClientMessage> msg);
+
     private:
         static GameWindow *_gameWindow;
         static ConnectionPanel *_connectionPanel;

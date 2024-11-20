@@ -20,13 +20,13 @@ namespace client
     {
         this->DestroyChildren();
 
-        auto& VictoryCards = Board->getVictoryCards();
-        auto& TreasureCards = Board->getTreasureCards();
-        auto& KingdomCards = Board->getKingdomCards();
+        auto &VictoryCards = Board->getVictoryCards();
+        auto &TreasureCards = Board->getTreasureCards();
+        auto &KingdomCards = Board->getKingdomCards();
 
         auto *sizer = new wxGridBagSizer(10, 10);
         unsigned int counter = 0;
-        for (const auto &VictoryPile : VictoryCards) {
+        for ( const auto &VictoryPile : VictoryCards ) {
             PilePanel *Pile = new PilePanel(this, VictoryPile);
             wxGBPosition position = wxGBPosition(counter, 0);
             wxGBSpan span = wxGBSpan(1, 1);
@@ -36,7 +36,7 @@ namespace client
         }
 
         counter = 0;
-        for (const auto &TreasurePile : TreasureCards) {
+        for ( const auto &TreasurePile : TreasureCards ) {
             PilePanel *Pile = new PilePanel(this, TreasurePile);
             wxGBPosition position = wxGBPosition(counter, 1);
             wxGBSpan span = wxGBSpan(1, 1);
@@ -46,7 +46,7 @@ namespace client
         }
 
         counter = 0;
-        for (const auto &KingdomPile : KingdomCards) {
+        for ( const auto &KingdomPile : KingdomCards ) {
             PilePanel *Pile = new PilePanel(this, KingdomPile);
             wxGBPosition position = wxGBPosition(counter % 2, 2 + counter / 2);
             wxGBSpan span = wxGBSpan(1, 1);

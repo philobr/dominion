@@ -20,7 +20,7 @@ namespace client
     }
 
 
-    void MainGamePanel::DrawGameState(std::unique_ptr<shared::ReducedGameState>& GameState)
+    void MainGamePanel::DrawGameState(std::unique_ptr<shared::ReducedGameState> &GameState)
     {
         Board->DrawBoard(GameState->board);
         Player->DrawPlayer(GameState->reduced_player);

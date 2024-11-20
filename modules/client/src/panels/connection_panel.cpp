@@ -52,10 +52,10 @@ namespace client
         VerticalLayout->Add(this->_playerNameField, 0, wxALIGN_CENTER | wxTOP | wxLEFT | wxRIGHT, 10);
 
         this->_gameName = new InputField(this, // parent element
-                                                   "Game name:", // label
-                                                   100, // width of label
-                                                   "my dominion", // default value (variable from "default.conf")
-                                                   240 // width of field
+                                         "Game name:", // label
+                                         100, // width of label
+                                         "my dominion", // default value (variable from "default.conf")
+                                         240 // width of field
         );
         VerticalLayout->Add(this->_gameName, 0, wxALIGN_CENTER | wxTOP | wxLEFT | wxRIGHT, 10);
 

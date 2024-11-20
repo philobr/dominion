@@ -9,8 +9,5 @@ namespace client
         this->SetBackgroundColour(wxColour(0, 0, 255));
     }
 
-    void PlayerPanel::DrawPlayer(const std::unique_ptr<shared::ReducedPlayer> &Player)
-    {
-        return;
-    }
+    void PlayerPanel::DrawPlayer(const std::unique_ptr<shared::ReducedPlayer> &Player) { return; }
 } // namespace client

@@ -108,10 +108,10 @@ namespace shared
         bool isGameOver() const;
         size_t getEmptyPilesCount() const;
 
-        pile_container_t& getVictoryCards() { return victory_cards; }
-        pile_container_t& getTreasureCards() { return treasure_cards; }
-        pile_container_t& getKingdomCards() { return kingdom_cards; }
-        Pile& getCurseCardPile() { return curse_card_pile; }
+        pile_container_t &getVictoryCards() { return victory_cards; }
+        pile_container_t &getTreasureCards() { return treasure_cards; }
+        pile_container_t &getKingdomCards() { return kingdom_cards; }
+        Pile &getCurseCardPile() { return curse_card_pile; }
 
     protected:
         pile_container_t victory_cards;

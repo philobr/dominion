@@ -72,9 +72,9 @@ namespace client
 
 
         // detach gui from network atm
-        if (inputPlayerName.ToStdString() == "testgigu") {
+        if ( inputPlayerName.ToStdString() == "testgigu" ) {
 
-          GameController::_gameWindow->showPanel(GameController::_lobbyPanel);
+            GameController::_gameWindow->showPanel(GameController::_lobbyPanel);
         }
 
         // send request to join game

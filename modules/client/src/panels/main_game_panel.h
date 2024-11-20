@@ -25,7 +25,7 @@ namespace client
          *
          * @param GameState
          */
-        void DrawGameState(std::unique_ptr<shared::ReducedGameState>& GameState);
+        void DrawGameState(std::unique_ptr<shared::ReducedGameState> &GameState);
 
 
     private:

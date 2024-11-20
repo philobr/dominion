@@ -34,15 +34,15 @@ void server::Lobby::join(MessageInterface &message_interface, std::unique_ptr<sh
         return;
     }
 
+    // Add player to the lobby
+    players.push_back(requestor_id);
+
     // Send JoinLobbyBroadcast to all players
     for ( const auto &player_id : players ) {
         shared::JoinLobbyBroadcastMessage join_message =
-                shared::JoinLobbyBroadcastMessage(lobby_id, uuid_generator::generate_uuid_v4(), requestor_id);
+                shared::JoinLobbyBroadcastMessage(lobby_id, uuid_generator::generate_uuid_v4(), players);
         message_interface.send_message(std::make_unique<shared::JoinLobbyBroadcastMessage>(join_message), player_id);
     }
-
-    // Add player to the lobby
-    players.push_back(requestor_id);
 
     shared::ResultResponseMessage success_message =
             shared::ResultResponseMessage(lobby_id, uuid_generator::generate_uuid_v4(), true, request->message_id);

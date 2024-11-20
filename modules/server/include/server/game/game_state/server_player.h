@@ -23,7 +23,7 @@ namespace server
          * @brief Creates a new player based on an id.
          * @param id the new players name
          */
-        explicit Player(shared::PlayerBase::id_t id) : shared::PlayerBase(id) {};
+        explicit Player(shared::PlayerBase::id_t id) : shared::PlayerBase(id){};
 
         /**
          * @brief Copy constructor

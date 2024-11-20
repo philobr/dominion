@@ -6,7 +6,8 @@ namespace server
                                              const std::vector<shared::CardBase::id_t> &play_cards,
                                              const std::vector<Player::id_t> &player_ids)
     {
-        LOG(INFO) << "Created a new GameInterface(" << "game_id:" << game_id << ")";
+        LOG(INFO) << "Created a new GameInterface("
+                  << "game_id:" << game_id << ")";
         return ptr_t(new GameInterface(game_id, play_cards, player_ids));
     }
 

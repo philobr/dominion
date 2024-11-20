@@ -1,9 +1,22 @@
 
+#include <algorithm>
+
 #include <shared/game/game_state/reduced_game_state.h>
 #include <shared/utils/logger.h>
 
 namespace shared
 {
+    bool ReducedGameState::operator==(const ReducedGameState &other) const
+    {
+        return *board == *other.board && *reduced_player == *other.reduced_player &&
+                std::equal(reduced_enemies.begin(), reduced_enemies.end(), other.reduced_enemies.begin(),
+                           other.reduced_enemies.end(),
+                           [](const ReducedEnemy::ptr_t &a, const ReducedEnemy::ptr_t &b) { return *a == *b; }) &&
+                active_player == other.active_player;
+    }
+
+    bool ReducedGameState::operator!=(const ReducedGameState &other) const { return !(*this == other); }
+
     rapidjson::Document ReducedGameState::toJson() const
     {
         rapidjson::Document doc;

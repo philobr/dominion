@@ -18,6 +18,9 @@ namespace shared
             active_player(active_player)
         {}
 
+        bool operator==(const ReducedGameState &other) const;
+        bool operator!=(const ReducedGameState &other) const;
+
         /**
          * @brief Serialize the ReducedGameState to a JSON object.
          */

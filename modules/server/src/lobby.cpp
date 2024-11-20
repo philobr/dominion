@@ -37,6 +37,7 @@ void server::Lobby::join(MessageInterface &message_interface, std::unique_ptr<sh
     // Add player to the lobby
     players.push_back(requestor_id);
 
+    std::cerr << players.size() << std::endl;
     // Send JoinLobbyBroadcast to all players
     for ( const auto &player_id : players ) {
         shared::JoinLobbyBroadcastMessage join_message =

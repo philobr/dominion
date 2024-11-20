@@ -5,7 +5,7 @@
 TEST(PlayerJsonConversions, ReducedPlayer2Way)
 {
     shared::PlayerBase base_player("Alice");
-    std::vector<shared::CardBase::id_t> hand_cards = { "Province", "Copper", "Copper", "Village", "Estate" };
+    std::vector<shared::CardBase::id_t> hand_cards = {"Province", "Copper", "Copper", "Village", "Estate"};
     auto expected = shared::ReducedPlayer::make(base_player, hand_cards);
     auto json = expected->toJson();
     std::unique_ptr<shared::ReducedPlayer> actual = shared::ReducedPlayer::fromJson(json);

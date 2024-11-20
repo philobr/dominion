@@ -28,7 +28,7 @@ namespace shared
         /**
          * @brief Deserialize a ReducedGameState from a JSON object.
          */
-        std::unique_ptr<ReducedGameState> fromJson(const rapidjson::Value &json);
+        static std::unique_ptr<ReducedGameState> fromJson(const rapidjson::Value &json);
 
         Board::ptr_t board;
         const ReducedPlayer::ptr_t reduced_player;

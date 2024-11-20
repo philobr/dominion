@@ -4,6 +4,38 @@
 #include <shared/game/game_state/reduced_game_state.h>
 #include <shared/utils/test_helpers.h>
 
+TEST(ReducedGameStateTest, Json2WayConversion)
+{
+    // Create a list of ReducedEnemies
+    shared::PlayerBase enemy1("Charlie");
+    shared::PlayerBase enemy2("Jacob");
+    std::vector<shared::ReducedEnemy::ptr_t> enemies;
+    enemies.emplace_back(shared::ReducedEnemy::make(enemy1, 5));
+    enemies.emplace_back(shared::ReducedEnemy::make(enemy2, 7));
+
+    // Set the active player
+    shared::PlayerBase::id_t active_player = "Charlie";
+
+    // Create the player
+    shared::PlayerBase player("Alice");
+    shared::ReducedPlayer::ptr_t reduced_player = shared::ReducedPlayer::make(player, {});
+
+    // Create the board
+    auto kingdom_cards = get_valid_kingdom_cards();
+    shared::Board::ptr_t board = shared::Board::make(kingdom_cards, 3);
+
+    // Create the ReducedGameState
+    shared::ReducedGameState expected(board, std::move(reduced_player), std::move(enemies), active_player);
+
+    auto json = expected.toJson();
+
+    // Convert back to ReducedGameState
+    std::unique_ptr<shared::ReducedGameState> actual = shared::ReducedGameState::fromJson(json);
+
+    ASSERT_NE(actual, nullptr);
+    EXPECT_EQ(*actual, expected);
+}
+
 TEST(ReducedGameStateTest, ParameterizedConstructor)
 {
     // Create a list of ReducedEnemies

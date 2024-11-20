@@ -2,6 +2,7 @@
 #include <algorithm>
 
 #include <shared/game/game_state/reduced_game_state.h>
+#include <shared/utils/json.h>
 #include <shared/utils/logger.h>
 
 namespace shared
@@ -39,10 +40,11 @@ namespace shared
             reduced_enemy_value.CopyFrom(reduced_enemy_doc, doc.GetAllocator());
             reduced_enemies_value.PushBack(reduced_enemy_value, doc.GetAllocator());
         }
+        doc.AddMember("reduced_enemies", reduced_enemies_value, doc.GetAllocator());
 
-        ADD_STRING_MEMBER(this->active_player, active_player);
+        ADD_STRING_MEMBER(this->active_player.c_str(), active_player);
 
-        return json;
+        return doc;
     }
 
     std::unique_ptr<ReducedGameState> ReducedGameState::fromJson(const rapidjson::Value &json)

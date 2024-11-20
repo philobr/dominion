@@ -2,9 +2,9 @@
  * @note The pile sizes, card counts etc are hardcoded on purpose. This way we notice if we change them by accident.
  */
 #include <algorithm>
+#include <gtest/gtest.h>
 #include <string>
 #include <vector>
-#include <gtest/gtest.h>
 
 #include <shared/game/cards/card_base.h>
 #include <shared/game/game_state/board_base.h>

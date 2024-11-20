@@ -20,6 +20,15 @@ namespace shared
         return std::make_unique<Pile>(card_id, count);
     }
 
+    rapidjson::Document Pile::toJson() const
+    {
+        rapidjson::Document doc;
+        doc.SetObject();
+        ADD_STRING_MEMBER(this->card_id, card_id);
+        ADD_UINT_MEMBER(this->count, count);
+        return doc;
+    }
+
     Board::Board(const std::vector<shared::CardBase::id_t> &kingdom_cards, size_t player_count) :
         victory_cards(initialiseVictoryCards(player_count)), treasure_cards(initialiseTreasureCards(player_count)),
         curse_card_pile(initialiseCursePile(player_count))

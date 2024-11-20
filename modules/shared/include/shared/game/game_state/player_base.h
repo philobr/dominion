@@ -7,7 +7,9 @@
 #include <iostream> // for operator<<
 #include <memory>
 
+#include <rapidjson/document.h>
 #include <shared/game/cards/card_base.h>
+
 namespace shared
 {
     class PlayerBase
@@ -60,13 +62,19 @@ namespace shared
         unsigned int treasure;
 
         CardBase::id_t current_card;
-        std::pair<CardBase::id_t, unsigned int> discard_pile; // top card id, discard_pile size
+        std::vector<CardBase::id_t> discard_pile;
         unsigned int draw_pile_size;
 
         std::vector<CardBase::id_t> played_cards;
 
-        rapidjson::Document sharedAttributesToJson() const;
-        void initFromJson(PlayerBase &player, const rapidjson::Value &json);
+        /**
+         * @brief Convert the player to a `rapidjson::Document` JSON object.
+         */
+        rapidjson::Document toJson() const;
+        /**
+         * @brief Initialize a player from a `rapidjson::Value` JSON object.
+         */
+        static std::unique_ptr<PlayerBase> fromJson(const rapidjson::Value &json);
     };
 
     class ReducedEnemy : public PlayerBase
@@ -77,7 +85,7 @@ namespace shared
         static ptr_t make(const PlayerBase &player, unsigned int hand_size);
 
         rapidjson::Document toJson() const;
-        std::unique_ptr<ReducedEnemy> fromJson(const rapidjson::Value &json);
+        static std::unique_ptr<ReducedEnemy> fromJson(const rapidjson::Value &json);
 
         unsigned int getHandSize() const;
 
@@ -94,7 +102,7 @@ namespace shared
         static ptr_t make(const PlayerBase &player, std::vector<CardBase::id_t> hand_cards);
 
         rapidjson::Document toJson() const;
-        std::unique_ptr<ReducedPlayer> fromJson(const rapidjson::Value &json);
+        static std::unique_ptr<ReducedPlayer> fromJson(const rapidjson::Value &json);
 
         const std::vector<CardBase::id_t> &getHandCards() const;
 

@@ -29,7 +29,8 @@ namespace server
 
     ServerNetworkManager::~ServerNetworkManager() = default;
 
-    void ServerNetworkManager::connect(const std::string &url, const uint16_t port)
+    // TODO: Why does this pass a URL when it is never used?
+    void ServerNetworkManager::connect(const std::string & /*url*/, const uint16_t port)
     {
         this->_acc = sockpp::tcp_acceptor(port);
 
@@ -138,9 +139,8 @@ namespace server
             shared::PlayerBase::id_t player_id = req->player_id;
             std::string address = peer_address.to_string();
             BasicNetwork::getInstance()->add_player_to_address(player_id, address);
-            std::cerr << "Received a message" << std::endl;
 #ifdef PRINT_NETWORK_MESSAGES
-            std::cout << "Received valid request : " << msg << std::endl;
+            std::cerr << "Received valid request : " << msg << std::endl;
 #endif
             // execute client request
             // TODO Change to message handler

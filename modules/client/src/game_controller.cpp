@@ -40,6 +40,7 @@ namespace client
         wxString inputServerAddress = GameController::_connectionPanel->getServerAddress().Trim();
         wxString inputServerPort = GameController::_connectionPanel->getServerPort().Trim();
         wxString inputPlayerName = GameController::_connectionPanel->getPlayerName().Trim();
+        wxString inputGameName = GameController::_connectionPanel->getGameName().Trim();
 
         // check that all values were provided
         if ( inputServerAddress.IsEmpty() ) {
@@ -54,6 +55,10 @@ namespace client
             GameController::showError("Input error", "Please enter your desired player name");
             return;
         }
+        if ( inputGameName.IsEmpty() ) {
+            GameController::showError("Input error", "Please enter the game name");
+            return;
+        }
 
         // convert port from wxString to uint16_t
         unsigned long portAsLong;
@@ -65,8 +70,15 @@ namespace client
         // connect to the server
         _clientNetworkManager->init(inputServerAddress.ToStdString(), portAsLong);
 
+
+        // detach gui from network atm
+        if ( inputPlayerName.ToStdString() == "testgigu" ) {
+
+            GameController::_gameWindow->showPanel(GameController::_lobbyPanel);
+        }
+
         // send request to join game
-        shared::CreateLobbyRequestMessage request("bob", "stuart", inputPlayerName.ToStdString());
+        shared::CreateLobbyRequestMessage request(inputGameName.ToStdString(), "stuart", inputPlayerName.ToStdString());
         GameController::send_request(request.to_json());
     }
 

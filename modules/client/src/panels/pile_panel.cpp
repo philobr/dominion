@@ -11,7 +11,7 @@ namespace client
         std::string CardPath = "assets/" + pile.card_id + ".png";
 
         ImagePanel *image_panel =
-                new ImagePanel(this, CardPath, wxBITMAP_TYPE_PNG, wxDefaultPosition, wxSize(100, 100));
+                new ImagePanel(this, CardPath, wxBITMAP_TYPE_PNG, wxDefaultPosition, wxSize(100, 125));
 
         sizer->Add(image_panel, 0, wxALIGN_CENTER_HORIZONTAL);
 

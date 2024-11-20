@@ -1,6 +1,7 @@
 
 #include <shared/action_order.h>
 #include <shared/utils/json.h>
+#include <string>
 #include <typeinfo>
 
 namespace shared
@@ -44,7 +45,7 @@ namespace shared
         return doc;
     }
 
-    bool ActionPhaseOrder::operator==(const ActionPhaseOrder &other) const { return true; }
+    bool ActionPhaseOrder::operator==(const ActionPhaseOrder & /* other */) const { return true; }
 
     bool ActionPhaseOrder::operator!=(const ActionPhaseOrder &other) const
     {
@@ -56,7 +57,7 @@ namespace shared
         return *this == dynamic_cast<const ActionPhaseOrder &>(other);
     }
 
-    bool BuyPhaseOrder::operator==(const BuyPhaseOrder &other) const { return true; }
+    bool BuyPhaseOrder::operator==(const BuyPhaseOrder & /*other*/) const { return true; }
 
     bool BuyPhaseOrder::operator!=(const BuyPhaseOrder &other) const { return !BuyPhaseOrder::operator==(other); }
 

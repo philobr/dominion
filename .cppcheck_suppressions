@@ -1,38 +1,11 @@
-
 # Ignore missing include "gtest/gtest.h" in unit tests
 # TODO: Find out why this is happening and remove this suppression
 missingInclude
-
-# This creates a lot of errors
-# TODO: Investigate and fix
-missingIncludeSystem
-
-# TODO: reenable
-# We use an old version of cppcheck in CI, so we need to suppress unknown suppressions
-unmatchedSuppression
-
-# TODO: do we really need this? Remove if not
-# Suppress warnings about cppcheck not being able to check all branches
-normalCheckLevelMaxBranches
-
-# False positive: This container be mutable
-# See the discussion on merge request !51
-# Talk to @amazzetta if you want to know more
-constParameter:modules/shared/src/utils/test_helpers.cpp
-
-# TODO: reenable
-# Suppress warnings about unusedFunction
-unusedFunction:unit_tests/shared/game_state.cpp
-unusedFunction:unit_tests/server/game/gamestate/server_board.cpp
-
-# TODO: reenable
-unusedFunction:unit_tests/server/game/gamestate/server_board.cpp
-
-# TODO: reenable
-# Suppress warnings about unusedStructMember
-unusedStructMember:unit_tests/server/game/gamestate/server_board.cpp
-unusedStructMember:unit_tests/shared/game/board_base.cpp
-
-# TODO: reenable
-# Suppress warnings about unreadVariable
-unreadVariable:unit_tests/shared/game/board_base.cpp
+# TODO: Why are these not being detected?
+# Suppress "The function 'SetUp' is never used."
+# unusedFunction:unit_tests/server/game/gamestate/server_board.cpp:73
+# Suppress "The function 'TearDown' is never used."
+# unusedFunction:unit_tests/server/game/gamestate/server_board.cpp:104
+# We are in fact using these struct members, but cppcheck is not able to detect it
+# unusedStructMember:unit_tests/server/game/gamestate/server_board.cpp
+# unusedStructMember:unit_tests/shared/game/board_base.cpp

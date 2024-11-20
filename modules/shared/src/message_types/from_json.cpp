@@ -43,13 +43,13 @@ parse_join_game_broadcast(const Document &json, const std::string &game_id, cons
 }
 
 static std::unique_ptr<StartGameBroadcastMessage>
-parse_start_game_message(const Document &json, const std::string &game_id, const std::string &message_id)
+parse_start_game_message(const Document & /*json*/, const std::string &game_id, const std::string &message_id)
 {
     return std::make_unique<StartGameBroadcastMessage>(game_id, message_id);
 }
 
 static std::unique_ptr<EndGameBroadcastMessage>
-parse_end_game_broadcast(const Document &json, const std::string &game_id, const std::string &message_id)
+parse_end_game_broadcast(const Document & /*json*/, const std::string &game_id, const std::string &message_id)
 {
     return std::make_unique<EndGameBroadcastMessage>(game_id, message_id);
 }
@@ -121,7 +121,7 @@ namespace shared
     }
 } // namespace shared
 
-static std::unique_ptr<GameStateRequestMessage> parse_game_state_request(const Document &json,
+static std::unique_ptr<GameStateRequestMessage> parse_game_state_request(const Document & /*json*/,
                                                                          const std::string &game_id,
                                                                          const std::string &message_id,
                                                                          const PlayerBase::id_t &player_id)
@@ -129,7 +129,7 @@ static std::unique_ptr<GameStateRequestMessage> parse_game_state_request(const D
     return std::make_unique<GameStateRequestMessage>(game_id, message_id, player_id);
 }
 
-static std::unique_ptr<CreateLobbyRequestMessage> parse_create_lobby_request(const Document &json,
+static std::unique_ptr<CreateLobbyRequestMessage> parse_create_lobby_request(const Document & /*json*/,
                                                                              const std::string &game_id,
                                                                              const std::string &message_id,
                                                                              const PlayerBase::id_t &player_id)
@@ -137,7 +137,7 @@ static std::unique_ptr<CreateLobbyRequestMessage> parse_create_lobby_request(con
     return std::make_unique<CreateLobbyRequestMessage>(game_id, message_id, player_id);
 }
 
-static std::unique_ptr<JoinLobbyRequestMessage> parse_join_game_request(const Document &json,
+static std::unique_ptr<JoinLobbyRequestMessage> parse_join_game_request(const Document & /*json*/,
                                                                         const std::string &game_id,
                                                                         const std::string &message_id,
                                                                         const PlayerBase::id_t &player_id)

@@ -28,7 +28,7 @@ namespace client
          *
          * @param Board
          */
-        void DrawBoard(shared::Board &Board);
+        void DrawBoard(std::shared_ptr<shared::Board> Board);
 
     private:
     };

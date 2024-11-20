@@ -3,46 +3,56 @@
 #include <wx/wx.h>
 #include "pile_panel.h"
 
+#include <shared/utils/test_helpers.h>
+
 namespace client
 {
 
     BoardPanel::BoardPanel(wxWindow *parent, wxSize size) : wxPanel(parent, wxID_ANY, wxDefaultPosition, size)
     {
 
-        shared::Board board;
-        board.initialise_treasure_cards(2);
-        board.initialise_victory_cards(2);
-        board.kingdom_cards = {{"Chapel", 8}, {"Village", 8}, {"Laboratory", 8}, {"Artisan", 8}};
+        auto board = shared::Board::make(get_valid_kingdom_cards(), 3);
         this->DrawBoard(board);
     }
-        PilePanel *EstatePanel =
-                new PilePanel(this, shared::Pile::make("Estate", shared::BoardConfig::VICTORY_CARDS_SMALL_GAME));
-        PilePanel *DuchyPanel =
-                new PilePanel(this, shared::Pile::make("Duchy", shared::BoardConfig::VICTORY_CARDS_SMALL_GAME));
 
 
-    void BoardPanel::DrawBoard(shared::Board &Board)
+    void BoardPanel::DrawBoard(std::shared_ptr<shared::Board> Board)
     {
         this->DestroyChildren();
 
+        auto& VictoryCards = Board->getVictoryCards();
+        auto& TreasureCards = Board->getTreasureCards();
+        auto& KingdomCards = Board->getKingdomCards();
+
         auto *sizer = new wxGridBagSizer(10, 10);
-        for ( unsigned i = 0; i < Board.victory_cards.size(); i++ ) {
-            PilePanel *Pile = new PilePanel(this, Board.victory_cards[i]);
-            wxGBPosition position = wxGBPosition(i, 0);
+        unsigned int counter = 0;
+        for (const auto &VictoryPile : VictoryCards) {
+            PilePanel *Pile = new PilePanel(this, VictoryPile);
+            wxGBPosition position = wxGBPosition(counter, 0);
             wxGBSpan span = wxGBSpan(1, 1);
             sizer->Add(Pile, position, span, wxALIGN_CENTER_HORIZONTAL);
+
+            counter++;
         }
-        for ( unsigned i = 0; i < Board.treasure_cards.size(); i++ ) {
-            PilePanel *Pile = new PilePanel(this, Board.treasure_cards[i]);
-            wxGBPosition position = wxGBPosition(i, 1);
+
+        counter = 0;
+        for (const auto &TreasurePile : TreasureCards) {
+            PilePanel *Pile = new PilePanel(this, TreasurePile);
+            wxGBPosition position = wxGBPosition(counter, 1);
             wxGBSpan span = wxGBSpan(1, 1);
             sizer->Add(Pile, position, span, wxALIGN_CENTER_HORIZONTAL);
+
+            counter++;
         }
-        for ( unsigned i = 0; i < Board.kingdom_cards.size(); i++ ) {
-            PilePanel *Pile = new PilePanel(this, Board.kingdom_cards[i]);
-            wxGBPosition position = wxGBPosition(i % 2, 2 + i / 2);
+
+        counter = 0;
+        for (const auto &KingdomPile : KingdomCards) {
+            PilePanel *Pile = new PilePanel(this, KingdomPile);
+            wxGBPosition position = wxGBPosition(counter % 2, 2 + counter / 2);
             wxGBSpan span = wxGBSpan(1, 1);
             sizer->Add(Pile, position, span, wxALIGN_CENTER_HORIZONTAL);
+
+            counter++;
         }
         sizer->Layout();
         this->SetSizer(sizer, true);

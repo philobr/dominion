@@ -20,6 +20,9 @@ namespace client
 
         wxBoxSizer *outersizer = new wxBoxSizer(wxHORIZONTAL);
 
+        size_t card_width_borders = hand_card_size.GetWidth() + 8;
+        outersizer->SetMinSize(wxSize(7*card_width_borders, 150));
+
         wxPanel *left = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDefaultSize);
         wxPanel *hand = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDefaultSize);
         wxPanel *right = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDefaultSize);
@@ -30,14 +33,22 @@ namespace client
 
         this->SetSizer(outersizer);
 
+        wxBoxSizer *outer_hand_sizer = new wxBoxSizer(wxVERTICAL);
+        outer_hand_sizer->SetMinSize(wxSize(5*card_width_borders, 150));
+
         wxBoxSizer *sizer = new wxBoxSizer(wxHORIZONTAL);
+        
+        outer_hand_sizer->Add(sizer, 1, wxALIGN_CENTER_HORIZONTAL, 5);
 
-
-
+        /*if (hand_size * card_width_borders > hand->GetSize().GetWidth()) {
+            hand_card_size.SetWidth(hand->GetSize().GetWidth() / hand_size - 8);
+            hand_card_size.SetHeight(hand_card_size.GetWidth() / 4 * 5);
+        }*/
+        
         for (size_t i = 0; i < hand_size; i++)
         {
             PilePanel * card = new PilePanel(hand, shared::Pile::make(cards[i], 1));
-            sizer->Add(card, 1, wxTOP, 5);
+            sizer->Add(card, 0, wxLEFT | wxRIGHT, 4);
         }
 
         /*std::cerr << "at least we're trying to draw a card\n";

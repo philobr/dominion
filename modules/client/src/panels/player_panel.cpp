@@ -11,8 +11,6 @@ namespace client
 
     void PlayerPanel::DrawPlayer(const std::unique_ptr<shared::ReducedPlayer> &Player)
     {
-        const auto& hand = Player->getHandCards();
-
         return;
     }
 } // namespace client

@@ -72,10 +72,9 @@ void server::Lobby::start_game(MessageInterface &message_interface,
         shared::StartGameBroadcastMessage start_message =
                 shared::StartGameBroadcastMessage(lobby_id, uuid_generator::generate_uuid_v4());
         message_interface.send_message(std::make_unique<shared::StartGameBroadcastMessage>(start_message), player_id);
-        // TODO: reenable this
-        // shared::ReducedGameState reduced_game_state = game_state.get_reduced_state(player_id);
-        shared::GameStateMessage game_state_message =
-                shared::GameStateMessage(lobby_id, uuid_generator::generate_uuid_v4() /*, reduced_game_state */);
-        message_interface.send_message(std::make_unique<shared::GameStateMessage>(game_state_message), player_id);
+        std::unique_ptr<shared::ReducedGameState> reduced_game_state = game_state->get_reduced_state(player_id);
+        std::unique_ptr<shared::ServerToClientMessage> game_state_message =
+                std::make_unique<shared::GameStateMessage>(lobby_id, uuid_generator::generate_uuid_v4(), std::move(reduced_game_state));
+        message_interface.send_message(std::move(game_state_message), player_id);
     }
 }

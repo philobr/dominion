@@ -27,10 +27,6 @@ namespace shared
 
         bool operator==(const PlayerBase &other) const;
 
-        std::string toJson() const;
-        PlayerBase fromJson(const id_t &player_id);
-        std::unique_ptr<PlayerBase> uniuqeFromJson(const id_t &player_id);
-
         id_t getId() const { return player_id; }
 
         unsigned int getVictoryPoints() const { return victory_points; }
@@ -68,6 +64,9 @@ namespace shared
         unsigned int draw_pile_size;
 
         std::vector<CardBase::id_t> played_cards;
+
+        rapidjson::Document sharedAttributesToJson() const;
+        void initFromJson(PlayerBase &player, const rapidjson::Value &json);
     };
 
     class ReducedEnemy : public PlayerBase
@@ -77,9 +76,8 @@ namespace shared
 
         static ptr_t make(const PlayerBase &player, unsigned int hand_size);
 
-        std::string toJson() const;
-        ReducedEnemy fromJson(const PlayerBase &player, unsigned int hand_size);
-        std::unique_ptr<ReducedEnemy> uniuqeFromJson(const PlayerBase &player, unsigned int hand_size);
+        rapidjson::Document toJson() const;
+        std::unique_ptr<ReducedEnemy> fromJson(const rapidjson::Value &json);
 
         unsigned int getHandSize() const;
 
@@ -95,9 +93,8 @@ namespace shared
 
         static ptr_t make(const PlayerBase &player, std::vector<CardBase::id_t> hand_cards);
 
-        std::string toJson() const;
-        ReducedPlayer fromJson(const std::string &json);
-        std::unique_ptr<ReducedPlayer> uniuqeFromJson(const std::string &json);
+        rapidjson::Document toJson() const;
+        std::unique_ptr<ReducedPlayer> fromJson(const rapidjson::Value &json);
 
         const std::vector<CardBase::id_t> &getHandCards() const;
 

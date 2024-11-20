@@ -96,6 +96,7 @@ void ClientNetworkManager::sendRequest(const std::string message)
         std::cout << "Sending request : " << message << std::endl;
 #endif
 
+        std::cout << "Sending request : " << msg << std::endl;
         // send message to server
         ssize_t bytesSent = ClientNetworkManager::_connection->write(msg);
 

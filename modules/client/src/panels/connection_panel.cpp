@@ -60,6 +60,7 @@ namespace client
         VerticalLayout->Add(this->_gameName, 0, wxALIGN_CENTER | wxTOP | wxLEFT | wxRIGHT, 10);
 
         wxButton *createLobbyButton = new wxButton(this, wxID_ANY, "create Lobby", wxDefaultPosition, wxSize(100, 40));
+        createLobbyButton->SetBackgroundColour(wxColor(0,0,0));
         createLobbyButton->Bind(wxEVT_BUTTON,
                                 [](const wxCommandEvent & /*event*/) { GameController::CreateLobby(); });
         VerticalLayout->Add(createLobbyButton, 0, wxALIGN_RIGHT | wxALL, 10);

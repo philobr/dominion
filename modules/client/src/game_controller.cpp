@@ -1,4 +1,5 @@
 #include "game_controller.h"
+#include <shared/utils/uuid_generator.h>
 
 
 namespace client
@@ -32,54 +33,86 @@ namespace client
         GameController::showStatus("Not connected");
     }
 
-
-    void GameController::connectToServer()
+    bool GameController::validInput(const wxString &inputServerAddress, const wxString &inputServerPort,
+                                    const wxString &inputPlayerName, const wxString &inputGameName)
     {
-
-        // get values form UI input fields
-        wxString inputServerAddress = GameController::_connectionPanel->getServerAddress().Trim();
-        wxString inputServerPort = GameController::_connectionPanel->getServerPort().Trim();
-        wxString inputPlayerName = GameController::_connectionPanel->getPlayerName().Trim();
-        wxString inputGameName = GameController::_connectionPanel->getGameName().Trim();
 
         // check that all values were provided
         if ( inputServerAddress.IsEmpty() ) {
             GameController::showError("Input error", "Please provide the server's address");
-            return;
+            return false;
         }
+
         if ( inputServerPort.IsEmpty() ) {
             GameController::showError("Input error", "Please provide the server's port number");
-            return;
+            return false;
         }
+
         if ( inputPlayerName.IsEmpty() ) {
             GameController::showError("Input error", "Please enter your desired player name");
-            return;
+            return false;
         }
+
         if ( inputGameName.IsEmpty() ) {
             GameController::showError("Input error", "Please enter the game name");
-            return;
+            return false;
         }
 
         // convert port from wxString to uint16_t
         unsigned long portAsLong;
         if ( !inputServerPort.ToULong(&portAsLong) || portAsLong > 65535 ) {
             GameController::showError("Connection error", "Invalid port");
-            return;
+            return false;
         }
 
-        // connect to the server
-        _clientNetworkManager->init(inputServerAddress.ToStdString(), portAsLong);
+        return true;
+    }
 
+    void GameController::CreateLobby()
+    {
+        // get values form UI input fields
+        wxString inputServerAddress = GameController::_connectionPanel->getServerAddress().Trim();
+        wxString inputServerPort = GameController::_connectionPanel->getServerPort().Trim();
+        wxString inputPlayerName = GameController::_connectionPanel->getPlayerName().Trim();
+        wxString inputGameName = GameController::_connectionPanel->getGameName().Trim();
+        if ( GameController::validInput(inputServerAddress, inputServerPort, inputPlayerName, inputGameName) ) {
+            unsigned long portAsLong;
+            inputServerPort.ToULong(&portAsLong);
 
-        // detach gui from network atm
-        if ( inputPlayerName.ToStdString() == "testgigu" ) {
+            // connect to the server
+            _clientNetworkManager->init(inputServerAddress.ToStdString(), portAsLong);
 
-            GameController::_gameWindow->showPanel(GameController::_lobbyPanel);
+            // detach gui from network atm
+            if ( inputPlayerName == "testgigu" ) {
+
+                GameController::_gameWindow->showPanel(GameController::_lobbyPanel);
+            }
+
+            // send request to join game
+            shared::CreateLobbyRequestMessage request(inputGameName.ToStdString(), uuid_generator::generate_uuid_v4(),
+                                                      inputPlayerName.ToStdString());
+            GameController::send_request(request.to_json());
         }
+    }
 
-        // send request to join game
-        shared::CreateLobbyRequestMessage request(inputGameName.ToStdString(), "stuart", inputPlayerName.ToStdString());
-        GameController::send_request(request.to_json());
+    void GameController::JoinLobby()
+    {
+        // get values form UI input fields
+        wxString inputServerAddress = GameController::_connectionPanel->getServerAddress().Trim();
+        wxString inputServerPort = GameController::_connectionPanel->getServerPort().Trim();
+        wxString inputPlayerName = GameController::_connectionPanel->getPlayerName().Trim();
+        wxString inputGameName = GameController::_connectionPanel->getGameName().Trim();
+        if ( GameController::validInput(inputServerAddress, inputServerPort, inputPlayerName, inputGameName) ) {
+            unsigned long portAsLong;
+            inputServerPort.ToULong(&portAsLong);
+
+            // connect to the server
+            _clientNetworkManager->init(inputServerAddress.ToStdString(), portAsLong);
+
+            // send request to join game
+            shared::JoinLobbyRequestMessage request(inputGameName.ToStdString(), uuid_generator::generate_uuid_v4(), inputPlayerName.ToStdString());
+            GameController::send_request(request.to_json());
+        }
     }
 
     void GameController::startGame()

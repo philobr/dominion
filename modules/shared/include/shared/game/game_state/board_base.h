@@ -1,3 +1,4 @@
+
 #pragma once
 
 #include <set>
@@ -5,6 +6,9 @@
 
 #include <shared/game/cards/card_base.h>
 #include <shared/utils/assert.h>
+
+#include <rapidjson/document.h>
+
 namespace shared
 {
     namespace BoardConfig
@@ -43,11 +47,16 @@ namespace shared
         shared::CardBase::id_t card_id;
         mutable size_t count; // `mutable` allows modification const contexts
 
-        Pile() = default;
+        /**
+         * @brief Creates a new card pile with size the given size
+         *
+         * @param card_id The ID of the kingdom card.
+         * @param pile_size Amount of cards in the pile
+         */
+        Pile(const shared::CardBase::id_t &card_id, size_t pile_size) : card_id(card_id), count(pile_size) {}
 
-        std::string toJson() const;
-        Pile fromJson(const std::string &json);
-        std::unique_ptr<Pile> uniuqeFromJson(const std::string &json);
+        rapidjson::Document toJson() const;
+        static std::unique_ptr<Pile> fromJson(const rapidjson::Value &json);
 
         /**
          * @brief Creates a new kingdom card pile with size 10; defined by shared::BoardConfig::KINGDOM_CARD_COUNT
@@ -56,15 +65,6 @@ namespace shared
          * @return Pile
          */
         static Pile makeKingdomCard(const shared::CardBase::id_t &kingdom_card_id);
-
-        /**
-         * @brief Creates a new card pile with size the given size
-         *
-         * @param card_id The ID of the kingdom card.
-         * @param pile_size Amount of cards in the pile
-         * @return Pile
-         */
-        static Pile make(const shared::CardBase::id_t &card_id, size_t pile_size);
 
         bool empty() const { return count == 0; }
 
@@ -76,9 +76,6 @@ namespace shared
             bool operator()(const Pile &a, const shared::CardBase::id_t &key) const { return a.card_id < key; }
             bool operator()(const shared::CardBase::id_t &key, const Pile &b) const { return key < b.card_id; }
         };
-
-    private:
-        Pile(const shared::CardBase::id_t &new_card_id, size_t pile_size) : card_id(new_card_id), count(pile_size) {}
     };
 
     class Board
@@ -133,7 +130,7 @@ namespace shared
         Board(const std::vector<shared::CardBase::id_t> &kingdom_cards, size_t player_count);
 
         /**
-         * @brief Initialised the treasure cards as follows:
+         * @brief Initialises the treasure cards as follows:
          *
          * - copper_count = shared::BoardConfig::TREASURE_COPPER_COUNT - (7 * player_count)
          *
@@ -143,7 +140,7 @@ namespace shared
          *
          * @param player_count
          */
-        void initialiseTreasureCards(size_t player_count);
+        static pile_container_t initialiseTreasureCards(size_t player_count);
 
         /**
          * @brief Initialised the victory cards as follows:
@@ -154,7 +151,7 @@ namespace shared
          *
          * @param player_count
          */
-        void initialiseVictoryCards(size_t player_count);
+        static pile_container_t initialiseVictoryCards(size_t player_count);
 
         /**
          * @brief Initialises the curse pile as:
@@ -163,7 +160,7 @@ namespace shared
          *
          * @param player_count
          */
-        void initialiseCursePile(size_t player_count);
+        static Pile initialiseCursePile(size_t player_count);
     };
 
 } // namespace shared

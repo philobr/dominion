@@ -257,7 +257,7 @@ TEST_P(PileCreationTest, MakePile)
 {
     shared::CardBase::id_t card_id = "Copper";
     size_t pile_size = GetParam();
-    shared::Pile pile = shared::Pile::make(card_id, pile_size);
+    shared::Pile pile = shared::Pile(card_id, pile_size);
 
     EXPECT_EQ(pile.card_id, card_id);
     EXPECT_EQ(pile.count, pile_size);

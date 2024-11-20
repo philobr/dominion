@@ -1,5 +1,8 @@
+
 #include <algorithm>
+#include <rapidjson/document.h>
 #include <shared/game/game_state/board_base.h>
+#include <shared/utils/json.h>
 
 namespace shared
 {
@@ -8,9 +11,19 @@ namespace shared
         return Pile(kingdom_card_id, BoardConfig::KINGDOM_CARD_COUNT);
     }
 
-    Pile Pile::make(const shared::CardBase::id_t &card_id, size_t pile_size) { return Pile(card_id, pile_size); }
+    std::unique_ptr<Pile> Pile::fromJson(const rapidjson::Value &json)
+    {
+        CardBase::id_t card_id;
+        GET_STRING_MEMBER(card_id, json, "card_id");
+        size_t count;
+        GET_UINT_MEMBER(count, json, "count");
+        return std::make_unique<Pile>(card_id, count);
+    }
 
-    Board::Board(const std::vector<shared::CardBase::id_t> &kingdom_cards, size_t player_count)
+    Board::Board(const std::vector<shared::CardBase::id_t> &kingdom_cards, size_t player_count) :
+        victory_cards(initialiseVictoryCards(player_count)),
+        treasure_cards(initialiseTreasureCards(player_count)),
+        curse_card_pile(initialiseCursePile(player_count))
     {
         _ASSERT_TRUE(BoardConfig::validatePlayerCount(player_count),
                      std::string_view{"player_count must be in [" + std::to_string(BoardConfig::MIN_PLAYER_COUNT) +
@@ -27,10 +40,6 @@ namespace shared
 
         _ASSERT_EQ(this->kingdom_cards.size(), BoardConfig::KINGDOM_CARD_COUNT,
                    std::string_view{"Board received duplicate kingdom card"});
-
-        initialiseTreasureCards(player_count);
-        initialiseVictoryCards(player_count);
-        initialiseCursePile(player_count);
     }
 
     Board::ptr_t Board::make(const std::vector<shared::CardBase::id_t> &kingdom_cards, size_t player_count)
@@ -60,24 +69,24 @@ namespace shared
         return is_province_pile_empty || (getEmptyPilesCount() >= BoardConfig::MAX_NUM_EMPTY_PILES);
     }
 
-    void Board::initialiseTreasureCards(size_t player_count)
+    Board::pile_container_t Board::initialiseTreasureCards(size_t player_count)
     {
-        treasure_cards = {Pile::make("Copper", BoardConfig::getCopperCount(player_count)),
-                          Pile::make("Silver", BoardConfig::TREASURE_SILVER_COUNT),
-                          Pile::make("Gold", BoardConfig::TREASURE_GOLD_COUNT)};
+        return {Pile("Copper", BoardConfig::getCopperCount(player_count)),
+                          Pile("Silver", BoardConfig::TREASURE_SILVER_COUNT),
+                          Pile("Gold", BoardConfig::TREASURE_GOLD_COUNT)};
     }
 
-    void Board::initialiseVictoryCards(size_t player_count)
+    Board::pile_container_t Board::initialiseVictoryCards(size_t player_count)
     {
         const size_t card_count = BoardConfig::getVictoryCardCount(player_count);
-        victory_cards = {Pile::make("Estate", card_count), Pile::make("Duchy", card_count),
-                         Pile::make("Province", card_count)};
+        return {Pile("Estate", card_count), Pile("Duchy", card_count),
+                         Pile("Province", card_count)};
     }
 
-    void Board::initialiseCursePile(size_t player_count)
+    Pile Board::initialiseCursePile(size_t player_count)
     {
         const size_t curse_count = BoardConfig::getCurseCardCount(player_count);
-        curse_card_pile = Pile::make("Curse", curse_count);
+        return Pile("Curse", curse_count);
     }
 
 } // namespace shared

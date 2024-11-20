@@ -4,6 +4,7 @@
 
 #include <shared/game/game_state/board_base.h>
 #include <shared/game/game_state/player_base.h>
+
 namespace shared
 {
     class ReducedGameState
@@ -17,8 +18,14 @@ namespace shared
             active_player(active_player)
         {}
 
+        /**
+         * @brief Serialize the ReducedGameState to a JSON object.
+         */
         rapidjson::Document toJson() const;
-        ReducedPlayer fromJson(const rapidjson::Value &json);
+        /**
+         * @brief Deserialize a ReducedGameState from a JSON object.
+         */
+        std::unique_ptr<ReducedGameState> fromJson(const rapidjson::Value &json);
 
         Board::ptr_t board;
         const ReducedPlayer::ptr_t reduced_player;

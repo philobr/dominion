@@ -56,6 +56,8 @@ namespace client
          */
         static void showStatus(const std::string &message);
 
+        static void RefreshPlayers(shared::JoinLobbyBroadcastMessage *msg);
+
     private:
         static GameWindow *_gameWindow;
         static ConnectionPanel *_connectionPanel;

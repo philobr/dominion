@@ -137,6 +137,7 @@ namespace client
         GameController::_clientNetworkManager->sendRequest(req);
     }
 
+
     void GameController::receive_message(std::unique_ptr<shared::ServerToClientMessage> msg)
     {
 
@@ -159,7 +160,7 @@ namespace client
             std::cerr << "Done with Message" << std::endl;
         } else if ( shared::JoinLobbyBroadcastMessage *jlbm = dynamic_cast<shared::JoinLobbyBroadcastMessage *>(msg.get()) ) {
             std::cerr << "Message is JoinLobbyBroadcastMessage" << std::endl;
-            GameController::_lobbyPanel->AddPlayer(jlbm->player_id);
+            GameController::RefreshPlayers(jlbm);
             msg.release();
             std::cerr << "Done with Message" << std::endl;
         } else {
@@ -168,4 +169,12 @@ namespace client
         }
     }
 
+    void GameController::RefreshPlayers(shared::JoinLobbyBroadcastMessage *msg)
+    {
+        // TODO: Clear the lobby panel
+        for (auto player : msg->players)
+        {
+            GameController::_lobbyPanel->AddPlayer(player);
+        }
+    }
 } // namespace client

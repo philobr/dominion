@@ -37,10 +37,13 @@ namespace client
          */
         wxString getPlayerName();
 
+        wxString getGameName();
+
     private:
         InputField *_serverAddressField;
         InputField *_serverPortField;
         InputField *_playerNameField;
+        InputField *_gameName;
     };
 
 } // namespace client

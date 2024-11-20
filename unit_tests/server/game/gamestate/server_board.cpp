@@ -49,7 +49,6 @@ public:
     server::ServerBoard::pile_container_t &getMutableKingdomCards() { return kingdom_cards; }
     server::ServerBoard::pile_container_t &getMutableTreasureCards() { return treasure_cards; }
     server::ServerBoard::pile_container_t &getMutableVictoryCards() { return victory_cards; }
-    std::vector<shared::CardBase::id_t> &getMutableTrash() { return trash; }
 };
 
 // ================================

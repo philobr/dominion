@@ -4,11 +4,10 @@
 #include <algorithm>
 #include <string>
 #include <vector>
-#include "gtest/gtest.h"
+#include <gtest/gtest.h>
 
 #include <shared/game/cards/card_base.h>
 #include <shared/game/game_state/board_base.h>
-#include <shared/utils/json.h>
 #include <shared/utils/test_helpers.h>
 
 TEST(PileTest, Pile2WayJsonConversion)
@@ -24,7 +23,6 @@ TEST(BoardJsonTest, Board2WayJsonConversion)
     std::vector<shared::CardBase::id_t> kingdom_cards = get_valid_kingdom_cards();
     shared::Board::ptr_t expected = shared::Board::make(kingdom_cards, 2);
     auto json = expected->toJson();
-    std::cerr << document_to_string(json) << std::endl;
     shared::Board::ptr_t actual = shared::Board::fromJson(json);
     ASSERT_NE(actual, nullptr);
     EXPECT_EQ(*actual, *expected);

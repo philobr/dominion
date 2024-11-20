@@ -1,7 +1,11 @@
-/**
+/**!
+ * @file
  * @brief This is our logger. It provides a few useful macros which can be used to either log to a file or to log to
  * console. If the logger is not initialised then we default to 'std::cerr'. A logger can only be instantiated once!
+ *
+ * @warning you should only use the LOG(leve) macro from this file!
  */
+
 #pragma once
 
 #include <chrono>
@@ -17,10 +21,10 @@
 
 #include <shared/utils/exception.h>
 
+// this _should_ be defined in the root CMakeLists.txt, but you never know
 #ifndef PROJECT_ROOT
 #define PROJECT_ROOT "/default/path/for/linter"
 #endif
-
 
 #ifdef NDEBUG // debug messages are only printed when debugging is actually enabled
 /**
@@ -67,8 +71,6 @@ namespace shared
          * @return std::string
          */
         std::string stripFilePath(const char *file);
-
-        std::string addTimestampToFilePath(const std::string &file_path);
 
     } // namespace log_helpers
 } // namespace shared
@@ -167,6 +169,7 @@ namespace shared
     Logger::~Logger()
     {
         if ( log_file_.is_open() ) {
+            LOG(INFO) << "END LOG" << std::endl;
             log_file_.close();
         }
     }
@@ -179,11 +182,9 @@ namespace shared
                 instance_ = std::unique_ptr<Logger>(new Logger());
                 LOG(LogLevel::INFO) << "Logging to std::cerr.";
             } else {
-                const std::string full_path = std::string(PROJECT_ROOT) + std::string("/build/logs/") +
-                        log_helpers::addTimestampToFilePath(file_path);
-
+                const std::string full_path = std::string(PROJECT_ROOT) + std::string("/build/logs/") + file_path;
                 instance_ = std::unique_ptr<Logger>(new Logger(full_path));
-                std::cout << "Logging to file: /build/logs/" + file_path << std::endl;
+                std::cout << "Logging to file: build/logs/" + file_path << std::endl;
             }
         } else {
             throw exception::Logger("Logger has already been initialized.");
@@ -259,21 +260,6 @@ namespace shared
                 return file_str.substr(pos + marker.length());
             }
             return file_str; // return full path if marker was not found
-        }
-
-        std::string addTimestampToFilePath(const std::string &file_path)
-        {
-            auto now = std::chrono::system_clock::now();
-            auto time = std::chrono::system_clock::to_time_t(now);
-            std::ostringstream timestamp;
-            timestamp << std::put_time(std::localtime(&time), "%d-%m-%Y_%H-%M-%S");
-
-            size_t dot_pos = file_path.find_last_of(".");
-            if ( dot_pos != std::string::npos ) {
-                return file_path.substr(0, dot_pos) + "_" + timestamp.str() + file_path.substr(dot_pos);
-            } else {
-                return file_path + "_" + timestamp.str();
-            }
         }
     } // namespace log_helpers
 } // namespace shared

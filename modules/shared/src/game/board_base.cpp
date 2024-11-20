@@ -11,15 +11,9 @@ namespace shared
         return Pile(kingdom_card_id, BoardConfig::KINGDOM_CARD_COUNT);
     }
 
-    bool Pile::operator==(const Pile &other) const
-    {
-        return card_id == other.card_id && count == other.count;
-    }
+    bool Pile::operator==(const Pile &other) const { return card_id == other.card_id && count == other.count; }
 
-    bool Pile::operator!=(const Pile &other) const
-    {
-        return !(*this == other);
-    }
+    bool Pile::operator!=(const Pile &other) const { return !(*this == other); }
 
     std::unique_ptr<Pile> Pile::fromJson(const rapidjson::Value &json)
     {

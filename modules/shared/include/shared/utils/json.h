@@ -86,7 +86,7 @@
     doc.AddMember(#key, key##_value, doc.GetAllocator());
 
 #define ADD_ARRAY_OF_STRINGS_MEMBER(var, key)                                                                          \
-    rapidjson::Value key##_array(kArrayType);                                                                          \
+    rapidjson::Value key##_array(rapidjson::kArrayType);                                                               \
     for ( const auto &item : var ) {                                                                                   \
         rapidjson::Value item_value;                                                                                   \
         item_value.SetString(item.c_str(), doc.GetAllocator());                                                        \
@@ -95,7 +95,7 @@
     doc.AddMember(#key, key##_array, doc.GetAllocator());
 
 #define ADD_ARRAY_OF_UINTS_MEMBER(var, key)                                                                            \
-    rapidjson::Value key##_array(kArrayType);                                                                          \
+    rapidjson::Value key##_array(rapidjson::kArrayType);                                                               \
     for ( const auto &item : var ) {                                                                                   \
         rapidjson::Value item_value;                                                                                   \
         item_value.SetUint(item);                                                                                      \

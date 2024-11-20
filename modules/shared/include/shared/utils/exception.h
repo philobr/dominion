@@ -74,3 +74,5 @@ NEW_INHERITED_EXCEPTION(GameStateConstructor, GameState);
 NEW_INHERITED_EXCEPTION(DuplicateCards, GameStateConstructor);
 NEW_INHERITED_EXCEPTION(CardCountMismatch, GameStateConstructor);
  */
+
+NEW_BASE_EXCPETION(Logger);

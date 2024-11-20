@@ -1,6 +1,11 @@
+/**
+ * @brief This is our logger. It provides a few useful macros which can be used to either log to a file or to log to
+ * console. If the logger is not initialised then we default to 'std::cerr'. A logger can only be instantiated once!
+ */
 #pragma once
 
 #include <chrono>
+#include <filesystem>
 #include <fstream>
 #include <iomanip>
 #include <iostream>
@@ -10,129 +15,265 @@
 #include <stdexcept>
 #include <string>
 
-#define LOG(level) Logger::getInstance().log(level, __FILE__, __LINE__).stream()
+#include <shared/utils/exception.h>
 
+#ifndef PROJECT_ROOT
+#define PROJECT_ROOT "/default/path/for/linter"
+#endif
+
+
+#ifdef NDEBUG // debug messages are only printed when debugging is actually enabled
+/**
+ * @brief This macro returns a stream with the desired level. If NDEBUG is set we will not log debug messages
+ */
+#define LOG(level)                                                                                                     \
+    if ( (level) == LogLevel::DEBUG ) {                                                                                \
+    } else                                                                                                             \
+        shared::Logger::getInstance().log(level, __FILE__, __LINE__).stream()
+#else
+/**
+ * @brief This macro returns a stream with the desired level. If NDEBUG is set we will not log debug messages
+ */
+#define LOG(level) shared::Logger::getInstance().log(level, __FILE__, __LINE__).stream()
+#endif
+
+// not in shared namespace to simplify usage
 enum LogLevel
 {
-    LOG_INFO,
-    LOG_WARN,
-    LOG_ERROR,
-    LOG_DEBUG
+    INFO,
+    WARN,
+    ERROR,
+    DEBUG
 };
 
-class Logger
+namespace shared
 {
-public:
-    static void initialize(const std::string &filePath)
+    namespace log_helpers
     {
-        std::lock_guard<std::mutex> lock(initMutex_);
-        if ( !instance_ ) {
-            instance_ = std::unique_ptr<Logger>(new Logger(filePath));
-        } else {
-            throw std::runtime_error("Logger has already been initialized.");
+        std::string toString(LogLevel level);
+
+        /**
+         * @brief Adds color codes to the level string, if log_to_file is true.
+         *
+         * @param level
+         * @param log_to_file
+         * @return std::string
+         */
+        std::string formatLevel(LogLevel level, bool toggle_colors);
+
+        /**
+         * @brief Strips the filepath to be rooted in our root directory
+         * @param file
+         * @return std::string
+         */
+        std::string stripFilePath(const char *file);
+
+        std::string addTimestampToFilePath(const std::string &file_path);
+
+    } // namespace log_helpers
+} // namespace shared
+
+
+namespace shared
+{
+    class Logger
+    {
+        class LogStream
+        {
+        public:
+            LogStream(Logger &logger, LogLevel level, const char *file, int line);
+            ~LogStream() { logger_.writeLog(ss_.str()); }
+
+            std::ostringstream &stream() { return ss_; }
+
+        private:
+            Logger &logger_;
+            std::ostringstream ss_;
+        };
+
+    public:
+        /**
+         * @brief If no file_path is set we will default to std::cout. Will automatically add a prefix
+         * (build/logs/file_path.log) to the output path
+         * @param file_path filename.log
+         */
+        static void initialize(const std::string &file_path = "");
+
+        /**
+         * @brief Returns an instance to a logger. If none is found we default to a std::cerr instance.
+         *
+         * @return Logger&
+         */
+        static Logger &getInstance();
+
+        ~Logger();
+
+        LogStream log(LogLevel level, const char *file, int line) { return LogStream(*this, level, file, line); }
+
+    private:
+        inline static std::mutex init_mutex_;
+        inline static std::unique_ptr<Logger> instance_;
+
+        std::mutex mutex_;
+        std::ofstream log_file_;
+        bool log_to_file_;
+
+        explicit Logger(const std::string &file_path = "");
+
+        Logger(const Logger &) = delete;
+        Logger &operator=(const Logger &) = delete;
+
+        void writeLog(const std::string &message);
+    };
+
+    // ================================
+    // IMPLEMENTATION LogStream
+    // ================================
+    Logger::LogStream::LogStream(Logger &logger, LogLevel level, const char *file, int line) : logger_(logger)
+    {
+        auto now = std::chrono::system_clock::now();
+        auto time = std::chrono::system_clock::to_time_t(now);
+        auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch()) % 1000;
+
+        ss_ << "[" << std::put_time(std::localtime(&time), "%Y-%m-%d %H:%M:%S") << "." << std::setfill('0')
+            << std::setw(3) << ms.count() << "] " << std::setfill(' ');
+
+        const size_t level_width = (logger.log_to_file_ ? 5 : 16);
+        ss_ << "[" << std::left << std::setw(level_width) << log_helpers::formatLevel(level, logger.log_to_file_)
+            << "] ";
+
+        ss_ << "[" << log_helpers::stripFilePath(file) << ":" << line << "] - ";
+    }
+
+
+    // ================================
+    // IMPLEMENTATION Logger
+    // ================================
+
+    // constructor (this is only here to not include the comment above as function description)
+    Logger::Logger(const std::string &file_path) : log_to_file_(!file_path.empty())
+    {
+        if ( log_to_file_ ) {
+            std::filesystem::path log_path = file_path;
+            std::filesystem::create_directories(log_path.parent_path());
+
+            log_file_.open(file_path, std::ios::out | std::ios::app);
+            if ( !log_file_ ) {
+                throw exception::Logger("Failed to open log file: " + file_path);
+            }
         }
     }
 
-    // Access the singleton instance
-    static Logger &getInstance()
+    Logger::~Logger()
+    {
+        if ( log_file_.is_open() ) {
+            log_file_.close();
+        }
+    }
+
+    void shared::Logger::initialize(const std::string &file_path)
+    {
+        std::lock_guard<std::mutex> lock(init_mutex_);
+        if ( !instance_ ) {
+            if ( file_path.empty() ) {
+                instance_ = std::unique_ptr<Logger>(new Logger());
+                LOG(LogLevel::INFO) << "Logging to std::cerr.";
+            } else {
+                const std::string full_path = std::string(PROJECT_ROOT) + std::string("/build/logs/") +
+                        log_helpers::addTimestampToFilePath(file_path);
+
+                instance_ = std::unique_ptr<Logger>(new Logger(full_path));
+                std::cout << "Logging to file: /build/logs/" + file_path << std::endl;
+            }
+        } else {
+            throw exception::Logger("Logger has already been initialized.");
+        }
+    }
+
+    Logger &Logger::getInstance()
     {
         if ( !instance_ ) {
-            throw std::runtime_error("Logger has not been initialized. Call Logger::initialize() first.");
+            initialize(); // default init logs to console
+            LOG(LogLevel::WARN) << "Logger not initialised";
         }
+
         return *instance_;
     }
 
-    // Logging function
-    class LogStream
-    {
-    public:
-        LogStream(Logger &logger, LogLevel level, const char *file, int line) :
-            logger_(logger), level_(level), file_(file), line_(line)
-        {
-            // Add timestamp
-            auto now = std::chrono::system_clock::now();
-            auto time = std::chrono::system_clock::to_time_t(now);
-            auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch()) % 1000;
-
-            ss_ << "[" << std::put_time(std::localtime(&time), "%Y-%m-%d %H:%M:%S") << "." << std::setfill('0')
-                << std::setw(3) << ms.count() << "] ";
-
-            // Add log level
-            ss_ << "[" << logger.logLevelToString(level_) << "] ";
-
-            // Add file and line number
-            ss_ << file << ":" << line << " - ";
-        }
-
-        ~LogStream() { logger_.writeLog(ss_.str()); }
-
-        std::ostringstream &stream() { return ss_; }
-
-    private:
-        Logger &logger_;
-        LogLevel level_;
-        const char *file_;
-        int line_;
-        std::ostringstream ss_;
-    };
-
-    LogStream log(LogLevel level, const char *file, int line) { return LogStream(*this, level, file, line); }
-
-private:
-    // Singleton instance and mutex for initialization
-    static std::unique_ptr<Logger> instance_;
-    static std::mutex initMutex_;
-
-    std::mutex mutex_; // For thread-safe logging
-    std::ofstream logFile_; // Optional log file
-
-    // Private constructor to enforce singleton
-    explicit Logger(const std::string &filePath)
-    {
-        logFile_.open(filePath, std::ios::out | std::ios::app);
-        if ( !logFile_ ) {
-            throw std::runtime_error("Failed to open log file: " + filePath);
-        }
-    }
-
-    ~Logger()
-    {
-        if ( logFile_.is_open() ) {
-            logFile_.close();
-        }
-    }
-
-    // Non-copyable and non-movable
-    Logger(const Logger &) = delete;
-    Logger &operator=(const Logger &) = delete;
-
-    void writeLog(const std::string &message)
+    void Logger::writeLog(const std::string &message)
     {
         std::lock_guard<std::mutex> lock(mutex_);
-        if ( logFile_.is_open() ) {
-            logFile_ << message << std::endl;
+        if ( log_to_file_ ) {
+            log_file_ << message << std::endl;
         } else {
-            std::cout << message << std::endl;
+            std::cerr << message << std::endl;
         }
     }
 
-    std::string logLevelToString(LogLevel level) const
+    // ================================
+    // IMPLEMENTATION log_helper functions
+    // ================================
+    namespace log_helpers
     {
-        switch ( level ) {
-            case LOG_INFO:
-                return "INFO";
-            case LOG_WARN:
-                return "WARN";
-            case LOG_ERROR:
-                return "ERROR";
-            case LOG_DEBUG:
-                return "DEBUG";
-            default:
-                return "UNKNOWN";
+        std::string toString(LogLevel level)
+        {
+            switch ( level ) {
+                case LogLevel::WARN:
+                    return "WARN";
+                case LogLevel::ERROR:
+                    return "ERROR";
+                case LogLevel::DEBUG:
+                    return "DEBUG";
+                case LogLevel::INFO:
+                default:
+                    return "INFO";
+            }
         }
-    }
-};
 
-// Define static members
-std::unique_ptr<Logger> Logger::instance_ = nullptr;
-std::mutex Logger::initMutex_;
+        std::string formatLevel(LogLevel level, bool log_to_file)
+        {
+            if ( log_to_file ) {
+                return log_helpers::toString(level);
+            }
+
+            // console has colored logs
+            switch ( level ) {
+                case LogLevel::WARN:
+                    return "\033[0;33m" + log_helpers::toString(level) + "\033[0m"; // yellow
+                case LogLevel::ERROR:
+                    return "\033[0;31m" + log_helpers::toString(level) + "\033[0m"; // red
+                case LogLevel::DEBUG:
+                    return "\033[0;34m" + log_helpers::toString(level) + "\033[0m"; // blue
+                case LogLevel::INFO:
+                default:
+                    return "\033[0;37m" + log_helpers::toString(level) + "\033[0m"; // white
+            }
+        }
+
+        std::string stripFilePath(const char *file)
+        {
+            std::string file_str(file);
+            const std::string marker = "dominion/";
+            auto pos = file_str.find(marker);
+            if ( pos != std::string::npos ) {
+                return file_str.substr(pos + marker.length());
+            }
+            return file_str; // return full path if marker was not found
+        }
+
+        std::string addTimestampToFilePath(const std::string &file_path)
+        {
+            auto now = std::chrono::system_clock::now();
+            auto time = std::chrono::system_clock::to_time_t(now);
+            std::ostringstream timestamp;
+            timestamp << std::put_time(std::localtime(&time), "%d-%m-%Y_%H-%M-%S");
+
+            size_t dot_pos = file_path.find_last_of(".");
+            if ( dot_pos != std::string::npos ) {
+                return file_path.substr(0, dot_pos) + "_" + timestamp.str() + file_path.substr(dot_pos);
+            } else {
+                return file_path + "_" + timestamp.str();
+            }
+        }
+    } // namespace log_helpers
+} // namespace shared

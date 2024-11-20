@@ -9,7 +9,3 @@ missingInclude
 # We are in fact using these struct members, but cppcheck is not able to detect it
 # unusedStructMember:unit_tests/server/game/gamestate/server_board.cpp
 # unusedStructMember:unit_tests/shared/game/board_base.cpp
-
-
-# TODO: reenable
-unusedFunction:modules/client/src/panels/main_game_panel.cpp

@@ -1,7 +1,8 @@
 
 #include <shared/utils/logger.h>
 
-namespace shared {
+namespace shared
+{
     // ================================
     // IMPLEMENTATION LogStream
     // ================================
@@ -157,4 +158,4 @@ namespace shared {
             return ss.str();
         }
     } // namespace log_helpers
-}
+} // namespace shared

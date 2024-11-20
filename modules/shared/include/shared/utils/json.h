@@ -37,7 +37,7 @@
     }                                                                                                                  \
     for ( const auto &elem : document[member].GetArray() ) {                                                           \
         if ( !elem.IsString() ) {                                                                                      \
-            LOG(WARN) << "Missing or invalid member: " << member;                                                          \
+            LOG(WARN) << "Missing or invalid member: " << member;                                                      \
             return nullptr;                                                                                            \
         }                                                                                                              \
         var.push_back(elem.GetString());                                                                               \
@@ -51,7 +51,7 @@
     }                                                                                                                  \
     for ( const auto &elem : document[member].GetArray() ) {                                                           \
         if ( !elem.IsUint() ) {                                                                                        \
-            LOG(WARN) << "Missing or invalid member: " << member;                                                          \
+            LOG(WARN) << "Missing or invalid member: " << member;                                                      \
             return nullptr;                                                                                            \
         }                                                                                                              \
         var.push_back(elem.GetUint());                                                                                 \
@@ -60,7 +60,7 @@
 #define GET_OPTIONAL_STRING_MEMBER(var, document, member)                                                              \
     if ( document.HasMember(member) ) {                                                                                \
         if ( !document[member].IsString() ) {                                                                          \
-            LOG(WARN) << "Invalid member: " << member;                                                          \
+            LOG(WARN) << "Invalid member: " << member;                                                                 \
             return nullptr;                                                                                            \
         }                                                                                                              \
         var = document[member].GetString();                                                                            \

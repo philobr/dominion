@@ -143,9 +143,9 @@ namespace shared
     rapidjson::Value member_name##_json(rapidjson::kArrayType);                                                        \
     for ( const auto &pile : pile_container ) {                                                                        \
         rapidjson::Document pile_doc = pile.toJson();                                                                  \
-        rapidjson::Value pile_value; \
-        pile_value.CopyFrom(pile_doc, doc.GetAllocator()); \
-        member_name##_json.PushBack(pile_value, doc.GetAllocator());                              \
+        rapidjson::Value pile_value;                                                                                   \
+        pile_value.CopyFrom(pile_doc, doc.GetAllocator());                                                             \
+        member_name##_json.PushBack(pile_value, doc.GetAllocator());                                                   \
     }                                                                                                                  \
     doc.AddMember(#member_name, member_name##_json, doc.GetAllocator());
 

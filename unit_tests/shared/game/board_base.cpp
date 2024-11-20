@@ -8,8 +8,8 @@
 
 #include <shared/game/cards/card_base.h>
 #include <shared/game/game_state/board_base.h>
-#include <shared/utils/test_helpers.h>
 #include <shared/utils/json.h>
+#include <shared/utils/test_helpers.h>
 
 TEST(PileTest, Pile2WayJsonConversion)
 {

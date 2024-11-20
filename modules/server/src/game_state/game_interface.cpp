@@ -86,17 +86,7 @@ namespace server
             return std::make_unique<shared::BuyPhaseOrder>();
         }
 
-        try {
-            game_state->try_buy(player_id, action_decision->card);
-        } catch ( exception::InsufficientFunds &e ) {
-            LOG(WARN) << "player(" << player_id << ") has insufficient funds to buy " << action_decision->card;
-            // TODO: what here?
-        } catch ( exception::CardNotAvailable &e ) {
-            LOG(WARN) << "card(" << action_decision->card << ") is not available";
-            // TODO: what here?
-        } catch ( std::exception &e ) {
-            LOG(ERROR) << "unexpected exception: " << e.what();
-        }
+        game_state->try_buy(player_id, action_decision->card);
 
         // TODO: turn should end automatically if a player cant buy anymore
         return std::make_unique<shared::BuyPhaseOrder>();
@@ -108,6 +98,7 @@ namespace server
     {
         if ( game_state->getPhase() == GamePhase::PLAYING_ACTION_CARD ) {
             LOG(ERROR) << "Player is trying to end his turn while playing a card";
+            throw exception::OutOfPhase("");
         }
 
         LOG(INFO) << "ending " << player_id << "\'s turn";

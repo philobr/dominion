@@ -84,3 +84,4 @@ NEW_INHERITED_EXCEPTION(CardNotAvailable, GameState);
 NEW_INHERITED_EXCEPTION(PlayerCountMismatch, GameState);
 NEW_INHERITED_EXCEPTION(DuplicatePlayer, GameState);
 NEW_INHERITED_EXCEPTION(WrongCardCount, GameState);
+NEW_INHERITED_EXCEPTION(OutOfPhase, GameState);

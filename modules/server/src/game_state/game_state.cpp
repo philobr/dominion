@@ -89,7 +89,6 @@ namespace server
 
     bool GameState::try_buy(const Player::id_t &player_id, const shared::CardBase::id_t &card_id)
     {
-        LOG(INFO) << "test";
         auto &player = get_player(player_id);
         const auto card_cost = CardFactory::getCard(card_id)->getCost();
 
@@ -152,6 +151,7 @@ namespace server
                 {
                     LOG(WARN) << "tried to switch from GamePhase::PLAYING_ACTION_CARD, which is not possible, you "
                                  "have to finish playing your card first";
+                    throw exception::OutOfPhase("");
                 }
             default:
                 {
@@ -176,7 +176,7 @@ namespace server
             case GamePhase::BUY_PHASE:
                 {
                     if ( player.getBuys() == 0 ) {
-                        phase = GamePhase::ACTION_PHASE;
+                        end_turn();
                     }
                 }
                 break;

@@ -6,8 +6,10 @@
 namespace client
 {
 
-    // This class can be used to display an image. It can be scaled with parameter <size> and rotated with <rotation>
-    // (in radian)
+    /**
+     * @brief The utility panel that displays an image
+     *
+     */
     class ImagePanel : public wxPanel
     {
         wxImage _image;
@@ -22,7 +24,18 @@ namespace client
         ImagePanel(wxWindow *parent, wxString file, wxBitmapType format, wxPoint position = wxDefaultPosition,
                    wxSize size = wxDefaultSize, double rotation = 0.0);
 
+        /**
+         * @brief Callback to repaint the image
+         *
+         * @param event
+         */
         void paintEvent(const wxPaintEvent &event);
+
+        /**
+         * @brief Callback to resize the image
+         *
+         * @param event
+         */
         void onSize(wxSizeEvent &event);
     };
 

@@ -106,10 +106,36 @@ namespace shared
         GET_PILE_CONTAINER(treasure_cards, json, "treasure_cards");
         GET_PILE_CONTAINER(kingdom_cards, json, "kingdom_cards");
 
+#undef GET_PILE_CONTAINER
+
         std::vector<shared::CardBase::id_t> trash;
         GET_STRING_ARRAY_MEMBER(trash, json, "trash");
 
         return std::unique_ptr<Board>(new Board(victory_cards, treasure_cards, kingdom_cards, curse_pile, trash));
+    }
+
+    rapidjson::Document Board::toJson() const
+    {
+        rapidjson::Document doc;
+        doc.SetObject();
+        doc.AddMember("curse_pile", curse_card_pile.toJson(), doc.GetAllocator());
+
+#define ADD_PILE_CONTAINER(pile_container, member_name)                                                                \
+    rapidjson::Value member_name##_json(rapidjson::kArrayType);                                                        \
+    for ( const auto &pile : pile_container ) {                                                                        \
+        member_name##_json.PushBack(pile.toJson(), doc.GetAllocator());                                                \
+    }                                                                                                                  \
+    doc.AddMember(#member_name, member_name##_json, doc.GetAllocator());
+
+        ADD_PILE_CONTAINER(victory_cards, victory_cards);
+        ADD_PILE_CONTAINER(treasure_cards, treasure_cards);
+        ADD_PILE_CONTAINER(kingdom_cards, kingdom_cards);
+
+#undef ADD_PILE_CONTAINER
+
+        ADD_ARRAY_OF_STRINGS_MEMBER(trash, trash);
+
+        return doc;
     }
 
     size_t Board::getEmptyPilesCount() const

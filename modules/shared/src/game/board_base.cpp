@@ -1,5 +1,7 @@
 
 #include <algorithm>
+#include <optional>
+
 #include <rapidjson/document.h>
 #include <shared/game/game_state/board_base.h>
 #include <shared/utils/json.h>
@@ -57,6 +59,57 @@ namespace shared
     Board::ptr_t Board::make(const std::vector<shared::CardBase::id_t> &kingdom_cards, size_t player_count)
     {
         return ptr_t(new Board(kingdom_cards, player_count));
+    }
+
+    // PRE: JSON must be an array type
+    std::optional<Board::pile_container_t> pileContainerFromJson(const rapidjson::Value &json)
+    {
+        _ASSERT_TRUE(json.IsArray(), "Pile container must be an array");
+        Board::pile_container_t pile_container;
+        for ( const auto &pile : json.GetArray() ) {
+            const std::unique_ptr<Pile> pile_ptr = Pile::fromJson(pile);
+            if (pile_ptr == nullptr) {
+                return std::nullopt;
+            }
+            pile_container.insert(*pile_ptr);
+        }
+        return pile_container;
+    }
+
+    Board::ptr_t Board::fromJson(const rapidjson::Value &json)
+    {
+        std::unique_ptr<Pile> curse_pile_ptr;
+        if (json.HasMember("curse_pile") && json["curse_pile"].IsObject()) {
+            curse_pile_ptr = Pile::fromJson(json["curse_pile"]);
+        } else {
+            return nullptr;
+        }
+        if (curse_pile_ptr == nullptr) {
+            return nullptr;
+        }
+        const Pile curse_pile = *curse_pile_ptr;
+
+#define GET_PILE_CONTAINER(pile_container, json, member_name) \
+    pile_container_t pile_container; \
+    if (json.HasMember(member_name) && json[member_name].IsArray()) { \
+        const auto container = pileContainerFromJson(json[member_name]); \
+        if (container.has_value()) { \
+            pile_container = container.value(); \
+        } else { \
+            return nullptr; \
+        } \
+    } else { \
+        return nullptr; \
+    }
+
+        GET_PILE_CONTAINER(victory_cards, json, "victory_cards");
+        GET_PILE_CONTAINER(treasure_cards, json, "treasure_cards");
+        GET_PILE_CONTAINER(kingdom_cards, json, "kingdom_cards");
+
+        std::vector<shared::CardBase::id_t> trash;
+        GET_STRING_ARRAY_MEMBER(trash, json, "trash");
+
+        return std::unique_ptr<Board>(new Board(victory_cards, treasure_cards, kingdom_cards, curse_pile, trash));
     }
 
     size_t Board::getEmptyPilesCount() const

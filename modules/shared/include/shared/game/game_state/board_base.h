@@ -99,9 +99,8 @@ namespace shared
          */
         static ptr_t make(const std::vector<shared::CardBase::id_t> &kingdom_cards, size_t player_count);
 
-        std::string toJson() const;
-        Board fromJson(const std::string &json);
-        std::unique_ptr<Board> uniuqeFromJson(const std::string &json);
+        rapidjson::Document toJson() const;
+        static ptr_t fromJson(const rapidjson::Value &json);
 
         virtual ~Board() = default;
 
@@ -164,6 +163,14 @@ namespace shared
          * @param player_count
          */
         static Pile initialiseCursePile(size_t player_count);
+
+    private:
+        Board(pile_container_t victory_cards, pile_container_t treasure_cards, pile_container_t kingdom_cards,
+              Pile curse_card_pile, std::vector<shared::CardBase::id_t> trash) : victory_cards(victory_cards),
+                                                                                 treasure_cards(treasure_cards),
+                                                                                 kingdom_cards(kingdom_cards),
+                                                                                 curse_card_pile(curse_card_pile),
+                                                                                 trash(trash) {}
     };
 
 } // namespace shared

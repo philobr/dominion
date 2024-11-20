@@ -27,7 +27,7 @@ namespace client
     }
 
 
-    void ImagePanel::paintEvent(const wxPaintEvent &event)
+    void ImagePanel::paintEvent(const wxPaintEvent & /*event*/)
     {
         // this code is called when the system requests this panel to be redrawn.
 

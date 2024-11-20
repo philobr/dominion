@@ -6,8 +6,10 @@
 #include <vector>
 
 #include <shared/action_decision.h>
+#include <shared/action_order.h>
 #include <shared/game/game_state/player_base.h>
 #include <shared/game/game_state/reduced_game_state.h>
+
 namespace shared
 {
 
@@ -219,15 +221,15 @@ namespace shared
     {
     public:
         ~ActionOrderMessage() = default;
-        ActionOrderMessage(std::string game_id, std::string message_id,
+        ActionOrderMessage(std::string game_id, std::string message_id, std::unique_ptr<ActionOrder> order,
                            std::optional<std::string> description = std::nullopt) :
             ServerToClientMessage(game_id, message_id),
-            description(description)
+            order(std::move(order)), description(description)
         {}
         std::string to_json() override;
         bool operator==(const ActionOrderMessage &other) const;
 
-        // TODO add phase and params
+        std::unique_ptr<ActionOrder> order;
         std::optional<std::string> description;
     };
 } // namespace shared

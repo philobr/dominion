@@ -117,11 +117,13 @@ TEST(SharedLibraryTest, ResultResponseMessageTwoWayConversion)
 
 TEST(SharedLibraryTest, ActionOrderMessageTwoWayConversion)
 {
-    ActionOrderMessage original_message("123", "456");
+    std::unique_ptr<ActionOrder> order = std::make_unique<ChooseNCardsFromHandOrder>(1);
+    ActionOrderMessage original_message("123", "456", std::move(order));
 
     std::string json = original_message.to_json();
 
     std::unique_ptr<ServerToClientMessage> base_message;
+
     base_message = ServerToClientMessage::from_json(json);
 
     std::unique_ptr<ActionOrderMessage> parsed_message(dynamic_cast<ActionOrderMessage *>(base_message.release()));

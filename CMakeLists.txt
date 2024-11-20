@@ -13,6 +13,9 @@ enable_testing()
 # always provide test output on failure
 list(APPEND CMAKE_CTEST_ARGUMENTS "--output-on-failure" "--timeout" "10")
 
+# exposes the root dir path to all (cpp) project files
+add_compile_definitions(PROJECT_ROOT="${CMAKE_SOURCE_DIR}") 
+
 add_compile_options(
     -Wall
     -Werror

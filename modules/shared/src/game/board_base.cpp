@@ -5,6 +5,7 @@
 #include <rapidjson/document.h>
 #include <shared/game/game_state/board_base.h>
 #include <shared/utils/json.h>
+#include <shared/utils/logger.h>
 
 namespace shared
 {
@@ -78,6 +79,7 @@ namespace shared
         for ( const auto &pile : json.GetArray() ) {
             const std::unique_ptr<Pile> pile_ptr = Pile::fromJson(pile);
             if ( pile_ptr == nullptr ) {
+                LOG(WARN) << "Failed to parse pile from JSON";
                 return std::nullopt;
             }
             pile_container.insert(*pile_ptr);
@@ -91,9 +93,11 @@ namespace shared
         if ( json.HasMember("curse_pile") && json["curse_pile"].IsObject() ) {
             curse_pile_ptr = Pile::fromJson(json["curse_pile"]);
         } else {
+            LOG(WARN) << "Curse pile not found in JSON";
             return nullptr;
         }
         if ( curse_pile_ptr == nullptr ) {
+            LOG(WARN) << "Failed to parse curse pile from JSON";
             return nullptr;
         }
         const Pile curse_pile = *curse_pile_ptr;
@@ -105,9 +109,11 @@ namespace shared
         if ( container.has_value() ) {                                                                                 \
             pile_container = container.value();                                                                        \
         } else {                                                                                                       \
+            LOG(WARN) << "Failed to parse " << member_name << " from JSON";                                            \
             return nullptr;                                                                                            \
         }                                                                                                              \
     } else {                                                                                                           \
+        LOG(WARN) << member_name << " not found in JSON";                                                              \
         return nullptr;                                                                                                \
     }
 
@@ -127,12 +133,19 @@ namespace shared
     {
         rapidjson::Document doc;
         doc.SetObject();
-        doc.AddMember("curse_pile", curse_card_pile.toJson(), doc.GetAllocator());
+
+        rapidjson::Document curse_pile_doc = curse_card_pile.toJson();
+        rapidjson::Value curse_pile_value;
+        curse_pile_value.CopyFrom(curse_pile_doc, doc.GetAllocator());
+        doc.AddMember("curse_pile", curse_pile_value, doc.GetAllocator());
 
 #define ADD_PILE_CONTAINER(pile_container, member_name)                                                                \
     rapidjson::Value member_name##_json(rapidjson::kArrayType);                                                        \
     for ( const auto &pile : pile_container ) {                                                                        \
-        member_name##_json.PushBack(pile.toJson(), doc.GetAllocator());                                                \
+        rapidjson::Document pile_doc = pile.toJson();                                                                  \
+        rapidjson::Value pile_value; \
+        pile_value.CopyFrom(pile_doc, doc.GetAllocator()); \
+        member_name##_json.PushBack(pile_value, doc.GetAllocator());                              \
     }                                                                                                                  \
     doc.AddMember(#member_name, member_name##_json, doc.GetAllocator());
 

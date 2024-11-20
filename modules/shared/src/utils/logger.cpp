@@ -5,8 +5,6 @@
 #include <filesystem>
 #include <iomanip>
 #include <iostream>
-#include <memory>
-#include <mutex>
 #include <stdexcept>
 
 namespace shared

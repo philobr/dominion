@@ -168,8 +168,10 @@ namespace shared
     {
     public:
         ~JoinLobbyBroadcastMessage() = default;
-        JoinLobbyBroadcastMessage(std::string game_id, std::string message_id, std::vector<shared::PlayerBase::id_t> players) :
-            ServerToClientMessage(game_id, message_id), players(players)
+        JoinLobbyBroadcastMessage(std::string game_id, std::string message_id,
+                                  std::vector<shared::PlayerBase::id_t> players) :
+            ServerToClientMessage(game_id, message_id),
+            players(players)
         {}
         std::string to_json() override;
         bool operator==(const JoinLobbyBroadcastMessage &other) const;

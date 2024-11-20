@@ -10,6 +10,14 @@
 #include <shared/game/game_state/board_base.h>
 #include <shared/utils/test_helpers.h>
 
+TEST(PileTest, Pile2WayJsonConversion)
+{
+    shared::Pile expected("Militia", 10);
+    auto json = expected.toJson();
+    std::unique_ptr<shared::Pile> actual = shared::Pile::fromJson(json);
+    EXPECT_EQ(*actual, expected);
+}
+
 // ================================
 // HELPERS
 // ================================

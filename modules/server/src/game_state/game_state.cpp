@@ -73,8 +73,8 @@ namespace server
         Player::id_t active_player_id = getCurrentPlayerId();
         shared::Board::ptr_t reduced_board = board->getReduced();
 
-        return std::make_unique<shared::ReducedGameState>(reduced_board, std::move(reduced_player), std::move(reduced_enemies),
-                                        active_player_id);
+        return std::make_unique<shared::ReducedGameState>(reduced_board, std::move(reduced_player),
+                                                          std::move(reduced_enemies), active_player_id);
     }
 
     bool GameState::try_buy(const Player::id_t player_id, const shared::CardBase::id_t &card_id)

@@ -179,10 +179,10 @@ namespace client
     {
         std::cerr << "Refreshing Players" << std::endl;
         //Delete the current lobby panel
-        //delete GameController::_lobbyPanel;
+        delete GameController::_lobbyPanel;
         std::cerr << "Deleted old panel" << std::endl;
         //Create a new lobby panel
-        //GameController::_lobbyPanel = new LobbyPanel(GameController::_gameWindow);
+        GameController::_lobbyPanel = new LobbyPanel(GameController::_gameWindow);
         std::cerr << "Created new panel" << std::endl;
         //Add all the players
         for ( auto player : msg->players ) {

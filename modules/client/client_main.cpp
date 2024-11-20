@@ -8,6 +8,7 @@
 #include <shared/message_types.h>
 
 
+// wx widget macro that calls the Dominion::OnInit() function
 wxIMPLEMENT_APP(client::Dominion);
 /*
 // Temporary test function

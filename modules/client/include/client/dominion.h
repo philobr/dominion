@@ -7,7 +7,10 @@
 namespace client
 {
 
-    // Main app class
+    /**
+     * @brief The main application class
+     *
+     */
     class Dominion : public wxApp
     {
     public:

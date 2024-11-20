@@ -91,7 +91,7 @@ namespace shared
 
     public:
         /**
-         * @brief If no file_path is set we will default to std::cout. Will automatically add a prefix
+         * @brief If no file_path is set we will default to std::cerr. Will automatically add a prefix
          * (build/logs/file_path.log) to the output path
          * @param file_path filename.log
          */
@@ -174,7 +174,7 @@ namespace shared
                 const std::string full_path = default_directory + "/" + file_path;
 
                 instance_ = std::unique_ptr<Logger>(new Logger(full_path));
-                std::cout << "Logging to file: build/logs/" + file_path << std::endl;
+                std::cerr << "Logging to file: build/logs/" + file_path << std::endl;
             }
         } else {
             throw exception::Logger("Logger has already been initialized.");

@@ -13,9 +13,8 @@ namespace shared
         ReducedGameState(Board::ptr_t board, ReducedPlayer::ptr_t reduced_player,
                          std::vector<ReducedEnemy::ptr_t> &&reduced_enemies, // rvalue ref
                          const PlayerBase::id_t &active_player) :
-            board(std::move(board)),
-            reduced_player(std::move(reduced_player)), reduced_enemies(std::move(reduced_enemies)),
-            active_player(active_player)
+            board(std::move(board)), reduced_player(std::move(reduced_player)),
+            reduced_enemies(std::move(reduced_enemies)), active_player(active_player)
         {}
 
         Board::ptr_t board;

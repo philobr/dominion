@@ -2,6 +2,7 @@
 #pragma once
 
 #include <rapidjson/document.h>
+#include <shared/utils/logger.h>
 
 
 // ======= GETTER MACROS ======= //
@@ -9,18 +10,21 @@
 
 #define GET_STRING_MEMBER(var, document, member)                                                                       \
     if ( !document.HasMember(member) || !document[member].IsString() ) {                                               \
+        LOG(WARN) << "Missing or invalid member: " << member;                                                          \
         return nullptr;                                                                                                \
     }                                                                                                                  \
     var = document[member].GetString();
 
 #define GET_UINT_MEMBER(var, document, member)                                                                         \
     if ( !document.HasMember(member) || !document[member].IsUint() ) {                                                 \
+        LOG(WARN) << "Missing or invalid member: " << member;                                                          \
         return nullptr;                                                                                                \
     }                                                                                                                  \
     var = document[member].GetUint();
 
 #define GET_BOOL_MEMBER(var, document, member)                                                                         \
     if ( !document.HasMember(member) || !document[member].IsBool() ) {                                                 \
+        LOG(WARN) << "Missing or invalid member: " << member;                                                          \
         return nullptr;                                                                                                \
     }                                                                                                                  \
     var = document[member].GetBool();
@@ -28,10 +32,12 @@
 #define GET_STRING_ARRAY_MEMBER(var, document, member)                                                                 \
     var = std::vector<std::string>();                                                                                  \
     if ( !document.HasMember(member) || !document[member].IsArray() ) {                                                \
+        LOG(WARN) << "Missing or invalid member: " << member;                                                          \
         return nullptr;                                                                                                \
     }                                                                                                                  \
     for ( const auto &elem : document[member].GetArray() ) {                                                           \
         if ( !elem.IsString() ) {                                                                                      \
+            LOG(WARN) << "Missing or invalid member: " << member;                                                          \
             return nullptr;                                                                                            \
         }                                                                                                              \
         var.push_back(elem.GetString());                                                                               \
@@ -40,10 +46,12 @@
 #define GET_UINT_ARRAY_MEMBER(var, document, member)                                                                   \
     var = std::vector<unsigned int>();                                                                                 \
     if ( !document.HasMember(member) || !document[member].IsArray() ) {                                                \
+        LOG(WARN) << "Missing or invalid member: " << member;                                                          \
         return nullptr;                                                                                                \
     }                                                                                                                  \
     for ( const auto &elem : document[member].GetArray() ) {                                                           \
         if ( !elem.IsUint() ) {                                                                                        \
+            LOG(WARN) << "Missing or invalid member: " << member;                                                          \
             return nullptr;                                                                                            \
         }                                                                                                              \
         var.push_back(elem.GetUint());                                                                                 \
@@ -52,6 +60,7 @@
 #define GET_OPTIONAL_STRING_MEMBER(var, document, member)                                                              \
     if ( document.HasMember(member) ) {                                                                                \
         if ( !document[member].IsString() ) {                                                                          \
+            LOG(WARN) << "Invalid member: " << member;                                                          \
             return nullptr;                                                                                            \
         }                                                                                                              \
         var = document[member].GetString();                                                                            \

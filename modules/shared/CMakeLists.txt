@@ -11,6 +11,7 @@ add_library(shared_lib STATIC
     src/game/board_base.cpp
     
     src/utils/json.cpp
+    src/utils/logger.cpp
     src/utils/test_helpers.cpp
 )
 

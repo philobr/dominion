@@ -27,6 +27,10 @@ namespace shared
 
         bool operator==(const PlayerBase &other) const;
 
+        std::string toJson() const;
+        PlayerBase fromJson(const id_t &player_id);
+        std::unique_ptr<PlayerBase> uniuqeFromJson(const id_t &player_id);
+
         id_t getId() const { return player_id; }
 
         unsigned int getVictoryPoints() const { return victory_points; }
@@ -72,6 +76,11 @@ namespace shared
         using ptr_t = std::unique_ptr<ReducedEnemy>;
 
         static ptr_t make(const PlayerBase &player, unsigned int hand_size);
+
+        std::string toJson() const;
+        ReducedEnemy fromJson(const PlayerBase &player, unsigned int hand_size);
+        std::unique_ptr<ReducedEnemy> uniuqeFromJson(const PlayerBase &player, unsigned int hand_size);
+
         unsigned int getHandSize() const;
 
     protected:
@@ -85,6 +94,11 @@ namespace shared
         using ptr_t = std::unique_ptr<ReducedPlayer>;
 
         static ptr_t make(const PlayerBase &player, std::vector<CardBase::id_t> hand_cards);
+
+        std::string toJson() const;
+        ReducedPlayer fromJson(const std::string &json);
+        std::unique_ptr<ReducedPlayer> uniuqeFromJson(const std::string &json);
+
         const std::vector<CardBase::id_t> &getHandCards() const;
 
     protected:

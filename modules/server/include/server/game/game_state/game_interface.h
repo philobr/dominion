@@ -4,18 +4,10 @@
 
 namespace server
 {
-    enum class GamePhase
-    {
-        ACTION_PHASE,
-        BUY_PHASE,
-        PLAYING_ACTION_CARD,
-    };
-
     class GameInterface
     {
         std::unique_ptr<GameState> game_state;
         const std::string game_id;
-        GamePhase phase;
 
     public:
         using ptr_t = std::unique_ptr<GameInterface>;

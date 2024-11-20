@@ -20,6 +20,13 @@ namespace server
     // forward declaration
     class ServerBoard;
 
+    enum class GamePhase
+    {
+        ACTION_PHASE,
+        BUY_PHASE,
+        PLAYING_ACTION_CARD,
+    };
+
     /**
      * @brief This holds the complete game stae on the server.
      *
@@ -30,8 +37,8 @@ namespace server
         std::map<Player::id_t, Player::ptr_t> player_map;
         std::vector<Player::id_t> player_order;
         unsigned int current_player_idx;
-
         ServerBoard::ptr_t board;
+        GamePhase phase;
 
     public:
         GameState();
@@ -44,6 +51,8 @@ namespace server
         const Player::id_t &getCurrentPlayerId() const { return player_order[current_player_idx]; }
         Player &get_current_player() { return *player_map[getCurrentPlayerId()]; }
         Player &get_player(const Player::id_t &id) { return *player_map.at(id); }
+
+        GamePhase getPhase() const { return phase; }
 
         void start_game();
         void end_game() { return; }
@@ -59,7 +68,19 @@ namespace server
         bool try_buy(const Player::id_t player_id, const shared::CardBase::id_t &card);
         bool try_play(const Player::id_t &affected_player, size_t hand_index, size_t behaviour_index);
 
+        /**
+         * @brief Switches phases if necessary, this means: if a player is out of buys or out of actions
+         * (im not happy with this name but i got nothing better rn)
+         */
+        void maybe_switch_phase();
+
     private:
+        /**
+         * @brief Forces a phase switch. This is called if a player ends a phase early
+         */
+        void force_switch_phase();
+
+        void reset_phase() { phase = GamePhase::ACTION_PHASE; }
         void switch_player() { current_player_idx = ++current_player_idx % player_map.size(); }
 
         /**

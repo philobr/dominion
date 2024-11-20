@@ -78,6 +78,9 @@ NEW_INHERITED_EXCEPTION(CardCountMismatch, GameStateConstructor);
 NEW_BASE_EXCPETION(Logger);
 
 // for gamestate
-NEW_BASE_EXCPETION(TryBuy);
-NEW_INHERITED_EXCEPTION(InsufficientFunds, TryBuy);
-NEW_INHERITED_EXCEPTION(CardNotAvailable, TryBuy);
+NEW_BASE_EXCPETION(GameState);
+NEW_INHERITED_EXCEPTION(InsufficientFunds, GameState);
+NEW_INHERITED_EXCEPTION(CardNotAvailable, GameState);
+NEW_INHERITED_EXCEPTION(PlayerCountMismatch, GameState);
+NEW_INHERITED_EXCEPTION(DuplicatePlayer, GameState);
+NEW_INHERITED_EXCEPTION(WrongCardCount, GameState);

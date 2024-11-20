@@ -4,14 +4,18 @@
 #include <server/game/game_state/game_state.h>
 #include <shared/utils/assert.h>
 #include <shared/utils/exception.h>
+#include <shared/utils/logger.h>
 
 namespace server
 {
     GameState::GameState(const std::vector<shared::CardBase::id_t> &play_cards,
                          const std::vector<Player::id_t> &player_ids) :
-        current_player_idx(0)
+        current_player_idx(0), phase(GamePhase::ACTION_PHASE)
     {
-        _ASSERT_TRUE((2 <= player_ids.size() && player_ids.size() <= 4), "Player count must be in [2, 4]");
+        if ( player_ids.size() < 2 && player_ids.size() > 4 ) {
+            LOG(ERROR) << "Should have 2-4 players, but got: " << player_ids.size();
+            throw exception::PlayerCountMismatch("wrong player count!");
+        }
 
         initialise_players(player_ids);
         initialise_board(play_cards);
@@ -37,7 +41,8 @@ namespace server
         player_order = player_ids; // for now the player order will be the same as the list of player ids
         for ( const auto &id : player_ids ) {
             if ( player_map.count(id) != 0u ) {
-                throw std::runtime_error("cant add the same player twice!");
+                LOG(ERROR) << "tried to add player(" << id << ") twice";
+                throw exception::DuplicatePlayer("cant add the same player twice!");
             }
 
             player_map[id] = std::make_unique<Player>(id);
@@ -55,7 +60,10 @@ namespace server
 
     void GameState::initialise_board(const std::vector<shared::CardBase::id_t> &selected_cards)
     {
-        _ASSERT_EQ(selected_cards.size(), size_t(10), "the game must be played with 10 kingdom cards!");
+        if ( selected_cards.size() != size_t(10) ) {
+            LOG(ERROR) << "Excepcted 10 cards but got " << selected_cards.size();
+            throw exception::WrongCardCount("");
+        }
         board = server::ServerBoard::make(selected_cards, player_map.size());
     }
 
@@ -80,14 +88,17 @@ namespace server
 
     bool GameState::try_buy(const Player::id_t player_id, const shared::CardBase::id_t &card_id)
     {
+        LOG(INFO) << "test";
         auto &player = get_player(player_id);
         const auto card_cost = CardFactory::getCard(card_id)->getCost();
 
         if ( player.getTreasure() < card_cost ) {
+            LOG(ERROR) << player_id << " has " << player.getTreasure() << " coins but needs " << card_cost;
             throw exception::InsufficientFunds("");
         }
 
         if ( !board->buy(card_id) ) {
+            LOG(ERROR) << card_id << " is not available";
             throw exception::CardNotAvailable("");
         }
 
@@ -101,6 +112,7 @@ namespace server
     {
         get_current_player().end_turn();
         switch_player();
+        reset_phase();
 
         if ( is_game_over() ) {
             end_game();
@@ -120,6 +132,62 @@ namespace server
                                    return false;
                                }
                            });
+    }
+
+    void GameState::force_switch_phase()
+    {
+        switch ( phase ) {
+            case GamePhase::ACTION_PHASE:
+                {
+                    phase = GamePhase::BUY_PHASE;
+                }
+                break;
+            case GamePhase::BUY_PHASE:
+                {
+                    phase = GamePhase::ACTION_PHASE;
+                }
+                break;
+            case GamePhase::PLAYING_ACTION_CARD:
+                {
+                    LOG(WARN) << "tried to switch from GamePhase::PLAYING_ACTION_CARD, which is not possible, you "
+                                 "have to finish playing your card first";
+                }
+            default:
+                {
+                    LOG(ERROR) << "tried to switch from GamePhase::" << static_cast<int>(phase)
+                               << ", which does not exist";
+                    throw std::runtime_error("unreachable code");
+                }
+        }
+    }
+
+    void GameState::maybe_switch_phase()
+    {
+        auto &player = get_current_player();
+        switch ( phase ) {
+            case GamePhase::ACTION_PHASE:
+                {
+                    if ( player.getActions() == 0 ) {
+                        phase = GamePhase::BUY_PHASE;
+                    }
+                }
+                break;
+            case GamePhase::BUY_PHASE:
+                {
+                    if ( player.getBuys() == 0 ) {
+                        phase = GamePhase::ACTION_PHASE;
+                    }
+                }
+                break;
+            case GamePhase::PLAYING_ACTION_CARD: // we do nothing here
+                break;
+            default:
+                {
+                    LOG(ERROR) << "tried to switch from GamePhase::" << static_cast<int>(phase)
+                               << ", which does not exist";
+                    throw std::runtime_error("unreachable code");
+                }
+        }
     }
 
 } // namespace server

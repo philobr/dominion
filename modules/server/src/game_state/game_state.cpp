@@ -86,7 +86,7 @@ namespace server
                                         active_player_id);
     }
 
-    bool GameState::try_buy(const Player::id_t player_id, const shared::CardBase::id_t &card_id)
+    bool GameState::try_buy(const Player::id_t &player_id, const shared::CardBase::id_t &card_id)
     {
         LOG(INFO) << "test";
         auto &player = get_player(player_id);

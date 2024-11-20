@@ -1,6 +1,7 @@
 
 #include <shared/action_order.h>
 #include <shared/utils/json.h>
+#include <string>
 #include <typeinfo>
 
 namespace shared

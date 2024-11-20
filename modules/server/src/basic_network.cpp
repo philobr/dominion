@@ -8,6 +8,7 @@ namespace server
 
         _rw_lock.lock();
 
+        std::cerr << "Sending Message: " << message << " to Address: " << address << std::endl;
         std::stringstream ss_msg;
         ss_msg << std::to_string(message.size()) << ':' << message; // prepend message length
         ssize_t ret = _address_to_socket.at(address).write(ss_msg.str());

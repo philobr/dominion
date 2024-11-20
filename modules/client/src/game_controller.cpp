@@ -149,9 +149,11 @@ namespace client
             // Show the lobby screen
             std::cerr << "Message is CreateLobbyResponse" << std::endl;
             GameController::_gameWindow->showPanel(GameController::_lobbyPanel);
+            std::cerr << "Switched panel" << std::endl;
             // TODO maybe add player_id to the ServerToClientMessage ?
             GameController::_lobbyPanel->AddPlayer(
                     GameController::_connectionPanel->getPlayerName().Trim().ToStdString());
+            std::cerr << "Added Player" << std::endl;
             msg.release();
             std::cerr << "Done with Message" << std::endl;
 
@@ -175,9 +177,20 @@ namespace client
 
     void GameController::RefreshPlayers(shared::JoinLobbyBroadcastMessage *msg)
     {
-        // TODO: Clear the lobby panel
+        std::cerr << "Refreshing Players" << std::endl;
+        //Delete the current lobby panel
+        //delete GameController::_lobbyPanel;
+        std::cerr << "Deleted old panel" << std::endl;
+        //Create a new lobby panel
+        //GameController::_lobbyPanel = new LobbyPanel(GameController::_gameWindow);
+        std::cerr << "Created new panel" << std::endl;
+        //Add all the players
         for ( auto player : msg->players ) {
             GameController::_lobbyPanel->AddPlayer(player);
         }
+        std::cerr << "Added players" << std::endl;
+        //Show the new lobby panel
+        GameController::_gameWindow->showPanel(GameController::_lobbyPanel);
+        std::cerr << "Showing new panel" << std::endl;
     }
 } // namespace client

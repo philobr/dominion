@@ -106,6 +106,7 @@ namespace server
                     // sanity check that really all bytes got read (possibility that count was <= 0, indicating a read
                     // error)
                     std::string msg = ss_msg.str();
+                    std::cerr << "Received Message: " << msg << std::endl;
                     message_handler(msg, socket.peer_address()); // attempt to parse client_request from 'msg'
                 } else {
                     std::cerr << "Could not read entire message. TCP stream ended before. Difference is "

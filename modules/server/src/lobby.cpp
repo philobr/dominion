@@ -13,6 +13,7 @@ server::Lobby::Lobby(shared::PlayerBase::id_t game_master, std::string lobby_id)
 
 void server::Lobby::join(MessageInterface &message_interface, std::unique_ptr<shared::JoinLobbyRequestMessage> request)
 {
+    std::cerr << "Got into Lobby" << std::endl;
     const shared::PlayerBase::id_t requestor_id = request->player_id;
 
     const bool player_already_in_lobby = std::any_of(players.begin(), players.end(),
@@ -49,6 +50,7 @@ void server::Lobby::join(MessageInterface &message_interface, std::unique_ptr<sh
             shared::ResultResponseMessage(lobby_id, uuid_generator::generate_uuid_v4(), true, request->message_id);
 
     message_interface.send_message(std::make_unique<shared::ResultResponseMessage>(success_message), requestor_id);
+    std::cerr << "Got done with Lobby" << std::endl;
     return;
 };
 
@@ -56,6 +58,7 @@ void server::Lobby::join(MessageInterface &message_interface, std::unique_ptr<sh
 void server::Lobby::start_game(MessageInterface &message_interface,
                                std::unique_ptr<shared::StartGameRequestMessage> request)
 {
+    std::cerr << "Got into Lobby" << std::endl;
     // Check if gamemaster is starting the game
     shared::PlayerBase::id_t requestor_id = request->player_id;
     if ( requestor_id != game_master ) {
@@ -79,4 +82,5 @@ void server::Lobby::start_game(MessageInterface &message_interface,
                 shared::GameStateMessage(lobby_id, uuid_generator::generate_uuid_v4() /*, reduced_game_state */);
         message_interface.send_message(std::make_unique<shared::GameStateMessage>(game_state_message), player_id);
     }
+    std::cerr << "Got done with Lobby" << std::endl;
 }

@@ -166,11 +166,10 @@ namespace shared
 
     private:
         Board(pile_container_t victory_cards, pile_container_t treasure_cards, pile_container_t kingdom_cards,
-              Pile curse_card_pile, std::vector<shared::CardBase::id_t> trash) : victory_cards(victory_cards),
-                                                                                 treasure_cards(treasure_cards),
-                                                                                 kingdom_cards(kingdom_cards),
-                                                                                 curse_card_pile(curse_card_pile),
-                                                                                 trash(trash) {}
+              Pile curse_card_pile, std::vector<shared::CardBase::id_t> trash) :
+            victory_cards(victory_cards),
+            treasure_cards(treasure_cards), kingdom_cards(kingdom_cards), curse_card_pile(curse_card_pile), trash(trash)
+        {}
     };
 
 } // namespace shared

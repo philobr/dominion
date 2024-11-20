@@ -68,7 +68,7 @@ namespace shared
         Board::pile_container_t pile_container;
         for ( const auto &pile : json.GetArray() ) {
             const std::unique_ptr<Pile> pile_ptr = Pile::fromJson(pile);
-            if (pile_ptr == nullptr) {
+            if ( pile_ptr == nullptr ) {
                 return std::nullopt;
             }
             pile_container.insert(*pile_ptr);
@@ -79,27 +79,27 @@ namespace shared
     Board::ptr_t Board::fromJson(const rapidjson::Value &json)
     {
         std::unique_ptr<Pile> curse_pile_ptr;
-        if (json.HasMember("curse_pile") && json["curse_pile"].IsObject()) {
+        if ( json.HasMember("curse_pile") && json["curse_pile"].IsObject() ) {
             curse_pile_ptr = Pile::fromJson(json["curse_pile"]);
         } else {
             return nullptr;
         }
-        if (curse_pile_ptr == nullptr) {
+        if ( curse_pile_ptr == nullptr ) {
             return nullptr;
         }
         const Pile curse_pile = *curse_pile_ptr;
 
-#define GET_PILE_CONTAINER(pile_container, json, member_name) \
-    pile_container_t pile_container; \
-    if (json.HasMember(member_name) && json[member_name].IsArray()) { \
-        const auto container = pileContainerFromJson(json[member_name]); \
-        if (container.has_value()) { \
-            pile_container = container.value(); \
-        } else { \
-            return nullptr; \
-        } \
-    } else { \
-        return nullptr; \
+#define GET_PILE_CONTAINER(pile_container, json, member_name)                                                          \
+    pile_container_t pile_container;                                                                                   \
+    if ( json.HasMember(member_name) && json[member_name].IsArray() ) {                                                \
+        const auto container = pileContainerFromJson(json[member_name]);                                               \
+        if ( container.has_value() ) {                                                                                 \
+            pile_container = container.value();                                                                        \
+        } else {                                                                                                       \
+            return nullptr;                                                                                            \
+        }                                                                                                              \
+    } else {                                                                                                           \
+        return nullptr;                                                                                                \
     }
 
         GET_PILE_CONTAINER(victory_cards, json, "victory_cards");

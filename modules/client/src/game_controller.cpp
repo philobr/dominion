@@ -110,7 +110,8 @@ namespace client
             _clientNetworkManager->init(inputServerAddress.ToStdString(), portAsLong);
 
             // send request to join game
-            shared::JoinLobbyRequestMessage request(inputGameName.ToStdString(), uuid_generator::generate_uuid_v4(), inputPlayerName.ToStdString());
+            shared::JoinLobbyRequestMessage request(inputGameName.ToStdString(), uuid_generator::generate_uuid_v4(),
+                                                    inputPlayerName.ToStdString());
             GameController::send_request(request.to_json());
         }
     }
@@ -142,22 +143,25 @@ namespace client
 
         std::cerr << "Gamecontroller received message!" << std::endl;
 
-        if ( shared::CreateLobbyResponseMessage *clrm = dynamic_cast<shared::CreateLobbyResponseMessage*>(msg.get()) ) {
+        if ( shared::CreateLobbyResponseMessage *clrm =
+                     dynamic_cast<shared::CreateLobbyResponseMessage *>(msg.get()) ) {
             // Show the lobby screen
             std::cerr << "Message is CreateLobbyResponse" << std::endl;
             GameController::_gameWindow->showPanel(GameController::_lobbyPanel);
             // TODO maybe add player_id to the ServerToClientMessage ?
-            GameController::_lobbyPanel->AddPlayer(GameController::_connectionPanel->getPlayerName().Trim().ToStdString());
+            GameController::_lobbyPanel->AddPlayer(
+                    GameController::_connectionPanel->getPlayerName().Trim().ToStdString());
             msg.release();
             std::cerr << "Done with Message" << std::endl;
 
         } else if ( shared::ResultResponseMessage *jlrm = dynamic_cast<shared::ResultResponseMessage *>(msg.get()) ) {
             std::cerr << "Message is ResultResponseMessage" << std::endl;
-            //Show the lobby screen
+            // Show the lobby screen
             GameController::_gameWindow->showPanel(GameController::_lobbyPanel);
             msg.release();
             std::cerr << "Done with Message" << std::endl;
-        } else if ( shared::JoinLobbyBroadcastMessage *jlbm = dynamic_cast<shared::JoinLobbyBroadcastMessage *>(msg.get()) ) {
+        } else if ( shared::JoinLobbyBroadcastMessage *jlbm =
+                            dynamic_cast<shared::JoinLobbyBroadcastMessage *>(msg.get()) ) {
             std::cerr << "Message is JoinLobbyBroadcastMessage" << std::endl;
             GameController::_lobbyPanel->AddPlayer(jlbm->player_id);
             msg.release();

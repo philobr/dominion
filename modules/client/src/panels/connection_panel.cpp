@@ -60,12 +60,10 @@ namespace client
         VerticalLayout->Add(this->_gameName, 0, wxALIGN_CENTER | wxTOP | wxLEFT | wxRIGHT, 10);
 
         wxButton *createLobbyButton = new wxButton(this, wxID_ANY, "create Lobby", wxDefaultPosition, wxSize(100, 40));
-        createLobbyButton->Bind(wxEVT_BUTTON,
-                                [](const wxCommandEvent & /*event*/) { GameController::CreateLobby(); });
+        createLobbyButton->Bind(wxEVT_BUTTON, [](const wxCommandEvent & /*event*/) { GameController::CreateLobby(); });
         VerticalLayout->Add(createLobbyButton, 0, wxALIGN_RIGHT | wxALL, 10);
         wxButton *joinLobbyButton = new wxButton(this, wxID_ANY, "join Lobby", wxDefaultPosition, wxSize(100, 40));
-        joinLobbyButton->Bind(wxEVT_BUTTON,
-                              [](const wxCommandEvent & /*event*/) { GameController::JoinLobby(); });
+        joinLobbyButton->Bind(wxEVT_BUTTON, [](const wxCommandEvent & /*event*/) { GameController::JoinLobby(); });
         VerticalLayout->Add(joinLobbyButton, 0, wxALIGN_RIGHT | wxALL, 10);
 
         this->SetSizerAndFit(VerticalLayout);

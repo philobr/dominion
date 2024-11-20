@@ -19,9 +19,6 @@ namespace client
 
         this->_rotation = rotation;
 
-        this->_width = -1;
-        this->_height = -1;
-
         this->Bind(wxEVT_PAINT, &ImagePanel::paintEvent, this);
         this->Bind(wxEVT_SIZE, &ImagePanel::onSize, this);
     }

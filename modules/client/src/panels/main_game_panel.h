@@ -6,7 +6,6 @@
 
 #include <shared/game/game_state/reduced_game_state.h>
 
-#include <memory>
 #include <wx/wx.h>
 
 namespace client

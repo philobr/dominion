@@ -28,7 +28,7 @@ namespace shared
         return *this == dynamic_cast<const BuyCardDecision &>(other);
     }
 
-    bool EndTurnDecision::operator==(const EndTurnDecision &other) const { return true; }
+    bool EndTurnDecision::operator==(const EndTurnDecision & /*other*/) const { return true; }
 
     bool EndTurnDecision::equals(const ActionDecision &other) const
     {

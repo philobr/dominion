@@ -280,9 +280,9 @@ TEST_P(BoardDuplicateKingdomCardsTest, DuplicateKingdomCards)
     const auto &param = GetParam();
 
     if ( param.expect_exception ) {
-        EXPECT_DEATH({ TestableSharedBoard board(param.kingdom_cards, param.player_count); }, "");
+        EXPECT_DEATH({ TestableSharedBoard(param.kingdom_cards, param.player_count); }, "");
     } else {
-        EXPECT_NO_THROW({ TestableSharedBoard board(param.kingdom_cards, param.player_count); });
+        EXPECT_NO_THROW({ TestableSharedBoard(param.kingdom_cards, param.player_count); });
     }
 }
 
@@ -317,9 +317,9 @@ TEST_P(BoardInvalidPlayerCountTest, InvalidPlayerCount)
     auto kingdom_cards = get_valid_kingdom_cards();
 
     if ( param.expect_exception ) {
-        EXPECT_DEATH({ TestableSharedBoard board(kingdom_cards, param.player_count); }, "");
+        EXPECT_DEATH({ TestableSharedBoard(kingdom_cards, param.player_count); }, "");
     } else {
-        EXPECT_NO_THROW({ TestableSharedBoard board(kingdom_cards, param.player_count); });
+        EXPECT_NO_THROW({ TestableSharedBoard(kingdom_cards, param.player_count); });
     }
 }
 

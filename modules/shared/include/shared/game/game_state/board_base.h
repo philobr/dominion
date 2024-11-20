@@ -55,6 +55,9 @@ namespace shared
          */
         Pile(const shared::CardBase::id_t &card_id, size_t pile_size) : card_id(card_id), count(pile_size) {}
 
+        bool operator==(const Pile &other) const;
+        bool operator!=(const Pile &other) const;
+
         rapidjson::Document toJson() const;
         static std::unique_ptr<Pile> fromJson(const rapidjson::Value &json);
 

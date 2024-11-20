@@ -11,6 +11,16 @@ namespace shared
         return Pile(kingdom_card_id, BoardConfig::KINGDOM_CARD_COUNT);
     }
 
+    bool Pile::operator==(const Pile &other) const
+    {
+        return card_id == other.card_id && count == other.count;
+    }
+
+    bool Pile::operator!=(const Pile &other) const
+    {
+        return !(*this == other);
+    }
+
     std::unique_ptr<Pile> Pile::fromJson(const rapidjson::Value &json)
     {
         CardBase::id_t card_id;
@@ -24,7 +34,7 @@ namespace shared
     {
         rapidjson::Document doc;
         doc.SetObject();
-        ADD_STRING_MEMBER(this->card_id, card_id);
+        ADD_STRING_MEMBER(this->card_id.c_str(), card_id);
         ADD_UINT_MEMBER(this->count, count);
         return doc;
     }

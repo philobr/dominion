@@ -99,6 +99,9 @@ namespace shared
          */
         static ptr_t make(const std::vector<shared::CardBase::id_t> &kingdom_cards, size_t player_count);
 
+        bool operator==(const Board &other) const;
+        bool operator!=(const Board &other) const;
+
         rapidjson::Document toJson() const;
         static ptr_t fromJson(const rapidjson::Value &json);
 

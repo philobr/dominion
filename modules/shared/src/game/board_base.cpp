@@ -61,6 +61,15 @@ namespace shared
         return ptr_t(new Board(kingdom_cards, player_count));
     }
 
+    bool Board::operator==(const Board &other) const
+    {
+        return other.victory_cards == victory_cards && other.treasure_cards == treasure_cards &&
+                other.kingdom_cards == kingdom_cards && other.curse_card_pile == curse_card_pile &&
+                other.trash == trash;
+    }
+
+    bool Board::operator!=(const Board &other) const { return !(*this == other); }
+
     // PRE: JSON must be an array type
     std::optional<Board::pile_container_t> pileContainerFromJson(const rapidjson::Value &json)
     {

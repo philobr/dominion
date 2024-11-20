@@ -1,8 +1,9 @@
-#include <server/game/game_state/game_state.h>
-#include <shared/utils/assert.h>
-
 #include <algorithm>
 #include <random>
+
+#include <server/game/game_state/game_state.h>
+#include <shared/utils/assert.h>
+#include <shared/utils/exception.h>
 
 namespace server
 {
@@ -83,11 +84,11 @@ namespace server
         const auto card_cost = CardFactory::getCard(card_id)->getCost();
 
         if ( player.getTreasure() < card_cost ) {
-            return false;
+            throw exception::InsufficientFunds("");
         }
 
         if ( !board->buy(card_id) ) {
-            return false;
+            throw exception::CardNotAvailable("");
         }
 
         player.add_to_discard_pile(card_id);

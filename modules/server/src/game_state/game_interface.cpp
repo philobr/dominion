@@ -1,11 +1,12 @@
 #include <server/game/game_state/game_interface.h>
-
+#include <shared/utils/logger.h>
 namespace server
 {
     GameInterface::ptr_t GameInterface::make(const std::string &game_id,
                                              const std::vector<shared::CardBase::id_t> &play_cards,
                                              const std::vector<Player::id_t> &player_ids)
     {
+        LOG(INFO) << "Created a new GameInterface(" << "game_id:" << game_id << ")";
         return ptr_t(new GameInterface(game_id, play_cards, player_ids));
     }
 
@@ -36,6 +37,7 @@ namespace server
         HANDLE_ACTION(EndTurnDecision);
         HANDLE_ACTION(ChooseNCardsFromHandDecision);
 
+        LOG(ERROR) << "This should not be reachable, i will now self-destruct!";
         throw std::runtime_error("Unreachable code");
     }
 
@@ -55,6 +57,7 @@ namespace server
         HANDLE_RESPONSE(EndTurnDecision);
         HANDLE_RESPONSE(ChooseNCardsFromHandDecision);
 
+        LOG(ERROR) << "This should not be reachable, i will now self-destruct!";
         throw std::runtime_error("Unreachable code");
     }
 
@@ -63,6 +66,7 @@ namespace server
                                                   const Player::id_t &player_id)
     {
         // TODO: Implement for MVP 3
+        LOG(ERROR) << "Not implemented yet, i will kill myself now:) much fun debugging!";
         throw std::runtime_error("Not implemented yet");
     }
 
@@ -70,46 +74,47 @@ namespace server
     GameInterface::BuyCardDecision_handler(std::unique_ptr<shared::BuyCardDecision> action_decision,
                                            const Player::id_t &player_id)
     {
-        switch ( phase ) {
-            case GamePhase::BUY_PHASE:
-            case GamePhase::ACTION_PHASE:
-                if ( !game_state->try_buy(player_id, action_decision->card) ) {
-                    // TODO: Log error
-                }
-                return std::make_unique<shared::BuyPhaseOrder>();
-            case GamePhase::PLAYING_ACTION_CARD:
-                // TODO: Log error
-                // TODO: Implement for MVP 3
-                throw std::runtime_error("Not implemented yet");
-            default:
-                throw std::runtime_error("Unreachable code");
+        if ( phase != GamePhase::BUY_PHASE ) {
+            LOG(WARN) << "player(" << player_id << ") is currently not in the buy phase, retrying";
+            // TODO: this makes no sense, the player will just try to buy again
+            return std::make_unique<shared::BuyPhaseOrder>();
         }
+
+        try {
+            game_state->try_buy(player_id, action_decision->card);
+        } catch ( exception::InsufficientFunds &e ) {
+            LOG(WARN) << "player(" << player_id << ") has insufficient funds to buy " << action_decision->card;
+            // TODO: what here?
+        } catch ( exception::CardNotAvailable &e ) {
+            LOG(WARN) << "card(" << action_decision->card << ") is not available";
+            // TODO: what here?
+        } catch ( std::exception &e ) {
+            LOG(ERROR) << "unexpected exception: " << e.what();
+        }
+
+        // TODO: turn should end automatically if a player cant buy anymore
+        return std::make_unique<shared::BuyPhaseOrder>();
     }
 
     GameInterface::response_t
     GameInterface::EndTurnDecision_handler(std::unique_ptr<shared::EndTurnDecision> action_decision,
                                            const Player::id_t &player_id)
     {
-        switch ( phase ) {
-            case GamePhase::BUY_PHASE:
-            case GamePhase::ACTION_PHASE:
-                // We end the turn of the current player
-                game_state->end_turn();
-                // We put the next player into action phase
-                return std::make_unique<shared::ActionPhaseOrder>();
-            case GamePhase::PLAYING_ACTION_CARD:
-                // TODO: Log error
-                // TODO: Implement for MVP 3
-                throw std::runtime_error("Not implemented yet");
-            default:
-                throw std::runtime_error("Unreachable code");
+        if ( phase == GamePhase::PLAYING_ACTION_CARD ) {
+            LOG(ERROR) << "Player is trying to end his turn while playing a card";
         }
+
+        LOG(INFO) << "ending " << player_id << "\'s turn";
+        game_state->end_turn();
+        // We put the next player into action phase
+        return std::make_unique<shared::ActionPhaseOrder>();
     }
 
     GameInterface::response_t GameInterface::ChooseNCardsFromHandDecision_handler(
             std::unique_ptr<shared::ChooseNCardsFromHandDecision> action_decision, const Player::id_t &player_id)
     {
         // TODO: Implement for MVP 3
+        LOG(ERROR) << "Not implemented yet, i will kill myself now:) much fun debugging!";
         throw std::runtime_error("Not implemented yet");
     }
 

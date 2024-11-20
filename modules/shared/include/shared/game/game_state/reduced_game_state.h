@@ -18,6 +18,10 @@ namespace shared
             active_player(active_player)
         {}
 
+        std::string toJson() const;
+        ReducedPlayer fromJson(const std::string &json);
+        std::unique_ptr<ReducedPlayer> uniuqeFromJson(const std::string &json);
+
         Board::ptr_t board;
         const ReducedPlayer::ptr_t reduced_player;
         const std::vector<ReducedEnemy::ptr_t> reduced_enemies;

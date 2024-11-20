@@ -45,6 +45,10 @@ namespace shared
 
         Pile() = default;
 
+        std::string toJson() const;
+        Pile fromJson(const std::string &json);
+        std::unique_ptr<Pile> uniuqeFromJson(const std::string &json);
+
         /**
          * @brief Creates a new kingdom card pile with size 10; defined by shared::BoardConfig::KINGDOM_CARD_COUNT
          *
@@ -94,6 +98,10 @@ namespace shared
          * @param player_count integer in range [2, 4]
          */
         static ptr_t make(const std::vector<shared::CardBase::id_t> &kingdom_cards, size_t player_count);
+
+        std::string toJson() const;
+        Board fromJson(const std::string &json);
+        std::unique_ptr<Board> uniuqeFromJson(const std::string &json);
 
         virtual ~Board() = default;
 

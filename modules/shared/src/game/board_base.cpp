@@ -21,8 +21,7 @@ namespace shared
     }
 
     Board::Board(const std::vector<shared::CardBase::id_t> &kingdom_cards, size_t player_count) :
-        victory_cards(initialiseVictoryCards(player_count)),
-        treasure_cards(initialiseTreasureCards(player_count)),
+        victory_cards(initialiseVictoryCards(player_count)), treasure_cards(initialiseTreasureCards(player_count)),
         curse_card_pile(initialiseCursePile(player_count))
     {
         _ASSERT_TRUE(BoardConfig::validatePlayerCount(player_count),
@@ -72,15 +71,13 @@ namespace shared
     Board::pile_container_t Board::initialiseTreasureCards(size_t player_count)
     {
         return {Pile("Copper", BoardConfig::getCopperCount(player_count)),
-                          Pile("Silver", BoardConfig::TREASURE_SILVER_COUNT),
-                          Pile("Gold", BoardConfig::TREASURE_GOLD_COUNT)};
+                Pile("Silver", BoardConfig::TREASURE_SILVER_COUNT), Pile("Gold", BoardConfig::TREASURE_GOLD_COUNT)};
     }
 
     Board::pile_container_t Board::initialiseVictoryCards(size_t player_count)
     {
         const size_t card_count = BoardConfig::getVictoryCardCount(player_count);
-        return {Pile("Estate", card_count), Pile("Duchy", card_count),
-                         Pile("Province", card_count)};
+        return {Pile("Estate", card_count), Pile("Duchy", card_count), Pile("Province", card_count)};
     }
 
     Pile Board::initialiseCursePile(size_t player_count)

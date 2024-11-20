@@ -20,9 +20,7 @@ namespace server
             message.release();
         } else if ( CreateLobbyRequestMessage *clrm = dynamic_cast<CreateLobbyRequestMessage *>(message.get()) ) {
             std::unique_ptr<CreateLobbyRequestMessage> clrm_ptr(clrm);
-            std::cerr << "Got in MessageHandler" << std::endl;
             this->lobby_manager_.create_lobby(std::move(clrm_ptr));
-            std::cerr << "Done with Handle Message" << std::endl;
             message.release();
         } else if ( JoinLobbyRequestMessage *jlrm = dynamic_cast<JoinLobbyRequestMessage *>(message.get()) ) {
             std::unique_ptr<JoinLobbyRequestMessage> jlrm_ptr(jlrm);
@@ -40,6 +38,5 @@ namespace server
             // This code should never be reached
             _ASSERT_FALSE(true, "Unknown message type");
         }
-        std::cerr << "Really done with handle message" << std::endl;
     }
 } // namespace server

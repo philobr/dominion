@@ -37,6 +37,7 @@ void server::LobbyManager::join_lobby(std::unique_ptr<shared::JoinLobbyRequestMe
         shared::ResultResponseMessage failure_message = shared::ResultResponseMessage(
                 lobby_id, uuid_generator::generate_uuid_v4(), false, request->message_id, "Lobby does not exist");
         message_interface->send_message(std::make_unique<shared::ResultResponseMessage>(failure_message), player_id);
+        return;
     }
 
     games.at(lobby_id)->join(*message_interface, std::move(request));

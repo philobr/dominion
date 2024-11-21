@@ -47,9 +47,9 @@ namespace server
         throw std::runtime_error("Unreachable code");
     }
 
-    GameInterface::response_t GameInterface::handle_response(std::unique_ptr<shared::ActionDecision> action_decision,
-                                                             const std::string &in_response_to,
-                                                             const Player::id_t &affected_player_id)
+    GameInterface::response_t
+    GameInterface::handle_response(std::unique_ptr<shared::ActionDecision> /*action_decision*/,
+                                   const std::string & /*in_response_to*/, const Player::id_t & /*affected_player_id*/)
     {
 #define HANDLE_RESPONSE(type)                                                                                          \
     if ( dynamic_cast<shared::type *>(action_decision.get()) ) {                                                       \
@@ -58,10 +58,10 @@ namespace server
                 affected_player_id, in_response_to);                                                                   \
     }
 
-        HANDLE_RESPONSE(PlayActionCardDecision);
-        HANDLE_RESPONSE(BuyCardDecision);
-        HANDLE_RESPONSE(EndTurnDecision);
-        HANDLE_RESPONSE(ChooseNCardsFromHandDecision);
+        // HANDLE_RESPONSE(PlayActionCardDecision);
+        // HANDLE_RESPONSE(BuyCardDecision);
+        // HANDLE_RESPONSE(EndTurnDecision);
+        // HANDLE_RESPONSE(ChooseNCardsFromHandDecision);
 
         LOG(ERROR) << "This should not be reachable, i will self destruct now!";
         throw std::runtime_error("Unreachable code");

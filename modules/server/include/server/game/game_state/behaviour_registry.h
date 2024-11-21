@@ -7,31 +7,41 @@
 #include <unordered_map>
 #include <vector>
 
-#include "behaviour.h"
+#include <server/game/game_state/behaviour.h>
+#include <shared/utils/utils.h>
 
-class BehaviourRegistry
+namespace server
 {
-    std::unordered_map<std::string, std::vector<std::unique_ptr<BehaviourBase>>> map_;
+    class BehaviourBase; // forward declaration
 
-public:
-    BehaviourRegistry() { insert<GainCoins<3>, GainCoins<2>, GainCoins<1>>("Laboratory"); }
-
-    template <typename... BehaviourTypes>
-    void insert(const std::string &card_id)
+    /**
+     * @brief here we can look up card_ids/behaviour lists.
+     * compiletime is not possible, so we will have to put it in its constructor.
+     */
+    class BehaviourRegistry
     {
-        if ( map_.find(card_id) == map_.end() ) {
-            map_[card_id] = {};
+    public:
+        using map_t = std::unordered_map<std::string, std::vector<std::unique_ptr<BehaviourBase>>>;
+
+        BehaviourRegistry();
+
+        static bool has(const std::string &card_id) { return map_.count(card_id) > 0; }
+
+        template <typename... BehaviourTypes>
+        void insert(const std::string &card_id)
+        {
+
+
+            LOG(INFO) << "Registering card: " << card_id;
+            ((LOG(INFO) << "  Behaviour type: " << utils::demangle(typeid(BehaviourTypes).name())), ...);
+
+            (map_[card_id].emplace_back(std::make_unique<BehaviourTypes>()), ...);
         }
 
-        (map_[card_id].push_back(std::make_unique<BehaviourTypes>()), ...);
-    }
+        const std::vector<std::unique_ptr<BehaviourBase>> &getBehaviours(const std::string &card_id);
 
-    const std::vector<std::unique_ptr<BehaviourBase>> &getBehaviours(const std::string &card_id)
-    {
-        auto it = map_.find(card_id);
-        if ( it == map_.end() ) {
-            throw std::runtime_error("card_id not found in the registry");
-        }
-        return it->second;
-    }
-};
+    private:
+        static map_t map_;
+    };
+
+} // namespace server

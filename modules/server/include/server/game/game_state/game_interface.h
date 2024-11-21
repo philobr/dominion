@@ -1,15 +1,18 @@
 #pragma once
 
 #include <server/game/game.h>
+#include <server/game/game_state/behaviour_registry.h>
 
 namespace server
 {
     class GameInterface
     {
         std::unique_ptr<GameState> game_state;
+
         const std::string game_id;
 
     public:
+        std::unique_ptr<BehaviourRegistry> behaviour_registry;
         using ptr_t = std::unique_ptr<GameInterface>;
         using response_t = std::unique_ptr<shared::ActionOrder>;
 
@@ -38,8 +41,8 @@ namespace server
     private:
         GameInterface(const std::string &game_id, const std::vector<shared::CardBase::id_t> &play_cards,
                       const std::vector<Player::id_t> &player_ids) :
-            game_state(std::make_unique<GameState>(play_cards, player_ids)),
-            game_id(game_id)
+            game_state(std::make_unique<GameState>(play_cards, player_ids)), game_id(game_id),
+            behaviour_registry(std::make_unique<BehaviourRegistry>())
         {}
 
         response_t handle_action(std::unique_ptr<shared::ActionDecision> action_decision,
@@ -62,10 +65,10 @@ namespace server
                                                 const std::string &in_response_to,                                     \
                                                 const Player::id_t &affected_player_id)
 
-        RESPONSE_HANDLER(PlayActionCardDecision);
-        RESPONSE_HANDLER(BuyCardDecision);
-        RESPONSE_HANDLER(EndTurnDecision);
-        RESPONSE_HANDLER(ChooseNCardsFromHandDecision);
+        // RESPONSE_HANDLER(PlayActionCardDecision);
+        // RESPONSE_HANDLER(BuyCardDecision);
+        // RESPONSE_HANDLER(EndTurnDecision);
+        // RESPONSE_HANDLER(ChooseNCardsFromHandDecision);
 
     }; // namespace server
 } // namespace server

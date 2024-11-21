@@ -103,7 +103,3 @@ namespace server
         static bool validateKingdomCardTypes(const std::vector<shared::CardBase::id_t> &kingdom_cards);
     };
 } // namespace server
-
-// this is down here because the cards need the gamestate at compiletime, but the gamestate does not need the cards at
-// compiletime
-#include <server/game/cards/cards.h>

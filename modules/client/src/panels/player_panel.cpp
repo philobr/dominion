@@ -9,7 +9,7 @@ namespace client
     PlayerPanel::PlayerPanel(wxWindow *parent, wxSize size) : wxPanel(parent, wxID_ANY, wxDefaultPosition, size)
     {
         auto player = shared::PlayerBase("gigu");
-        auto reduced = shared::ReducedPlayer::make(player, {"Copper", "Copper", "Copper", "Copper", "Estate"});
+        auto reduced = shared::ReducedPlayer::make(player, {"Copper", "Copper", "Copper", "Copper", "Estate", "Estate", "Estate", "Estate", "Estate"});
         this->DrawPlayer(reduced);
     }
 
@@ -24,13 +24,28 @@ namespace client
         size_t card_width_borders = hand_card_size.GetWidth() + 8;
         outersizer->SetMinSize(wxSize(7 * card_width_borders, 150));
 
+        std::cerr << "gigugagi";
+
         wxPanel *left = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDefaultSize);
+
+        left->SetBackgroundColour(wxColour(255, 0, 0));
+        wxBoxSizer *left_sizer = new wxBoxSizer(wxVERTICAL);
+        left_sizer->SetMinSize(wxSize(1 * card_width_borders, 150));
+        left->SetSizer(left_sizer);
+
+
         wxPanel *hand = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDefaultSize);
         wxPanel *right = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDefaultSize);
 
-        outersizer->Add(left, 1, wxEXPAND, 5);
-        outersizer->Add(hand, 5, wxEXPAND, 5);
-        outersizer->Add(right, 1, wxEXPAND, 5);
+        wxBoxSizer *right_sizer = new wxBoxSizer(wxVERTICAL);
+        right_sizer->SetMinSize(wxSize(1 * card_width_borders, 150));
+        right->SetSizer(right_sizer);
+
+        right->SetBackgroundColour(wxColour(0, 0, 255));
+
+        outersizer->Add(left, 1, wxTOP, 5);
+        outersizer->Add(hand, 5, wxTOP, 5);
+        outersizer->Add(right, 1, wxTOP, 5);
 
         this->SetSizer(outersizer);
 
@@ -41,13 +56,13 @@ namespace client
 
         outer_hand_sizer->Add(sizer, 1, wxALIGN_CENTER_HORIZONTAL, 5);
 
-        /*if (hand_size * card_width_borders > hand->GetSize().GetWidth()) {
+        if (hand_size * card_width_borders > hand->GetSize().GetWidth()) {
             hand_card_size.SetWidth(hand->GetSize().GetWidth() / hand_size - 8);
             hand_card_size.SetHeight(hand_card_size.GetWidth() / 4 * 5);
-        }*/
+        }
 
         for ( size_t i = 0; i < hand_size; i++ ) {
-            PilePanel *card = new PilePanel(hand, shared::Pile::make(cards[i], 1));
+            ImagePanel *card = new ImagePanel(hand, "assets/" + cards[i] + ".png", wxBITMAP_TYPE_PNG, wxDefaultPosition, hand_card_size);
             sizer->Add(card, 0, wxLEFT | wxRIGHT, 4);
         }
 

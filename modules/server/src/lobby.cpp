@@ -2,6 +2,7 @@
 #include <server/lobbies/lobby.h>
 #include <shared/utils/assert.h>
 #include <shared/utils/uuid_generator.h>
+#include <shared/utils/logger.h>
 
 const unsigned int MAX_PLAYERS = 4;
 
@@ -65,17 +66,28 @@ void server::Lobby::start_game(MessageInterface &message_interface,
         return;
     }
 
-    game_state = std::make_unique<GameState>(request->selected_cards, players);
-    // set board cards
-    // send game state to all players
+    // Create new game interface
+    game_interface = server::GameInterface::make(lobby_id, request->selected_cards, players);
+
+    // get game state for game_state_message later
+    std::shared_ptr<server::GameState> game_state = game_interface->get_game_state();
+    if(!game_state){
+        LOG(ERROR) << "Game state is nullptr";
+        throw std::runtime_error("Game state is nullptr");
+    }
+
+    // send messages
     for ( const auto &player_id : players ) {
+        // send start game broadcast to all players
         shared::StartGameBroadcastMessage start_message =
                 shared::StartGameBroadcastMessage(lobby_id, uuid_generator::generate_uuid_v4());
         message_interface.send_message(std::make_unique<shared::StartGameBroadcastMessage>(start_message), player_id);
-        // TODO: reenable this
-        // shared::ReducedGameState reduced_game_state = game_state.get_reduced_state(player_id);
+
+        // send game state to all players
+        shared::ReducedGameState reduced_game_state = game_state->get_reduced_state(player_id);
         shared::GameStateMessage game_state_message =
                 shared::GameStateMessage(lobby_id, uuid_generator::generate_uuid_v4() /*, reduced_game_state */);
         message_interface.send_message(std::make_unique<shared::GameStateMessage>(game_state_message), player_id);
     }
 }
+

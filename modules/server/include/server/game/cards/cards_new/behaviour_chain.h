@@ -1,6 +1,6 @@
 #pragma once
 
-#include <server/game/cards/cards_new/behaviour.h>
+#include <server/game/cards/cards_new/behaviour_registry.h>
 #include <shared/utils/logger.h>
 #include <vector>
 
@@ -13,21 +13,24 @@
  *      - list of behaviour pointers (probably best)
  *      - either behaviour chains (cumbersome)
  *
+ *
+ * THIS CLASS WILL BE EXPOSED TO THE GAME_INTERFACE
+ *
  */
 class BehaviourChain
 {
-    // maybe even raw pointers or const ref? we dont want ownership of behaviours
-    std::vector<std::unique_ptr<BehaviourBase>> behaviour_list;
+    std::string current_card;
     size_t behaviour_idx;
+    std::unique_ptr<BehaviourRegistry> behaviour_registry;
 
 public:
-    BehaviourChain() : behaviour_idx(-1) { LOG(DEBUG) << "Created a new BehaviourChain"; }
+    BehaviourChain() : current_card(""), behaviour_idx(-1), behaviour_registry(std::make_unique<BehaviourRegistry>())
+    {
+        LOG(DEBUG) << "Created a new BehaviourChain";
+    }
 
-    void innit(std::vector<std::unique_ptr<BehaviourBase>> new_behaviour_list);
-    void load_behaviours(const std::string &card_name); // i prefer this to the one above, we directly access the
-                                                        // behaviour_map through this function
-
-    void reset();
+    void load_card(const std::string &card_id);
+    void reset_card();
 
     /**
      * @brief Using a raw pointer here as ownership transfer would be annoying.
@@ -41,28 +44,31 @@ public:
                   std::optional<std::unique_ptr<shared::ActionDecision>> action_decision);
 
 private:
-    const BehaviourBase &getBehaviour() const { return *behaviour_list[behaviour_idx].get(); }
+    const BehaviourBase &getBehaviour() const
+    {
+        return *behaviour_registry->getBehaviours(current_card)[behaviour_idx].get();
+    }
 
     void advance() { ++behaviour_idx; }
-    bool hasNext() const { return behaviour_idx != behaviour_list.size(); }
+    bool hasNext() const { return behaviour_idx != behaviour_registry->getBehaviours(current_card).size(); }
     void reset() { behaviour_idx = 0; }
 
     std::optional<std::unique_ptr<shared::ActionOrder>>
     handleDecision(server::GameState *state, std::optional<std::unique_ptr<shared::ActionDecision>> action_decision);
 };
 
-void BehaviourChain::innit(std::vector<std::unique_ptr<BehaviourBase>> new_behaviour_list)
+void BehaviourChain::load_card(const std::string &card_id)
 {
-    if ( !behaviour_list.empty() || behaviour_idx != -1 ) {
+    if ( !current_card.empty() || behaviour_idx != -1 ) {
         LOG(WARN) << "BehaviourList is already initialised!";
         throw std::runtime_error("BehaviourList is already initialised !");
     }
 
-    behaviour_list = new_behaviour_list;
     behaviour_idx = 0;
+    current_card = card_id;
 }
 
-void BehaviourChain::reset()
+void BehaviourChain::reset_card()
 {
     if ( hasNext() ) {
         LOG(WARN) << "Tried to reset the BehaviourChain before it was finished!";
@@ -70,7 +76,7 @@ void BehaviourChain::reset()
     }
 
     behaviour_idx = -1; // this way we throw if we try to use an uninitialised chain
-    behaviour_list.clear();
+    current_card.clear();
 }
 
 std::optional<std::unique_ptr<shared::ActionOrder>>

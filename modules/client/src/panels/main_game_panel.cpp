@@ -22,7 +22,11 @@ namespace client
 
     void MainGamePanel::DrawGameState(const std::unique_ptr<shared::ReducedGameState> &GameState)
     {
-        Board->DrawBoard(GameState->board);
+
+        bool is_active = (GameState->active_player == GameState->reduced_player->getId());
+
+
+        Board->DrawBoard(GameState->board, is_active, GameState->reduced_player->getTreasure());
         Player->DrawPlayer(GameState->reduced_player);
         EnemyInfo->DrawEnemies(GameState->reduced_enemies);
     }

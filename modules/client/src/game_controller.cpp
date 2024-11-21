@@ -116,6 +116,13 @@ namespace client
         //
 
         GameController::_gameWindow->showPanel(GameController::_mainGamePanel);
+   }
+
+
+    void GameController::buyCard(const std::string &card_id)
+    {
+        // send request to buy card
+        wxMessageBox("Buying one " + card_id, "Buying card", wxICON_INFORMATION);
     }
 
 

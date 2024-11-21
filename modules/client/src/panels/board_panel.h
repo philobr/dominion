@@ -3,6 +3,7 @@
 #include <shared/game/game_state/board_base.h>
 
 #include <wx/wx.h>
+#include "pile_panel.h"
 
 namespace client
 {
@@ -28,7 +29,8 @@ namespace client
          *
          * @param Board
          */
-        void DrawBoard(std::shared_ptr<shared::Board> Board);
+        void DrawBoard(std::shared_ptr<shared::Board> Board, bool is_active, unsigned int treasure);
+        void makeBuyable(PilePanel* Pile);
 
     private:
     };

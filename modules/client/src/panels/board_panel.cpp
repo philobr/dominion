@@ -1,4 +1,6 @@
 #include "board_panel.h"
+
+#include "../game_controller.h"
 #include <wx/gbsizer.h>
 #include <wx/wx.h>
 #include "pile_panel.h"
@@ -12,11 +14,11 @@ namespace client
     {
 
         auto board = shared::Board::make(get_valid_kingdom_cards(), 3);
-        this->DrawBoard(board);
+        this->DrawBoard(board, true, 3);
     }
 
 
-    void BoardPanel::DrawBoard(std::shared_ptr<shared::Board> Board)
+    void BoardPanel::DrawBoard(std::shared_ptr<shared::Board> Board, bool is_active, unsigned int treasure)
     {
         this->DestroyChildren();
 
@@ -32,6 +34,10 @@ namespace client
             wxGBSpan span = wxGBSpan(1, 1);
             sizer->Add(Pile, position, span, wxALIGN_CENTER_HORIZONTAL);
 
+            if (is_active) {
+                makeBuyable(Pile);
+            }
+
             counter++;
         }
 
@@ -41,6 +47,10 @@ namespace client
             wxGBPosition position = wxGBPosition(counter, 1);
             wxGBSpan span = wxGBSpan(1, 1);
             sizer->Add(Pile, position, span, wxALIGN_CENTER_HORIZONTAL);
+            
+            if (is_active) {
+                makeBuyable(Pile);
+            }
 
             counter++;
         }
@@ -52,10 +62,23 @@ namespace client
             wxGBSpan span = wxGBSpan(1, 1);
             sizer->Add(Pile, position, span, wxALIGN_CENTER_HORIZONTAL);
 
+            if (is_active) {
+                makeBuyable(Pile);
+            }
+
             counter++;
         }
         sizer->Layout();
         this->SetSizer(sizer, true);
+    }
+
+    void BoardPanel::makeBuyable(PilePanel* Pile)
+    {
+        Pile->SetToolTip("Buy card");
+        Pile->SetCursor(wxCursor(wxCURSOR_HAND));
+        Pile->Bind(wxEVT_LEFT_UP, [&Pile](wxMouseEvent& /*event*/) {
+            GameController::buyCard(Pile->getPile().card_id);
+        });
     }
 
 

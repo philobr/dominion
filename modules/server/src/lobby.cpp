@@ -70,10 +70,10 @@ namespace server
         // Create new game interface
         game_interface = GameInterface::make(lobby_id, request->selected_cards, players);
 
-        // get game state for game_state_message later
+        // get game state for game_state_message
         std::shared_ptr<GameState> game_state = game_interface->get_game_state();
         if(!game_state){
-            LOG(ERROR) << "Game state is nullptr";
+            LOG(ERROR) << "Game state in Lobby::start_game is nullptr";
             throw std::runtime_error("Game state is nullptr");
         }
 

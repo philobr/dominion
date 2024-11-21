@@ -8,7 +8,7 @@ namespace server
     class GameInterface
     {
         std::unique_ptr<GameState> game_state;
-
+        // TODO: add behaviour chain and everything it entails
         const std::string game_id;
 
     public:

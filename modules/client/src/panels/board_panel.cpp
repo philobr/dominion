@@ -32,12 +32,12 @@ namespace client
             PilePanel *Pile = new PilePanel(this, VictoryPile);
             wxGBPosition position = wxGBPosition(counter, 0);
             wxGBSpan span = wxGBSpan(1, 1);
-            sizer->Add(Pile, position, span, wxALIGN_CENTER_HORIZONTAL);
 
             if ( is_active ) {
                 makeBuyable(Pile);
             }
 
+            sizer->Add(Pile, position, span, wxALIGN_CENTER_HORIZONTAL);
             counter++;
         }
 
@@ -46,6 +46,11 @@ namespace client
             PilePanel *Pile = new PilePanel(this, TreasurePile);
             wxGBPosition position = wxGBPosition(counter, 1);
             wxGBSpan span = wxGBSpan(1, 1);
+
+            if ( is_active ) {
+                makeBuyable(Pile);
+            }
+
             sizer->Add(Pile, position, span, wxALIGN_CENTER_HORIZONTAL);
 
             if ( is_active ) {
@@ -77,7 +82,7 @@ namespace client
         Pile->SetToolTip("Buy card");
         Pile->SetCursor(wxCursor(wxCURSOR_HAND));
         Pile->Bind(wxEVT_LEFT_UP,
-                   [&Pile](wxMouseEvent & /*event*/) { GameController::buyCard(Pile->getPile().card_id); });
+                   [Pile](wxMouseEvent & /*event*/) { GameController::buyCard(Pile->getPile().card_id); });
     }
 
 

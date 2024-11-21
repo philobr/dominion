@@ -50,27 +50,28 @@ namespace client
 
         this->SetSizer(outersizer);
 
-        wxBoxSizer *outer_hand_sizer = new wxBoxSizer(wxVERTICAL);
-        outer_hand_sizer->SetMinSize(wxSize(5 * card_width_borders, 150));
+        wxGridSizer *sizer = new wxGridSizer(1, hand_size, 0, 0);
+        sizer->SetMinSize(wxSize(5 * card_width_borders, 150));
 
-        wxBoxSizer *sizer = new wxBoxSizer(wxHORIZONTAL);
+        hand->SetSizer(sizer);
 
-        outer_hand_sizer->Add(sizer, 1, wxALIGN_CENTER_HORIZONTAL, 5);
-
-        if ( hand_size * card_width_borders > (unsigned)hand->GetSize().GetWidth() ) {
-            hand_card_size.SetWidth(hand->GetSize().GetWidth() / hand_size - 8);
+        if ( hand_size > 5) {
+            // scale bigger hands
+            hand_card_size.SetWidth(hand_card_size.GetWidth() * 5 / hand_size - 8);
             hand_card_size.SetHeight(hand_card_size.GetWidth() / 4 * 5);
+            
         }
 
         for ( size_t i = 0; i < hand_size; i++ ) {
             ImagePanel *card = new ImagePanel(hand, "assets/" + cards[i] + ".png", wxBITMAP_TYPE_PNG, wxDefaultPosition,
-                                              hand_card_size);
+                                              hand_card_size, 0);
             sizer->Add(card, 0, wxLEFT | wxRIGHT, 4);
         }
+
+        sizer->Layout();
 
         /*std::cerr << "at least we're trying to draw a card\n";
         PilePanel * card = new PilePanel(this, shared::Pile::make(cards[0], 1));
         sizer->Add(card, 1, wxALL, 5);*/
-        hand->SetSizer(sizer);
     }
 } // namespace client

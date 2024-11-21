@@ -160,50 +160,44 @@ TEST(ServerLibraryTest, JoinLobby)
     ASSERT_EQ(games->at("123")->get_players().size(), 4) << "There should still be four players in the lobby";
 }
 
-/*TEST(ServerLibraryTest, StartGame)
+TEST(ServerLibraryTest, StartGame)
 {
-    auto is_failure_message = [](shared::ServerToClientMessage *message)
-    {
-        const shared::ResultResponseMessage *result_msg = dynamic_cast<shared::ResultResponseMessage *>(message);
-        return (result_msg != nullptr) && !result_msg->success;
-    };
-
     std::shared_ptr<MockMessageInterface> message_interface = std::make_shared<MockMessageInterface>();
     server::LobbyManager lobby_manager(message_interface);
     shared::PlayerBase::id_t player_1 = "Max";
     shared::PlayerBase::id_t player_2 = "Peter";
 
-    shared::CreateLobbyRequestMessage request1("123", "101", player_1);
-    shared::JoinLobbyRequestMessage request2("123", "102", player_2);
+    auto request1 = std::make_unique<shared::CreateLobbyRequestMessage>("123", "101", player_1);
+    auto request2 = std::make_unique<shared::JoinLobbyRequestMessage>("123", "102", player_2);
 
     std::vector<shared::CardBase::id_t> selected_cards = {"Moat",   "Village", "Woodcutter", "Workshop", "Militia",
                                                           "Cellar", "Market",  "Mine",       "Smithy",   "Remodel"};
 
     // Start game request with wrong game_id
-    shared::StartGameRequestMessage request3("abc", "103", player_1, selected_cards);
+    auto request3 = std::make_unique<shared::StartGameRequestMessage>("abc", "103", player_1, selected_cards);
 
     // Start game request not as game_master
-    shared::StartGameRequestMessage request4("123", "104", player_2, selected_cards);
+    auto request4 = std::make_unique<shared::StartGameRequestMessage>("123", "104", player_2, selected_cards);
 
     // Start game request as game_master
-    shared::StartGameRequestMessage request5("123", "105", player_1, selected_cards);
+    auto request5 = std::make_unique<shared::StartGameRequestMessage>("123", "105", player_1, selected_cards);
 
-    lobby_manager.create_lobby(request1);
-    lobby_manager.join_lobby(request2);
+    lobby_manager.create_lobby(std::move(request1));
+    lobby_manager.join_lobby(std::move(request2));
 
     // All expected function calls of send_message
     {
         InSequence s;
         // request3
-        EXPECT_CALL(*message_interface, send_message(Truly(is_failure_message), player_1)).Times(1);
+        EXPECT_CALL(*message_interface, send_message(IsFailureMessage(), player_1)).Times(1);
         // request4
-        EXPECT_CALL(*message_interface, send_message(Truly(is_failure_message), player_2)).Times(1);
+        EXPECT_CALL(*message_interface, send_message(IsFailureMessage(), player_2)).Times(1);
         // request5
         EXPECT_CALL(*message_interface, send_message(_, _)).Times(4);
     }
 
-    lobby_manager.start_game(request3);
-    lobby_manager.start_game(request4);
-    lobby_manager.start_game(request5);
+    lobby_manager.start_game(std::move(request3));
+    lobby_manager.start_game(std::move(request4));
+    lobby_manager.start_game(std::move(request5));
     // TODO: Check if the game started correctly
-}*/
+}

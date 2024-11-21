@@ -18,7 +18,7 @@ namespace client
     }
 
 
-    void BoardPanel::DrawBoard(std::shared_ptr<shared::Board> Board, bool is_active, unsigned int treasure)
+    void BoardPanel::DrawBoard(std::shared_ptr<shared::Board> Board, bool is_active, unsigned int /*treasure*/)
     {
         this->DestroyChildren();
 

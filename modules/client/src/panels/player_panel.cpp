@@ -56,7 +56,7 @@ namespace client
 
         outer_hand_sizer->Add(sizer, 1, wxALIGN_CENTER_HORIZONTAL, 5);
 
-        if (hand_size * card_width_borders > hand->GetSize().GetWidth()) {
+        if (hand_size * card_width_borders > (unsigned)hand->GetSize().GetWidth()) {
             hand_card_size.SetWidth(hand->GetSize().GetWidth() / hand_size - 8);
             hand_card_size.SetHeight(hand_card_size.GetWidth() / 4 * 5);
         }

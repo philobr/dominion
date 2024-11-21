@@ -122,7 +122,7 @@ namespace client
     void GameController::buyCard(const std::string &card_id)
     {
         // send request to buy card
-        
+
 
         // For testing delete later
         std::cerr << "Tried to buy card " << card_id << std::endl;

@@ -32,9 +32,8 @@ namespace client
         void DrawBoard(std::shared_ptr<shared::Board> Board, bool is_active, unsigned int /*treasure*/);
 
     private:
-
         /**
-         * @brief Make a pile buyable 
+         * @brief Make a pile buyable
          * by making it cliickable and attaching an Event handler that sends a buy request
          */
         void makeBuyable(PilePanel *Pile);

@@ -39,10 +39,10 @@ namespace server
         shared::PlayerBase::id_t get_game_master() const { return game_master; };
 
     private:
-        std::unique_ptr<GameInterface> game_interface;
-        shared::PlayerBase::id_t game_master;
+        GameInterface::ptr_t game_interface;
+        Player::id_t game_master;
 
-        std::vector<shared::PlayerBase::id_t> players;
+        std::vector<Player::id_t> players;
         std::string lobby_id;
     };
 } // namespace server

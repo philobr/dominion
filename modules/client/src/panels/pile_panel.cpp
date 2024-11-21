@@ -25,8 +25,5 @@ namespace client
         this->SetSizer(sizer);
     }
 
-    shared::Pile PilePanel::getPile() const
-    {
-        return Pile;
-    }
+    shared::Pile PilePanel::getPile() const { return Pile; }
 } // namespace client

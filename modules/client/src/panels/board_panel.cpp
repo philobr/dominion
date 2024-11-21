@@ -1,8 +1,8 @@
 #include "board_panel.h"
 
-#include "../game_controller.h"
 #include <wx/gbsizer.h>
 #include <wx/wx.h>
+#include "../game_controller.h"
 #include "pile_panel.h"
 
 #include <shared/utils/test_helpers.h>
@@ -34,7 +34,7 @@ namespace client
             wxGBSpan span = wxGBSpan(1, 1);
             sizer->Add(Pile, position, span, wxALIGN_CENTER_HORIZONTAL);
 
-            if (is_active) {
+            if ( is_active ) {
                 makeBuyable(Pile);
             }
 
@@ -47,8 +47,8 @@ namespace client
             wxGBPosition position = wxGBPosition(counter, 1);
             wxGBSpan span = wxGBSpan(1, 1);
             sizer->Add(Pile, position, span, wxALIGN_CENTER_HORIZONTAL);
-            
-            if (is_active) {
+
+            if ( is_active ) {
                 makeBuyable(Pile);
             }
 
@@ -62,7 +62,7 @@ namespace client
             wxGBSpan span = wxGBSpan(1, 1);
             sizer->Add(Pile, position, span, wxALIGN_CENTER_HORIZONTAL);
 
-            if (is_active) {
+            if ( is_active ) {
                 makeBuyable(Pile);
             }
 
@@ -72,13 +72,12 @@ namespace client
         this->SetSizer(sizer, true);
     }
 
-    void BoardPanel::makeBuyable(PilePanel* Pile)
+    void BoardPanel::makeBuyable(PilePanel *Pile)
     {
         Pile->SetToolTip("Buy card");
         Pile->SetCursor(wxCursor(wxCURSOR_HAND));
-        Pile->Bind(wxEVT_LEFT_UP, [&Pile](wxMouseEvent& /*event*/) {
-            GameController::buyCard(Pile->getPile().card_id);
-        });
+        Pile->Bind(wxEVT_LEFT_UP,
+                   [&Pile](wxMouseEvent & /*event*/) { GameController::buyCard(Pile->getPile().card_id); });
     }
 
 

@@ -116,7 +116,7 @@ namespace client
         //
 
         GameController::_gameWindow->showPanel(GameController::_mainGamePanel);
-   }
+    }
 
 
     void GameController::buyCard(const std::string &card_id)

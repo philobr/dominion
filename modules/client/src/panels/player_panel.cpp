@@ -9,7 +9,8 @@ namespace client
     PlayerPanel::PlayerPanel(wxWindow *parent, wxSize size) : wxPanel(parent, wxID_ANY, wxDefaultPosition, size)
     {
         auto player = shared::PlayerBase("gigu");
-        auto reduced = shared::ReducedPlayer::make(player, {"Copper", "Copper", "Copper", "Copper", "Estate", "Estate", "Estate", "Estate", "Estate"});
+        auto reduced = shared::ReducedPlayer::make(
+                player, {"Copper", "Copper", "Copper", "Copper", "Estate", "Estate", "Estate", "Estate", "Estate"});
         this->DrawPlayer(reduced);
     }
 
@@ -56,13 +57,14 @@ namespace client
 
         outer_hand_sizer->Add(sizer, 1, wxALIGN_CENTER_HORIZONTAL, 5);
 
-        if (hand_size * card_width_borders > (unsigned)hand->GetSize().GetWidth()) {
+        if ( hand_size * card_width_borders > (unsigned)hand->GetSize().GetWidth() ) {
             hand_card_size.SetWidth(hand->GetSize().GetWidth() / hand_size - 8);
             hand_card_size.SetHeight(hand_card_size.GetWidth() / 4 * 5);
         }
 
         for ( size_t i = 0; i < hand_size; i++ ) {
-            ImagePanel *card = new ImagePanel(hand, "assets/" + cards[i] + ".png", wxBITMAP_TYPE_PNG, wxDefaultPosition, hand_card_size);
+            ImagePanel *card = new ImagePanel(hand, "assets/" + cards[i] + ".png", wxBITMAP_TYPE_PNG, wxDefaultPosition,
+                                              hand_card_size);
             sizer->Add(card, 0, wxLEFT | wxRIGHT, 4);
         }
 

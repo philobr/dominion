@@ -5,16 +5,10 @@
 #include <vector>
 
 /**
- * @brief BehaviourChain as discussed in MergeRequest Proposal/cards_redesign.
- * We could add:
+ * @brief This class stores the state of the card that is currently being played. it will be accessed from the game
+ * interface and handle incoming/outcoming messages. it will also apply the behaviours to the player/gamestate THIS
  *
- * - A shared card_map where all cards are included with their base stats (id, type, cost)
- * - A server behaviour_map where card names are linked with
- *      - list of behaviour pointers (probably best)
- *      - either behaviour chains (cumbersome)
- *
- *
- * THIS CLASS WILL BE EXPOSED TO THE GAME_INTERFACE
+ *  CLASS WILL BE EXPOSED TO THE GAME_INTERFACE
  *
  */
 class BehaviourChain

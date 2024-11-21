@@ -18,6 +18,11 @@ server::BehaviourRegistry::BehaviourRegistry()
 {
     LOG(INFO) << "Creating Behaviour registry";
 
+    /**
+     * behaviours are registered to card names here.
+     * insert can take multiple types as template param
+     */
+
     using namespace server;
     using namespace behaviour;
 

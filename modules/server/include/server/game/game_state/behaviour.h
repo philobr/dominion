@@ -7,6 +7,7 @@ namespace server
 {
     enum BehaviourType
     {
+        NONE,
         NON_INTERACTIVE = 1,
         DEMANDS_ACTION = 2,
         EXPECTS_RESPONSE = 4,
@@ -15,10 +16,6 @@ namespace server
         INTERACTIVE = DEMANDS_ACTION | EXPECTS_RESPONSE
     };
 
-    /**
-     * @brief A behaviour as described in the card refactor proposal.
-     * Behaviours can still be created using templates (e.g. GainCoins<int coins=2>)
-     */
     class BehaviourBase
     {
     protected:
@@ -27,7 +24,7 @@ namespace server
     public:
         using ret_t = std::optional<std::unique_ptr<shared::ActionOrder>>;
 
-        BehaviourBase() : behaviour_type(BehaviourType::NON_INTERACTIVE) {}
+        BehaviourBase() : behaviour_type(BehaviourType::NONE) {}
         BehaviourBase(BehaviourType type) : behaviour_type(type) {}
         virtual ~BehaviourBase() = default;
 
@@ -35,6 +32,7 @@ namespace server
         apply(server::GameState *state,
               std::optional<std::unique_ptr<shared::ActionDecision>> action_decision = std::nullopt) const = 0;
 
+        // i think we dont even need this
         bool expectsResponse() const { return (behaviour_type & BehaviourType::EXPECTS_RESPONSE) != 0; }
 
     private:

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <server/game/cards/cards_new/behaviour_registry.h>
+#include <server/game/game_state/cards_new/behaviour_registry.h>
 #include <shared/utils/logger.h>
 #include <vector>
 

@@ -16,7 +16,7 @@ namespace client
     public:
         EnemyInfoPanel(wxWindow *parent, wxSize size);
 
-        void DrawEnemies(const std::vector<std::unique_ptr<shared::ReducedEnemy>> & /*Enemies*/) {};
+        void DrawEnemies(const std::vector<std::unique_ptr<shared::ReducedEnemy>> & /*Enemies*/){};
 
     private:
     };

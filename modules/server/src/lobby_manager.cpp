@@ -12,6 +12,7 @@ void server::LobbyManager::create_lobby(std::unique_ptr<shared::CreateLobbyReque
                 lobby_id, uuid_generator::generate_uuid_v4(), false, request->message_id, "Lobby already exists");
         message_interface->send_message(std::make_unique<shared::ResultResponseMessage>(failure_message),
                                         game_master_id);
+        return;
     }
 
     games[lobby_id] = std::make_shared<Lobby>(game_master_id, lobby_id);

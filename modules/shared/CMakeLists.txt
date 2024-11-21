@@ -9,6 +9,7 @@ add_library(shared_lib STATIC
     
     src/game/player_base.cpp
     src/game/board_base.cpp
+    src/game/cards.cpp
     
     src/utils/json.cpp
     src/utils/logger.cpp

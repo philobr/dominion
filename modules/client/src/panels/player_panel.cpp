@@ -25,8 +25,6 @@ namespace client
         size_t card_width_borders = hand_card_size.GetWidth() + 8;
         outersizer->SetMinSize(wxSize(7 * card_width_borders, 150));
 
-        std::cerr << "gigugagi";
-
         wxPanel *left = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDefaultSize);
 
         left->SetBackgroundColour(wxColour(255, 0, 0));

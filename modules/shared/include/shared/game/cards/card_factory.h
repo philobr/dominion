@@ -16,7 +16,7 @@ namespace shared
             map_.emplace(card_id, std::make_unique<CardBase>(card_id, type, cost));
         }
 
-        static const CardBase &get(const CardBase::id_t &card_id) { return *map_.at(card_id).get(); }
+        static const CardBase &getCard(const CardBase::id_t &card_id) { return *map_.at(card_id).get(); }
         static const map_t &getAll() { return map_; }
 
         static bool has(const CardBase::id_t &card_id) { return map_.count(card_id) > 0; }

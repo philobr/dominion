@@ -66,6 +66,11 @@ namespace client
         joinLobbyButton->Bind(wxEVT_BUTTON, [](const wxCommandEvent & /*event*/) { GameController::JoinLobby(); });
         VerticalLayout->Add(joinLobbyButton, 0, wxALIGN_RIGHT | wxALL, 10);
 
+        // TODO Remove this button before release
+        wxButton *skipToGameScreenButton = new wxButton(this, wxID_ANY, "Game Screen", wxDefaultPosition, wxSize(100, 40));
+        skipToGameScreenButton->Bind(wxEVT_BUTTON, [](const wxCommandEvent & /*event*/) { GameController::startGame(); });
+        VerticalLayout->Add(skipToGameScreenButton, 0, wxALIGN_RIGHT | wxALL, 10);
+
         this->SetSizerAndFit(VerticalLayout);
     }
 

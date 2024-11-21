@@ -82,12 +82,6 @@ namespace client
             // connect to the server
             _clientNetworkManager->init(inputServerAddress.ToStdString(), portAsLong);
 
-            // detach gui from network atm
-            if ( inputPlayerName == "testgigu" ) {
-
-                GameController::_gameWindow->showPanel(GameController::_lobbyPanel);
-            }
-
             // send request to join game
             shared::CreateLobbyRequestMessage request(inputGameName.ToStdString(), uuid_generator::generate_uuid_v4(),
                                                       inputPlayerName.ToStdString());

@@ -4,6 +4,7 @@
 #include <memory>
 #include <string>
 
+#include <server/game/game_state/game_interface.h>
 #include <server/game/game_state/game_state.h>
 #include <server/network/message_interface.h>
 #include <shared/message_types.h>
@@ -32,18 +33,16 @@ namespace server
         void start_game(MessageInterface &message_interface, std::unique_ptr<shared::StartGameRequestMessage> request);
         void receive_action(MessageInterface &message_interface, std::unique_ptr<shared::ActionDecisionMessage> action);
 
-        shared::ReducedGameState get_game_state(shared::PlayerBase::id_t player) const;
+        // TODO: check for nullptr and log and throw
         std::vector<shared::PlayerBase::id_t> get_players() const { return players; }
-
 
         shared::PlayerBase::id_t get_game_master() const { return game_master; };
 
     private:
-        std::unique_ptr<GameState> game_state;
-        shared::PlayerBase::id_t game_master;
+        GameInterface::ptr_t game_interface;
+        Player::id_t game_master;
 
-        std::vector<shared::PlayerBase::id_t> players;
-
+        std::vector<Player::id_t> players;
         std::string lobby_id;
     };
 } // namespace server

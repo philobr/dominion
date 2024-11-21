@@ -30,7 +30,6 @@ namespace server
         void join_lobby(std::unique_ptr<shared::JoinLobbyRequestMessage> request);
         void start_game(std::unique_ptr<shared::StartGameRequestMessage> request);
         void receive_action(std::unique_ptr<shared::ActionDecisionMessage> action);
-        shared::ReducedGameState get_game_state(std::string game_id, shared::PlayerBase::id_t player);
         const std::map<std::string, std::shared_ptr<Lobby>> *get_games() { return &games; };
 
     private:

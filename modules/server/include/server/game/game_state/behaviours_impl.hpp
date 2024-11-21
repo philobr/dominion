@@ -32,26 +32,12 @@ namespace server
             const
 
         // ================================
-        // PLACEHOLDER BEHAVIOUR
-        // ================================
-        DEFINE_BEHAVIOUR(NOT_IMPLEMENTED_YET, BehaviourType::NON_INTERACTIVE)
-        {
-            if ( game_state->is_game_over() || action_decision.has_value() ) {
-                LOG(ERROR) << "making the linter happy by using all the variables :D :D :D";
-            }
-            LOG(ERROR) << "BEHAVIOUR IS NOT IMPLEMENTED YET";
-            throw std::runtime_error("not implemented");
-
-            return std::nullopt;
-        }
-
-        // ================================
         // BEHAVIOUR IMPLEMENTATIONS
         // ================================
         DEFINE_TEMPLATED_BEHAVIOUR(GainCoins, BehaviourType::NON_INTERACTIVE, int, coins)
         {
             CHECK_HAS_NO_DECISION;
-            LOG(INFO) << "Applied GainCoins";
+            LOG(DEGUG) << "Applied GainCoins";
 
             auto &affected_player = game_state->get_current_player();
             affected_player.incTreasure(coins);
@@ -78,15 +64,40 @@ namespace server
             return std::nullopt;
         }
 
-        DEFINE_TEMPLATED_BEHAVIOUR(GainPoints, BehaviourType::NON_INTERACTIVE, int, actions)
+        DEFINE_TEMPLATED_BEHAVIOUR(GainPoints, BehaviourType::NON_INTERACTIVE, int, points)
         {
             CHECK_HAS_NO_DECISION;
             LOG(INFO) << "Applied GainPoints";
 
             auto &affected_player = game_state->get_current_player();
-            affected_player.incPoints(actions);
+            affected_player.incPoints(points);
             return std::nullopt;
         }
+
+#define TODO_IMPLEMENT_ME                                                                                              \
+    if ( game_state->is_game_over() || action_decision.has_value() ) {                                                 \
+        LOG(ERROR) << "making the linter happy by using all the variables :D :D :D";                                   \
+    }                                                                                                                  \
+    LOG(ERROR) << "BEHAVIOUR IS NOT IMPLEMENTED YET";                                                                  \
+    throw std::runtime_error("not implemented");                                                                       \
+                                                                                                                       \
+    return std::nullopt;
+
+        // ================================
+        // PLACEHOLDER BEHAVIOUR
+        // ================================
+        DEFINE_BEHAVIOUR(NOT_IMPLEMENTED_YET, BehaviourType::NON_INTERACTIVE) { TODO_IMPLEMENT_ME; }
+
+        // ================================
+        // TODO
+        // ================================
+        DEFINE_TEMPLATED_BEHAVIOUR(DrawCards, BehaviourType::NON_INTERACTIVE, int, cards) { TODO_IMPLEMENT_ME; }
+
+        DEFINE_BEHAVIOUR(GainAnyCard, BehaviourType::NON_INTERACTIVE) { TODO_IMPLEMENT_ME; }
+
+        // ================================
+        // TODO: ADD MORE
+        // ================================
 
 #undef DEFINE_BEHAVIOUR
 #undef DEFINE_TEMPLATED_BEHAVIOUR

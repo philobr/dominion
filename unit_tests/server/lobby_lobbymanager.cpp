@@ -75,6 +75,7 @@ TEST(ServerLibraryTest, CreateLobby)
     ASSERT_EQ(games->at("123")->get_players().size(), 1);
 }
 
+// TODO: Implement tests for the following methods
 /*TEST(ServerLibraryTest, JoinLobby)
 {
     auto is_success_message = [](shared::ServerToClientMessage *message)

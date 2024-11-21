@@ -1,4 +1,5 @@
 #pragma once
+
 #include <server/game/game.h>
 
 namespace server
@@ -10,7 +11,7 @@ namespace server
 
     public:
         using ptr_t = std::unique_ptr<GameInterface>;
-        using response_t = std::unique_ptr<shared::ServerToClientMessage>;
+        using response_t = std::unique_ptr<shared::ActionOrder>;
 
         GameInterface operator=(const GameInterface &other) = delete;
         GameInterface(const GameInterface &other) = delete;

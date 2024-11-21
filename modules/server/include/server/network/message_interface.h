@@ -21,7 +21,7 @@ namespace server
          */
         // TODO: I think this also needs to take in a player ID
         virtual void send_message(std::unique_ptr<shared::ServerToClientMessage> message,
-                                 const shared::PlayerBase::id_t &player_id) = 0;
+                                  const shared::PlayerBase::id_t &player_id) = 0;
     };
 
     class ImplementedMessageInterface : public MessageInterface

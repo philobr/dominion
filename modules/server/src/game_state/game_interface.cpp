@@ -117,8 +117,7 @@ namespace server
     }
 
     GameInterface::response_t GameInterface::PlayActionCardDecision_response_handler(
-            std::unique_ptr<shared::PlayActionCardDecision> /*action_decision*/,
-            const Player::id_t & /*player_id*/,
+            std::unique_ptr<shared::PlayActionCardDecision> /*action_decision*/, const Player::id_t & /*player_id*/,
             const std::string & /*in_response_to*/)
     {
         // TODO: Implement for MVP 3
@@ -126,20 +125,20 @@ namespace server
         throw std::runtime_error("Not implemented");
     }
 
-    GameInterface::response_t GameInterface::BuyCardDecision_response_handler(
-            std::unique_ptr<shared::BuyCardDecision> /*action_decision*/,
-            const Player::id_t & /*player_id*/,
-            const std::string & /*in_response_to*/)
+    GameInterface::response_t
+    GameInterface::BuyCardDecision_response_handler(std::unique_ptr<shared::BuyCardDecision> /*action_decision*/,
+                                                    const Player::id_t & /*player_id*/,
+                                                    const std::string & /*in_response_to*/)
     {
         // TODO: Implement for MVP 3
         LOG(ERROR) << "Not implemented";
         throw std::runtime_error("Not implemented");
     }
 
-    GameInterface::response_t GameInterface::EndTurnDecision_response_handler(
-            std::unique_ptr<shared::EndTurnDecision> /*action_decision*/,
-            const Player::id_t & /*player_id*/,
-            const std::string & /*in_response_to*/)
+    GameInterface::response_t
+    GameInterface::EndTurnDecision_response_handler(std::unique_ptr<shared::EndTurnDecision> /*action_decision*/,
+                                                    const Player::id_t & /*player_id*/,
+                                                    const std::string & /*in_response_to*/)
     {
         // TODO: Implement for MVP 3
         LOG(ERROR) << "Not implemented";
@@ -148,8 +147,7 @@ namespace server
 
     GameInterface::response_t GameInterface::ChooseNCardsFromHandDecision_response_handler(
             std::unique_ptr<shared::ChooseNCardsFromHandDecision> /*action_decision*/,
-            const Player::id_t & /*player_id*/,
-            const std::string & /*in_response_to*/)
+            const Player::id_t & /*player_id*/, const std::string & /*in_response_to*/)
     {
         // TODO: Implement for MVP 3
         LOG(ERROR) << "Not implemented";

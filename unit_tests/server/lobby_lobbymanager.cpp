@@ -102,13 +102,20 @@ TEST(ServerLibraryTest, JoinLobby)
     shared::PlayerBase::id_t player_4 = "John";
     shared::PlayerBase::id_t player_5 = "George";
 
-    auto request1 = std::make_unique<shared::CreateLobbyRequestMessage>("123", uuid_generator::generate_uuid_v4(), player_1);
-    auto request2 = std::make_unique<shared::JoinLobbyRequestMessage>("123", uuid_generator::generate_uuid_v4(), player_2);
-    auto request2_again = std::make_unique<shared::JoinLobbyRequestMessage>("123", uuid_generator::generate_uuid_v4(), player_2);
-    auto false_request3 = std::make_unique<shared::JoinLobbyRequestMessage>("222", uuid_generator::generate_uuid_v4(), player_3);
-    auto corrected_request3 = std::make_unique<shared::JoinLobbyRequestMessage>("123", uuid_generator::generate_uuid_v4(), player_3);
-    auto request4 = std::make_unique<shared::JoinLobbyRequestMessage>("123", uuid_generator::generate_uuid_v4(), player_4);
-    auto request5 = std::make_unique<shared::JoinLobbyRequestMessage>("123", uuid_generator::generate_uuid_v4(), player_5);
+    auto request1 =
+            std::make_unique<shared::CreateLobbyRequestMessage>("123", uuid_generator::generate_uuid_v4(), player_1);
+    auto request2 =
+            std::make_unique<shared::JoinLobbyRequestMessage>("123", uuid_generator::generate_uuid_v4(), player_2);
+    auto request2_again =
+            std::make_unique<shared::JoinLobbyRequestMessage>("123", uuid_generator::generate_uuid_v4(), player_2);
+    auto false_request3 =
+            std::make_unique<shared::JoinLobbyRequestMessage>("222", uuid_generator::generate_uuid_v4(), player_3);
+    auto corrected_request3 =
+            std::make_unique<shared::JoinLobbyRequestMessage>("123", uuid_generator::generate_uuid_v4(), player_3);
+    auto request4 =
+            std::make_unique<shared::JoinLobbyRequestMessage>("123", uuid_generator::generate_uuid_v4(), player_4);
+    auto request5 =
+            std::make_unique<shared::JoinLobbyRequestMessage>("123", uuid_generator::generate_uuid_v4(), player_5);
 
     const auto *games = lobby_manager.get_games();
 

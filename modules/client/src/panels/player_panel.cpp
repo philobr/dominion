@@ -53,11 +53,10 @@ namespace client
 
         hand->SetSizer(sizer);
 
-        if ( hand_size > 5) {
+        if ( hand_size > 5 ) {
             // scale bigger hands
             hand_card_size.SetWidth(hand_card_size.GetWidth() * 5 / hand_size - 8);
             hand_card_size.SetHeight(hand_card_size.GetWidth() / 4 * 5);
-            
         }
 
         for ( size_t i = 0; i < hand_size; i++ ) {

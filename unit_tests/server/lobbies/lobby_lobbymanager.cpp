@@ -1,10 +1,10 @@
 #include <server/lobbies/lobby.h>
 #include <server/lobbies/lobby_manager.h>
-#include "mock_templates.h"
 #include <shared/message_types.h>
 #include <shared/utils/test_helpers.h>
 #include <shared/utils/uuid_generator.h>
 #include <typeinfo>
+#include "mock_templates.h"
 
 TEST(ServerLibraryTest, CreateLobby)
 {

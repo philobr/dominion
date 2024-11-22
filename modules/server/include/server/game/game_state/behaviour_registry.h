@@ -1,5 +1,6 @@
 #pragma once
 
+#include <functional>
 #include <memory>
 #include <stdexcept>
 #include <string>
@@ -27,7 +28,7 @@ namespace server
          */
         BehaviourRegistry();
 
-        const std::vector<std::unique_ptr<BehaviourBase>> &getBehaviours(const std::string &card_id);
+        std::function<std::vector<BehaviourBase *>()> getBehaviours(const std::string &card_id);
 
     private:
         /**
@@ -44,20 +45,25 @@ namespace server
         template <typename... BehaviourTypes>
         void insert(const std::string &card_id);
 
-        static std::unordered_map<std::string, std::vector<std::unique_ptr<BehaviourBase>>> map_;
+        static std::unordered_map<std::string, std::function<std::vector<BehaviourBase *>()>> map_;
         static bool is_initialised;
     };
 
     // static member initialisation
-    inline std::unordered_map<std::string, std::vector<std::unique_ptr<BehaviourBase>>> server::BehaviourRegistry::map_;
+    inline std::unordered_map<std::string, std::function<std::vector<BehaviourBase *>()>> BehaviourRegistry::map_;
     inline bool BehaviourRegistry::is_initialised;
 
-    template <typename... BehaviourTypes>
+    template <typename... BehaviourType>
     inline void BehaviourRegistry::insert(const std::string &card_id)
     {
         LOG(INFO) << "Registering card: " << card_id;
-        ((LOG(INFO) << "  Behaviour type: " << utils::demangle(typeid(BehaviourTypes).name())), ...);
+        ((LOG(INFO) << "  Behaviour type: " << utils::demangle(typeid(BehaviourType).name())), ...);
 
-        (map_[card_id].emplace_back(std::make_unique<BehaviourTypes>()), ...);
+        map_[card_id] = []()
+        {
+            std::vector<BehaviourBase *> behaviours;
+            (behaviours.emplace_back(new BehaviourType()), ...);
+            return behaviours;
+        };
     }
 } // namespace server

@@ -19,6 +19,8 @@ namespace server
         size_t behaviour_idx;
         std::unique_ptr<BehaviourRegistry> behaviour_registry;
 
+        std::vector<BehaviourBase *> behaviours_list;
+
     public:
         BehaviourChain() :
             current_card(INVALID_CARD), behaviour_idx(INVALID_IDX),
@@ -45,12 +47,9 @@ namespace server
 
     private:
         void advance() { ++behaviour_idx; }
-        bool hasNext() const { return behaviour_idx < behaviour_registry->getBehaviours(current_card).size(); }
+        bool hasNext() const { return behaviour_idx < behaviours_list.size(); }
 
-        const BehaviourBase &getBehaviour() const
-        {
-            return *behaviour_registry->getBehaviours(current_card)[behaviour_idx].get();
-        }
+        const BehaviourBase &getBehaviour() const { return *behaviours_list[behaviour_idx]; }
     };
 
     inline constexpr size_t BehaviourChain::INVALID_IDX = static_cast<size_t>(-1);

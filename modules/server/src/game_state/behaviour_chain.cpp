@@ -11,6 +11,7 @@ void server::BehaviourChain::loadBehaviours(const std::string &card_id)
 
     behaviour_idx = 0;
     current_card = card_id;
+    behaviours_list = behaviour_registry->getBehaviours(card_id)();
 }
 
 void server::BehaviourChain::resetBehaviours()
@@ -22,6 +23,7 @@ void server::BehaviourChain::resetBehaviours()
 
     behaviour_idx = INVALID_IDX;
     current_card = INVALID_CARD;
+    behaviours_list.clear();
 }
 
 std::optional<std::unique_ptr<shared::ActionOrder>>

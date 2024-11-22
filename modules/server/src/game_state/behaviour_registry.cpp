@@ -1,6 +1,6 @@
 #include <server/game/game_state/behaviour_registry.h>
 
-const std::vector<std::unique_ptr<server::BehaviourBase>> &
+std::function<std::vector<server::BehaviourBase *>()>
 server::BehaviourRegistry::getBehaviours(const std::string &card_id)
 {
     auto it = map_.find(card_id);

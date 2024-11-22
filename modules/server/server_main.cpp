@@ -3,7 +3,7 @@
 #include "server/args.h"
 #include "server/network/server_network_manager.h"
 
-int main(int argc, char* argv[])
+int main(int argc, char *argv[])
 {
     server::ServerArgs args(argc, argv);
 

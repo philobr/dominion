@@ -95,6 +95,12 @@ macro(include_gmock target)
     )
 endmacro()
 
+macro(include_quick_arg_parser target)
+    message(STATUS "Including quick_arg_parser in ${target}")
+    target_include_directories(${target} PRIVATE ${EXTERNAL_LIBS}/quick_arg_parser)
+    target_compile_options(${target} PRIVATE -Wno-unused-parameter)
+endmacro()
+
 macro(include_wxwidgets target)
     if (wxWidgets_FOUND)
         message(STATUS "Including wxWidgets in ${target}")

@@ -14,10 +14,10 @@ namespace server
     }
 
     Lobby::Lobby(shared::PlayerBase::id_t game_master, std::string lobby_id) :
-        game_master(game_master), lobby_id(lobby_id)
+        game_interface(nullptr), game_master(game_master), lobby_id(lobby_id)
     {
         players.push_back(game_master);
-        game_interface = nullptr;
+        
     };
 
     void Lobby::join(MessageInterface &message_interface, std::unique_ptr<shared::JoinLobbyRequestMessage> request)

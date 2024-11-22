@@ -73,7 +73,7 @@ namespace server
          *
          * @return A const reference to the map of lobby ids.
          */
-        const std::map<std::string, std::shared_ptr<Lobby>> *get_games() { return &games; };
+        const std::map<std::string, std::shared_ptr<Lobby>> &get_games() { return games; };
 
     private:
         std::map<std::string, std::shared_ptr<Lobby>> games;

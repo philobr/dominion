@@ -54,9 +54,9 @@ namespace server
         /**
          * @brief Get the players in the lobby.
          *
-         * @return A vector of player ids.
+         * @return A const reference vector of player ids.
          */
-        std::vector<Player::id_t> get_players() const { return players; }
+        const std::vector<Player::id_t> &get_players() { return players; }
 
         /**
          * @brief Get the id of the game master.

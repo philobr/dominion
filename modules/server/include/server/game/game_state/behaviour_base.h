@@ -34,28 +34,6 @@ namespace server
 
         // i think we dont even need this
         bool expectsResponse() const { return (behaviour_type & BehaviourType::EXPECTS_RESPONSE) != 0; }
-
-    private:
-#define CHECK_HAS_DECISION                                                                                             \
-    if ( action_decision == std::nullopt ) {                                                                           \
-        LOG(WARN) << "Expected a decision, but didnt receive one";                                                     \
-        throw std::runtime_error("Expected a decision, but didnt receive one");                                        \
-    }
-
-#define CHECK_HAS_NO_DECISION                                                                                          \
-    if ( action_decision != std::nullopt ) {                                                                           \
-        LOG(WARN) << "Received a decision, but didnt excpect one";                                                     \
-        throw std::runtime_error("Received a decision, but didnt excpect one");                                        \
-    }
-
-#define TRY_CAST_DECISION(type)                                                                                        \
-    CHECK_HAS_DECISION                                                                                                 \
-    if ( /* try to cast the decision */ ) {                                                                            \
-        LOG(WARN) << "Decision has wrong type";                                                                        \
-        throw std::runtime_error("Decision has wrong type");                                                           \
-    } else {                                                                                                           \
-        /* return the decision */                                                                                      \
-    }
     };
 
 } // namespace server

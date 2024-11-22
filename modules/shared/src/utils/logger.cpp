@@ -69,18 +69,17 @@ namespace shared
         }
 
         if ( !file_path.empty() ) {
-            const std::string default_directory = std::string(PROJECT_ROOT) + "/" + std::string("build/logs");
-            const std::string full_path = default_directory + "/" + file_path;
+            std::filesystem::path log_path = file_path;
+            if ( log_path.has_parent_path() ) {
+                std::filesystem::create_directories(log_path.parent_path());
+            }
 
-            std::filesystem::path log_path = full_path;
-            std::filesystem::create_directories(log_path.parent_path());
-
-            logger.log_file_.open(full_path, std::ios::out | std::ios::app);
+            LOG(LogLevel::INFO) << "Logging to file: " << file_path;
+            logger.log_file_.open(file_path, std::ios::out | std::ios::app);
             if ( !logger.log_file_ ) {
-                throw exception::Logger("Failed to open log file: " + full_path);
+                throw exception::Logger("Failed to open log file: " + file_path);
             }
             logger.log_to_file_ = true;
-            LOG(LogLevel::INFO) << "Logging to file: " << full_path;
         } else {
             logger.log_to_file_ = false;
             LOG(LogLevel::INFO) << "Logging to std::cerr.";

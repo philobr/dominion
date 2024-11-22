@@ -90,7 +90,7 @@ namespace shared
          * @brief Sets the file path for logging output.
          * @param file_path The full file path where logs will be written.
          */
-        static void writeTo(const std::string &file_path);
+        static void writeTo(const std::string &file_path = "");
 
         /**
          * @brief Sets the minimum log level. Messages below this level will not be logged.

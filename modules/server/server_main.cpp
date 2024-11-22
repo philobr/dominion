@@ -10,7 +10,7 @@ int main()
     // initialise the logger to log to build/logs/
     shared::Logger::initialize();
     shared::Logger::setLevel(INFO);
-
+    shared::Logger::writeTo("nirvana.log");
     LOG_FUNCTION_ENTRY;
 
     LOG(INFO) << "Prints Info...";

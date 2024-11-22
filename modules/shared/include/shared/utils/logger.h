@@ -1,11 +1,3 @@
-/**!
- * @file
- * @brief This is our logger. It provides a few useful macros which can be used to either log to a file or to log to
- * console. If the logger is not initialised then we default to 'std::cerr'. A logger can only be instantiated once!
- *
- * @warning you should only use the LOG(leve) macro from this file!
- */
-
 #pragma once
 
 #include <fstream>
@@ -15,34 +7,38 @@
 #include <string>
 
 #include <shared/utils/exception.h>
+#include <shared/utils/utils.h>
 
 // this _should_ be defined in the root CMakeLists.txt, but you never know
 #ifndef PROJECT_ROOT
 #define PROJECT_ROOT "/default/path/for/linter"
 #endif
 
-#ifdef NDEBUG // debug messages are only printed when debugging is actually enabled
 /**
- * @brief This macro returns a stream with the desired level. If NDEBUG is set we will not log debug messages
- */
-#define LOG(level)                                                                                                     \
-    if ( (level) == LogLevel::DEBUG ) {                                                                                \
-    } else                                                                                                             \
-        shared::Logger::getInstance().log(level, __FILE__, __LINE__).stream()
-#else
-/**
- * @brief This macro returns a stream with the desired level. If NDEBUG is set we will not log debug messages
+ * @brief This macro returns a stream with the desired level.
  */
 #define LOG(level) shared::Logger::getInstance().log(level, __FILE__, __LINE__).stream()
-#endif
+
+/**
+ * @brief Returns a string with the cleaned up class name
+ */
+#define CLASS_NAME (std::string("{class:") + utils::demangle(typeid(*this).name()) + std::string("}"))
+
+/**
+ * @brief Returns a string with the cleaned up function name
+ */
+#define FUNC_NAME (std::string("{func:") + utils::demangle(__func__) + std::string("}"))
+
+#define LOG_FUNCTION_ENTRY LOG(INFO) << "ENTERED: " << FUNC_NAME
+#define LOG_FUNCTION_EXIT LOG(INFO) << "EXITED: " << FUNC_NAME
 
 // not in shared namespace to simplify usage
 enum LogLevel
 {
-    INFO,
-    WARN,
-    ERROR,
-    DEBUG
+    INFO, // everything
+    DEBUG, // important stuff
+    WARN, // unexpected, but handled behaviour
+    ERROR // actual errors
 };
 
 namespace shared
@@ -66,7 +62,6 @@ namespace shared
     } // namespace log_helpers
 } // namespace shared
 
-
 namespace shared
 {
     class Logger
@@ -75,25 +70,36 @@ namespace shared
         {
         public:
             LogStream(Logger &logger, LogLevel level, const char *file, int line);
-            ~LogStream() { logger_.writeLog(ss_.str()); }
+            ~LogStream();
 
             std::ostringstream &stream() { return ss_; }
 
         private:
             Logger &logger_;
+            LogLevel level_;
             std::ostringstream ss_;
         };
 
     public:
         /**
-         * @brief If no file_path is set we will default to std::cerr. Will automatically add a prefix
-         * (build/logs/file_path.log) to the output path
-         * @param file_path filename.log
+         * @brief Initializes the logger. If not called, logging will default to std::cerr.
          */
-        static void initialize(const std::string &file_path = "");
+        static void initialize();
 
         /**
-         * @brief Returns an instance to a logger. If none is found we default to a std::cerr instance.
+         * @brief Sets the file path for logging output.
+         * @param file_path The full file path where logs will be written.
+         */
+        static void writeTo(const std::string &file_path);
+
+        /**
+         * @brief Sets the minimum log level. Messages below this level will not be logged.
+         * @param level The minimum LogLevel to log.
+         */
+        static void setLevel(LogLevel level);
+
+        /**
+         * @brief Returns an instance to the logger.
          *
          * @return Logger&
          */
@@ -107,15 +113,17 @@ namespace shared
         inline static std::mutex init_mutex_;
         inline static std::unique_ptr<Logger> instance_;
 
+        LogLevel min_log_level_;
+
         std::mutex mutex_;
         std::ofstream log_file_;
         bool log_to_file_;
 
-        explicit Logger(const std::string &file_path = "");
+        Logger();
 
         Logger(const Logger &) = delete;
         Logger &operator=(const Logger &) = delete;
 
-        void writeLog(const std::string &message);
+        void writeLog(LogLevel level, const std::string &message);
     };
 } // namespace shared

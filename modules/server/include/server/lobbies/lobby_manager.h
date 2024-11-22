@@ -29,12 +29,22 @@ namespace server
         void create_lobby(std::unique_ptr<shared::CreateLobbyRequestMessage> request);
         void join_lobby(std::unique_ptr<shared::JoinLobbyRequestMessage> request);
         void start_game(std::unique_ptr<shared::StartGameRequestMessage> request);
+
+        /**
+         * @brief Receive an action from a player and handle it correctly.
+         * This will be passed on to the correct lobby.
+         *
+         * @param action The ActionDecisionMessage to handle.
+         *
+         * @pre Valid ActionDecisionMessage.
+         */
         void receive_action(std::unique_ptr<shared::ActionDecisionMessage> action);
-        shared::ReducedGameState get_game_state(std::string game_id, shared::PlayerBase::id_t player);
         const std::map<std::string, std::shared_ptr<Lobby>> *get_games() { return &games; };
 
     private:
         std::map<std::string, std::shared_ptr<Lobby>> games;
         std::shared_ptr<MessageInterface> message_interface;
+
+        bool lobby_exists(std::string lobby_id);
     };
 } // namespace server

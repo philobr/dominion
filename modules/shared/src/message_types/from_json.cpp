@@ -64,8 +64,8 @@ static std::unique_ptr<ResultResponseMessage> parse_result_response(const Docume
     std::optional<std::string> additional_information;
     GET_OPTIONAL_STRING_MEMBER(additional_information, json, "additional_information");
 
-    return std::make_unique<ResultResponseMessage>(game_id, success, in_response_to,
-                                                   additional_information, message_id);
+    return std::make_unique<ResultResponseMessage>(game_id, success, in_response_to, additional_information,
+                                                   message_id);
 }
 
 static std::unique_ptr<ActionOrderMessage> parse_action_order(const Document &json, const std::string &game_id,
@@ -187,8 +187,8 @@ static std::unique_ptr<ActionDecisionMessage> parse_action_decision(const Docume
         return nullptr;
     }
 
-    return std::make_unique<ActionDecisionMessage>(game_id, player_id,
-                                                   std::unique_ptr<ActionDecision>(decision), in_response_to, message_id);
+    return std::make_unique<ActionDecisionMessage>(game_id, player_id, std::unique_ptr<ActionDecision>(decision),
+                                                   in_response_to, message_id);
 }
 
 /* ======= CLIENT TO SERVER MESSAGES ======= */

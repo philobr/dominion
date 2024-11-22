@@ -31,8 +31,7 @@ namespace shared
         return ClientToServerMessage::operator==(other);
     }
 
-    StartGameRequestMessage::StartGameRequestMessage(std::string game_id,
-                                                     PlayerBase::id_t player_id,
+    StartGameRequestMessage::StartGameRequestMessage(std::string game_id, PlayerBase::id_t player_id,
                                                      std::vector<CardBase::id_t> selected_cards,
                                                      std::string message_id) :
         ClientToServerMessage(game_id, player_id, message_id),

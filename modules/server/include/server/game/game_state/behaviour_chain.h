@@ -1,111 +1,58 @@
 #pragma once
 
-#include <server/game/game_state/cards_new/behaviour_registry.h>
+#include <server/game/game_state/behaviour_registry.h>
 #include <shared/utils/logger.h>
 #include <vector>
 
-/**
- * @brief This class stores the state of the card that is currently being played. it will be accessed from the game
- * interface and handle incoming/outcoming messages. it will also apply the behaviours to the player/gamestate THIS
- *
- *  CLASS WILL BE EXPOSED TO THE GAME_INTERFACE
- *
- */
-class BehaviourChain
+namespace server
 {
-    std::string current_card;
-    size_t behaviour_idx;
-    std::unique_ptr<BehaviourRegistry> behaviour_registry;
-
-public:
-    BehaviourChain() : current_card(""), behaviour_idx(-1), behaviour_registry(std::make_unique<BehaviourRegistry>())
-    {
-        LOG(DEBUG) << "Created a new BehaviourChain";
-    }
-
-    void load_card(const std::string &card_id);
-    void reset_card();
-
     /**
-     * @brief Using a raw pointer here as ownership transfer would be annoying.
-     *
-     * @param game_state
-     * @param action_decision
-     * @return std::optional<std::unique_ptr<shared::ActionOrder>>
+     * @brief This class stores the state of the card that is currently being played. it will be accessed from the game
+     * interface and handle incoming/outcoming messages. it will also apply the behaviours to the player/gamestate.
      */
-    std::optional<std::unique_ptr<shared::ActionOrder>>
-    receiveAction(server::GameState *game_state,
-                  std::optional<std::unique_ptr<shared::ActionDecision>> action_decision);
-
-private:
-    const BehaviourBase &getBehaviour() const
+    class BehaviourChain
     {
-        return *behaviour_registry->getBehaviours(current_card)[behaviour_idx].get();
-    }
+        static const size_t INVALID_IDX;
+        static const std::string INVALID_CARD;
 
-    void advance() { ++behaviour_idx; }
-    bool hasNext() const { return behaviour_idx != behaviour_registry->getBehaviours(current_card).size(); }
-    void reset() { behaviour_idx = 0; }
+        std::string current_card;
+        size_t behaviour_idx;
+        std::unique_ptr<BehaviourRegistry> behaviour_registry;
 
-    std::optional<std::unique_ptr<shared::ActionOrder>>
-    handleDecision(server::GameState *state, std::optional<std::unique_ptr<shared::ActionDecision>> action_decision);
-};
-
-void BehaviourChain::load_card(const std::string &card_id)
-{
-    if ( !current_card.empty() || behaviour_idx != -1 ) {
-        LOG(WARN) << "BehaviourList is already initialised!";
-        throw std::runtime_error("BehaviourList is already initialised !");
-    }
-
-    behaviour_idx = 0;
-    current_card = card_id;
-}
-
-void BehaviourChain::reset_card()
-{
-    if ( hasNext() ) {
-        LOG(WARN) << "Tried to reset the BehaviourChain before it was finished!";
-        return;
-    }
-
-    behaviour_idx = -1; // this way we throw if we try to use an uninitialised chain
-    current_card.clear();
-}
-
-std::optional<std::unique_ptr<shared::ActionOrder>>
-BehaviourChain::receiveAction(server::GameState *game_state,
-                              std::optional<std::unique_ptr<shared::ActionDecision>> action_decision)
-{
-    while ( hasNext() ) {
-        auto action_order = action_decision.has_value() ? handleDecision(game_state, std::move(action_decision))
-                                                        : getBehaviour().apply(game_state);
-
-        if ( action_order != std::nullopt ) {
-            return action_order;
+    public:
+        BehaviourChain() :
+            current_card(INVALID_CARD), behaviour_idx(INVALID_IDX),
+            behaviour_registry(std::make_unique<BehaviourRegistry>())
+        {
+            LOG(DEBUG) << "Created a new BehaviourChain";
         }
 
-        advance();
-    }
+        void loadBehaviours(const std::string &card_id);
+        void resetBehaviours();
 
-    return std::nullopt;
-}
+        /**
+         * @brief Using a raw pointer here as ownership transfer would be annoying.
+         *
+         * @param game_state
+         * @param action_decision
+         * @return std::optional<std::unique_ptr<shared::ActionOrder>>
+         */
+        std::optional<std::unique_ptr<shared::ActionOrder>>
+        receiveAction(server::GameState *game_state,
+                      std::optional<std::unique_ptr<shared::ActionDecision>> action_decision);
 
-std::optional<std::unique_ptr<shared::ActionOrder>>
-BehaviourChain::handleDecision(server::GameState *state,
-                               std::optional<std::unique_ptr<shared::ActionDecision>> action_decision)
-{
-    // unneccessary, but better safe than sorry
-    if ( !action_decision.has_value() ) {
-        LOG(WARN) << "Expected an action_decision, but didnt get one!";
-        throw std::runtime_error("Didnt receive a decision");
-    }
+        bool empty() const { return behaviour_idx == INVALID_IDX && current_card == INVALID_CARD; }
 
-    // we should not receive an action decision if the behaviour has this type
-    if ( !getBehaviour().expectsResponse() ) {
-        LOG(WARN) << "Behaviour type should not receive a response";
-        throw std::runtime_error("Received a decision in the wrong state");
-    }
+    private:
+        void advance() { ++behaviour_idx; }
+        bool hasNext() const { return behaviour_idx < behaviour_registry->getBehaviours(current_card).size(); }
 
-    return getBehaviour().apply(state, std::move(action_decision));
-}
+        const BehaviourBase &getBehaviour() const
+        {
+            return *behaviour_registry->getBehaviours(current_card)[behaviour_idx].get();
+        }
+    };
+
+    inline constexpr size_t BehaviourChain::INVALID_IDX = static_cast<size_t>(-1);
+    inline const std::string BehaviourChain::INVALID_CARD = "INVALID_CARD";
+} // namespace server

@@ -4,6 +4,7 @@ namespace server
 {
     namespace behaviour
     {
+        // TODO: define a stateful behaviour, ask @aaron if you need this
 
 #define DEFINE_BEHAVIOUR(name, types)                                                                                  \
     class name : public BehaviourBase                                                                                  \

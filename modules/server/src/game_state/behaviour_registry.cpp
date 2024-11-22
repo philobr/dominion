@@ -1,13 +1,12 @@
 #include <server/game/game_state/behaviour_registry.h>
 
-std::function<std::vector<server::BehaviourBase *>()>
-server::BehaviourRegistry::getBehaviours(const std::string &card_id)
+std::vector<std::unique_ptr<server::BehaviourBase>> server::BehaviourRegistry::getBehaviours(const std::string &card_id)
 {
     auto it = map_.find(card_id);
     if ( it == map_.end() ) {
         throw std::runtime_error("card_id not found in the registry");
     }
-    return it->second;
+    return it->second();
 }
 
 server::BehaviourRegistry::BehaviourRegistry()

@@ -19,7 +19,7 @@ namespace server
         size_t behaviour_idx;
         std::unique_ptr<BehaviourRegistry> behaviour_registry;
 
-        std::vector<BehaviourBase *> behaviours_list;
+        std::vector<std::unique_ptr<BehaviourBase>> behaviours_list;
 
     public:
         BehaviourChain() :

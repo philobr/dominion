@@ -119,9 +119,9 @@ namespace server
             }
         }
 
-        LOG(ERROR) << "Read error [" << socket.last_error() << "]: " << socket.last_error_str();
+        LOG(INFO) << "Read error [" << socket.last_error() << "]: " << socket.last_error_str();
 
-        LOG(ERROR) << "Closing connection to " << socket.peer_address();
+        LOG(INFO) << "Closing connection to " << socket.peer_address();
         socket.shutdown();
     }
 

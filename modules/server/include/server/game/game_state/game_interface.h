@@ -7,8 +7,8 @@ namespace server
 {
     class GameInterface
     {
-        std::unique_ptr<GameState> game_state;
-        std::unique_ptr<BehaviourChain> cur_behaviours;
+        std::shared_ptr<GameState> game_state;
+        std::shared_ptr<BehaviourChain> cur_behaviours;
         const std::string game_id;
 
     public:
@@ -42,7 +42,7 @@ namespace server
     private:
         GameInterface(const std::string &game_id, const std::vector<shared::CardBase::id_t> &play_cards,
                       const std::vector<Player::id_t> &player_ids) :
-            game_state(std::make_unique<GameState>(play_cards, player_ids)),
+            game_state(std::make_shared<GameState>(play_cards, player_ids)),
             cur_behaviours(std::make_unique<BehaviourChain>()), game_id(game_id)
         {
             // TODO: just for testing, remove later
@@ -70,10 +70,10 @@ namespace server
                                                 const std::string &in_response_to,                                     \
                                                 const Player::id_t &affected_player_id)
 
-        // RESPONSE_HANDLER(PlayActionCardDecision);
-        // RESPONSE_HANDLER(BuyCardDecision);
-        // RESPONSE_HANDLER(EndTurnDecision);
-        // RESPONSE_HANDLER(ChooseNCardsFromHandDecision);
+        RESPONSE_HANDLER(PlayActionCardDecision);
+        RESPONSE_HANDLER(BuyCardDecision);
+        RESPONSE_HANDLER(EndTurnDecision);
+        RESPONSE_HANDLER(ChooseNCardsFromHandDecision);
 
     }; // namespace server
 } // namespace server

@@ -1,4 +1,4 @@
-#include <server/game/game_state/behaviour.h>
+#include <server/game/game_state/behaviour_base.h>
 
 namespace server
 {

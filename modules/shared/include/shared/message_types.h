@@ -134,16 +134,15 @@ namespace shared
     {
     public:
         ~GameStateMessage() = default;
-        GameStateMessage(std::string game_id, std::string message_id, /* ReducedGameState game_state, */
+        GameStateMessage(std::string game_id, std::string message_id, std::unique_ptr<ReducedGameState> game_state,
                          std::optional<std::string> in_response_to = std::nullopt) :
             ServerToClientMessage(game_id, message_id),
-            /* game_state(game_state), */ in_response_to(in_response_to)
+            game_state(std::move(game_state)), in_response_to(in_response_to)
         {}
         std::string to_json() override;
         bool operator==(const GameStateMessage &other) const;
 
-        // TODO: Add this back
-        // ReducedGameState game_state;
+        std::unique_ptr<ReducedGameState> game_state;
         std::optional<std::string> in_response_to;
     };
 

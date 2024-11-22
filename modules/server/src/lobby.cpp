@@ -7,8 +7,13 @@
 const unsigned int MAX_PLAYERS = 4;
 namespace server
 {
+    bool Lobby::player_in_lobby(const shared::PlayerBase::id_t &player_id)
+    {
+        return std::any_of(players.begin(), players.end(), [&](const auto &player) { return player == player_id; });
+    }
+
     Lobby::Lobby(shared::PlayerBase::id_t game_master, std::string lobby_id) :
-        game_master(game_master), lobby_id(lobby_id)
+        game_interface(nullptr), game_master(game_master), lobby_id(lobby_id)
     {
         players.push_back(game_master);
     };
@@ -17,10 +22,7 @@ namespace server
     {
         const shared::PlayerBase::id_t requestor_id = request->player_id;
 
-        const bool player_already_in_lobby = std::any_of(
-                players.begin(), players.end(), [&](const auto &player_id) { return player_id == requestor_id; });
-
-        if ( player_already_in_lobby ) {
+        if ( player_in_lobby(requestor_id) ) {
             shared::ResultResponseMessage failure_message =
                     shared::ResultResponseMessage(lobby_id, uuid_generator::generate_uuid_v4(), false,
                                                   request->message_id, "Player is already in the lobby");
@@ -90,10 +92,35 @@ namespace server
                                            player_id);
 
             // send game state to all players
-            shared::ReducedGameState reduced_game_state = game_state->get_reduced_state(player_id);
-            shared::GameStateMessage game_state_message =
-                    shared::GameStateMessage(lobby_id, uuid_generator::generate_uuid_v4() /*, reduced_game_state */);
-            message_interface.send_message(std::make_unique<shared::GameStateMessage>(game_state_message), player_id);
+            std::unique_ptr<shared::ReducedGameState> reduced_game_state = game_state->get_reduced_state(player_id);
+            std::unique_ptr<shared::GameStateMessage> game_state_message = std::make_unique<shared::GameStateMessage>(
+                    lobby_id, uuid_generator::generate_uuid_v4(), std::move(reduced_game_state));
+            message_interface.send_message(std::move(game_state_message), player_id);
         }
+    }
+
+    void Lobby::receive_action(MessageInterface &message_interface,
+                               std::unique_ptr<shared::ActionDecisionMessage> action)
+    {
+        // Check if game has started
+        if ( !game_interface ) {
+            LOG(ERROR) << "Game interface in Lobby::receive_action is nullptr. The game hasn't started yet.";
+            throw std::runtime_error("Game interface is nullptr");
+        }
+
+        // Check if player is in the lobby
+        shared::PlayerBase::id_t player_id = action->player_id;
+        if ( !player_in_lobby(player_id) ) {
+            shared::ResultResponseMessage failure_message =
+                    shared::ResultResponseMessage(lobby_id, uuid_generator::generate_uuid_v4(), false,
+                                                  action->message_id, "Player is not in the lobby");
+            message_interface.send_message(std::make_unique<shared::ResultResponseMessage>(failure_message), player_id);
+            return;
+        }
+        GameInterface::response_t response_order =
+                game_interface->receive_action(std::move(action->decision), action->message_id, player_id);
+        std::unique_ptr<shared::ActionOrderMessage> response_msg = std::make_unique<shared::ActionOrderMessage>(
+                lobby_id, uuid_generator::generate_uuid_v4(), std::move(response_order));
+        message_interface.send_message(std::move(response_msg), player_id);
     }
 } // namespace server

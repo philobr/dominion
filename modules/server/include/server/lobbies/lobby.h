@@ -31,6 +31,17 @@ namespace server
          */
         void join(MessageInterface &message_interface, std::unique_ptr<shared::JoinLobbyRequestMessage> request);
         void start_game(MessageInterface &message_interface, std::unique_ptr<shared::StartGameRequestMessage> request);
+
+        /**
+         * @brief Receive an action from a player and handle it correctly.
+         * This will be passed on to the game interface.
+         *
+         * @param message_interface The message interface to send messages to the players.
+         * @param action The ActionDecisionMessage to handle.
+         *
+         * @pre The lobby exists.
+         * @pre Valid ActionDecisionMessage.
+         */
         void receive_action(MessageInterface &message_interface, std::unique_ptr<shared::ActionDecisionMessage> action);
 
         // TODO: check for nullptr and log and throw
@@ -44,5 +55,7 @@ namespace server
 
         std::vector<Player::id_t> players;
         std::string lobby_id;
+
+        bool player_in_lobby(const shared::PlayerBase::id_t &player_id);
     };
 } // namespace server

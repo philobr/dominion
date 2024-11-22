@@ -7,9 +7,10 @@ add_library(shared_lib STATIC
     src/message_types/to_json.cpp
     src/message_types/other.cpp
     
+    src/game/cards.cpp
     src/game/player_base.cpp
     src/game/board_base.cpp
-    src/game/cards.cpp
+    src/game/recuded_game_state.h
     
     src/utils/json.cpp
     src/utils/logger.cpp

@@ -1,5 +1,6 @@
 add_executable(server_tests
-    lobby_lobbymanager.cpp
+    lobbies/lobby_lobbymanager.cpp
+    lobbies/mock_templates.h
  
     # disabled for now, need to reimplement (will write tests if merge goes thorugh)
     #game/cards/behaviour.cpp

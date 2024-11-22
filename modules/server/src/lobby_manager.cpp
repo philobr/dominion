@@ -1,13 +1,19 @@
 #include <server/lobbies/lobby_manager.h>
 #include <shared/utils/uuid_generator.h>
 
-void server::LobbyManager::create_lobby(std::unique_ptr<shared::CreateLobbyRequestMessage> request)
+
+auto lobby_exists(std::map<std::string, std::shared_ptr<server::Lobby>> games, std::string lobby_id) -> bool
+{
+    return games.find(lobby_id) != games.end();
+}
+
+void server::CardBase::create_lobby(std::unique_ptr<shared::CreateLobbyRequestMessage> request)
 {
     std::cerr << "Got in LobbyManager" << std::endl;
     std::string lobby_id = request->game_id;
     shared::PlayerBase::id_t game_master_id = request->player_id;
     // Lobby already exists
-    if ( (games.size() > 0) && (games.find(lobby_id) != games.end()) ) {
+    if ( (games.size() > 0) && lobby_exists(games, lobby_id) ) {
         shared::ResultResponseMessage failure_message = shared::ResultResponseMessage(
                 lobby_id, uuid_generator::generate_uuid_v4(), false, request->message_id, "Lobby already exists");
         message_interface->send_message(std::make_unique<shared::ResultResponseMessage>(failure_message),
@@ -58,8 +64,16 @@ void server::LobbyManager::start_game(std::unique_ptr<shared::StartGameRequestMe
     games.at(lobby_id)->start_game(*message_interface, std::move(request));
 };
 
-void server::LobbyManager::receive_action(std::unique_ptr<shared::ActionDecisionMessage> /*action*/)
+void server::LobbyManager::receive_action(std::unique_ptr<shared::ActionDecisionMessage> msg)
 {
-    // TODO Implement this
-    return;
+    std::string lobby_id = msg->game_id;
+    shared::PlayerBase::id_t player_id = msg->player_id;
+    // Lobby does not exist
+    if (!lobby_exists(games, lobby_id)) {
+        shared::ResultResponseMessage failure_message = shared::ResultResponseMessage(
+                lobby_id, uuid_generator::generate_uuid_v4(), false, msg->message_id, "Lobby does not exist");
+        message_interface->send_message(std::make_unique<shared::ResultResponseMessage>(failure_message), player_id);
+        return;
+    }
+    games.at(lobby_id)->receive_action(*message_interface, std::move(msg));
 }

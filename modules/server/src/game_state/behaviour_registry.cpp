@@ -49,6 +49,14 @@ void server::BehaviourRegistry::initialise_behaviours()
     insert<GainPoints<6>>("Province");
     insert<GainCoins<-1>>("Curse");
 
+    // kingdom cards
+    insert<DrawCards<2>>("Moat");
+    insert<DrawCards<3>>("Smithy");
+    insert<GainActions<2>, DrawCards<1>>("Village");
+    insert<GainActions<1>, DrawCards<2>>("Laboratory");
+    insert<GainActions<2>, GainCoins<2>, GainBuys<1>>("Festival");
+    insert<GainActions<1>, GainCoins<1>, GainBuys<1>, DrawCards<1>>("Market");
+
     /*
     UNSURE
      */
@@ -56,17 +64,6 @@ void server::BehaviourRegistry::initialise_behaviours()
     insert<NOT_IMPLEMENTED_YET>("Throne_Room"); // how 'sticky' card?
     // gain +1 coin if you play silver for the first time
     insert<DrawCards<1>, GainActions<1>, NOT_IMPLEMENTED_YET>("Merchant"); // how conditional?
-
-    /*
-    ALMOST DONE
-    */
-    // TODO: implement draw cards
-    insert<DrawCards<2>>("Moat");
-    insert<GainActions<2>, DrawCards<1>>("Village");
-    insert<DrawCards<3>>("Smithy");
-    insert<GainActions<2>, GainCoins<2>, GainBuys<1>>("Festival");
-    insert<GainActions<1>, DrawCards<1>, GainBuys<1>, GainCoins<1>>("Market");
-    insert<DrawCards<2>, GainActions<1>>("Laboratory");
 
     /*
     TODO:

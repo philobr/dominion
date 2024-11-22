@@ -1,5 +1,6 @@
 add_executable(server_tests
     lobbies/lobby_lobbymanager.cpp
+    lobbies/mock_templates.h
  
     game/cards/behaviour.cpp
     game/cards/card.cpp

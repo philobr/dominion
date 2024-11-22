@@ -25,7 +25,8 @@ namespace client
                                       wxSize(fieldWidth, -1) // size (-1 means default size)
         );
         horizontalLayout->Add(this->_field, 0, wxALIGN_CENTER);
-        this->_label->SetBackgroundColour(wxColor(*wxBLACK));
+        this->_label->SetForegroundColour(wxColor(*wxBLACK));
+        this->_field->SetForegroundColour(wxColor(*wxBLACK));
         this->SetSizerAndFit(horizontalLayout);
     }
 

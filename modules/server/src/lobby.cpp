@@ -17,7 +17,6 @@ namespace server
         game_interface(nullptr), game_master(game_master), lobby_id(lobby_id)
     {
         players.push_back(game_master);
-        
     };
 
     void Lobby::join(MessageInterface &message_interface, std::unique_ptr<shared::JoinLobbyRequestMessage> request)

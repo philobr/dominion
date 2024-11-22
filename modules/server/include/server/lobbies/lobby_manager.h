@@ -35,7 +35,7 @@ namespace server
         /**
          * @brief Create a new lobby.
          * This will create a new lobby and add it to the list of games. The game master will be added to the lobby.
-         * 
+         *
          * @param request The CreateLobbyRequestMessage to create the lobby with.
          */
         void create_lobby(std::unique_ptr<shared::CreateLobbyRequestMessage> request);
@@ -43,7 +43,7 @@ namespace server
         /**
          * @brief Join a lobby.
          * This will add a player to the lobby with the given lobby id.
-         * 
+         *
          * @param request The JoinLobbyRequestMessage to join the lobby with.
          */
         void join_lobby(std::unique_ptr<shared::JoinLobbyRequestMessage> request);
@@ -51,9 +51,9 @@ namespace server
         /**
          * @brief Start a game.
          * This will start the game in the lobby with the given lobby id.
-         * 
+         *
          * @param request The StartGameRequestMessage to start the game with.
-         * 
+         *
          * @pre The request contains 10 cards.
          */
         void start_game(std::unique_ptr<shared::StartGameRequestMessage> request);
@@ -70,7 +70,7 @@ namespace server
 
         /**
          * @brief Get the games that are currently running.
-         * 
+         *
          * @return A const reference to the map of lobby ids.
          */
         const std::map<std::string, std::shared_ptr<Lobby>> *get_games() { return &games; };
@@ -81,9 +81,9 @@ namespace server
 
         /**
          * @brief Check if a lobby exists.
-         * 
+         *
          * @param lobby_id The id of the lobby to check.
-         * 
+         *
          * @return True if the lobby exists, false otherwise.
          */
         bool lobby_exists(std::string lobby_id);

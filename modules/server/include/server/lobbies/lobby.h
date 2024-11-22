@@ -23,17 +23,17 @@ namespace server
         /**
          * @brief Create a new game lobby.
          * Game master is added to the players of the lobby.
-         * 
+         *
          * @param game_master The player who created the lobby.
          */
         Lobby(Player::id_t game_master, std::string lobby_id);
-        
+
         /**
          * @brief Add a player to the lobby.
-         * 
+         *
          * @param message_interface The message interface to send messages to the players.
          * @param request The JoinLobbyRequestMessage to join the lobby with.
-         * 
+         *
          * @pre The lobby exists.
          */
         void join(MessageInterface &message_interface, std::unique_ptr<shared::JoinLobbyRequestMessage> request);
@@ -53,14 +53,14 @@ namespace server
 
         /**
          * @brief Get the players in the lobby.
-         * 
+         *
          * @return A vector of player ids.
          */
         std::vector<Player::id_t> get_players() const { return players; }
 
         /**
          * @brief Get the id of the game master.
-         * 
+         *
          * @return The id of the game master.
          */
         Player::id_t get_game_master() const { return game_master; };
@@ -74,9 +74,9 @@ namespace server
 
         /**
          * @brief Check if a player is in the lobby.
-         * 
+         *
          * @param player_id The id of the player to check.
-         * 
+         *
          * @return True if the player is in the lobby, false otherwise.
          */
         bool player_in_lobby(const Player::id_t &player_id);

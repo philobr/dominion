@@ -265,4 +265,4 @@ TEST(ServerLibraryTest, ReceiveAction)
     lobby_manager.receive_action(std::move(request6));
     // TODO: uncomment as soon as game_interface is implemented
     // lobby_manager.receive_action(std::move(request7));
-} 
+}

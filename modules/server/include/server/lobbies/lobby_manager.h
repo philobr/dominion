@@ -29,6 +29,15 @@ namespace server
         void create_lobby(std::unique_ptr<shared::CreateLobbyRequestMessage> request);
         void join_lobby(std::unique_ptr<shared::JoinLobbyRequestMessage> request);
         void start_game(std::unique_ptr<shared::StartGameRequestMessage> request);
+
+        /**
+         * @brief Receive an action from a player and handle it correctly.
+         * This will be passed on to the correct lobby.
+         * 
+         * @param action The ActionDecisionMessage to handle.
+         * 
+         * @pre Valid ActionDecisionMessage.
+         */
         void receive_action(std::unique_ptr<shared::ActionDecisionMessage> action);
         const std::map<std::string, std::shared_ptr<Lobby>> *get_games() { return &games; };
 

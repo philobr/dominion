@@ -9,7 +9,6 @@ bool server::LobbyManager::lobby_exists(std::string lobby_id)
 
 void server::LobbyManager::create_lobby(std::unique_ptr<shared::CreateLobbyRequestMessage> request)
 {
-    std::cerr << "Got in LobbyManager" << std::endl;
     std::string lobby_id = request->game_id;
     shared::PlayerBase::id_t game_master_id = request->player_id;
     // Lobby already exists
@@ -29,7 +28,6 @@ void server::LobbyManager::create_lobby(std::unique_ptr<shared::CreateLobbyReque
             lobby_id, uuid_generator::generate_uuid_v4(), available_cards, request->message_id);
     message_interface->send_message(std::make_unique<shared::CreateLobbyResponseMessage>(create_lobby_message),
                                     game_master_id);
-    std::cerr << "Got done with create lobby" << std::endl;
     return;
 };
 

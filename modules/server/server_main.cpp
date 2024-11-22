@@ -9,7 +9,7 @@ int main()
 {
     // initialise the logger to log to build/logs/
     shared::Logger::initialize("server.log");
-
+    LOG(INFO) << "Running...";
     std::vector<std::string> player_ids = {"player1", "player2", "player3"};
     auto valid_cards = get_valid_kingdom_cards();
     auto interface = server::GameInterface::make("game_id", valid_cards, player_ids);

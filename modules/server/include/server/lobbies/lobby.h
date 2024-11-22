@@ -35,10 +35,10 @@ namespace server
         /**
          * @brief Receive an action from a player and handle it correctly.
          * This will be passed on to the game interface.
-         * 
+         *
          * @param message_interface The message interface to send messages to the players.
          * @param action The ActionDecisionMessage to handle.
-         * 
+         *
          * @pre The lobby exists.
          * @pre Valid ActionDecisionMessage.
          */

@@ -33,9 +33,9 @@ namespace server
         /**
          * @brief Receive an action from a player and handle it correctly.
          * This will be passed on to the correct lobby.
-         * 
+         *
          * @param action The ActionDecisionMessage to handle.
-         * 
+         *
          * @pre Valid ActionDecisionMessage.
          */
         void receive_action(std::unique_ptr<shared::ActionDecisionMessage> action);

@@ -95,8 +95,9 @@ namespace server
 
             // send game state to all players
             shared::ReducedGameState reduced_game_state = game_state->get_reduced_state(player_id);
-            shared::GameStateMessage game_state_message =
-                    shared::GameStateMessage(lobby_id, uuid_generator::generate_uuid_v4() /*, reduced_game_state */); // TODO: uncomment reduced_game_state
+            shared::GameStateMessage game_state_message = shared::GameStateMessage(
+                    lobby_id,
+                    uuid_generator::generate_uuid_v4() /*, reduced_game_state */); // TODO: uncomment reduced_game_state
             message_interface.send_message(std::make_unique<shared::GameStateMessage>(game_state_message), player_id);
         }
     }
@@ -119,8 +120,10 @@ namespace server
             message_interface.send_message(std::make_unique<shared::ResultResponseMessage>(failure_message), player_id);
             return;
         }
-        GameInterface::response_t response_order = game_interface->receive_action(std::move(action->decision), action->message_id, player_id);
-        std::unique_ptr<shared::ActionOrderMessage> response_msg = std::make_unique<shared::ActionOrderMessage>(lobby_id, uuid_generator::generate_uuid_v4(), std::move(response_order));
+        GameInterface::response_t response_order =
+                game_interface->receive_action(std::move(action->decision), action->message_id, player_id);
+        std::unique_ptr<shared::ActionOrderMessage> response_msg = std::make_unique<shared::ActionOrderMessage>(
+                lobby_id, uuid_generator::generate_uuid_v4(), std::move(response_order));
         message_interface.send_message(std::move(response_msg), player_id);
     }
 } // namespace server

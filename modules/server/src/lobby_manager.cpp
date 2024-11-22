@@ -69,7 +69,7 @@ void server::LobbyManager::receive_action(std::unique_ptr<shared::ActionDecision
     std::string lobby_id = msg->game_id;
     shared::PlayerBase::id_t player_id = msg->player_id;
     // Lobby does not exist
-    if (!lobby_exists(games, lobby_id)) {
+    if ( !lobby_exists(games, lobby_id) ) {
         shared::ResultResponseMessage failure_message = shared::ResultResponseMessage(
                 lobby_id, uuid_generator::generate_uuid_v4(), false, msg->message_id, "Lobby does not exist");
         message_interface->send_message(std::make_unique<shared::ResultResponseMessage>(failure_message), player_id);

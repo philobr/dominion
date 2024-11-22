@@ -1,8 +1,8 @@
 #include <server/lobbies/lobby.h>
 #include <server/lobbies/lobby_manager.h>
 #include <shared/message_types.h>
+#include <shared/utils/logger.h>
 #include <shared/utils/test_helpers.h>
-#include <shared/utils/uuid_generator.h>
 #include <typeinfo>
 #include "mock_templates.h"
 
@@ -13,10 +13,8 @@ TEST(ServerLibraryTest, CreateLobby)
     shared::PlayerBase::id_t player_1 = "Max";
     shared::PlayerBase::id_t player_2 = "Peter";
 
-    auto request1 =
-            std::make_unique<shared::CreateLobbyRequestMessage>("123", uuid_generator::generate_uuid_v4(), player_1);
-    auto request2 =
-            std::make_unique<shared::CreateLobbyRequestMessage>("123", uuid_generator::generate_uuid_v4(), player_2);
+    auto request1 = std::make_unique<shared::CreateLobbyRequestMessage>("123", player_1);
+    auto request2 = std::make_unique<shared::CreateLobbyRequestMessage>("123", player_2);
 
     // All expected function calls of send_message
     {
@@ -58,20 +56,13 @@ TEST(ServerLibraryTest, JoinLobby)
     shared::PlayerBase::id_t player_4 = "John";
     shared::PlayerBase::id_t player_5 = "George";
 
-    auto request1 =
-            std::make_unique<shared::CreateLobbyRequestMessage>("123", uuid_generator::generate_uuid_v4(), player_1);
-    auto request2 =
-            std::make_unique<shared::JoinLobbyRequestMessage>("123", uuid_generator::generate_uuid_v4(), player_2);
-    auto request2_again =
-            std::make_unique<shared::JoinLobbyRequestMessage>("123", uuid_generator::generate_uuid_v4(), player_2);
-    auto false_request3 =
-            std::make_unique<shared::JoinLobbyRequestMessage>("222", uuid_generator::generate_uuid_v4(), player_3);
-    auto corrected_request3 =
-            std::make_unique<shared::JoinLobbyRequestMessage>("123", uuid_generator::generate_uuid_v4(), player_3);
-    auto request4 =
-            std::make_unique<shared::JoinLobbyRequestMessage>("123", uuid_generator::generate_uuid_v4(), player_4);
-    auto request5 =
-            std::make_unique<shared::JoinLobbyRequestMessage>("123", uuid_generator::generate_uuid_v4(), player_5);
+    auto request1 = std::make_unique<shared::CreateLobbyRequestMessage>("123", player_1);
+    auto request2 = std::make_unique<shared::JoinLobbyRequestMessage>("123", player_2);
+    auto request2_again = std::make_unique<shared::JoinLobbyRequestMessage>("123", player_2);
+    auto false_request3 = std::make_unique<shared::JoinLobbyRequestMessage>("222", player_3);
+    auto corrected_request3 = std::make_unique<shared::JoinLobbyRequestMessage>("123", player_3);
+    auto request4 = std::make_unique<shared::JoinLobbyRequestMessage>("123", player_4);
+    auto request5 = std::make_unique<shared::JoinLobbyRequestMessage>("123", player_5);
 
     const auto *games = lobby_manager.get_games();
 
@@ -123,22 +114,22 @@ TEST(ServerLibraryTest, StartGame)
     shared::PlayerBase::id_t player_1 = "Max";
     shared::PlayerBase::id_t player_2 = "Peter";
 
-    auto request1 = std::make_unique<shared::CreateLobbyRequestMessage>("123", "101", player_1);
-    auto request2 = std::make_unique<shared::JoinLobbyRequestMessage>("123", "102", player_2);
+    auto request1 = std::make_unique<shared::CreateLobbyRequestMessage>("123", player_1);
+    auto request2 = std::make_unique<shared::JoinLobbyRequestMessage>("123", player_2);
 
     std::vector<shared::CardBase::id_t> selected_cards = get_valid_kingdom_cards();
 
     // Start game request with wrong game_id
-    auto request3 = std::make_unique<shared::StartGameRequestMessage>("abc", uuid_generator::generate_uuid_v4(),
-                                                                      player_1, selected_cards);
+    auto request3 = std::make_unique<shared::StartGameRequestMessage>("abc", player_1, selected_cards);
 
     // Start game request not as game_master
-    auto request4 = std::make_unique<shared::StartGameRequestMessage>("123", uuid_generator::generate_uuid_v4(),
-                                                                      player_2, selected_cards);
+    auto request4 = std::make_unique<shared::StartGameRequestMessage>("123", player_2, selected_cards);
 
     // Start game request as game_master
-    auto request5 = std::make_unique<shared::StartGameRequestMessage>("123", uuid_generator::generate_uuid_v4(),
-                                                                      player_1, selected_cards);
+    auto request5 = std::make_unique<shared::StartGameRequestMessage>("123", player_1, selected_cards);
+
+    LOG(DEBUG) << "StartGameRequestMessage(player, game, message): " << request3->player_id << " " << request3->game_id
+               << " " << request3->message_id;
 
     lobby_manager.create_lobby(std::move(request1));
     lobby_manager.join_lobby(std::move(request2));
@@ -169,15 +160,12 @@ TEST(ServerLibraryTest, ReceiveAction)
     shared::PlayerBase::id_t player_3 = "Paul";
 
     /* Setup of the lobby */
-    auto request1 =
-            std::make_unique<shared::CreateLobbyRequestMessage>("123", uuid_generator::generate_uuid_v4(), player_1);
-    auto request2 =
-            std::make_unique<shared::JoinLobbyRequestMessage>("123", uuid_generator::generate_uuid_v4(), player_2);
+    auto request1 = std::make_unique<shared::CreateLobbyRequestMessage>("123", player_1);
+    auto request2 = std::make_unique<shared::JoinLobbyRequestMessage>("123", player_2);
 
     std::vector<shared::CardBase::id_t> selected_cards = get_valid_kingdom_cards();
 
-    auto request3 = std::make_unique<shared::StartGameRequestMessage>("123", uuid_generator::generate_uuid_v4(),
-                                                                      player_1, selected_cards);
+    auto request3 = std::make_unique<shared::StartGameRequestMessage>("123", player_1, selected_cards);
 
     lobby_manager.create_lobby(std::move(request1));
     lobby_manager.join_lobby(std::move(request2));
@@ -185,19 +173,19 @@ TEST(ServerLibraryTest, ReceiveAction)
 
     // ActionDecision for a lobby that doesn't exist
     auto request4 = std::make_unique<shared::ActionDecisionMessage>(
-            "456", uuid_generator::generate_uuid_v4(), player_1, std::make_unique<shared::PlayActionCardDecision>(1));
+            "456", player_1, std::make_unique<shared::PlayActionCardDecision>(1));
 
     // ActionDecision for a game that hasn't started yet
     auto request5 = std::make_unique<shared::ActionDecisionMessage>(
-            "123", uuid_generator::generate_uuid_v4(), player_1, std::make_unique<shared::PlayActionCardDecision>(1));
+            "123", player_1, std::make_unique<shared::PlayActionCardDecision>(1));
 
     // ActionDecision for a player that is not in the lobby
     auto request6 = std::make_unique<shared::ActionDecisionMessage>(
-            "123", uuid_generator::generate_uuid_v4(), player_3, std::make_unique<shared::BuyCardDecision>("Village"));
+            "123", player_3, std::make_unique<shared::BuyCardDecision>("Village"));
 
     // ActionDecision should be handled correctly
     auto request7 = std::make_unique<shared::ActionDecisionMessage>(
-            "123", uuid_generator::generate_uuid_v4(), player_1, std::make_unique<shared::BuyCardDecision>("Village"));
+            "123", player_1, std::make_unique<shared::BuyCardDecision>("Village"));
 
     // First part of expected function calls of send_message
     {

@@ -44,5 +44,7 @@ namespace server
     private:
         std::map<std::string, std::shared_ptr<Lobby>> games;
         std::shared_ptr<MessageInterface> message_interface;
+
+        bool lobby_exists(std::string lobby_id);
     };
 } // namespace server

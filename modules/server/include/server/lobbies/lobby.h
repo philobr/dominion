@@ -55,5 +55,7 @@ namespace server
 
         std::vector<Player::id_t> players;
         std::string lobby_id;
+
+        bool player_in_lobby(const shared::PlayerBase::id_t &player_id);
     };
 } // namespace server

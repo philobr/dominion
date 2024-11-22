@@ -11,10 +11,10 @@ namespace server
     {                                                                                                                  \
     public:                                                                                                            \
         inline ret_t                                                                                                   \
-        apply(server::GameState *state,                                                                                \
+        apply(server::GameState &state,                                                                                \
               std::optional<std::unique_ptr<shared::ActionDecision>> action_decision = std::nullopt) const;            \
     };                                                                                                                 \
-    inline BehaviourBase::ret_t name::apply(server::GameState *game_state,                                             \
+    inline BehaviourBase::ret_t name::apply(server::GameState &game_state,                                             \
                                             std::optional<std::unique_ptr<shared::ActionDecision>> action_decision)    \
             const
 
@@ -24,12 +24,12 @@ namespace server
     {                                                                                                                  \
     public:                                                                                                            \
         inline ret_t                                                                                                   \
-        apply(server::GameState *state,                                                                                \
+        apply(server::GameState &state,                                                                                \
               std::optional<std::unique_ptr<shared::ActionDecision>> action_decision = std::nullopt) const;            \
     };                                                                                                                 \
     template <template_type template_name>                                                                             \
     inline BehaviourBase::ret_t name<template_name>::apply(                                                            \
-            server::GameState *game_state, std::optional<std::unique_ptr<shared::ActionDecision>> action_decision)     \
+            server::GameState &game_state, std::optional<std::unique_ptr<shared::ActionDecision>> action_decision)     \
             const
 
 // ================================
@@ -83,7 +83,7 @@ namespace server
             LOG_CALL;
             ASSERT_NO_DECISION;
 
-            auto &affected_player = game_state->get_current_player();
+            auto &affected_player = game_state.get_current_player();
             affected_player.incTreasure(coins);
             return std::nullopt;
         }
@@ -93,7 +93,7 @@ namespace server
             LOG_CALL;
             ASSERT_NO_DECISION;
 
-            auto &affected_player = game_state->get_current_player();
+            auto &affected_player = game_state.get_current_player();
             affected_player.incBuys(buys);
             return std::nullopt;
         }
@@ -103,7 +103,7 @@ namespace server
             LOG_CALL;
             ASSERT_NO_DECISION;
 
-            auto &affected_player = game_state->get_current_player();
+            auto &affected_player = game_state.get_current_player();
             affected_player.incActions(actions);
             return std::nullopt;
         }
@@ -113,7 +113,7 @@ namespace server
             LOG_CALL;
             ASSERT_NO_DECISION;
 
-            auto &affected_player = game_state->get_current_player();
+            auto &affected_player = game_state.get_current_player();
             affected_player.incPoints(points);
             return std::nullopt;
         }
@@ -123,7 +123,7 @@ namespace server
             LOG_CALL;
             ASSERT_NO_DECISION;
 
-            auto &affected_player = game_state->get_current_player();
+            auto &affected_player = game_state.get_current_player();
             affected_player.draw(n_cards);
 
             // assuming the state is updated automatically from the lobby/game_interface

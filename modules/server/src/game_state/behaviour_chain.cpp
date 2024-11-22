@@ -28,7 +28,7 @@ void server::BehaviourChain::resetBehaviours()
 }
 
 std::optional<std::unique_ptr<shared::ActionOrder>>
-server::BehaviourChain::receiveAction(server::GameState *game_state,
+server::BehaviourChain::receiveAction(server::GameState &game_state,
                                       std::optional<std::unique_ptr<shared::ActionDecision>> action_decision)
 {
     if ( empty() ) {

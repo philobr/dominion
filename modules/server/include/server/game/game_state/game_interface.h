@@ -47,7 +47,7 @@ namespace server
         {
             // TODO: just for testing, remove later
             cur_behaviours->loadBehaviours("Laboratory");
-            cur_behaviours->receiveAction(game_state.get(), std::nullopt);
+            cur_behaviours->receiveAction(*game_state.get(), std::nullopt);
         }
 
         response_t handle_action(std::unique_ptr<shared::ActionDecision> action_decision,

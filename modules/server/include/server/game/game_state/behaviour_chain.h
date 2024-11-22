@@ -40,7 +40,7 @@ namespace server
          * @return std::optional<std::unique_ptr<shared::ActionOrder>>
          */
         std::optional<std::unique_ptr<shared::ActionOrder>>
-        receiveAction(server::GameState *game_state,
+        receiveAction(server::GameState &game_state,
                       std::optional<std::unique_ptr<shared::ActionDecision>> action_decision);
 
         bool empty() const { return behaviour_idx == INVALID_IDX && current_card == INVALID_CARD; }

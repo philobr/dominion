@@ -29,7 +29,7 @@ namespace server
         virtual ~BehaviourBase() = default;
 
         virtual ret_t
-        apply(server::GameState *state,
+        apply(server::GameState &state,
               std::optional<std::unique_ptr<shared::ActionDecision>> action_decision = std::nullopt) const = 0;
 
         // i think we dont even need this

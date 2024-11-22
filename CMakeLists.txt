@@ -27,6 +27,9 @@ add_compile_options(
     -Wuninitialized
     # TODO: Remove this suppression
     -Wno-deprecated-enum-enum-conversion
+    # This is a warning that exists on more recent versions of clang
+    # We don't care too much about shadowing
+    -Wno-shadow
 )
 
 add_subdirectory(${EXTERNAL_LIBS}/sockpp)

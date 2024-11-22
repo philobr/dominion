@@ -174,13 +174,13 @@ TEST(ServerLibraryTest, StartGame)
                                                           "Cellar", "Market",  "Mine",       "Smithy",   "Remodel"};
 
     // Start game request with wrong game_id
-    auto request3 = std::make_unique<shared::StartGameRequestMessage>("abc", "103", player_1, selected_cards);
+    auto request3 = std::make_unique<shared::StartGameRequestMessage>("abc", uuid_generator::generate_uuid_v4(), player_1, selected_cards);
 
     // Start game request not as game_master
-    auto request4 = std::make_unique<shared::StartGameRequestMessage>("123", "104", player_2, selected_cards);
+    auto request4 = std::make_unique<shared::StartGameRequestMessage>("123", uuid_generator::generate_uuid_v4(), player_2, selected_cards);
 
     // Start game request as game_master
-    auto request5 = std::make_unique<shared::StartGameRequestMessage>("123", "105", player_1, selected_cards);
+    auto request5 = std::make_unique<shared::StartGameRequestMessage>("123", uuid_generator::generate_uuid_v4(), player_1, selected_cards);
 
     lobby_manager.create_lobby(std::move(request1));
     lobby_manager.join_lobby(std::move(request2));
@@ -201,3 +201,61 @@ TEST(ServerLibraryTest, StartGame)
     lobby_manager.start_game(std::move(request5));
     // TODO: Check if the game started correctly
 }
+
+TEST(ServerLibraryTest, ReceiveAction)
+{
+    std::shared_ptr<MockMessageInterface> message_interface = std::make_shared<MockMessageInterface>();
+    server::LobbyManager lobby_manager(message_interface);
+    shared::PlayerBase::id_t player_1 = "Max";
+    shared::PlayerBase::id_t player_2 = "Peter";
+	shared::PlayerBase::id_t player_3 = "Paul";
+
+	/* Setup of the lobby */
+    auto request1 = std::make_unique<shared::CreateLobbyRequestMessage>("123", uuid_generator::generate_uuid_v4(), player_1);
+    auto request2 = std::make_unique<shared::JoinLobbyRequestMessage>("123", uuid_generator::generate_uuid_v4(), player_2);
+
+    std::vector<shared::CardBase::id_t> selected_cards = {"Moat",   "Village", "Woodcutter", "Workshop", "Militia",
+                                                          "Cellar", "Market",  "Mine",       "Smithy",   "Remodel"};
+
+    auto request3 = std::make_unique<shared::StartGameRequestMessage>("123", uuid_generator::generate_uuid_v4(), player_1, selected_cards);
+
+    lobby_manager.create_lobby(std::move(request1));
+    lobby_manager.join_lobby(std::move(request2));
+	/* Finish setup */
+
+	// ActionDecision for a lobby that doesn't exist
+	auto request4 = std::make_unique<shared::ActionDecisionMessage>(
+            "456", uuid_generator::generate_uuid_v4(), player_1, std::make_unique<shared::PlayActionCardDecision>(1));
+
+	// ActionDecision for a game that hasn't started yet
+	auto request5 = std::make_unique<shared::ActionDecisionMessage>(
+			"123", uuid_generator::generate_uuid_v4(), player_1, std::make_unique<shared::PlayActionCardDecision>(1));
+
+	// ActionDecision for a player that is not in the lobby
+    auto request6 = std::make_unique<shared::ActionDecisionMessage>(
+            "123", uuid_generator::generate_uuid_v4(), player_3, std::make_unique<shared::BuyCardDecision>("Village"));
+
+	// ActionDecision should be handled correctly
+	auto request7 = std::make_unique<shared::ActionDecisionMessage>(
+			"123", uuid_generator::generate_uuid_v4(), player_1, std::make_unique<shared::BuyCardDecision>("Village"));
+
+    // First part of expected function calls of send_message
+    {
+        InSequence s;
+        // request4
+		EXPECT_CALL(*message_interface, send_message(IsFailureMessage(), player_1)).Times(1);
+		// Start game messages
+		EXPECT_CALL(*message_interface, send_message(_, _)).Times(4);
+		// request6
+		EXPECT_CALL(*message_interface, send_message(IsFailureMessage(), player_3)).Times(1);
+		// request7
+		// TODO: uncomment as soon as game_interface is implemented
+		//EXPECT_CALL(*message_interface, send_message(_, player_1)).Times(1);
+    }
+
+    lobby_manager.receive_action(std::move(request4));
+	EXPECT_THROW(lobby_manager.receive_action(std::move(request5)), std::runtime_error);
+	lobby_manager.start_game(std::move(request3));
+    lobby_manager.receive_action(std::move(request6));
+	// TODO: uncomment as soon as game_interface is implemented
+	//lobby_manager.receive_action(std::move(request7));

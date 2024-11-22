@@ -11,7 +11,7 @@ namespace server
         return std::any_of(players.begin(), players.end(), [&](const auto &player) { return player == player_id; });
     }
 
-    Lobby::Lobby(Player::id_t game_master, std::string lobby_id) :
+    Lobby::Lobby(const Player::id_t &game_master, const std::string &lobby_id) :
         game_interface(nullptr), game_master(game_master), lobby_id(lobby_id)
     {
         LOG(INFO) << "Lobby constructor called with lobby_id: " << lobby_id;

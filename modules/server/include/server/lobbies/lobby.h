@@ -26,7 +26,7 @@ namespace server
          *
          * @param game_master The player who created the lobby.
          */
-        Lobby(Player::id_t game_master, std::string lobby_id);
+        Lobby(const Player::id_t &game_master, const std::string &lobby_id);
 
         /**
          * @brief Add a player to the lobby.

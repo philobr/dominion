@@ -2,8 +2,8 @@
 #include <server/lobbies/lobby_manager.h>
 #include <server/network/message_interface.h>
 #include <shared/message_types.h>
-#include <shared/utils/uuid_generator.h>
 #include <shared/utils/test_helpers.h>
+#include <shared/utils/uuid_generator.h>
 #include <typeinfo>
 
 #include <gmock/gmock.h>

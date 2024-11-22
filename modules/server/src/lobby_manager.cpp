@@ -2,10 +2,7 @@
 #include <shared/utils/uuid_generator.h>
 
 
-bool server::LobbyManager::lobby_exists(std::string lobby_id)
-{
-    return games.find(lobby_id) != games.end();
-}
+bool server::LobbyManager::lobby_exists(std::string lobby_id) { return games.find(lobby_id) != games.end(); }
 
 void server::LobbyManager::create_lobby(std::unique_ptr<shared::CreateLobbyRequestMessage> request)
 {

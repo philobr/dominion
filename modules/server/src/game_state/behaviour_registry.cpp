@@ -1,9 +1,5 @@
 #include <server/game/game_state/behaviour_registry.h>
 
-
-// static member declaration
-server::BehaviourRegistry::map_t server::BehaviourRegistry::map_;
-
 const std::vector<std::unique_ptr<server::BehaviourBase>> &
 server::BehaviourRegistry::getBehaviours(const std::string &card_id)
 {
@@ -16,15 +12,27 @@ server::BehaviourRegistry::getBehaviours(const std::string &card_id)
 
 server::BehaviourRegistry::BehaviourRegistry()
 {
-    LOG(INFO) << "Creating Behaviour registry";
+    if ( is_initialised ) {
+        LOG(INFO) << "BehaviourRegistry is already initialised, skipping card registration";
+        return;
+    }
+
+    LOG(INFO) << "Initialising BehaviourRegistry";
+
+    initialise_behaviours();
+
+    is_initialised = true;
+}
+
+void server::BehaviourRegistry::initialise_behaviours()
+{
+    using namespace server;
+    using namespace behaviour;
 
     /**
      * behaviours are registered to card names here.
      * insert can take multiple types as template param
      */
-
-    using namespace server;
-    using namespace behaviour;
 
     /*
     DONE
@@ -59,7 +67,6 @@ server::BehaviourRegistry::BehaviourRegistry()
     insert<GainActions<2>, GainCoins<2>, GainBuys<1>>("Festival");
     insert<GainActions<1>, DrawCards<1>, GainBuys<1>, GainCoins<1>>("Market");
     insert<DrawCards<2>, GainActions<1>>("Laboratory");
-
 
     /*
     TODO:

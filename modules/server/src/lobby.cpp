@@ -45,7 +45,7 @@ namespace server
         // Send JoinLobbyBroadcast to all players
         for ( const auto &player_id : players ) {
             shared::JoinLobbyBroadcastMessage join_message =
-                    shared::JoinLobbyBroadcastMessage(lobby_id, uuid_generator::generate_uuid_v4(), requestor_id);
+                    shared::JoinLobbyBroadcastMessage(lobby_id, uuid_generator::generate_uuid_v4(), players);
             message_interface.send_message(std::make_unique<shared::JoinLobbyBroadcastMessage>(join_message),
                                            player_id);
         }

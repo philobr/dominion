@@ -50,7 +50,7 @@ namespace shared
     {
     public:
         GameStateRequestMessage(std::string game_id, PlayerBase::id_t player_id, std::string message_id = uuid_generator::generate_uuid_v4()) :
-            ClientToServerMessage(game_id, message_id, player_id)
+            ClientToServerMessage(game_id, player_id, message_id)
         {}
         ~GameStateRequestMessage() = default;
         std::string to_json() override;
@@ -61,7 +61,7 @@ namespace shared
     {
     public:
         CreateLobbyRequestMessage(std::string game_id, PlayerBase::id_t player_id, std::string message_id = uuid_generator::generate_uuid_v4()) :
-            ClientToServerMessage(game_id, message_id, player_id)
+            ClientToServerMessage(game_id, player_id, message_id)
         {}
         ~CreateLobbyRequestMessage() = default;
         std::string to_json() override;
@@ -73,7 +73,7 @@ namespace shared
     public:
         ~JoinLobbyRequestMessage() = default;
         JoinLobbyRequestMessage(std::string game_id, PlayerBase::id_t player_id, std::string message_id = uuid_generator::generate_uuid_v4()) :
-            ClientToServerMessage(game_id, message_id, player_id)
+            ClientToServerMessage(game_id, player_id, message_id)
         {}
         std::string to_json() override;
         bool operator==(const JoinLobbyRequestMessage &other) const;
@@ -102,7 +102,7 @@ namespace shared
         ActionDecisionMessage(std::string game_id, PlayerBase::id_t player_id,
                               std::unique_ptr<ActionDecision> decision,
                               std::optional<std::string> in_response_to = std::nullopt, std::string message_id = uuid_generator::generate_uuid_v4()) :
-            ClientToServerMessage(game_id, message_id, player_id),
+            ClientToServerMessage(game_id, player_id, message_id),
             decision(std::move(decision)), in_response_to(in_response_to)
         {}
         std::string to_json() override;
@@ -127,7 +127,7 @@ namespace shared
         static std::unique_ptr<ServerToClientMessage> from_json(const std::string &json);
 
     protected:
-        ServerToClientMessage(std::string game_id, , std::string message_id = uuid_generator::generate_uuid_v4()) : Message(game_id, message_id) {}
+        ServerToClientMessage(std::string game_id, std::string message_id = uuid_generator::generate_uuid_v4()) : Message(game_id, message_id) {}
         bool operator==(const ServerToClientMessage &other) const;
     };
 

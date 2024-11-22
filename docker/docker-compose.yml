@@ -17,3 +17,5 @@ services:
       target: build
       dockerfile: docker/Dockerfile
     container_name: dominion-prod
+    ports:
+      - "50505:50505"

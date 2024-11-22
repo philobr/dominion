@@ -39,6 +39,7 @@ namespace shared
 
     Logger::~Logger()
     {
+        log_file_.flush();
         if ( log_file_.is_open() ) {
             if ( log_to_file_ ) {
                 log_file_ << "[INFO] - END LOG" << std::endl;

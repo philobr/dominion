@@ -20,7 +20,7 @@ void server::LobbyManager::create_lobby(std::unique_ptr<shared::CreateLobbyReque
         return;
     }
 
-    LOG(DEBUG) << "Creating lobby with ID: " << lobby_id;
+    LOG(INFO) << "Creating lobby with ID: " << lobby_id;
     games[lobby_id] = std::make_shared<Lobby>(game_master_id, lobby_id);
 
     std::vector<shared::CardBase::id_t> available_cards =

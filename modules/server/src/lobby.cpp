@@ -14,14 +14,17 @@ namespace server
     Lobby::Lobby(shared::PlayerBase::id_t game_master, std::string lobby_id) :
         game_interface(nullptr), game_master(game_master), lobby_id(lobby_id)
     {
+        LOG(INFO) << "Lobby constructor called with lobby_id: " << lobby_id;
         players.push_back(game_master);
     };
 
     void Lobby::join(MessageInterface &message_interface, std::unique_ptr<shared::JoinLobbyRequestMessage> request)
     {
         const shared::PlayerBase::id_t requestor_id = request->player_id;
-
+        LOG(INFO) << "Lobby::join called with Lobby ID: " << lobby_id << " and Player ID: " << requestor_id;
+        // Check if player is already in the lobby
         if ( player_in_lobby(requestor_id) ) {
+            LOG(DEBUG) << "Player is already in the lobby. Lobby ID: " << lobby_id << " , Player ID: " << requestor_id;
             shared::ResultResponseMessage failure_message = shared::ResultResponseMessage(
                     lobby_id, false, request->message_id, "Player is already in the lobby");
 
@@ -31,6 +34,8 @@ namespace server
         }
 
         if ( players.size() >= MAX_PLAYERS ) {
+            LOG(DEBUG) << "Lobby is full. Lobby ID: " << lobby_id << " , Player ID: " << requestor_id << " , Max players: "
+                       << MAX_PLAYERS;
             shared::ResultResponseMessage failure_message =
                     shared::ResultResponseMessage(lobby_id, false, request->message_id, "Lobby is full");
             message_interface.send_message(std::make_unique<shared::ResultResponseMessage>(failure_message),
@@ -40,12 +45,14 @@ namespace server
 
         // Send JoinLobbyBroadcast to all players
         for ( const auto &player_id : players ) {
+            LOG(INFO) << "Sending JoinLobbyBroadcastMessage to Player ID: " << player_id;
             shared::JoinLobbyBroadcastMessage join_message = shared::JoinLobbyBroadcastMessage(lobby_id, requestor_id);
             message_interface.send_message(std::make_unique<shared::JoinLobbyBroadcastMessage>(join_message),
                                            player_id);
         }
 
         // Add player to the lobby
+        LOG(DEBUG) << "Adding player to the lobby. Lobby ID: " << lobby_id << " , Player ID: " << requestor_id;
         players.push_back(requestor_id);
 
         shared::ResultResponseMessage success_message =
@@ -61,7 +68,9 @@ namespace server
     {
         // Check if gamemaster is starting the game
         shared::PlayerBase::id_t requestor_id = request->player_id;
+        LOG(INFO) << "Lobby::start_game called with Lobby ID: " << lobby_id << " and Player ID: " << requestor_id;
         if ( requestor_id != game_master ) {
+            LOG(DEBUG) << "Lobby::start_game is called by someone differnt than game master. Lobby ID: " << lobby_id << " , Player ID: " << requestor_id << " , Game Master ID: " << game_master;
             shared::ResultResponseMessage failure_message = shared::ResultResponseMessage(
                     lobby_id, false, request->message_id, "Only the game master can start the game");
             message_interface.send_message(std::make_unique<shared::ResultResponseMessage>(failure_message),
@@ -82,11 +91,13 @@ namespace server
         // send messages
         for ( const auto &player_id : players ) {
             // send start game broadcast to all players
+            LOG(INFO) << "Sending StartGameBroadcastMessage in Lobby ID: " << lobby_id <<" to Player ID: " << player_id;
             shared::StartGameBroadcastMessage start_message = shared::StartGameBroadcastMessage(lobby_id);
             message_interface.send_message(std::make_unique<shared::StartGameBroadcastMessage>(start_message),
                                            player_id);
 
             // send game state to all players
+            LOG(INFO) << "Sending GameStateMessage in Lobby ID: " << lobby_id << " to Player ID: " << player_id;
             std::unique_ptr<shared::ReducedGameState> reduced_game_state = game_state->get_reduced_state(player_id);
             std::unique_ptr<shared::GameStateMessage> game_state_message =
                     std::make_unique<shared::GameStateMessage>(lobby_id, std::move(reduced_game_state));
@@ -106,6 +117,7 @@ namespace server
         // Check if player is in the lobby
         shared::PlayerBase::id_t player_id = action->player_id;
         if ( !player_in_lobby(player_id) ) {
+            LOG(DEBUG) << "Received Action and Player is not in the requested lobby. Lobby ID: " << lobby_id << " , Player ID: " << player_id << " , Message ID: " << action->message_id;
             shared::ResultResponseMessage failure_message =
                     shared::ResultResponseMessage(lobby_id, false, action->message_id, "Player is not in the lobby");
             message_interface.send_message(std::make_unique<shared::ResultResponseMessage>(failure_message), player_id);

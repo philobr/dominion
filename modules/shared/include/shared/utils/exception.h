@@ -85,3 +85,7 @@ NEW_INHERITED_EXCEPTION(PlayerCountMismatch, GameState);
 NEW_INHERITED_EXCEPTION(DuplicatePlayer, GameState);
 NEW_INHERITED_EXCEPTION(WrongCardCount, GameState);
 NEW_INHERITED_EXCEPTION(OutOfPhase, GameState);
+
+// CLI parsing
+NEW_BASE_EXCPETION(Cli);
+NEW_INHERITED_EXCEPTION(InvalidArgument, Cli);

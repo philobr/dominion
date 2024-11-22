@@ -11,7 +11,7 @@ int main(int argc, char *argv[])
     shared::Logger::writeTo(args.getLogFile());
 
     // create a message interface, which creates a server network manager, which listens endlessly for connections
-    server::ServerNetworkManager server;
+    server::ServerNetworkManager server(args.getPort());
 
     return 0;
 }

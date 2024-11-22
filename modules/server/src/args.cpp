@@ -1,6 +1,7 @@
 
 #include <quick_arg_parser.hpp>
 #include <server/args.h>
+#include <server/network/server_network_manager.h>
 #include <shared/utils/exception.h>
 
 namespace server
@@ -9,6 +10,7 @@ namespace server
     {
         std::string logFile = option("log-file", 'f', "Log file") = "";
         std::string logLevel = option("log-level", 'l', "Log level") = "warn";
+        uint16_t port = option("port", 'p', "Port") = DEFAULT_PORT;
     };
 
     LogLevel parseLogLevel(const std::string &logLevel)
@@ -33,6 +35,7 @@ namespace server
 
             _logFile = impl.logFile;
             _logLevel = parseLogLevel(impl.logLevel);
+            _port = impl.port;
         } catch ( const exception::Cli &e ) {
             std::cerr << "Error: Faild to parse args: " << e.what() << std::endl;
             std::exit(1);
@@ -42,4 +45,6 @@ namespace server
     std::string ServerArgs::getLogFile() { return _logFile; }
 
     LogLevel ServerArgs::getLogLevel() { return _logLevel; }
+
+    uint16_t ServerArgs::getPort() { return _port; }
 } // namespace server

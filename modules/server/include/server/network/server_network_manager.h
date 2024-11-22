@@ -21,10 +21,13 @@ using handler = std::function<void(const std::string &, const sockpp::tcp_socket
 
 namespace server
 {
+    const std::string DEFAULT_SERVER_HOST = "127.0.0.1";
+    const uint16_t DEFAULT_PORT = 50505;
+
     class ServerNetworkManager
     {
     public:
-        ServerNetworkManager();
+        ServerNetworkManager(uint16_t port = DEFAULT_PORT);
         ~ServerNetworkManager();
 
         // function to send via the BasicNetwork class

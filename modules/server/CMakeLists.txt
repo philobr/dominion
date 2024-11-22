@@ -21,6 +21,7 @@ target_include_directories(server_lib PUBLIC
 include_rapidjson(server_lib)   
 include_sockpp(server_lib)
 include_shared_lib(server_lib)
+include_quick_arg_parser(server_lib)
 
 set(SERVER_EXECUTABLE_SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/server_main.cpp 

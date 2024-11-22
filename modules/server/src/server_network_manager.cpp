@@ -1,3 +1,4 @@
+
 #include <iostream>
 #include <sstream>
 
@@ -7,15 +8,12 @@ using handler = std::function<void(const std::string &, const sockpp::tcp_socket
 
 namespace server
 {
-    const std::string DEFAULT_SERVER_HOST = "127.0.0.1";
-    const unsigned int DEFAULT_PORT = 50505;
-
     BasicNetwork *BasicNetwork::_instance = nullptr;
     std::shared_ptr<MessageInterface> ServerNetworkManager::_messageInterface;
     LobbyManager ServerNetworkManager::_lobby_manager(ServerNetworkManager::_messageInterface);
     std::unique_ptr<MessageHandler> ServerNetworkManager::_messageHandler;
 
-    ServerNetworkManager::ServerNetworkManager()
+    ServerNetworkManager::ServerNetworkManager(uint16_t port)
     {
         if ( _instance == nullptr ) {
             _instance = this;
@@ -24,7 +22,7 @@ namespace server
         _lobby_manager = LobbyManager(_messageInterface);
         _messageHandler = std::make_unique<MessageHandler>(MessageHandler(_lobby_manager));
         sockpp::socket_initializer socket_initializer; // Required to initialise sockpp
-        this->connect(DEFAULT_SERVER_HOST, DEFAULT_PORT);
+        this->connect(DEFAULT_SERVER_HOST, port);
     }
 
     ServerNetworkManager::~ServerNetworkManager() = default;

@@ -6,6 +6,7 @@
 #include <shared/game/cards/card_base.h>
 #include <shared/game/game_state/player_base.h>
 #include <shared/game/game_state/reduced_game_state.h>
+#include <shared/utils/logger.h>
 
 namespace server
 {
@@ -124,6 +125,130 @@ namespace server
          * @brief Shuffles all cards in the discard_pile and inserts them below the draw_pile.
          */
         void shuffle_deck();
+
+        enum CardAccess
+        {
+            DISCARD_PILE = 1,
+            DRAW_PILE_PILE_TOP = 2,
+            DRAW_PILE_PILE_BOTTOM = 4,
+            HAND = 8,
+
+            PLAYED_CARDS = 16,
+            STAGED_CARDS = 32, // ex: sentry could move here
+            TRASH = 64,
+        };
+
+        std::vector<shared::CardBase::id_t> &get_pile(CardAccess pile)
+        {
+            switch ( pile ) {
+                case DISCARD_PILE:
+                    return discard_pile;
+                case HAND:
+                    return hand_cards;
+                case PLAYED_CARDS:
+                    return played_cards;
+                default:
+                    throw std::invalid_argument("Invalid pile specified or pile is not accessible.");
+            }
+        }
+
+        std::vector<shared::CardBase::id_t> take_n_from(unsigned int n, CardAccess from)
+        {
+            std::vector<shared::CardBase::id_t> taken_cards;
+            taken_cards.reserve(n);
+
+            switch ( from ) {
+                case DISCARD_PILE:
+                case HAND:
+                case PLAYED_CARDS:
+                    {
+                        auto &pile = get_pile(from);
+                        n = std::min(n, static_cast<unsigned int>(pile.size()));
+                        auto start_iter = pile.end() - n;
+                        taken_cards = {std::make_move_iterator(pile.end() - n), std::make_move_iterator(pile.end())};
+                        pile.erase(start_iter, pile.end());
+                    }
+                    break;
+                case DRAW_PILE_PILE_TOP:
+                    {
+                        auto &pile = draw_pile;
+                        n = std::min(n, static_cast<unsigned int>(pile.size()));
+                        taken_cards = {std::make_move_iterator(draw_pile.begin()),
+                                       std::make_move_iterator(draw_pile.begin() + n)};
+                        pile.erase(pile.begin(), pile.begin() + n);
+                    }
+                    break;
+                case DRAW_PILE_PILE_BOTTOM:
+                    {
+                        auto &pile = draw_pile;
+                        n = std::min(n, static_cast<unsigned int>(pile.size()));
+                        taken_cards = {std::make_move_iterator(draw_pile.end() - n),
+                                       std::make_move_iterator(draw_pile.end())};
+                        pile.erase(pile.end() - n, pile.end());
+                    }
+                    break;
+                default:
+                    throw std::invalid_argument("Invalid 'from' pile specified.");
+            }
+
+            return taken_cards;
+        }
+
+        void add_to(std::vector<shared::CardBase::id_t> cards, CardAccess to)
+        {
+            switch ( to ) {
+                case DISCARD_PILE:
+                case HAND:
+                case PLAYED_CARDS:
+                    {
+                        auto &pile = get_pile(to);
+                        pile.insert(discard_pile.end(), std::make_move_iterator(cards.begin()),
+                                    std::make_move_iterator(cards.end()));
+                    }
+                    break;
+                case DRAW_PILE_PILE_TOP:
+                    {
+                        draw_pile.insert(draw_pile.begin(), std::make_move_iterator(cards.begin()),
+                                         std::make_move_iterator(cards.end()));
+                    }
+                    break;
+                case DRAW_PILE_PILE_BOTTOM:
+                    {
+                        draw_pile.insert(draw_pile.end(), std::make_move_iterator(cards.begin()),
+                                         std::make_move_iterator(cards.end()));
+                    }
+                    break;
+                case TRASH:
+                    {
+                        // do nothing, cards are already trashed implicitly
+                    }
+                    break;
+                default:
+                    throw std::invalid_argument("Invalid 'to' pile specified.");
+            }
+        }
+
+        void move(int n, CardAccess from, CardAccess to)
+        {
+            if ( n <= 0 )
+                return;
+
+            if ( to == TRASH ) {
+                take_n_from(n, from);
+            } else {
+                auto cards = take_n_from(n, from);
+                add_to(std::move(cards), to);
+            }
+        }
+
+        /**
+         * we can expose stuff like:
+         * - getNFromImmutable
+         * - moveToTrash(from)
+         *
+         * actually, this can even be templated!!!!!
+         */
+
 
         std::deque<card_id> draw_pile;
         std::vector<card_id> discard_pile;

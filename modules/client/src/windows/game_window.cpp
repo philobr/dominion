@@ -33,36 +33,64 @@ namespace client
 
         // if we are already showing the panel, we don't need to do anything
         if ( this->_currentPanel == panel ) {
-            LOG(INFO) << "Was same panel";
             return;
         }
-        LOG(INFO) << "Wasn't the same panel";
+
+        // idk why, but if we use this then the panel switch actually works on osx...
+        this->CallAfter(
+                [=, this]()
+                {
+                    if ( this->_currentPanel ) {
+                        this->_mainLayout->Detach(this->_currentPanel);
+
+                        this->_mainLayout->Layout();
+                        this->Update();
+                        this->Refresh();
+
+                        this->_currentPanel->Hide();
+                        this->_currentPanel = nullptr;
+                    }
+
+                    if ( panel ) {
+                        this->_mainLayout->Add(panel, 1, wxALIGN_CENTER, 20); // 20-pixel spacing
+                        panel->Show(true);
+                        this->_currentPanel = panel;
+
+                        this->_mainLayout->Layout();
+                        this->Fit();
+                    }
+
+                    LOG(INFO) << "Done with GameWindow::showPanel()";
+                });
+        LOG(INFO) << "Done with GameWindow::showPanel()";
+
+        /*
+        OLD VERSION, AS BACKUP IF IT DOESNT WORK ON LINUX
+
+        // if we are already showing the panel, we don't need to do anything
+        if ( this->_currentPanel == panel ) {
+            return;
+        }
 
         // remove previous panel
         if ( this->_currentPanel != nullptr ) {
-            LOG(INFO) << "Current panel is not nullptr";
             this->_mainLayout->Detach(this->_currentPanel);
-            LOG(INFO) << "Detached current panel";
             this->_currentPanel->Show(false);
-            LOG(INFO) << "Not showing current panel any more";
             this->_currentPanel = nullptr;
-            LOG(INFO) << "Changed current panel to nullptr";
         }
-        LOG(INFO) << "Removed previous panel";
 
         // add new panel
         this->_mainLayout->Add(panel, 1, wxALIGN_CENTER, 20); // 20 pixel spacing
         panel->Show(true);
         this->_currentPanel = panel;
-        LOG(INFO) << "Added new panel";
 
         // update layout
         this->_mainLayout->Layout();
-        LOG(INFO) << "Updated Layout";
 
         // update window size
         this->Fit();
-        LOG(INFO) << "Done with GameWindow::showPanel()";
+
+        */
     }
 
 

@@ -1,5 +1,5 @@
 #include <server/game/game_state/behaviour_base.h>
-
+#include <shared/utils/utils.h>
 namespace server
 {
     namespace behaviour
@@ -31,13 +31,56 @@ namespace server
             server::GameState *game_state, std::optional<std::unique_ptr<shared::ActionDecision>> action_decision)     \
             const
 
+// ================================
+// HELPER MACROS
+// ================================
+
+// returns a pretty string with the behaviours name.
+#define BEHAVIOUR_TO_STRING utils::demangle(typeid(*this).name())
+
+// call this at the top of your behaviour to log the call.
+#define LOG_CALL LOG(DEBUG) << "Applying " << BEHAVIOUR_TO_STRING
+
+// call this if the linter is beeing a lil bitch.
+#define SUPPRESS_UNUSED_VAR_WARNING(variable) (void)(variable)
+
+#define ASSERT_DECISION                                                                                                \
+    if ( action_decision == std::nullopt ) {                                                                           \
+        LOG(ERROR) << "Expected a decision, but didnt receive one";                                                    \
+        throw std::runtime_error("Expected a decision, but didnt receive one");                                        \
+    }
+
+#define ASSERT_NO_DECISION                                                                                             \
+    if ( action_decision != std::nullopt ) {                                                                           \
+        LOG(ERROR) << "Received a decision, but didnt excpect one";                                                    \
+        throw std::runtime_error("Received a decision, but didnt excpect one");                                        \
+    }
+
+/**
+ * @brief can be used like:
+ * auto casted_decision = TRY_CAST_DECISION(expected_type);
+ */
+#define TRY_CAST_DECISION(type)                                                                                        \
+    [](std::optional<std::unique_ptr<shared::ActionDecision>> &action_decision) -> type *                              \
+    {                                                                                                                  \
+        ASSERT_DECISION                                                                                                \
+        auto *casted_decision = dynamic_cast<type *>(action_decision->get());                                          \
+        if ( !casted_decision ) {                                                                                      \
+            LOG(ERROR) << "Decision has wrong type! Expected: " << utils::demangle(typeid(type).name())                \
+                       << ", but got: " << utils::demangle(typeid(*action_decision->get()).name());                    \
+            throw std::runtime_error("Decision has wrong type");                                                       \
+        }                                                                                                              \
+        return casted_decision;                                                                                        \
+    }(action_decision)
+
+
         // ================================
         // BEHAVIOUR IMPLEMENTATIONS
         // ================================
         DEFINE_TEMPLATED_BEHAVIOUR(GainCoins, BehaviourType::NON_INTERACTIVE, int, coins)
         {
-            CHECK_HAS_NO_DECISION;
-            LOG(DEBUG) << "Applied GainCoins";
+            LOG_CALL;
+            ASSERT_NO_DECISION;
 
             auto &affected_player = game_state->get_current_player();
             affected_player.incTreasure(coins);
@@ -46,8 +89,8 @@ namespace server
 
         DEFINE_TEMPLATED_BEHAVIOUR(GainBuys, BehaviourType::NON_INTERACTIVE, int, buys)
         {
-            CHECK_HAS_NO_DECISION;
-            LOG(INFO) << "Applied GainCoins";
+            LOG_CALL;
+            ASSERT_NO_DECISION;
 
             auto &affected_player = game_state->get_current_player();
             affected_player.incBuys(buys);
@@ -56,8 +99,8 @@ namespace server
 
         DEFINE_TEMPLATED_BEHAVIOUR(GainActions, BehaviourType::NON_INTERACTIVE, int, actions)
         {
-            CHECK_HAS_NO_DECISION;
-            LOG(INFO) << "Applied GainCoins";
+            LOG_CALL;
+            ASSERT_NO_DECISION;
 
             auto &affected_player = game_state->get_current_player();
             affected_player.incActions(actions);
@@ -66,22 +109,32 @@ namespace server
 
         DEFINE_TEMPLATED_BEHAVIOUR(GainPoints, BehaviourType::NON_INTERACTIVE, int, points)
         {
-            CHECK_HAS_NO_DECISION;
-            LOG(INFO) << "Applied GainPoints";
+            LOG_CALL;
+            ASSERT_NO_DECISION;
 
             auto &affected_player = game_state->get_current_player();
             affected_player.incPoints(points);
             return std::nullopt;
         }
 
+        DEFINE_TEMPLATED_BEHAVIOUR(DrawCards, BehaviourType::NON_INTERACTIVE, int, n_cards)
+        {
+            LOG_CALL;
+            ASSERT_NO_DECISION;
+
+            auto &affected_player = game_state->get_current_player();
+            affected_player.draw(n_cards);
+
+            // assuming the state is updated automatically from the lobby/game_interface
+            return std::nullopt;
+        }
+
 #define TODO_IMPLEMENT_ME                                                                                              \
-    if ( game_state->is_game_over() || action_decision.has_value() ) {                                                 \
-        LOG(ERROR) << "making the linter happy by using all the variables :D :D :D";                                   \
-    }                                                                                                                  \
-    LOG(ERROR) << "BEHAVIOUR IS NOT IMPLEMENTED YET";                                                                  \
+    SUPPRESS_UNUSED_VAR_WARNING(game_state);                                                                           \
+    SUPPRESS_UNUSED_VAR_WARNING(action_decision);                                                                      \
+    LOG(ERROR) << "BEHAVIOUR " << BEHAVIOUR_TO_STRING << " IS NOT IMPLEMENTED YET";                                    \
     throw std::runtime_error("not implemented");                                                                       \
-                                                                                                                       \
-    return std::nullopt;
+    return std::nullopt
 
         // ================================
         // PLACEHOLDER BEHAVIOUR
@@ -89,17 +142,15 @@ namespace server
         DEFINE_BEHAVIOUR(NOT_IMPLEMENTED_YET, BehaviourType::NON_INTERACTIVE) { TODO_IMPLEMENT_ME; }
 
         // ================================
-        // TODO
-        // ================================
-        DEFINE_TEMPLATED_BEHAVIOUR(DrawCards, BehaviourType::NON_INTERACTIVE, int, cards) { TODO_IMPLEMENT_ME; }
-
-        DEFINE_BEHAVIOUR(GainAnyCard, BehaviourType::NON_INTERACTIVE) { TODO_IMPLEMENT_ME; }
-
-        // ================================
-        // TODO: ADD MORE
+        // TODO: add behaviours
         // ================================
 
 #undef DEFINE_BEHAVIOUR
 #undef DEFINE_TEMPLATED_BEHAVIOUR
+#undef TRY_CAST_DECISION
+#undef LOG_CALL
+#undef SUPPRESS_UNUSED_VAR_WARNING
+#undef ASSERT_DECISION
+#undef ASSERT_NO_DECISION
     } // namespace behaviour
 } // namespace server

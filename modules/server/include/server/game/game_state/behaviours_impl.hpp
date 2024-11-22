@@ -36,11 +36,8 @@ namespace server
 // HELPER MACROS
 // ================================
 
-// returns a pretty string with the behaviours name.
-#define BEHAVIOUR_TO_STRING utils::demangle(typeid(*this).name())
-
 // call this at the top of your behaviour to log the call.
-#define LOG_CALL LOG(DEBUG) << "Applying " << BEHAVIOUR_TO_STRING
+#define LOG_CALL LOG(INFO) << "Applying " << CLASS_NAME
 
 // call this if the linter is beeing a lil bitch.
 #define SUPPRESS_UNUSED_VAR_WARNING(variable) (void)(variable)
@@ -133,7 +130,7 @@ namespace server
 #define TODO_IMPLEMENT_ME                                                                                              \
     SUPPRESS_UNUSED_VAR_WARNING(game_state);                                                                           \
     SUPPRESS_UNUSED_VAR_WARNING(action_decision);                                                                      \
-    LOG(ERROR) << "BEHAVIOUR " << BEHAVIOUR_TO_STRING << " IS NOT IMPLEMENTED YET";                                    \
+    LOG(ERROR) << "BEHAVIOUR " << CLASS_NAME << " IS NOT IMPLEMENTED YET";                                             \
     throw std::runtime_error("not implemented");                                                                       \
     return std::nullopt
 

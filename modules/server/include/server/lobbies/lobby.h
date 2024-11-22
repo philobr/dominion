@@ -56,14 +56,14 @@ namespace server
          *
          * @return A const reference vector of player ids.
          */
-        const std::vector<Player::id_t> &get_players() { return players; }
+        const std::vector<Player::id_t> &get_players() const { return players; }
 
         /**
          * @brief Get the id of the game master.
          *
          * @return The id of the game master.
          */
-        Player::id_t get_game_master() const { return game_master; };
+        const Player::id_t &get_game_master() const { return game_master; };
 
     private:
         GameInterface::ptr_t game_interface;

@@ -46,7 +46,7 @@ namespace server
         ~GameState();
         GameState(GameState &&other);
 
-        shared::ReducedGameState get_reduced_state(const Player::id_t &affected_player);
+        std::unique_ptr<shared::ReducedGameState> get_reduced_state(const Player::id_t &affected_player);
 
         const Player::id_t &getCurrentPlayerId() const { return player_order[current_player_idx]; }
         Player &get_current_player() { return *player_map[getCurrentPlayerId()]; }
@@ -103,7 +103,3 @@ namespace server
         static bool validateKingdomCardTypes(const std::vector<shared::CardBase::id_t> &kingdom_cards);
     };
 } // namespace server
-
-// this is down here because the cards need the gamestate at compiletime, but the gamestate does not need the cards at
-// compiletime
-#include <server/game/cards/cards.h>

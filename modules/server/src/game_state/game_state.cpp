@@ -2,6 +2,8 @@
 #include <random>
 
 #include <server/game/game_state/game_state.h>
+
+#include <shared/game/cards/card_factory.h>
 #include <shared/utils/assert.h>
 #include <shared/utils/exception.h>
 #include <shared/utils/logger.h>
@@ -68,7 +70,7 @@ namespace server
         board = server::ServerBoard::make(selected_cards, player_map.size());
     }
 
-    shared::ReducedGameState GameState::get_reduced_state(const Player::id_t &target_player)
+    std::unique_ptr<shared::ReducedGameState> GameState::get_reduced_state(const Player::id_t &target_player)
     {
         std::vector<shared::ReducedEnemy::ptr_t> reduced_enemies;
         std::for_each(player_map.begin(), player_map.end(),
@@ -83,14 +85,14 @@ namespace server
         Player::id_t active_player_id = getCurrentPlayerId();
         shared::Board::ptr_t reduced_board = board->getReduced();
 
-        return shared::ReducedGameState(reduced_board, std::move(reduced_player), std::move(reduced_enemies),
-                                        active_player_id);
+        return std::make_unique<shared::ReducedGameState>(reduced_board, std::move(reduced_player),
+                                                          std::move(reduced_enemies), active_player_id);
     }
 
     bool GameState::try_buy(const Player::id_t &player_id, const shared::CardBase::id_t &card_id)
     {
         auto &player = get_player(player_id);
-        const auto card_cost = CardFactory::getCard(card_id)->getCost();
+        const auto card_cost = shared::CardFactory::getCard(card_id).getCost();
 
         if ( player.getTreasure() < card_cost ) {
             LOG(ERROR) << player_id << " has " << player.getTreasure() << " coins but needs " << card_cost;
@@ -126,11 +128,8 @@ namespace server
         return std::all_of(kingdom_cards.begin(), kingdom_cards.end(),
                            [](const auto &card_id)
                            {
-                               if ( const auto &card = CardFactory::getCard(card_id); card != nullptr ) {
-                                   return card->isAction() || card->isAttack() || card->isReaction();
-                               } else {
-                                   return false;
-                               }
+                               const auto &card = shared::CardFactory::getCard(card_id);
+                               return card.isAction() || card.isAttack() || card.isReaction();
                            });
     }
 

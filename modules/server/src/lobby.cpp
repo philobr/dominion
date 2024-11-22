@@ -87,10 +87,10 @@ namespace server
                                            player_id);
 
             // send game state to all players
-            shared::ReducedGameState reduced_game_state = game_state->get_reduced_state(player_id);
-            shared::GameStateMessage game_state_message =
-                    shared::GameStateMessage(lobby_id /*, reduced_game_state */); // TODO: uncomment reduced_game_state
-            message_interface.send_message(std::make_unique<shared::GameStateMessage>(game_state_message), player_id);
+            std::unique_ptr<shared::ReducedGameState> reduced_game_state = game_state->get_reduced_state(player_id);
+            std::unique_ptr<shared::GameStateMessage> game_state_message = std::make_unique<shared::GameStateMessage>(
+                    lobby_id, std::move(reduced_game_state));
+            message_interface.send_message(std::move(game_state_message), player_id);
         }
     }
 

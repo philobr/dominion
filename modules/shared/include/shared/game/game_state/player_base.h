@@ -7,7 +7,9 @@
 #include <iostream> // for operator<<
 #include <memory>
 
+#include <rapidjson/document.h>
 #include <shared/game/cards/card_base.h>
+
 namespace shared
 {
     class PlayerBase
@@ -26,10 +28,6 @@ namespace shared
         virtual ~PlayerBase() = default;
 
         bool operator==(const PlayerBase &other) const;
-
-        std::string toJson() const;
-        PlayerBase fromJson(const id_t &player_id);
-        std::unique_ptr<PlayerBase> uniuqeFromJson(const id_t &player_id);
 
         id_t getId() const { return player_id; }
 
@@ -64,10 +62,19 @@ namespace shared
         unsigned int treasure;
 
         CardBase::id_t current_card;
-        std::pair<CardBase::id_t, unsigned int> discard_pile; // top card id, discard_pile size
+        std::vector<CardBase::id_t> discard_pile;
         unsigned int draw_pile_size;
 
         std::vector<CardBase::id_t> played_cards;
+
+        /**
+         * @brief Convert the player to a `rapidjson::Document` JSON object.
+         */
+        rapidjson::Document toJson() const;
+        /**
+         * @brief Initialize a player from a `rapidjson::Value` JSON object.
+         */
+        static std::unique_ptr<PlayerBase> fromJson(const rapidjson::Value &json);
     };
 
     class ReducedEnemy : public PlayerBase
@@ -77,9 +84,10 @@ namespace shared
 
         static ptr_t make(const PlayerBase &player, unsigned int hand_size);
 
-        std::string toJson() const;
-        ReducedEnemy fromJson(const PlayerBase &player, unsigned int hand_size);
-        std::unique_ptr<ReducedEnemy> uniuqeFromJson(const PlayerBase &player, unsigned int hand_size);
+        ReducedEnemy(ReducedEnemy &&other) noexcept : PlayerBase(std::move(other)), hand_size(other.hand_size) {}
+
+        rapidjson::Document toJson() const;
+        static std::unique_ptr<ReducedEnemy> fromJson(const rapidjson::Value &json);
 
         unsigned int getHandSize() const;
 
@@ -95,9 +103,12 @@ namespace shared
 
         static ptr_t make(const PlayerBase &player, std::vector<CardBase::id_t> hand_cards);
 
-        std::string toJson() const;
-        ReducedPlayer fromJson(const std::string &json);
-        std::unique_ptr<ReducedPlayer> uniuqeFromJson(const std::string &json);
+        ReducedPlayer(ReducedPlayer &&other) noexcept :
+            PlayerBase(std::move(other)), hand_cards(std::move(other.hand_cards))
+        {}
+
+        rapidjson::Document toJson() const;
+        static std::unique_ptr<ReducedPlayer> fromJson(const rapidjson::Value &json);
 
         const std::vector<CardBase::id_t> &getHandCards() const;
 

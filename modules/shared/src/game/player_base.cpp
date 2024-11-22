@@ -1,4 +1,6 @@
+
 #include <shared/game/game_state/player_base.h>
+#include <shared/utils/json.h>
 
 namespace shared
 {
@@ -11,6 +13,21 @@ namespace shared
         return ptr_t(new ReducedPlayer(player, hand_cards));
     }
 
+    rapidjson::Document ReducedPlayer::toJson() const
+    {
+        rapidjson::Document doc = PlayerBase::toJson();
+        ADD_ARRAY_OF_STRINGS_MEMBER(this->hand_cards, hand_cards);
+        return doc;
+    }
+
+    std::unique_ptr<ReducedPlayer> ReducedPlayer::fromJson(const rapidjson::Value &json)
+    {
+        std::unique_ptr<PlayerBase> player_base = PlayerBase::fromJson(json);
+        std::vector<CardBase::id_t> hand_cards;
+        GET_STRING_ARRAY_MEMBER(hand_cards, json, "hand_cards");
+        return std::unique_ptr<ReducedPlayer>(new ReducedPlayer(*player_base, hand_cards));
+    }
+
     const std::vector<CardBase::id_t> &ReducedPlayer::getHandCards() const { return hand_cards; }
 
     ReducedEnemy::ReducedEnemy(const PlayerBase &player, unsigned int hand) : PlayerBase(player), hand_size(hand) {}
@@ -18,6 +35,21 @@ namespace shared
     ReducedEnemy::ptr_t ReducedEnemy::make(const PlayerBase &player, unsigned int hand_size)
     {
         return ptr_t(new ReducedEnemy(player, hand_size));
+    }
+
+    rapidjson::Document ReducedEnemy::toJson() const
+    {
+        rapidjson::Document doc = PlayerBase::toJson();
+        ADD_UINT_MEMBER(this->hand_size, hand_size);
+        return doc;
+    }
+
+    std::unique_ptr<ReducedEnemy> ReducedEnemy::fromJson(const rapidjson::Value &json)
+    {
+        std::unique_ptr<PlayerBase> player_base = PlayerBase::fromJson(json);
+        unsigned int hand_size;
+        GET_UINT_MEMBER(hand_size, json, "hand_size");
+        return std::unique_ptr<ReducedEnemy>(new ReducedEnemy(*player_base, hand_size));
     }
 
     unsigned int ReducedEnemy::getHandSize() const { return hand_size; }
@@ -92,15 +124,44 @@ namespace shared
 
     bool PlayerBase::operator==(const PlayerBase &other) const
     {
-        // this is so cursed, sry
         return (player_id == other.player_id) && (victory_points == other.victory_points) &&
                 (actions == other.actions) && (buys == other.buys) && (treasure == other.treasure) &&
-                (current_card == other.current_card) &&
-                ((discard_pile.first == other.discard_pile.first) &&
-                 (discard_pile.second == other.discard_pile.second)) &&
-                (draw_pile_size == other.draw_pile_size) &&
-                ((played_cards.size() == other.played_cards.size()) &&
-                 (std::equal(played_cards.begin(), played_cards.end(), other.played_cards.begin())));
+                (current_card == other.current_card) && (discard_pile == other.discard_pile) &&
+                (draw_pile_size == other.draw_pile_size) && (played_cards == other.played_cards);
+    }
+
+    rapidjson::Document PlayerBase::toJson() const
+    {
+        rapidjson::Document doc;
+        doc.SetObject();
+
+        ADD_STRING_MEMBER(this->player_id.c_str(), player_id);
+        ADD_UINT_MEMBER(this->victory_points, victory_points);
+        ADD_UINT_MEMBER(this->actions, actions);
+        ADD_UINT_MEMBER(this->buys, buys);
+        ADD_UINT_MEMBER(this->treasure, treasure);
+        ADD_STRING_MEMBER(this->current_card.c_str(), current_card);
+        ADD_ARRAY_OF_STRINGS_MEMBER(this->discard_pile, discard_pile);
+        ADD_UINT_MEMBER(this->draw_pile_size, draw_pile_size);
+        ADD_ARRAY_OF_STRINGS_MEMBER(this->played_cards, played_cards);
+
+        return doc;
+    }
+
+    std::unique_ptr<PlayerBase> PlayerBase::fromJson(const rapidjson::Value &json)
+    {
+        PlayerBase::id_t player_id;
+        GET_STRING_MEMBER(player_id, json, "player_id");
+        std::unique_ptr<PlayerBase> player(new PlayerBase(player_id));
+        GET_UINT_MEMBER(player->victory_points, json, "victory_points");
+        GET_UINT_MEMBER(player->actions, json, "actions");
+        GET_UINT_MEMBER(player->buys, json, "buys");
+        GET_UINT_MEMBER(player->treasure, json, "treasure");
+        GET_STRING_MEMBER(player->current_card, json, "current_card");
+        GET_STRING_ARRAY_MEMBER(player->discard_pile, json, "discard_pile");
+        GET_UINT_MEMBER(player->draw_pile_size, json, "draw_pile_size");
+        GET_STRING_ARRAY_MEMBER(player->played_cards, json, "played_cards");
+        return player;
     }
 
 } // namespace shared

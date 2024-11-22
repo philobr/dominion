@@ -1,4 +1,3 @@
-
 #include <shared/utils/logger.h>
 
 #include <chrono>
@@ -12,35 +11,26 @@ namespace shared
     // ================================
     // IMPLEMENTATION LogStream
     // ================================
-    Logger::LogStream::LogStream(Logger &logger, LogLevel level, const char *file, int line) : logger_(logger)
+    Logger::LogStream::LogStream(Logger &logger, LogLevel level, const char *file, int line) :
+        logger_(logger), level_(level)
     {
         ss_ << log_helpers::formatTimestamp() << " ";
-        ss_ << log_helpers::formatLogLevel(level, logger.log_to_file_) << " ";
+        ss_ << log_helpers::formatLogLevel(level, logger_.log_to_file_) << " ";
         ss_ << log_helpers::formatFileLine(file, line) << " - ";
     }
+
+    Logger::LogStream::~LogStream() { logger_.writeLog(level_, ss_.str()); }
 
     // ================================
     // IMPLEMENTATION Logger
     // ================================
 
-    // constructor (this is only here to not include the comment above as function description)
-    Logger::Logger(const std::string &file_path) : log_to_file_(!file_path.empty())
-    {
-        if ( log_to_file_ ) {
-            std::filesystem::path log_path = file_path;
-            std::filesystem::create_directories(log_path.parent_path());
-
-            log_file_.open(file_path, std::ios::out | std::ios::app);
-            if ( !log_file_ ) {
-                throw exception::Logger("Failed to open log file: " + file_path);
-            }
-        }
-    }
+    Logger::Logger() : min_log_level_(LogLevel::WARN), log_to_file_(false) {}
 
     Logger::~Logger()
     {
-        log_file_.flush();
         if ( log_file_.is_open() ) {
+            log_file_.flush();
             if ( log_to_file_ ) {
                 log_file_ << "[INFO] - END LOG" << std::endl;
             }
@@ -48,20 +38,12 @@ namespace shared
         }
     }
 
-    void shared::Logger::initialize(const std::string &file_path)
+    void Logger::initialize()
     {
         std::lock_guard<std::mutex> lock(init_mutex_);
         if ( !instance_ ) {
-            if ( file_path.empty() ) {
-                instance_ = std::unique_ptr<Logger>(new Logger());
-                LOG(LogLevel::INFO) << "Logging to std::cerr.";
-            } else {
-                const std::string default_directory = std::string(PROJECT_ROOT) + "/" + std::string("build/logs");
-                const std::string full_path = default_directory + "/" + file_path;
-
-                instance_ = std::unique_ptr<Logger>(new Logger(full_path));
-                std::cerr << "Logging to file: build/logs/" + file_path << std::endl;
-            }
+            instance_ = std::unique_ptr<Logger>(new Logger());
+            LOG(LogLevel::INFO) << "Logger initialized with default settings.";
         } else {
             throw exception::Logger("Logger has already been initialized.");
         }
@@ -71,14 +53,53 @@ namespace shared
     {
         if ( !instance_ ) {
             initialize(); // default init logs to console
-            LOG(LogLevel::WARN) << "Logger not initialised";
+            LOG(LogLevel::WARN) << "Logger not initialized; using default settings.";
         }
 
         return *instance_;
     }
 
-    void Logger::writeLog(const std::string &message)
+    void Logger::writeTo(const std::string &file_path)
     {
+        std::lock_guard<std::mutex> lock(init_mutex_);
+        Logger &logger = getInstance();
+
+        if ( logger.log_file_.is_open() ) {
+            logger.log_file_.close();
+        }
+
+        if ( !file_path.empty() ) {
+            std::filesystem::path log_path = file_path;
+            if ( log_path.has_parent_path() ) {
+                std::filesystem::create_directories(log_path.parent_path());
+            }
+
+            LOG(LogLevel::INFO) << "Logging to file: " << file_path;
+            logger.log_file_.open(file_path, std::ios::out | std::ios::app);
+            if ( !logger.log_file_ ) {
+                throw exception::Logger("Failed to open log file: " + file_path);
+            }
+            logger.log_to_file_ = true;
+        } else {
+            logger.log_to_file_ = false;
+            LOG(LogLevel::INFO) << "Logging to std::cerr.";
+        }
+    }
+
+    void Logger::setLevel(LogLevel level)
+    {
+        std::lock_guard<std::mutex> lock(init_mutex_);
+        Logger &logger = getInstance();
+        logger.min_log_level_ = level;
+        LOG(LogLevel::INFO) << "Minimum log level set to: " << log_helpers::toString(level);
+    }
+
+    void Logger::writeLog(LogLevel level, const std::string &message)
+    {
+        if ( level < min_log_level_ ) {
+            return; // Do not log messages below the minimum log level
+        }
+
         std::lock_guard<std::mutex> lock(mutex_);
         if ( log_to_file_ ) {
             log_file_ << message << std::endl;

@@ -2,6 +2,7 @@
 
 #include "game_controller.h"
 #include "windows/game_window.h"
+#include <shared/utils/logger.h>
 
 
 namespace client
@@ -10,6 +11,9 @@ namespace client
     // Application entry point
     bool Dominion::OnInit()
     {
+        //initialize logger
+        shared::Logger::initialize("client.log");
+        LOG(INFO) << "Called Dominion::OnInit()";
         // Allow loading of JPEG  and PNG image files
         wxImage::AddHandler(new wxJPEGHandler());
         wxImage::AddHandler(new wxPNGHandler());
@@ -24,6 +28,7 @@ namespace client
         // Initialize game controller
         GameController::init(gameWindow);
 
+        LOG(INFO) << "Done with Dominion::OnInit()";
         return true;
     }
 

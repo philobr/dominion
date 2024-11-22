@@ -2,6 +2,7 @@
 #include <sstream>
 
 #include <server/network/server_network_manager.h>
+#include <shared/utils/logger.h>
 
 using handler = std::function<void(const std::string &, const sockpp::tcp_socket::addr_t &)>;
 
@@ -35,7 +36,7 @@ namespace server
         this->_acc = sockpp::tcp_acceptor(port);
 
         if ( !_acc ) {
-            std::cerr << "Error creating the acceptor: " << _acc.last_error_str() << std::endl;
+            LOG(ERROR) << "Error creating the acceptor: " << _acc.last_error_str();
             return;
         }
 
@@ -55,7 +56,7 @@ namespace server
             std::cout << "Received a connection request from " << peer << std::endl;
 
             if ( !sock ) {
-                std::cerr << "Error accepting incoming connection: " << _acc.last_error_str() << std::endl;
+                LOG(ERROR) << "Error accepting incoming connection: " << _acc.last_error_str();
             } else {
                 std::string address = sock.peer_address().to_string();
                 BasicNetwork::getInstance()->add_address_to_socket(address, sock.clone());
@@ -106,21 +107,21 @@ namespace server
                     // sanity check that really all bytes got read (possibility that count was <= 0, indicating a read
                     // error)
                     std::string msg = ss_msg.str();
-                    std::cerr << "Received Message: " << msg << std::endl;
+                    LOG(INFO) << "Received Message: " << msg;
                     message_handler(msg, socket.peer_address()); // attempt to parse client_request from 'msg'
                 } else {
-                    std::cerr << "Could not read entire message. TCP stream ended before. Difference is "
-                              << msg_length - msg_bytes_read << std::endl;
+                    LOG(ERROR) << "Could not read entire message. TCP stream ended before. Difference is "
+                              << msg_length - msg_bytes_read;
                 }
             } catch ( std::exception &e ) { // Make sure the connection isn't torn down only because of a read error
-                std::cerr << "Error while reading message from " << socket.peer_address() << std::endl
-                          << e.what() << std::endl;
+                LOG(ERROR) << "Error while reading message from " << socket.peer_address() << std::endl
+                          << e.what();
             }
         }
 
-        std::cout << "Read error [" << socket.last_error() << "]: " << socket.last_error_str() << std::endl;
+        LOG(ERROR) << "Read error [" << socket.last_error() << "]: " << socket.last_error_str();
 
-        std::cout << "Closing connection to " << socket.peer_address() << std::endl;
+        LOG(ERROR) << "Closing connection to " << socket.peer_address();
         socket.shutdown();
     }
 
@@ -140,18 +141,16 @@ namespace server
             shared::PlayerBase::id_t player_id = req->player_id;
             std::string address = peer_address.to_string();
             BasicNetwork::getInstance()->add_player_to_address(player_id, address);
-#ifdef PRINT_NETWORK_MESSAGES
-            std::cerr << "Received valid request : " << msg << std::endl;
-#endif
+            LOG(INFO) << "Received valid request : " << msg;
             // execute client request
             // TODO Change to message handler
             _messageHandler->HandleMessage(std::move(req));
-            std::cerr << "Handled Message" << std::endl;
+            LOG(INFO) << "Handled Message from player: " << player_id;
 
         } catch ( const std::exception &e ) {
-            std::cerr << "Failed to execute client request. Content was :\n"
+            LOG(ERROR) << "Failed to execute client request. Content was :\n"
                       << msg << std::endl
-                      << "Error was " << e.what() << std::endl;
+                      << "Error was " << e.what();
         }
     }
 

@@ -1,9 +1,11 @@
+
 #include <server/lobbies/lobby_manager.h>
 #include <shared/utils/uuid_generator.h>
+#include <shared/utils/logger.h>
 
 void server::LobbyManager::create_lobby(std::unique_ptr<shared::CreateLobbyRequestMessage> request)
 {
-    std::cerr << "Got in LobbyManager" << std::endl;
+    LOG(INFO) << "Lobby Manger called in function create_lobby()";
     std::string lobby_id = request->game_id;
     shared::PlayerBase::id_t game_master_id = request->player_id;
     // Lobby already exists
@@ -23,13 +25,13 @@ void server::LobbyManager::create_lobby(std::unique_ptr<shared::CreateLobbyReque
             lobby_id, uuid_generator::generate_uuid_v4(), available_cards, request->message_id);
     message_interface->send_message(std::make_unique<shared::CreateLobbyResponseMessage>(create_lobby_message),
                                     game_master_id);
-    std::cerr << "Got done with create lobby" << std::endl;
+    LOG(INFO) << "Done with LobbyManager::create_lobby()";
     return;
 };
 
 void server::LobbyManager::join_lobby(std::unique_ptr<shared::JoinLobbyRequestMessage> request)
 {
-    std::cerr << "Got in LobbyManager" << std::endl;
+    LOG(INFO) << "Lobby Manager called in function join_lobby()" << std::endl;
     std::string lobby_id = request->game_id;
     shared::PlayerBase::id_t player_id = request->player_id;
     // Lobby does not exist
@@ -41,12 +43,12 @@ void server::LobbyManager::join_lobby(std::unique_ptr<shared::JoinLobbyRequestMe
     }
 
     games.at(lobby_id)->join(*message_interface, std::move(request));
-    std::cerr << "Got done with Lobby Manager" << std::endl;
+    LOG(INFO) << "Done with LobbyManager::join_lobby()";
 };
 
 void server::LobbyManager::start_game(std::unique_ptr<shared::StartGameRequestMessage> request)
 {
-    std::cerr << "Got in LobbyManager" << std::endl;
+    LOG(INFO) << "Lobby Manager called in function start_game()";
     std::string lobby_id = request->game_id;
     shared::PlayerBase::id_t requestor_id = request->player_id;
     // Lobby does not exist
@@ -58,12 +60,13 @@ void server::LobbyManager::start_game(std::unique_ptr<shared::StartGameRequestMe
     }
 
     games.at(lobby_id)->start_game(*message_interface, std::move(request));
-    std::cerr << "Got done with Lobby Manager" << std::endl;
+    LOG(INFO) << "Done with LobbyManager::start_game()";
 };
 
 void server::LobbyManager::receive_action(std::unique_ptr<shared::ActionDecisionMessage> /*action*/)
 {
-    std::cerr << "Got in LobbyManager" << std::endl;
+    LOG(INFO) << "Lobby Manager called in function receive_action()";
     // TODO Implement this
+    LOG(INFO) << "Done with LobbyManager::receive_action()";
     return;
 }

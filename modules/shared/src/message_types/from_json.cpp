@@ -3,6 +3,7 @@
 
 #include <rapidjson/document.h>
 
+#include <shared/game/game_state/reduced_game_state.h>
 #include <shared/message_types.h>
 #include <shared/utils/assert.h>
 #include <shared/utils/json.h>
@@ -16,15 +17,27 @@ static std::unique_ptr<GameStateMessage> parse_game_state_message(const Document
                                                                   const std::string &message_id)
 {
     std::optional<std::string> in_response_to;
+
+    if ( !json.HasMember("game_state") ) {
+        LOG(WARN) << "GameStateMessage: No game_state member";
+        return nullptr;
+    }
+    std::unique_ptr<ReducedGameState> game_state = ReducedGameState::fromJson(json["game_state"]);
+    if ( game_state == nullptr ) {
+        LOG(WARN) << "GameStateMessage: Could not parse game_state";
+        return nullptr;
+    }
+
     GET_OPTIONAL_STRING_MEMBER(in_response_to, json, "in_response_to");
 
-    return std::make_unique<GameStateMessage>(game_id, message_id, /* TODO: game_state, */ in_response_to);
+    return std::unique_ptr<GameStateMessage>(
+            new GameStateMessage(game_id, message_id, std::move(game_state), in_response_to));
 }
 
 static std::unique_ptr<CreateLobbyResponseMessage>
 parse_create_lobby_response(const Document &json, const std::string &game_id, const std::string &message_id)
 {
-    std::vector<shared::CardBase::id_t> available_cards;
+    std::vector<CardBase::id_t> available_cards;
     GET_STRING_ARRAY_MEMBER(available_cards, json, "available_cards");
 
     std::optional<std::string> in_response_to;

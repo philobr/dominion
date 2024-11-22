@@ -7,13 +7,24 @@ using namespace shared;
 
 // ======= SERVER TO CLIENT MESSAGES ======= //
 
-/* TODO: reenable
 TEST(SharedLibraryTest, GameStateMessageTwoWayConversion)
 {
-    // TODO: Implement ReducedGameState
-    ReducedGameState *game_state = nullptr;
-    ASSERT_TRUE(game_state);
-    GameStateMessage original_message("123", "456", *game_state, "789");
+
+    const std::vector<CardBase::id_t> kingdom_cards = {"Village",    "Smithy",  "Market", "Council Room", "Festival",
+                                                       "Laboratory", "Library", "Mine",   "Witch",        "Adventurer"};
+    const unsigned int num_players = 2;
+    Board::ptr_t board = Board::make(kingdom_cards, num_players);
+
+    ReducedPlayer::ptr_t player =
+            ReducedPlayer::make(PlayerBase("Felix"), {"Copper", "Copper", "Estate", "Chapel", "Silver"});
+    std::vector<ReducedEnemy::ptr_t> enemies;
+    enemies.push_back(ReducedEnemy::make(PlayerBase("Marius"), 5));
+
+    const std::string active_player = "Felix";
+
+    std::unique_ptr<ReducedGameState> game_state =
+            std::make_unique<ReducedGameState>(std::move(board), std::move(player), std::move(enemies), active_player);
+    GameStateMessage original_message("123", "456", std::move(game_state), "789");
 
     std::string json = original_message.to_json();
 
@@ -23,13 +34,8 @@ TEST(SharedLibraryTest, GameStateMessageTwoWayConversion)
     std::unique_ptr<GameStateMessage> parsed_message(dynamic_cast<GameStateMessage *>(base_message.release()));
 
     ASSERT_NE(parsed_message, nullptr);
-
-    ASSERT_EQ(parsed_message->game_id, "123");
-    ASSERT_EQ(parsed_message->message_id, "456");
-    ASSERT_TRUE(parsed_message->in_response_to);
-    ASSERT_EQ(parsed_message->in_response_to.value(), "789");
+    ASSERT_EQ(*parsed_message, original_message);
 }
-*/
 
 TEST(SharedLibraryTest, CreateLobbyResponseMessageTwoWayConversion)
 {

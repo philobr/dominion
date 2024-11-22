@@ -44,8 +44,13 @@ namespace shared
     std::string GameStateMessage::to_json()
     {
         Document doc = document_from_server_to_client_msg("game_state", *this);
+
+        Document game_state_doc = this->game_state->toJson();
+        Value game_state_value;
+        game_state_value.CopyFrom(game_state_doc, doc.GetAllocator());
+        doc.AddMember("game_state", game_state_value, doc.GetAllocator());
+
         ADD_OPTIONAL_STRING_MEMBER(this->in_response_to, in_response_to);
-        // TODO: Add game state to the document
         return document_to_string(doc);
     }
 

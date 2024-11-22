@@ -21,7 +21,7 @@ namespace server
         if ( _instance == nullptr ) {
             _instance = this;
         }
-        _messageInterface = std::make_shared<MessageInterface>();
+        _messageInterface = std::make_shared<ImplementedMessageInterface>();
         _lobby_manager = LobbyManager(_messageInterface);
         _messageHandler = std::make_unique<MessageHandler>(MessageHandler(_lobby_manager));
         sockpp::socket_initializer socket_initializer; // Required to initialise sockpp

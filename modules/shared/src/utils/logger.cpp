@@ -1,11 +1,10 @@
+
 #include <shared/utils/logger.h>
 
 #include <chrono>
 #include <filesystem>
 #include <iomanip>
 #include <iostream>
-#include <memory>
-#include <mutex>
 #include <stdexcept>
 
 namespace shared
@@ -60,7 +59,7 @@ namespace shared
                 const std::string full_path = default_directory + "/" + file_path;
 
                 instance_ = std::unique_ptr<Logger>(new Logger(full_path));
-                std::cout << "Logging to file: build/logs/" + file_path << std::endl;
+                std::cerr << "Logging to file: build/logs/" + file_path << std::endl;
             }
         } else {
             throw exception::Logger("Logger has already been initialized.");

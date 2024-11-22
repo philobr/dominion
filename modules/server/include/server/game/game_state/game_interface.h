@@ -1,16 +1,17 @@
 #pragma once
+
 #include <server/game/game.h>
 
 namespace server
 {
     class GameInterface
     {
-        std::unique_ptr<GameState> game_state;
+        std::shared_ptr<GameState> game_state;
         const std::string game_id;
 
     public:
         using ptr_t = std::unique_ptr<GameInterface>;
-        using response_t = std::unique_ptr<shared::ServerToClientMessage>;
+        using response_t = std::unique_ptr<shared::ActionOrder>;
 
         GameInterface operator=(const GameInterface &other) = delete;
         GameInterface(const GameInterface &other) = delete;
@@ -19,6 +20,8 @@ namespace server
 
         static ptr_t make(const std::string &game_id, const std::vector<shared::CardBase::id_t> &play_cards,
                           const std::vector<Player::id_t> &player_ids);
+
+        std::shared_ptr<GameState> get_game_state() { return game_state; }
 
         /**
          * @brief Receives an ActionDecision from the Lobby and handles it accordingly.

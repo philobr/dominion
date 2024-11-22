@@ -10,6 +10,8 @@
 
 #include <memory>
 #include <fstream>
+#include <memory>
+#include <mutex>
 #include <sstream>
 #include <string>
 
@@ -85,7 +87,7 @@ namespace shared
 
     public:
         /**
-         * @brief If no file_path is set we will default to std::cout. Will automatically add a prefix
+         * @brief If no file_path is set we will default to std::cerr. Will automatically add a prefix
          * (build/logs/file_path.log) to the output path
          * @param file_path filename.log
          */
@@ -117,5 +119,4 @@ namespace shared
 
         void writeLog(const std::string &message);
     };
-
 } // namespace shared

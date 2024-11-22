@@ -57,7 +57,7 @@ namespace shared
         return *this == dynamic_cast<const ActionPhaseOrder &>(other);
     }
 
-    bool BuyPhaseOrder::operator==(const BuyPhaseOrder & /*other*/) const { return true; }
+    bool BuyPhaseOrder::operator==(const BuyPhaseOrder & /* other */) const { return true; }
 
     bool BuyPhaseOrder::operator!=(const BuyPhaseOrder &other) const { return !BuyPhaseOrder::operator==(other); }
 

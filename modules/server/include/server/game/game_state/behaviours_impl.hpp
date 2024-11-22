@@ -37,7 +37,7 @@ namespace server
         DEFINE_TEMPLATED_BEHAVIOUR(GainCoins, BehaviourType::NON_INTERACTIVE, int, coins)
         {
             CHECK_HAS_NO_DECISION;
-            LOG(DEGUG) << "Applied GainCoins";
+            LOG(DEBUG) << "Applied GainCoins";
 
             auto &affected_player = game_state->get_current_player();
             affected_player.incTreasure(coins);

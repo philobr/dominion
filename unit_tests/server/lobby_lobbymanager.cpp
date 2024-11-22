@@ -3,6 +3,7 @@
 #include <server/network/message_interface.h>
 #include <shared/message_types.h>
 #include <shared/utils/uuid_generator.h>
+#include <shared/utils/test_helpers.h>
 #include <typeinfo>
 
 #include <gmock/gmock.h>
@@ -170,8 +171,7 @@ TEST(ServerLibraryTest, StartGame)
     auto request1 = std::make_unique<shared::CreateLobbyRequestMessage>("123", "101", player_1);
     auto request2 = std::make_unique<shared::JoinLobbyRequestMessage>("123", "102", player_2);
 
-    std::vector<shared::CardBase::id_t> selected_cards = {"Moat",   "Village", "Woodcutter", "Workshop", "Militia",
-                                                          "Cellar", "Market",  "Mine",       "Smithy",   "Remodel"};
+    std::vector<shared::CardBase::id_t> selected_cards = get_valid_kingdom_cards();
 
     // Start game request with wrong game_id
     auto request3 = std::make_unique<shared::StartGameRequestMessage>("abc", uuid_generator::generate_uuid_v4(),
@@ -219,8 +219,7 @@ TEST(ServerLibraryTest, ReceiveAction)
     auto request2 =
             std::make_unique<shared::JoinLobbyRequestMessage>("123", uuid_generator::generate_uuid_v4(), player_2);
 
-    std::vector<shared::CardBase::id_t> selected_cards = {"Moat",   "Village", "Woodcutter", "Workshop", "Militia",
-                                                          "Cellar", "Market",  "Mine",       "Smithy",   "Remodel"};
+    std::vector<shared::CardBase::id_t> selected_cards = get_valid_kingdom_cards();
 
     auto request3 = std::make_unique<shared::StartGameRequestMessage>("123", uuid_generator::generate_uuid_v4(),
                                                                       player_1, selected_cards);

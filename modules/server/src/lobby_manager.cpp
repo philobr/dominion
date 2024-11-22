@@ -7,7 +7,7 @@ auto lobby_exists(std::map<std::string, std::shared_ptr<server::Lobby>> games, s
     return games.find(lobby_id) != games.end();
 }
 
-void server::CardBase::create_lobby(std::unique_ptr<shared::CreateLobbyRequestMessage> request)
+void server::LobbyManager::create_lobby(std::unique_ptr<shared::CreateLobbyRequestMessage> request)
 {
     std::cerr << "Got in LobbyManager" << std::endl;
     std::string lobby_id = request->game_id;

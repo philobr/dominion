@@ -8,55 +8,55 @@ using namespace shared;
 
 TEST(SharedLibraryTest, GameStateRequestMessageEquality)
 {
-    GameStateRequestMessage message1("game1", "message1", "player1");
+    GameStateRequestMessage message1("game1", "player1", "message1");
     ASSERT_EQ(message1, message1);
 
-    GameStateRequestMessage message2("game1", "message1", "player1");
+    GameStateRequestMessage message2("game1", "player1", "message1");
     ASSERT_EQ(message1, message2);
 
-    GameStateRequestMessage message3("game2", "message1", "player1");
+    GameStateRequestMessage message3("game2", "player1", "message1");
     ASSERT_NE(message1, message3);
 
-    GameStateRequestMessage message4("game1", "message2", "player1");
+    GameStateRequestMessage message4("game1", "player1", "message2");
     ASSERT_NE(message1, message4);
 
-    GameStateRequestMessage message5("game1", "message1", "player2");
+    GameStateRequestMessage message5("game1", "player2", "message1");
     ASSERT_NE(message1, message5);
 }
 
 TEST(SharedLibraryTest, CreateLobbyRequestMessageEquality)
 {
-    CreateLobbyRequestMessage message1("game1", "message1", "player1");
+    CreateLobbyRequestMessage message1("game1", "player1", "message1");
     ASSERT_EQ(message1, message1);
 
-    CreateLobbyRequestMessage message2("game1", "message1", "player1");
+    CreateLobbyRequestMessage message2("game1", "player1", "message1");
     ASSERT_EQ(message1, message2);
 
-    CreateLobbyRequestMessage message3("game2", "message1", "player1");
+    CreateLobbyRequestMessage message3("game2", "player1", "message1");
     ASSERT_NE(message1, message3);
 
-    CreateLobbyRequestMessage message4("game1", "message2", "player1");
+    CreateLobbyRequestMessage message4("game1", "player1", "message2");
     ASSERT_NE(message1, message4);
 
-    CreateLobbyRequestMessage message5("game1", "message1", "player2");
+    CreateLobbyRequestMessage message5("game1", "player2", "message1");
     ASSERT_NE(message1, message5);
 }
 
 TEST(SharedLibraryTest, JoinLobbyRequestMessageEquality)
 {
-    JoinLobbyRequestMessage message1("game1", "message1", "player1");
+    JoinLobbyRequestMessage message1("game1", "player1", "message1");
     ASSERT_EQ(message1, message1);
 
-    JoinLobbyRequestMessage message2("game1", "message1", "player1");
+    JoinLobbyRequestMessage message2("game1", "player1", "message1");
     ASSERT_EQ(message1, message2);
 
-    JoinLobbyRequestMessage message3("game2", "message1", "player1");
+    JoinLobbyRequestMessage message3("game2", "player1", "message1");
     ASSERT_NE(message1, message3);
 
-    JoinLobbyRequestMessage message4("game1", "message2", "player1");
+    JoinLobbyRequestMessage message4("game1", "player1", "message2");
     ASSERT_NE(message1, message4);
 
-    JoinLobbyRequestMessage message5("game1", "message1", "player2");
+    JoinLobbyRequestMessage message5("game1", "player2", "message1");
     ASSERT_NE(message1, message5);
 }
 
@@ -64,55 +64,55 @@ TEST(SharedLibraryTest, StartGameRequestMessageEquality)
 {
     std::vector<CardBase::id_t> selected_cards = {"Adventurer", "Bureaucrat", "Cellar",     "Chapel", "CouncilRoom",
                                                   "Festival",   "Gardens",    "Laboratory", "Market", "Militia"};
-    StartGameRequestMessage message1("game1", "message1", "player1", selected_cards);
+    StartGameRequestMessage message1("game1", "player1", selected_cards, "message1");
     ASSERT_EQ(message1, message1);
 
-    StartGameRequestMessage message2("game1", "message1", "player1", selected_cards);
+    StartGameRequestMessage message2("game1", "player1", selected_cards, "message1");
     ASSERT_EQ(message1, message2);
 
-    StartGameRequestMessage message3("game2", "message1", "player1", selected_cards);
+    StartGameRequestMessage message3("game2", "player1", selected_cards, "message1");
     ASSERT_NE(message1, message3);
 
-    StartGameRequestMessage message4("game1", "message2", "player1", selected_cards);
+    StartGameRequestMessage message4("game1", "player1", selected_cards, "message2");
     ASSERT_NE(message1, message4);
 
-    StartGameRequestMessage message5("game1", "message1", "player2", selected_cards);
+    StartGameRequestMessage message5("game1", "player2", selected_cards, "message1");
     ASSERT_NE(message1, message5);
 
     std::vector<CardBase::id_t> selected_cards2 = {"Adventurer", "Bureaucrat", "Cellar",     "Chapel", "CouncilRoom",
                                                    "Festival",   "Gardens",    "Laboratory", "Market", "Moat"};
-    StartGameRequestMessage message6("game1", "message1", "player1", selected_cards2);
+    StartGameRequestMessage message6("game1", "player1", selected_cards2, "message1");
     ASSERT_NE(message1, message6);
 }
 
 TEST(SharedLibraryTest, ActionDecisionMessage)
 {
     std::unique_ptr<ActionDecision> decision1 = std::make_unique<PlayActionCardDecision>(3);
-    ActionDecisionMessage message1("game1", "message1", "player1", std::move(decision1), "message0");
+    ActionDecisionMessage message1("game1", "player1", std::move(decision1), "message0", "message1");
     ASSERT_EQ(message1, message1);
 
     std::unique_ptr<ActionDecision> decision2 = std::make_unique<PlayActionCardDecision>(3);
-    ActionDecisionMessage message2("game1", "message1", "player1", std::move(decision2), "message0");
+    ActionDecisionMessage message2("game1", "player1", std::move(decision2), "message0", "message1");
     ASSERT_EQ(message1, message2);
 
     std::unique_ptr<ActionDecision> decision3 = std::make_unique<PlayActionCardDecision>(4);
-    ActionDecisionMessage message3("game2", "message1", "player1", std::move(decision3), "message0");
+    ActionDecisionMessage message3("game2", "player1", std::move(decision3), "message0", "message1");
     ASSERT_NE(message1, message3);
 
     std::unique_ptr<ActionDecision> decision4 = std::make_unique<PlayActionCardDecision>(3);
-    ActionDecisionMessage message4("game1", "message2", "player1", std::move(decision4), "message0");
+    ActionDecisionMessage message4("game1", "player1", std::move(decision4), "message0", "message2");
     ASSERT_NE(message1, message4);
 
     std::unique_ptr<ActionDecision> decision5 = std::make_unique<PlayActionCardDecision>(3);
-    ActionDecisionMessage message5("game1", "message1", "player2", std::move(decision5), "message0");
+    ActionDecisionMessage message5("game1", "player2", std::move(decision5), "message0", "message1");
     ASSERT_NE(message1, message5);
 
     std::unique_ptr<ActionDecision> decision6 = std::make_unique<BuyCardDecision>("Copper");
-    ActionDecisionMessage message6("game1", "message1", "player1", std::move(decision6), "message0");
+    ActionDecisionMessage message6("game1", "player1", std::move(decision6), "message0", "message1");
     ASSERT_NE(message1, message6);
 
     std::unique_ptr<ActionDecision> decision7 = std::make_unique<PlayActionCardDecision>(3);
-    ActionDecisionMessage message7("game1", "message1", "player1", std::move(decision7));
+    ActionDecisionMessage message7("game1", "player1", std::move(decision7), "", "message1");
     ASSERT_NE(message1, message7);
 }
 
@@ -155,42 +155,42 @@ TEST(SharedLibraryTest, CreateLobbyResponseMessageEquality)
                                                    "Festival",   "Gardens",     "Laboratory", "Market", "Militia",
                                                    "Moat",       "Moneylender", "Remodel",    "Smithy", "Village",
                                                    "Witch",      "Woodcutter",  "Workshop"};
-    CreateLobbyResponseMessage message1("game1", "message1", available_cards, "message0");
+    CreateLobbyResponseMessage message1("game1", available_cards, "message0", "message1");
     ASSERT_EQ(message1, message1);
 
-    CreateLobbyResponseMessage message2("game1", "message1", available_cards, "message0");
+    CreateLobbyResponseMessage message2("game1", available_cards, "message0", "message1");
     ASSERT_EQ(message1, message2);
 
-    CreateLobbyResponseMessage message3("game2", "message1", available_cards, "message0");
+    CreateLobbyResponseMessage message3("game2", available_cards, "message0", "message1");
     ASSERT_NE(message1, message3);
 
-    CreateLobbyResponseMessage message4("game1", "message2", available_cards, "message0");
+    CreateLobbyResponseMessage message4("game1", available_cards, "message0", "message2");
     ASSERT_NE(message1, message4);
 
     std::vector<CardBase::id_t> available_cards2 = {"Adventurer", "Bureaucrat",  "Cellar",
                                                     "Chapel",     "CouncilRoom", "Festival"};
-    CreateLobbyResponseMessage message5("game1", "message1", available_cards2, "message0");
+    CreateLobbyResponseMessage message5("game1", available_cards2, "message0", "message1");
     ASSERT_NE(message1, message5);
 
-    CreateLobbyResponseMessage message6("game1", "message1", available_cards);
+    CreateLobbyResponseMessage message6("game1", available_cards, "", "message1");
     ASSERT_NE(message1, message6);
 }
 
 TEST(SharedLibraryTest, JoinLobbyBroadcastMessageEquality)
 {
-    JoinLobbyBroadcastMessage message1("game1", "message1", "player1");
+    JoinLobbyBroadcastMessage message1("game1", "player1", "message1");
     ASSERT_EQ(message1, message1);
 
-    JoinLobbyBroadcastMessage message2("game1", "message1", "player1");
+    JoinLobbyBroadcastMessage message2("game1", "player1", "message1");
     ASSERT_EQ(message1, message2);
 
-    JoinLobbyBroadcastMessage message3("game2", "message1", "player1");
+    JoinLobbyBroadcastMessage message3("game2", "player1", "message1");
     ASSERT_NE(message1, message3);
 
-    JoinLobbyBroadcastMessage message4("game1", "message2", "player1");
+    JoinLobbyBroadcastMessage message4("game1", "player1", "message2");
     ASSERT_NE(message1, message4);
 
-    JoinLobbyBroadcastMessage message5("game1", "message1", "player2");
+    JoinLobbyBroadcastMessage message5("game1", "player2", "message1");
     ASSERT_NE(message1, message5);
 }
 
@@ -227,55 +227,55 @@ TEST(SharedLibraryTest, EndGameBroadcastMessageEquality)
 TEST(SharedLibraryTest, ResultResponseMessageEquality)
 {
     bool success = false;
-    ResultResponseMessage message1("game1", "message1", success, "message0", "failed because of reasons");
+    ResultResponseMessage message1("game1", success, "message0", "failed because of reasons", "message1");
     ASSERT_EQ(message1, message1);
 
-    ResultResponseMessage message2("game1", "message1", success, "message0", "failed because of reasons");
+    ResultResponseMessage message2("game1", success, "message0", "failed because of reasons", "message1");
     ASSERT_EQ(message1, message2);
 
-    ResultResponseMessage message3("game2", "message1", success, "message0", "failed because of reasons");
+    ResultResponseMessage message3("game2", success, "message0", "failed because of reasons", "message1");
     ASSERT_NE(message1, message3);
 
-    ResultResponseMessage message4("game1", "message2", success, "message0", "failed because of reasons");
+    ResultResponseMessage message4("game1", success, "message0", "failed because of reasons", "message2");
     ASSERT_NE(message1, message4);
 
-    ResultResponseMessage message5("game1", "message1", !success, "message0", "failed because of reasons");
+    ResultResponseMessage message5("game1", !success, "message0", "failed because of reasons", "message1");
     ASSERT_NE(message1, message5);
 
-    ResultResponseMessage message6("game1", "message1", success, "message1", "failed because of reasons");
+    ResultResponseMessage message6("game1", success, "message1", "failed because of reasons", "message1");
     ASSERT_NE(message1, message6);
 
-    ResultResponseMessage message7("game1", "message1", success, "message0");
+    ResultResponseMessage message7("game1", success, "message0", "", "message1");
     ASSERT_NE(message1, message7);
 }
 
 TEST(SharedLibraryTest, ActionOrderMessageEquality)
 {
     std::unique_ptr<ActionOrder> order1 = std::make_unique<ChooseNCardsFromHandOrder>(3);
-    ActionOrderMessage message1("game1", "message1", std::move(order1), "description");
+    ActionOrderMessage message1("game1", std::move(order1), "description", "message1");
     ASSERT_EQ(message1, message1);
 
     std::unique_ptr<ActionOrder> order2 = std::make_unique<ChooseNCardsFromHandOrder>(3);
-    ActionOrderMessage message2("game1", "message1", std::move(order2), "description");
+    ActionOrderMessage message2("game1", std::move(order2), "description", "message1");
     ASSERT_EQ(message1, message2);
 
     std::unique_ptr<ActionOrder> order3 = std::make_unique<ChooseNCardsFromHandOrder>(3);
-    ActionOrderMessage message3("game2", "message1", std::move(order3), "description");
+    ActionOrderMessage message3("game2", std::move(order3), "description", "message1");
     ASSERT_NE(message1, message3);
 
     std::unique_ptr<ActionOrder> order4 = std::make_unique<ChooseNCardsFromHandOrder>(3);
-    ActionOrderMessage message4("game1", "message2", std::move(order4), "description");
+    ActionOrderMessage message4("game1", std::move(order4), "description", "message2");
     ASSERT_NE(message1, message4);
 
     std::unique_ptr<ActionOrder> order5 = std::make_unique<ChooseNCardsFromHandOrder>(4);
-    ActionOrderMessage message5("game1", "message1", std::move(order5), "description");
+    ActionOrderMessage message5("game1", std::move(order5), "description", "message1");
     ASSERT_NE(message1, message5);
 
     std::unique_ptr<ActionOrder> order6 = std::make_unique<ChooseNCardsFromHandOrder>(3);
-    ActionOrderMessage message6("game1", "message1", std::move(order6));
+    ActionOrderMessage message6("game1", std::move(order6), "message1");
     ASSERT_NE(message1, message6);
 
     std::unique_ptr<ActionOrder> order7 = std::make_unique<ChooseNCardsFromHandOrder>(3);
-    ActionOrderMessage message7("game1", "message1", std::move(order7), "description0");
+    ActionOrderMessage message7("game1", std::move(order7), "description0", "message1");
     ASSERT_NE(message1, message7);
 }

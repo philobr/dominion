@@ -1,6 +1,7 @@
 #pragma once
 
 #include <deque>
+#include <random>
 #include <vector>
 
 #include <shared/game/cards/card_base.h>
@@ -10,6 +11,18 @@
 
 namespace server
 {
+    enum CardAccess
+    {
+        DISCARD_PILE = 1,
+        HAND = 2,
+        DRAW_PILE_TOP = 4,
+        DRAW_PILE_BOTTOM = 8,
+
+        PLAYED_CARDS = 16,
+        TRASH = 32,
+        STAGED_CARDS = 64 // ex: sentry could move here
+    };
+
     /**
      * Manages the server players state and provides useful functions.
      */
@@ -24,7 +37,7 @@ namespace server
          * @brief Creates a new player based on an id.
          * @param id the new players name
          */
-        explicit Player(shared::PlayerBase::id_t id) : shared::PlayerBase(id){};
+        explicit Player(shared::PlayerBase::id_t id) : shared::PlayerBase(id) {};
 
         /**
          * @brief Copy constructor
@@ -47,69 +60,63 @@ namespace server
         shared::ReducedEnemy::ptr_t get_reduced_enemy();
 
         /**
-         * @brief Peek the min(n, draw_pile_size) top cards from the deck.
-         * The draw pile does NOT get manipulated through this.
-         *
-         * @param n number of cards to peek
-         * @return std::vector<card_id> [ deck_top_card == vector[i], deck_(n-1)th_card = vector[n - 1]
-         */
-        std::vector<card_id> peek_draw_pile(size_t n);
-
-        /**
          * @brief Draw the min(n, draw_pile_size) top cards from the deck and put them in the hand
          *
          * @param n number of cards to draw
          */
-        void draw(size_t n);
+        inline void draw(size_t n) { move<DRAW_PILE_TOP, HAND>(n); }
 
-        /**
-         * @brief Deletes the card stored in range at index.
-         *
-         * @param range a valid range of card_ids
-         * @param trash_idx index in [0, range.size())
-         */
-        void trash(std::vector<card_id> &range, size_t trash_idx);
+        template <enum CardAccess PILE>
+        inline void trash(const std::vector<unsigned int> &indices)
+        {
+            move_indices<PILE, TRASH>(indices);
+        }
 
-        /**
-         * @brief Moves the card stored in range at index to the top of the discard_pile
-         *
-         * @param range a valid range of card_ids
-         * @param trash_idx index in [0, range.size())
-         */
-        void discard(std::vector<card_id> &range, size_t trash_idx);
+        template <enum CardAccess PILE>
+        inline void discard(const std::vector<unsigned int> &indices)
+        {
+            move_indices<PILE, DISCARD_PILE>(indices);
+        }
 
-        /**
-         * @brief Adds to the range. (push_back)
-         *
-         * @param range
-         * @param trash_idx a (not validated) card id
-         */
-        // TODO: this needs to be add_top, add_bottom
-        void add(std::vector<card_id> &range, const card_id &card) { range.push_back(card); }
-
-        /**
-         * @brief Adds a card to the discard_pile. (push_back)
-         *
-         * @param card
-         */
-        void add_to_discard_pile(const card_id &card) { discard_pile.push_back(card); }
+        void peek(int n) { move<DRAW_PILE_TOP, STAGED_CARDS>(n); }
+        void unpeek() { move<STAGED_CARDS, DRAW_PILE_TOP>(); }
 
         /**
          * @brief Moves the played_cards & hand_cards to the discard_pile, then draws 5 cards again.
          */
         void end_turn();
 
-        // TODO: there is technically no reason to expose those functions, refactor them away (if possible/usefull)
-        auto &get_draw_pile() { return draw_pile; }
-        auto &get_discard_pile() { return discard_pile; }
-        auto &get_hand_cards() { return hand_cards; }
-        auto &get_current_card() { return currently_playing_card; }
-        auto &get_played_cards() { return played_cards; }
-
         void incActions(int n) { actions += n; }
         void incBuys(int n) { buys += n; }
         void incTreasure(int n) { treasure += n; }
         void incPoints(int n) { victory_points += n; }
+
+        template <enum CardAccess PILE>
+        inline std::vector<shared::CardBase::id_t> &get();
+
+        template <enum CardAccess PILE>
+        inline void shuffle();
+
+        template <enum CardAccess FROM>
+        inline std::vector<shared::CardBase::id_t> take(unsigned int n = 0);
+
+        template <enum CardAccess FROM>
+        inline std::vector<shared::CardBase::id_t> take_indices(const std::vector<unsigned int> &indices);
+
+        template <enum CardAccess TO>
+        inline void add(std::vector<shared::CardBase::id_t> &&cards);
+
+        template <enum CardAccess TO>
+        inline void add(const std::vector<shared::CardBase::id_t> &cards);
+
+        template <enum CardAccess TO>
+        inline void add(const shared::CardBase::id_t &card_id);
+
+        template <enum CardAccess FROM, enum CardAccess TO>
+        inline void move(unsigned int n = 0);
+
+        template <enum CardAccess FROM, enum CardAccess TO>
+        inline void move_indices(const std::vector<unsigned int> &indices);
 
     private:
         /**
@@ -122,126 +129,6 @@ namespace server
         void reset_values();
 
         /**
-         * @brief Shuffles all cards in the discard_pile and inserts them below the draw_pile.
-         */
-        void shuffle_deck();
-
-        enum CardAccess
-        {
-            DISCARD_PILE = 1,
-            DRAW_PILE_PILE_TOP = 2,
-            DRAW_PILE_PILE_BOTTOM = 4,
-            HAND = 8,
-
-            PLAYED_CARDS = 16,
-            STAGED_CARDS = 32, // ex: sentry could move here
-            TRASH = 64,
-        };
-
-        std::vector<shared::CardBase::id_t> &get_pile(CardAccess pile)
-        {
-            switch ( pile ) {
-                case DISCARD_PILE:
-                    return discard_pile;
-                case HAND:
-                    return hand_cards;
-                case PLAYED_CARDS:
-                    return played_cards;
-                default:
-                    throw std::invalid_argument("Invalid pile specified or pile is not accessible.");
-            }
-        }
-
-        std::vector<shared::CardBase::id_t> take_n_from(unsigned int n, CardAccess from)
-        {
-            std::vector<shared::CardBase::id_t> taken_cards;
-            taken_cards.reserve(n);
-
-            switch ( from ) {
-                case DISCARD_PILE:
-                case HAND:
-                case PLAYED_CARDS:
-                    {
-                        auto &pile = get_pile(from);
-                        n = std::min(n, static_cast<unsigned int>(pile.size()));
-                        auto start_iter = pile.end() - n;
-                        taken_cards = {std::make_move_iterator(pile.end() - n), std::make_move_iterator(pile.end())};
-                        pile.erase(start_iter, pile.end());
-                    }
-                    break;
-                case DRAW_PILE_PILE_TOP:
-                    {
-                        auto &pile = draw_pile;
-                        n = std::min(n, static_cast<unsigned int>(pile.size()));
-                        taken_cards = {std::make_move_iterator(draw_pile.begin()),
-                                       std::make_move_iterator(draw_pile.begin() + n)};
-                        pile.erase(pile.begin(), pile.begin() + n);
-                    }
-                    break;
-                case DRAW_PILE_PILE_BOTTOM:
-                    {
-                        auto &pile = draw_pile;
-                        n = std::min(n, static_cast<unsigned int>(pile.size()));
-                        taken_cards = {std::make_move_iterator(draw_pile.end() - n),
-                                       std::make_move_iterator(draw_pile.end())};
-                        pile.erase(pile.end() - n, pile.end());
-                    }
-                    break;
-                default:
-                    throw std::invalid_argument("Invalid 'from' pile specified.");
-            }
-
-            return taken_cards;
-        }
-
-        void add_to(std::vector<shared::CardBase::id_t> cards, CardAccess to)
-        {
-            switch ( to ) {
-                case DISCARD_PILE:
-                case HAND:
-                case PLAYED_CARDS:
-                    {
-                        auto &pile = get_pile(to);
-                        pile.insert(discard_pile.end(), std::make_move_iterator(cards.begin()),
-                                    std::make_move_iterator(cards.end()));
-                    }
-                    break;
-                case DRAW_PILE_PILE_TOP:
-                    {
-                        draw_pile.insert(draw_pile.begin(), std::make_move_iterator(cards.begin()),
-                                         std::make_move_iterator(cards.end()));
-                    }
-                    break;
-                case DRAW_PILE_PILE_BOTTOM:
-                    {
-                        draw_pile.insert(draw_pile.end(), std::make_move_iterator(cards.begin()),
-                                         std::make_move_iterator(cards.end()));
-                    }
-                    break;
-                case TRASH:
-                    {
-                        // do nothing, cards are already trashed implicitly
-                    }
-                    break;
-                default:
-                    throw std::invalid_argument("Invalid 'to' pile specified.");
-            }
-        }
-
-        void move(int n, CardAccess from, CardAccess to)
-        {
-            if ( n <= 0 )
-                return;
-
-            if ( to == TRASH ) {
-                take_n_from(n, from);
-            } else {
-                auto cards = take_n_from(n, from);
-                add_to(std::move(cards), to);
-            }
-        }
-
-        /**
          * we can expose stuff like:
          * - getNFromImmutable
          * - moveToTrash(from)
@@ -250,13 +137,168 @@ namespace server
          */
 
 
-        std::deque<card_id> draw_pile;
+        std::vector<card_id> draw_pile;
         std::vector<card_id> discard_pile;
         std::vector<card_id> hand_cards;
         std::vector<card_id> played_cards; // TODO: move this to base player
+        std::vector<card_id> staged_cards; // TODO: move this to base player
 
         // TODO: this is ugly, rename or smth
         card_id currently_playing_card;
         size_t current_behaviour_idx;
     };
+
+    template <enum CardAccess PILE>
+    inline std::vector<shared::CardBase::id_t> &Player::get()
+    {
+        switch ( PILE ) {
+            case DISCARD_PILE:
+                return discard_pile;
+            case HAND:
+                return hand_cards;
+            case PLAYED_CARDS:
+                return played_cards;
+            case STAGED_CARDS:
+                return staged_cards;
+            case DRAW_PILE_TOP:
+                return draw_pile;
+            case DRAW_PILE_BOTTOM:
+                return draw_pile;
+            default:
+                throw std::invalid_argument("Invalid pile specified or pile is not accessible.");
+        }
+    }
+
+    template <enum CardAccess PILE>
+    inline void Player::shuffle()
+    {
+        static std::random_device rd; // we only need one instance
+        static std::mt19937 gen(rd()); // we only need one instance
+
+        auto &cards = get<PILE>();
+        std::shuffle(cards.begin(), cards.end(), gen); // Shuffle the cards
+    }
+
+    template <enum CardAccess FROM>
+    inline std::vector<shared::CardBase::id_t> Player::take(unsigned int n)
+    {
+        auto &pile = get<FROM>();
+
+        if ( n == 0 ) {
+            n = pile.size();
+        }
+
+        // Special handling for draw pile: reshuffle if needed
+        if constexpr ( FROM == DRAW_PILE_TOP || FROM == DRAW_PILE_BOTTOM ) {
+            if ( pile.size() < n && !get<DISCARD_PILE>().empty() ) {
+                shuffle<DISCARD_PILE>();
+                move<DISCARD_PILE, DRAW_PILE_BOTTOM>();
+            }
+            n = std::min(n, static_cast<unsigned int>(pile.size()));
+        } else {
+            // For other piles, throw if not enough cards
+            if ( pile.size() < n ) {
+                throw std::runtime_error("Not enough cards in the pile to take.");
+            }
+        }
+
+        // Take cards
+        std::vector<shared::CardBase::id_t> taken_cards;
+        taken_cards.reserve(n);
+
+        if constexpr ( FROM == DRAW_PILE_TOP ) {
+            // Take from the top of the draw pile
+            taken_cards.assign(std::make_move_iterator(pile.begin()), std::make_move_iterator(pile.begin() + n));
+            pile.erase(pile.begin(), pile.begin() + n);
+        } else {
+            // Take from the bottom or other piles
+            taken_cards.assign(std::make_move_iterator(pile.end() - n), std::make_move_iterator(pile.end()));
+            pile.erase(pile.end() - n, pile.end());
+        }
+
+        return taken_cards;
+    }
+
+    template <enum CardAccess FROM>
+    inline std::vector<shared::CardBase::id_t> Player::take_indices(const std::vector<unsigned int> &indices)
+    {
+        auto &pile = get<FROM>();
+
+        // Validate indices
+        for ( unsigned int idx : indices ) {
+            if ( idx >= pile.size() ) {
+                throw std::out_of_range("Index out of range for the pile.");
+            }
+        }
+
+        // Extract cards
+        std::vector<shared::CardBase::id_t> taken_cards;
+        taken_cards.reserve(indices.size());
+
+        // Sort indices in descending order to safely erase from the pile
+        std::vector<unsigned int> sorted_indices = indices;
+        std::sort(sorted_indices.rbegin(), sorted_indices.rend());
+
+        for ( unsigned int idx : sorted_indices ) {
+            taken_cards.push_back(std::move(pile[idx]));
+            pile.erase(pile.begin() + idx);
+        }
+
+        // Reverse the order of the taken cards to maintain the original order
+        std::reverse(taken_cards.begin(), taken_cards.end());
+        return taken_cards;
+    }
+
+    template <enum CardAccess TO>
+    inline void Player::add(std::vector<shared::CardBase::id_t> &&cards)
+    {
+        auto &pile = get<TO>();
+        if constexpr ( TO == DRAW_PILE_TOP ) {
+            pile.insert(pile.begin(), std::make_move_iterator(cards.begin()), std::make_move_iterator(cards.end()));
+        } else {
+            pile.insert(pile.end(), std::make_move_iterator(cards.begin()), std::make_move_iterator(cards.end()));
+        }
+    }
+
+    template <enum CardAccess TO>
+    inline void Player::add(const shared::CardBase::id_t &card_id)
+    {
+        auto &pile = get<TO>();
+        if constexpr ( TO == DRAW_PILE_TOP ) {
+            pile.push_front(card_id);
+        } else {
+            pile.push_back(card_id);
+        }
+    }
+
+    template <enum CardAccess TO>
+    inline void Player::add(const std::vector<shared::CardBase::id_t> &cards)
+    {
+        auto &pile = get<TO>();
+        if constexpr ( TO == DRAW_PILE_TOP ) {
+            pile.insert(pile.begin(), cards.begin(), cards.end());
+        } else {
+            pile.insert(pile.end(), cards.begin(), cards.end());
+        }
+    }
+
+    template <enum CardAccess FROM, enum CardAccess TO>
+    inline void Player::move(unsigned int n)
+    {
+        if constexpr ( TO == TRASH ) {
+            take<FROM>(n);
+        } else {
+            add<TO>(take<FROM>(n));
+        }
+    }
+
+    template <enum CardAccess FROM, enum CardAccess TO>
+    inline void Player::move_indices(const std::vector<unsigned int> &indices)
+    {
+        if constexpr ( TO == TRASH ) {
+            take_indices<FROM>(indices);
+        } else {
+            add<TO>(take_indices<FROM>(indices));
+        }
+    }
 } // namespace server

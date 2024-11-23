@@ -81,7 +81,7 @@ namespace server
             ASSERT_NO_DECISION;
 
             auto &affected_player = game_state.get_current_player();
-            affected_player.incTreasure(coins);
+            affected_player.addTreasure(coins);
             return std::nullopt;
         }
 
@@ -91,7 +91,7 @@ namespace server
             ASSERT_NO_DECISION;
 
             auto &affected_player = game_state.get_current_player();
-            affected_player.incBuys(buys);
+            affected_player.addBuys(buys);
             return std::nullopt;
         }
 
@@ -101,7 +101,7 @@ namespace server
             ASSERT_NO_DECISION;
 
             auto &affected_player = game_state.get_current_player();
-            affected_player.incActions(actions);
+            affected_player.addActions(actions);
             return std::nullopt;
         }
 
@@ -111,7 +111,7 @@ namespace server
             ASSERT_NO_DECISION;
 
             auto &affected_player = game_state.get_current_player();
-            affected_player.incPoints(points);
+            affected_player.addPoints(points);
             return std::nullopt;
         }
 

@@ -113,18 +113,18 @@ TEST(PlayerTest, DiscardCard)
     EXPECT_EQ(player.get<CardAccess::DISCARD_PILE>()[0], "Card2");
 }
 
-TEST(PlayerTest, AddCard)
+TEST(PlayerTest, GainCard)
 {
     TestPlayer player("player");
-    std::vector<std::string> hand = {"Card1", "Card2"};
-    player.getMutable<CardAccess::HAND>() = hand;
+    std::vector<std::string> discard_pile = {"Card1", "Card2"};
+    player.getMutable<CardAccess::DISCARD_PILE>() = discard_pile;
 
     // Add "Card3" to hand
     player.gain("Card3");
 
     // Now hand should have "Card1", "Card2", "Card3"
-    ASSERT_EQ(player.get<CardAccess::HAND>().size(), 3);
-    EXPECT_EQ(player.get<CardAccess::HAND>()[2], "Card3");
+    ASSERT_EQ(player.get<CardAccess::DISCARD_PILE>().size(), 3);
+    EXPECT_EQ(player.get<CardAccess::DISCARD_PILE>()[2], "Card3");
 }
 
 TEST(PlayerTest, AddToDiscardPile)
@@ -198,10 +198,6 @@ TEST(PlayerTest, EndTurn)
     EXPECT_EQ(player.getBuys(), 1);
     EXPECT_EQ(player.getTreasure(), 0);
 
-    std::cerr << "hand: " << player.get<CardAccess::HAND>().size() << std::endl;
-    std::cerr << "played: " << player.get<CardAccess::PLAYED_CARDS>().size() << std::endl;
-    std::cerr << "discard: " << player.get<CardAccess::DISCARD_PILE>().size() << std::endl;
-    std::cerr << "draw: " << player.get<CardAccess::DRAW_PILE_TOP>().size() << std::endl;
     // hand should contain 5 cards again
     EXPECT_EQ(player.get<CardAccess::HAND>().size(), 4);
 

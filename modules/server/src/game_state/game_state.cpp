@@ -52,9 +52,9 @@ namespace server
 
             for ( unsigned i = 0; i < 7; i++ ) {
                 if ( i < 3 ) {
-                    player_map[id]->add_to_discard_pile("Estate");
+                    player_map[id]->gain("Estate");
                 }
-                player_map[id]->add_to_discard_pile("Copper");
+                player_map[id]->gain("Copper");
             }
 
             player_map[id]->draw(5);
@@ -104,7 +104,7 @@ namespace server
             throw exception::CardNotAvailable("");
         }
 
-        player.add_to_discard_pile(card_id);
+        player.gain(card_id);
         player.decTreasure(card_cost);
 
         return true;

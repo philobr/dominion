@@ -3,10 +3,23 @@
 
 #include <server/game/game_state/server_player.h>
 
+using namespace server;
+
+class TestPlayer : public Player
+{
+public:
+    using Player::Player;
+
+    // to make setups easier
+    using Player::getMutable;
+
+    // expose the functions to test
+};
+
 // Begin test cases
 TEST(PlayerTest, DefaultConstructor)
 {
-    server::Player player("player");
+    TestPlayer player("player");
 
     EXPECT_EQ(player.getId(), "player");
     EXPECT_EQ(player.getVictoryPoints(), 0);
@@ -14,30 +27,30 @@ TEST(PlayerTest, DefaultConstructor)
     EXPECT_EQ(player.getBuys(), 1);
     EXPECT_EQ(player.getTreasure(), 0);
 
-    EXPECT_TRUE(player.get_draw_pile().empty());
-    EXPECT_TRUE(player.get_discard_pile().empty());
-    EXPECT_TRUE(player.get_hand_cards().empty());
+    EXPECT_TRUE(player.get<CardAccess::DRAW_PILE_TOP>().empty());
+    EXPECT_TRUE(player.get<CardAccess::DISCARD_PILE>().empty());
+    EXPECT_TRUE(player.get<CardAccess::HAND>().empty());
 }
 
 TEST(PlayerTest, ConstructorWithId)
 {
     std::string player_id = "player1";
-    server::Player player(player_id);
+    TestPlayer player(player_id);
     EXPECT_EQ(player.getId(), player_id);
 }
 
 TEST(PlayerTest, CopyConstructor)
 {
     std::string player_id = "player1";
-    server::Player player(player_id);
+    TestPlayer player(player_id);
 
     // initialise some properties
-    player.incActions(2);
-    player.incBuys(1);
-    player.incTreasure(3);
-    player.incPoints(5);
+    player.addActions(2);
+    player.addBuys(1);
+    player.addTreasure(3);
+    player.addPoints(5);
 
-    server::Player copy_player(player);
+    TestPlayer copy_player(player);
 
     // check that copy has the same properties
     EXPECT_EQ(copy_player.getId(), player.getId());
@@ -47,152 +60,135 @@ TEST(PlayerTest, CopyConstructor)
     EXPECT_EQ(copy_player.getVictoryPoints(), player.getVictoryPoints());
 }
 
-TEST(PlayerTest, PeekDrawPile)
-{
-    server::Player player("player");
-    // Set up draw_pile
-    std::deque<std::string> draw_pile = {"Card1", "Card2", "Card3", "Card4", "Card5"};
-    player.get_draw_pile() = draw_pile;
-
-    // Peek top 3 cards
-    std::vector<std::string> peeked_cards = player.peek_draw_pile(3);
-
-    ASSERT_EQ(peeked_cards.size(), 3);
-    EXPECT_EQ(peeked_cards[0], "Card1");
-    EXPECT_EQ(peeked_cards[1], "Card2");
-    EXPECT_EQ(peeked_cards[2], "Card3");
-
-    // Ensure draw_pile is unchanged
-    EXPECT_EQ(player.get_draw_pile().size(), 5);
-}
-
 TEST(PlayerTest, DrawCards)
 {
-    server::Player player("player");
+    TestPlayer player("player");
 
-    std::deque<std::string> draw_pile = {"Card1", "Card2", "Card3", "Card4", "Card5"};
-    player.get_draw_pile() = draw_pile;
+    std::vector<std::string> draw_pile = {"Card1", "Card2", "Card3", "Card4", "Card5"};
+    player.getMutable<CardAccess::DRAW_PILE_TOP>() = draw_pile;
 
     player.draw(2);
 
-    ASSERT_EQ(player.get_hand_cards().size(), 2);
-    EXPECT_EQ(player.get_hand_cards()[0], "Card1");
-    EXPECT_EQ(player.get_hand_cards()[1], "Card2");
+    ASSERT_EQ(player.get<CardAccess::HAND>().size(), 2);
+    EXPECT_EQ(player.get<CardAccess::HAND>()[0], "Card1");
+    EXPECT_EQ(player.get<CardAccess::HAND>()[1], "Card2");
 
-    ASSERT_EQ(player.get_draw_pile().size(), 3);
-    EXPECT_EQ(player.get_draw_pile()[0], "Card3");
-    EXPECT_EQ(player.get_draw_pile()[1], "Card4");
-    EXPECT_EQ(player.get_draw_pile()[2], "Card5");
+    ASSERT_EQ(player.get<CardAccess::DRAW_PILE_TOP>().size(), 3);
+    EXPECT_EQ(player.get<CardAccess::DRAW_PILE_TOP>()[0], "Card3");
+    EXPECT_EQ(player.get<CardAccess::DRAW_PILE_TOP>()[1], "Card4");
+    EXPECT_EQ(player.get<CardAccess::DRAW_PILE_TOP>()[2], "Card5");
 }
 
 TEST(PlayerTest, TrashCard)
 {
-    server::Player player("player");
+    TestPlayer player("player");
     std::vector<std::string> hand = {"Card1", "Card2", "Card3"};
-    player.get_hand_cards() = hand;
+    player.getMutable<CardAccess::HAND>() = hand;
 
-    player.trash(player.get_hand_cards(), 1);
+    std::vector<unsigned int> indices = {1};
+    player.trash<CardAccess::HAND>(indices);
 
-    ASSERT_EQ(player.get_hand_cards().size(), 2);
-    EXPECT_EQ(player.get_hand_cards()[0], "Card1");
-    EXPECT_EQ(player.get_hand_cards()[1], "Card3");
+    ASSERT_EQ(player.get<CardAccess::HAND>().size(), 2);
+    EXPECT_EQ(player.get<CardAccess::HAND>()[0], "Card1");
+    EXPECT_EQ(player.get<CardAccess::HAND>()[1], "Card3");
 }
 
 TEST(PlayerTest, DiscardCard)
 {
-    server::Player player("player");
+    TestPlayer player("player");
     std::vector<std::string> hand = {"Card1", "Card2", "Card3"};
-    player.get_hand_cards() = hand;
+    player.getMutable<CardAccess::HAND>() = hand;
 
     // Discard the second card (index 1)
-    player.discard(player.get_hand_cards(), 1);
+    std::vector<unsigned int> indices = {1};
+    player.discard<CardAccess::HAND>(indices);
 
     // Now hand should have "Card1", "Card3"
-    ASSERT_EQ(player.get_hand_cards().size(), 2);
-    EXPECT_EQ(player.get_hand_cards()[0], "Card1");
-    EXPECT_EQ(player.get_hand_cards()[1], "Card3");
+    ASSERT_EQ(player.get<CardAccess::HAND>().size(), 2);
+    EXPECT_EQ(player.get<CardAccess::HAND>()[0], "Card1");
+    EXPECT_EQ(player.get<CardAccess::HAND>()[1], "Card3");
 
     // Discard pile should have "Card2"
-    ASSERT_EQ(player.get_discard_pile().size(), 1);
-    EXPECT_EQ(player.get_discard_pile()[0], "Card2");
+    ASSERT_EQ(player.get<CardAccess::DISCARD_PILE>().size(), 1);
+    EXPECT_EQ(player.get<CardAccess::DISCARD_PILE>()[0], "Card2");
 }
 
-TEST(PlayerTest, AddCard)
+TEST(PlayerTest, GainCard)
 {
-    server::Player player("player");
-    std::vector<std::string> hand = {"Card1", "Card2"};
-    player.get_hand_cards() = hand;
+    TestPlayer player("player");
+    std::vector<std::string> discard_pile = {"Card1", "Card2"};
+    player.getMutable<CardAccess::DISCARD_PILE>() = discard_pile;
 
     // Add "Card3" to hand
-    player.add(player.get_hand_cards(), "Card3");
+    player.gain("Card3");
 
     // Now hand should have "Card1", "Card2", "Card3"
-    ASSERT_EQ(player.get_hand_cards().size(), 3);
-    EXPECT_EQ(player.get_hand_cards()[2], "Card3");
+    ASSERT_EQ(player.get<CardAccess::DISCARD_PILE>().size(), 3);
+    EXPECT_EQ(player.get<CardAccess::DISCARD_PILE>()[2], "Card3");
 }
 
 TEST(PlayerTest, AddToDiscardPile)
 {
-    server::Player player("player");
+    TestPlayer player("player");
 
     // Discard pile is initially empty
-    EXPECT_TRUE(player.get_discard_pile().empty());
+    EXPECT_TRUE(player.get<CardAccess::DISCARD_PILE>().empty());
 
     // Add "Card1" to discard pile
-    player.add_to_discard_pile("Card1");
+    player.gain("Card1");
 
     // Now discard pile should have "Card1"
-    ASSERT_EQ(player.get_discard_pile().size(), 1);
-    EXPECT_EQ(player.get_discard_pile()[0], "Card1");
+    ASSERT_EQ(player.get<CardAccess::DISCARD_PILE>().size(), 1);
+    EXPECT_EQ(player.get<CardAccess::DISCARD_PILE>()[0], "Card1");
 }
 
 TEST(PlayerTest, IncreaseActions)
 {
-    server::Player player("player");
+    TestPlayer player("player");
     EXPECT_EQ(player.getActions(), 1);
 
-    player.incActions(2);
+    player.addActions(2);
     EXPECT_EQ(player.getActions(), 3);
 }
 
 TEST(PlayerTest, IncreaseBuys)
 {
-    server::Player player("player");
+    TestPlayer player("player");
     EXPECT_EQ(player.getBuys(), 1);
 
-    player.incBuys(3);
+    player.addBuys(3);
     EXPECT_EQ(player.getBuys(), 4);
 }
 
 TEST(PlayerTest, IncreaseTreasure)
 {
-    server::Player player("player");
+    TestPlayer player("player");
     EXPECT_EQ(player.getTreasure(), 0);
 
-    player.incTreasure(5);
+    player.addTreasure(5);
     EXPECT_EQ(player.getTreasure(), 5);
 }
 
 TEST(PlayerTest, AddPoints)
 {
-    server::Player player("player");
+    TestPlayer player("player");
     EXPECT_EQ(player.getVictoryPoints(), 0);
 
-    player.incPoints(7);
+    player.addPoints(7);
     EXPECT_EQ(player.getVictoryPoints(), 7);
 }
 
 TEST(PlayerTest, EndTurn)
 {
-    server::Player player("player");
+    TestPlayer player("player");
     // Set up some state
-    player.incActions(2);
-    player.incBuys(1);
-    player.incTreasure(3);
-    player.incPoints(5);
-    player.get_hand_cards() = {"Card1", "Card2"};
-    player.get_played_cards() = {"Card3"};
-    player.get_discard_pile() = {"Card4"};
+    player.addActions(2);
+    player.addBuys(1);
+    player.addTreasure(3);
+    player.addPoints(5);
+    player.getMutable<CardAccess::HAND>() = {"Card1", "Card2"};
+    player.getMutable<CardAccess::PLAYED_CARDS>() = {"Card3"};
+    player.getMutable<CardAccess::DISCARD_PILE>() = {"Card4"};
 
     // Call end_turn()
     player.end_turn();
@@ -203,8 +199,50 @@ TEST(PlayerTest, EndTurn)
     EXPECT_EQ(player.getTreasure(), 0);
 
     // hand should contain 5 cards again
-    EXPECT_EQ(player.get_hand_cards().size(), 4);
+    EXPECT_EQ(player.get<CardAccess::HAND>().size(), 4);
 
     // discard pile should be empty as reshuffle was triggered
-    ASSERT_EQ(player.get_discard_pile().size(), 0); // hand + played + pile
+    ASSERT_EQ(player.get<CardAccess::DISCARD_PILE>().size(), 0); // hand + played + pile
+}
+
+TEST(PlayerTest, AddCardsToPile)
+{
+    TestPlayer player("player");
+
+    // Set up an empty discard pile
+    player.getMutable<CardAccess::DISCARD_PILE>().clear();
+
+    // Add cards to the discard pile
+    player.gain("Card1");
+    player.gain("Card2");
+    player.gain("Card3");
+
+    // Verify the discard pile
+    auto &discard_pile = player.get<CardAccess::DISCARD_PILE>();
+    ASSERT_EQ(discard_pile.size(), 3);
+    EXPECT_EQ(discard_pile[0], "Card1");
+    EXPECT_EQ(discard_pile[1], "Card2");
+    EXPECT_EQ(discard_pile[2], "Card3");
+}
+
+TEST(PlayerTest, GetPile)
+{
+    TestPlayer player("player");
+
+    // Set up piles
+    player.getMutable<CardAccess::DISCARD_PILE>() = {"Card1", "Card2"};
+    player.getMutable<CardAccess::DRAW_PILE_TOP>() = {"Card3", "Card4"};
+    player.getMutable<CardAccess::HAND>() = {"Card5"};
+    player.getMutable<CardAccess::PLAYED_CARDS>() = {"Card6"};
+
+    // Access and verify each pile
+    EXPECT_EQ(player.get<DISCARD_PILE>()[0], "Card1");
+    EXPECT_EQ(player.get<DISCARD_PILE>()[1], "Card2");
+
+    EXPECT_EQ(player.get<DRAW_PILE_TOP>()[0], "Card3");
+    EXPECT_EQ(player.get<DRAW_PILE_TOP>()[1], "Card4");
+
+    EXPECT_EQ(player.get<HAND>()[0], "Card5");
+
+    EXPECT_EQ(player.get<PLAYED_CARDS>()[0], "Card6");
 }

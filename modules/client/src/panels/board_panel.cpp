@@ -104,11 +104,7 @@ namespace client
 
         // Bind left click on the panel to the buyCard function
         Pile->Bind(wxEVT_LEFT_UP,
-                   [Pile](wxMouseEvent & /*event*/)
-                   {
-                       std::cerr << "Clicked on card" << std::endl;
-                       GameController::buyCard(Pile->getPile().card_id);
-                   });
+                   [Pile](wxMouseEvent & /*event*/) { GameController::buyCard(Pile->getPile().card_id); });
     }
 
 

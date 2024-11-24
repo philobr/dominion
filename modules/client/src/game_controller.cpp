@@ -1,5 +1,6 @@
 #include "game_controller.h"
 #include <shared/utils/uuid_generator.h>
+#include "shared/utils/logger.h"
 
 
 namespace client
@@ -125,13 +126,14 @@ namespace client
 
 
         // For testing delete later
-        std::cerr << "Tried to buy card " << card_id << std::endl;
+        LOG(DEBUG) << "Tried to buy card " << card_id << std::endl;
         showStatus("Tried to buy card " + card_id);
     }
 
 
     void GameController::showError(const std::string &title, const std::string &message)
     {
+        LOG(WARN) << title << ": " << message << std::endl;
         wxMessageBox(message, title, wxICON_ERROR);
     }
 

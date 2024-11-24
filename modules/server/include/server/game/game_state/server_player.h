@@ -70,17 +70,44 @@ namespace server
          */
         inline void draw(size_t n) { move<DRAW_PILE_TOP, HAND>(n); }
 
+        /**
+         * @brief Adds a card to the discard_pile
+         */
         inline void gain(const shared::CardBase::id_t &card_id) { add<DISCARD_PILE>(card_id); }
 
+        /**
+         * @brief Trashes the cards at the given indices
+         *
+         * @tparam FROM_PILE
+         * @param indices
+         */
         template <enum CardAccess FROM_PILE>
         inline void trash(const std::vector<unsigned int> &indices);
 
+        /**
+         * @brief Moves the cards at the given pile to the back of the discard pile
+         *
+         * @tparam FROM_PILE
+         * @param indices
+         */
         template <enum CardAccess FROM_PILE>
         inline void discard(const std::vector<unsigned int> &indices);
 
+        /**
+         * @brief Moves the cards at the given pile to the back of the stage pile
+         *
+         * @tparam FROM_PILE
+         * @param indices
+         */
         template <enum CardAccess FROM_PILE>
         inline void stage(const std::vector<unsigned int> &indices);
 
+        /**
+         * @brief Unstages the cards at the specified indices to the specified pile.
+         *
+         * @tparam TO_PILE
+         * @param indices
+         */
         template <enum CardAccess TO_PILE>
         inline void un_stage(const std::vector<unsigned int> &indices);
 
@@ -114,17 +141,35 @@ namespace server
         void reset_values();
 
         template <enum CardAccess PILE>
-        inline void shuffle();
-
-        template <enum CardAccess PILE>
         inline std::vector<shared::CardBase::id_t> &getMutable();
 
+        template <enum CardAccess PILE>
+        inline void shuffle();
+
+        /**
+         * @brief Adds (no copy) the vector of cards to the specified pile.
+         *
+         * @tparam TO
+         * @param cards
+         */
         template <enum CardAccess TO>
         inline void add(std::vector<shared::CardBase::id_t> &&cards);
 
+        /**
+         * @brief Adds (with copy) the vector of cards to the specified pile.
+         *
+         * @tparam TO
+         * @param cards
+         */
         template <enum CardAccess TO>
         inline void add(const std::vector<shared::CardBase::id_t> &cards);
 
+        /**
+         * @brief Adds the card_id to the back of the specified pile
+         *
+         * @tparam TO
+         * @param card_id
+         */
         template <enum CardAccess TO>
         inline void add(const shared::CardBase::id_t &card_id);
 

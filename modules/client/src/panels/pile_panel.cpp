@@ -10,10 +10,9 @@ namespace client
 
         std::string CardPath = "assets/" + pile.card_id + ".png";
 
-        ImagePanel *image_panel =
-                new ImagePanel(this, CardPath, wxBITMAP_TYPE_PNG, wxDefaultPosition, wxSize(100, 125));
+        Image = new ImagePanel(this, CardPath, wxBITMAP_TYPE_PNG, wxDefaultPosition, wxSize(100, 125));
 
-        sizer->Add(image_panel, 0, wxALIGN_CENTER_HORIZONTAL);
+        sizer->Add(Image, 0, wxALIGN_CENTER_HORIZONTAL);
 
         wxStaticText *PileSize = new wxStaticText(this, wxID_ANY, std::to_string(pile.count), wxDefaultPosition,
                                                   wxDefaultSize, wxALIGN_CENTER);
@@ -26,4 +25,5 @@ namespace client
     }
 
     shared::Pile PilePanel::getPile() const { return Pile; }
+
 } // namespace client

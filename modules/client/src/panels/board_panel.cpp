@@ -103,8 +103,7 @@ namespace client
         Pile->SetCursor(wxCursor(wxCURSOR_HAND));
 
         // Bind left click on the panel to the buyCard function
-        Pile->Bind(wxEVT_LEFT_UP,
-                   [Pile](wxMouseEvent & /*event*/) { GameController::buyCard(Pile->getPile().card_id); });
+        Pile->makeClickable([Pile](wxMouseEvent & /*event*/) { GameController::buyCard(Pile->getPile().card_id); });
     }
 
 

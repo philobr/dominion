@@ -43,6 +43,7 @@ namespace client
         static void startGame();
 
         static void buyCard(const std::string &card_id);
+        static void playCard(const std::string &card_id);
         static void send_request(const std::string &req);
         static void receive_message(std::unique_ptr<shared::ServerToClientMessage> msg);
 

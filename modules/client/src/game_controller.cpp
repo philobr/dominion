@@ -130,6 +130,15 @@ namespace client
         showStatus("Tried to buy card " + card_id);
     }
 
+    void GameController::playCard(const std::string &card_id)
+    {
+        // send request to play card
+
+        // For testing delete later
+        LOG(DEBUG) << "Tried to play card " << card_id << std::endl;
+        showStatus("Tried to play card " + card_id);
+    }
+
 
     void GameController::showError(const std::string &title, const std::string &message)
     {

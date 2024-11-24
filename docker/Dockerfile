@@ -22,6 +22,7 @@ RUN apt-get install -y \
 
 USER dominion
 
+
 # This is necessary since the container is run as root while the dominion directory is owned by the host user
 RUN git config --global --add safe.directory /dominion
 
@@ -38,3 +39,4 @@ WORKDIR /dominion/build
 RUN cmake .. && make -j $(nproc)
 
 CMD [ "./server_exe" ]
+

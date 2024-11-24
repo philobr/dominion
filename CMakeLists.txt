@@ -6,6 +6,7 @@ project(doMINION)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+set(CMAKE_BUILD_TYPE Debug)
 set(EXTERNAL_LIBS ${CMAKE_SOURCE_DIR}/external)
 
 enable_testing()
@@ -26,6 +27,9 @@ add_compile_options(
     -Wuninitialized
     # TODO: Remove this suppression
     -Wno-deprecated-enum-enum-conversion
+    # This is a warning that exists on more recent versions of clang
+    # We don't care too much about shadowing
+    -Wno-shadow
 )
 
 add_subdirectory(${EXTERNAL_LIBS}/sockpp)
@@ -89,6 +93,12 @@ macro(include_gmock target)
     target_include_directories(${target} PRIVATE
         ${EXTERNAL_LIBS}/googletest/lib/googlemock/include
     )
+endmacro()
+
+macro(include_quick_arg_parser target)
+    message(STATUS "Including quick_arg_parser in ${target}")
+    target_include_directories(${target} PRIVATE ${EXTERNAL_LIBS}/quick_arg_parser)
+    target_compile_options(${target} PRIVATE -Wno-unused-parameter)
 endmacro()
 
 macro(include_wxwidgets target)

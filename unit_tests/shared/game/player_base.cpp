@@ -2,6 +2,26 @@
 
 #include <gtest/gtest.h>
 
+TEST(PlayerJsonConversions, ReducedPlayer2Way)
+{
+    shared::PlayerBase base_player("Alice");
+    std::vector<shared::CardBase::id_t> hand_cards = {"Province", "Copper", "Copper", "Village", "Estate"};
+    auto expected = shared::ReducedPlayer::make(base_player, hand_cards);
+    auto json = expected->toJson();
+    std::unique_ptr<shared::ReducedPlayer> actual = shared::ReducedPlayer::fromJson(json);
+    EXPECT_EQ(*actual, *expected);
+}
+
+TEST(PlayerJsonConversions, ReducedEnemy2Way)
+{
+    shared::PlayerBase base_player("Bob");
+    unsigned int hand_size = 3;
+    auto expected = shared::ReducedEnemy::make(base_player, hand_size);
+    auto json = expected->toJson();
+    std::unique_ptr<shared::ReducedEnemy> actual = shared::ReducedEnemy::fromJson(json);
+    EXPECT_EQ(*actual, *expected);
+}
+
 class TestablePlayerBase : public shared::PlayerBase
 {
 public:
@@ -9,7 +29,7 @@ public:
 
     // Expose protected variables through public getters
     const shared::CardBase::id_t getCurrentCard() const { return current_card; }
-    const std::pair<shared::CardBase::id_t, unsigned int> getDiscardPile() const { return discard_pile; }
+    const std::vector<shared::CardBase::id_t> getDiscardPile() const { return discard_pile; }
     unsigned int getDrawPileSize() const { return draw_pile_size; }
     const std::vector<shared::CardBase::id_t> getPlayedCards() const { return played_cards; }
 
@@ -33,8 +53,7 @@ TEST(PlayerBaseTest, Constructor)
 
     // testing private variables
     EXPECT_EQ(player.getCurrentCard(), "");
-    EXPECT_EQ(player.getDiscardPile().first, "");
-    EXPECT_EQ(player.getDiscardPile().second, 0);
+    EXPECT_EQ(player.getDiscardPile().empty(), true);
     EXPECT_EQ(player.getDrawPileSize(), 0);
     EXPECT_EQ(player.getPlayedCards().size(), 0);
 }

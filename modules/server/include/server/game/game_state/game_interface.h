@@ -1,16 +1,19 @@
 #pragma once
+
 #include <server/game/game.h>
+#include <server/game/game_state/behaviour_chain.h>
 
 namespace server
 {
     class GameInterface
     {
-        std::unique_ptr<GameState> game_state;
+        std::shared_ptr<GameState> game_state;
+        std::shared_ptr<BehaviourChain> cur_behaviours;
         const std::string game_id;
 
     public:
         using ptr_t = std::unique_ptr<GameInterface>;
-        using response_t = std::unique_ptr<shared::ServerToClientMessage>;
+        using response_t = std::unique_ptr<shared::ActionOrder>;
 
         GameInterface operator=(const GameInterface &other) = delete;
         GameInterface(const GameInterface &other) = delete;
@@ -19,6 +22,8 @@ namespace server
 
         static ptr_t make(const std::string &game_id, const std::vector<shared::CardBase::id_t> &play_cards,
                           const std::vector<Player::id_t> &player_ids);
+
+        std::shared_ptr<GameState> get_game_state() { return game_state; }
 
         /**
          * @brief Receives an ActionDecision from the Lobby and handles it accordingly.
@@ -37,9 +42,13 @@ namespace server
     private:
         GameInterface(const std::string &game_id, const std::vector<shared::CardBase::id_t> &play_cards,
                       const std::vector<Player::id_t> &player_ids) :
-            game_state(std::make_unique<GameState>(play_cards, player_ids)),
-            game_id(game_id)
-        {}
+            game_state(std::make_shared<GameState>(play_cards, player_ids)),
+            cur_behaviours(std::make_unique<BehaviourChain>()), game_id(game_id)
+        {
+            // TODO: just for testing, remove later
+            cur_behaviours->loadBehaviours("Laboratory");
+            cur_behaviours->receiveAction(*game_state.get(), std::nullopt);
+        }
 
         response_t handle_action(std::unique_ptr<shared::ActionDecision> action_decision,
                                  const Player::id_t &affected_player_id);

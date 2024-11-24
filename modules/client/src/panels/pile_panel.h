@@ -19,7 +19,24 @@ namespace client
 
         shared::Pile getPile() const;
 
+        /**
+         * @brief make the pile clickable
+         *
+         * @tparam Functor the function to call when the pile is clicked
+         *
+         */
+        template <typename Functor>
+        void makeClickable(Functor f);
+
     private:
         shared::Pile Pile;
+        ImagePanel *Image;
     };
+
+
+    template <typename Functor>
+    void PilePanel::makeClickable(Functor f)
+    {
+        Image->Bind(wxEVT_LEFT_UP, f);
+    }
 } // namespace client

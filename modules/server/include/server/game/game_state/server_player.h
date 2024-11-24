@@ -11,7 +11,7 @@
 
 namespace server
 {
-    // TODO: move this inside the playerbase class?
+    // TODO: move this inside the playerbase class? (does this help gui people?)
     enum CardAccess
     {
         DISCARD_PILE = 1,
@@ -32,6 +32,8 @@ namespace server
         std::vector<shared::CardBase::id_t> draw_pile;
         std::vector<shared::CardBase::id_t> discard_pile;
         std::vector<shared::CardBase::id_t> hand_cards;
+
+        // TODO: move this inside the playerbase class? (does this help gui people?)
         std::vector<shared::CardBase::id_t> played_cards; // TODO: move this to base player
         std::vector<shared::CardBase::id_t> staged_cards; // TODO: move this to base player
 

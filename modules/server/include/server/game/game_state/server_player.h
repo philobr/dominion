@@ -143,9 +143,9 @@ namespace server
     protected:
         /**
          * @brief Resets the 'stats' to:
-         * - actions      1
-         * - buys         1
-         * - treasure     0
+         * - actions                1
+         * - buys                   1
+         * - treasure               0
          * - victory_points         0
          */
         void reset_values();

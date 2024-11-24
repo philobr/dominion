@@ -96,6 +96,6 @@ namespace client
         Image->SetCursor(wxCursor(wxCURSOR_HAND));
 
         // Bind left click on the panel to the buyCard function
-        Image->Bind(wxEVT_LEFT_UP, [card_id](wxMouseEvent & /*event*/) { GameController::buyCard(card_id); });
+        Image->Bind(wxEVT_LEFT_UP, [card_id](wxMouseEvent & /*event*/) { GameController::playCard(card_id); });
     }
 } // namespace client

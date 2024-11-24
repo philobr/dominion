@@ -11,6 +11,7 @@
 
 namespace server
 {
+    // TODO: move this inside the playerbase class?
     enum CardAccess
     {
         DISCARD_PILE = 1,
@@ -69,19 +70,19 @@ namespace server
          */
         inline void draw(size_t n) { move<DRAW_PILE_TOP, HAND>(n); }
 
-        template <enum CardAccess PILE>
+        inline void gain(const shared::CardBase::id_t &card_id) { add<DISCARD_PILE>(card_id); }
+
+        template <enum CardAccess FROM_PILE>
         inline void trash(const std::vector<unsigned int> &indices);
 
-        template <enum CardAccess PILE>
+        template <enum CardAccess FROM_PILE>
         inline void discard(const std::vector<unsigned int> &indices);
 
-        void peek(int n) { move<DRAW_PILE_TOP, STAGED_CARDS>(n); }
-        void unpeek() { move<STAGED_CARDS, DRAW_PILE_TOP>(); }
+        template <enum CardAccess FROM_PILE>
+        inline void stage(const std::vector<unsigned int> &indices);
 
-        /**
-         * @brief Moves the played_cards & hand_cards to the discard_pile, then draws 5 cards again.
-         */
-        void end_turn();
+        template <enum CardAccess TO_PILE>
+        inline void un_stage(const std::vector<unsigned int> &indices);
 
         void addActions(int n) { actions += n; }
         void addBuys(int n) { buys += n; }
@@ -97,20 +98,12 @@ namespace server
         template <enum CardAccess PILE>
         inline const std::vector<shared::CardBase::id_t> &get();
 
-        template <enum CardAccess TO>
-        inline void add(std::vector<shared::CardBase::id_t> &&cards);
+        /**
+         * @brief Moves the played_cards & hand_cards to the discard_pile, then draws 5 cards again.
+         */
+        void end_turn();
 
-        template <enum CardAccess TO>
-        inline void add(const std::vector<shared::CardBase::id_t> &cards);
-
-        template <enum CardAccess TO>
-        inline void add(const shared::CardBase::id_t &card_id);
-
-        template <enum CardAccess PILE>
-        inline std::vector<shared::CardBase::id_t> &
-        getMutable(); // TODO: move this to private, need to adjust tests first though
-
-    private:
+    protected:
         /**
          * @brief Resets the 'stats' to:
          * - actions      1
@@ -122,6 +115,18 @@ namespace server
 
         template <enum CardAccess PILE>
         inline void shuffle();
+
+        template <enum CardAccess PILE>
+        inline std::vector<shared::CardBase::id_t> &getMutable();
+
+        template <enum CardAccess TO>
+        inline void add(std::vector<shared::CardBase::id_t> &&cards);
+
+        template <enum CardAccess TO>
+        inline void add(const std::vector<shared::CardBase::id_t> &cards);
+
+        template <enum CardAccess TO>
+        inline void add(const shared::CardBase::id_t &card_id);
 
         /**
          * @brief Removes $n$ cards from a pile.
@@ -336,5 +341,17 @@ namespace server
     inline const std::vector<shared::CardBase::id_t> &Player::get()
     {
         return getMutable<PILE>();
+    }
+
+    template <enum CardAccess PILE>
+    inline void Player::stage(const std::vector<unsigned int> &indices)
+    {
+        move_indices<PILE, STAGED_CARDS>(indices);
+    }
+
+    template <enum CardAccess TO_PILE>
+    inline void Player::un_stage(const std::vector<unsigned int> &indices)
+    {
+        move_indices<STAGED_CARDS, TO_PILE>(indices);
     }
 } // namespace server

@@ -1,12 +1,12 @@
 #include "player_panel.h"
 
-#include "../uiElements/image_panel.h"
-#include "../game_controller.h"
+#include <shared/game/cards/card_factory.h>
+#include <shared/utils/logger.h>
 #include <wx/event.h>
 #include <wx/sizer.h>
 #include <wx/wx.h>
-#include <shared/utils/logger.h>
-#include <shared/game/cards/card_factory.h>
+#include "../game_controller.h"
+#include "../uiElements/image_panel.h"
 
 namespace client
 {
@@ -14,8 +14,7 @@ namespace client
     PlayerPanel::PlayerPanel(wxWindow *parent, wxSize size) : wxPanel(parent, wxID_ANY, wxDefaultPosition, size)
     {
         auto player = shared::PlayerBase("gigu");
-        auto reduced = shared::ReducedPlayer::make(
-                player, {"Village", "Copper", "Copper", "Copper", "Estate"});
+        auto reduced = shared::ReducedPlayer::make(player, {"Village", "Copper", "Copper", "Copper", "Estate"});
         this->DrawPlayer(reduced, true);
     }
 
@@ -61,32 +60,26 @@ namespace client
         LOG(DEBUG) << "Hand panel width " << hand->GetSize().GetWidth() << "\n";
         LOG(DEBUG) << "card width " << card_width_borders << "\n";
 
-        if ( card_width_borders * hand_size > 724) {
+        if ( card_width_borders * hand_size > 724 ) {
             // scale bigger hands
             hand_card_size.SetWidth(724 / hand_size - 8);
             hand_card_size.SetHeight(hand_card_size.GetWidth() / 4 * 5);
         }
 
         for ( size_t i = 0; i < hand_size; i++ ) {
-            ImagePanel *card = new ImagePanel(
-                hand, 
-                "assets/" + cards[i] + ".png", 
-                wxBITMAP_TYPE_PNG, 
-                wxDefaultPosition,
-                hand_card_size, 
-                0);
+            ImagePanel *card = new ImagePanel(hand, "assets/" + cards[i] + ".png", wxBITMAP_TYPE_PNG, wxDefaultPosition,
+                                              hand_card_size, 0);
 
-            bool is_action = shared::CardFactory::getCard(cards[i]).isAction(); 
+            bool is_action = shared::CardFactory::getCard(cards[i]).isAction();
 
-            if (is_action && is_active && Player->getActions() > 0) {
-               makePlayable(card, cards[i]);
+            if ( is_action && is_active && Player->getActions() > 0 ) {
+                makePlayable(card, cards[i]);
             }
-            sizer->Add(card, 0, wxRIGHT, 4);
-          
+
+            sizer->Add(card, 0, wxALIGN_CENTER, 4);
         }
 
         sizer->Layout();
-
     }
 
     void PlayerPanel::makePlayable(ImagePanel *Image, std::string card_id)

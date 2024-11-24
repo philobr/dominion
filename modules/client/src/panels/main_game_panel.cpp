@@ -27,7 +27,7 @@ namespace client
 
 
         Board->DrawBoard(GameState->board, is_active, GameState->reduced_player->getTreasure());
-        Player->DrawPlayer(GameState->reduced_player);
+        Player->DrawPlayer(GameState->reduced_player, is_active);
         EnemyInfo->DrawEnemies(GameState->reduced_enemies);
     }
 

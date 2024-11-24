@@ -5,8 +5,10 @@
 #include <vector>
 
 #include <shared/game/cards/card_base.h>
+#include <shared/game/cards/card_factory.h>
 #include <shared/game/game_state/player_base.h>
 #include <shared/game/game_state/reduced_game_state.h>
+
 #include <shared/utils/logger.h>
 
 namespace server
@@ -65,6 +67,12 @@ namespace server
         shared::ReducedPlayer::ptr_t get_reduced_player();
         shared::ReducedEnemy::ptr_t get_reduced_enemy();
 
+        bool canBlock() const
+        {
+            return std::any_of(hand_cards.begin(), hand_cards.end(),
+                               [&](const auto &card_id) { return shared::CardFactory::getCard(card_id).isReaction(); });
+        }
+
         /**
          * @brief Draw the min(n, draw_pile_size) top cards from the deck and put them in the hand
          *
@@ -113,10 +121,10 @@ namespace server
         template <enum CardAccess TO_PILE>
         inline void un_stage(const std::vector<unsigned int> &indices);
 
-        void addActions(int n) { actions += n; }
-        void addBuys(int n) { buys += n; }
-        void addTreasure(int n) { treasure += n; }
-        void addPoints(int n) { victory_points += n; }
+        void addActions(unsigned int n) { actions += n; }
+        void addBuys(unsigned int n) { buys += n; }
+        void addTreasure(unsigned int n) { treasure += n; }
+        void addPoints(unsigned int n) { victory_points += n; }
 
         /**
          * @brief Returns a const ref to the specified pile
@@ -224,22 +232,21 @@ namespace server
     template <enum CardAccess PILE>
     inline std::vector<shared::CardBase::id_t> &Player::getMutable()
     {
-        switch ( PILE ) {
-            case DISCARD_PILE:
-                return discard_pile;
-            case HAND:
-                return hand_cards;
-            case PLAYED_CARDS:
-                return played_cards;
-            case STAGED_CARDS:
-                return staged_cards;
-            case DRAW_PILE_TOP:
-                return draw_pile;
-            case DRAW_PILE_BOTTOM:
-                return draw_pile;
-            default:
-                // should only happen for trash pile
-                throw std::invalid_argument("Invalid pile specified or pile is not accessible.");
+        if constexpr ( PILE == DISCARD_PILE ) {
+            return discard_pile;
+        } else if constexpr ( PILE == HAND ) {
+            return hand_cards;
+        } else if constexpr ( PILE == PLAYED_CARDS ) {
+            return played_cards;
+        } else if constexpr ( PILE == STAGED_CARDS ) {
+            return staged_cards;
+        } else if constexpr ( PILE == DRAW_PILE_TOP ) {
+            return draw_pile;
+        } else if constexpr ( PILE == DRAW_PILE_BOTTOM ) {
+            return draw_pile;
+        } else {
+            // should only happen for trash pile
+            throw std::invalid_argument("Invalid pile specified or pile is not accessible.");
         }
     }
 
@@ -297,18 +304,17 @@ namespace server
     {
         auto &pile = getMutable<FROM>();
 
-        for ( unsigned int idx : indices ) {
-            if ( idx >= pile.size() ) {
-                throw std::out_of_range("Index out of range for the pile.");
-            }
+        // sort desc order to safely erase
+        std::vector<unsigned int> sorted_indices = indices;
+        std::sort(sorted_indices.rbegin(), sorted_indices.rend());
+
+        // check for overflow
+        if ( sorted_indices.front() >= pile.size() ) {
+            throw std::out_of_range("Index out of range for the pile.");
         }
 
         std::vector<shared::CardBase::id_t> taken_cards;
         taken_cards.reserve(indices.size());
-
-        // sort desc order to safely erase
-        std::vector<unsigned int> sorted_indices = indices;
-        std::sort(sorted_indices.rbegin(), sorted_indices.rend());
 
         for ( unsigned int idx : sorted_indices ) {
             taken_cards.push_back(std::move(pile[idx]));

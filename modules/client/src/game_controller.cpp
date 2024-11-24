@@ -1,4 +1,6 @@
 #include "game_controller.h"
+#include <shared/utils/uuid_generator.h>
+#include "shared/utils/logger.h"
 
 
 namespace client
@@ -32,54 +34,81 @@ namespace client
         GameController::showStatus("Not connected");
     }
 
-
-    void GameController::connectToServer()
+    bool GameController::validInput(const wxString &inputServerAddress, const wxString &inputServerPort,
+                                    const wxString &inputPlayerName, const wxString &inputGameName)
     {
-
-        // get values form UI input fields
-        wxString inputServerAddress = GameController::_connectionPanel->getServerAddress().Trim();
-        wxString inputServerPort = GameController::_connectionPanel->getServerPort().Trim();
-        wxString inputPlayerName = GameController::_connectionPanel->getPlayerName().Trim();
-        wxString inputGameName = GameController::_connectionPanel->getGameName().Trim();
 
         // check that all values were provided
         if ( inputServerAddress.IsEmpty() ) {
             GameController::showError("Input error", "Please provide the server's address");
-            return;
+            return false;
         }
+
         if ( inputServerPort.IsEmpty() ) {
             GameController::showError("Input error", "Please provide the server's port number");
-            return;
+            return false;
         }
+
         if ( inputPlayerName.IsEmpty() ) {
             GameController::showError("Input error", "Please enter your desired player name");
-            return;
+            return false;
         }
+
         if ( inputGameName.IsEmpty() ) {
             GameController::showError("Input error", "Please enter the game name");
-            return;
+            return false;
         }
 
         // convert port from wxString to uint16_t
         unsigned long portAsLong;
         if ( !inputServerPort.ToULong(&portAsLong) || portAsLong > 65535 ) {
             GameController::showError("Connection error", "Invalid port");
-            return;
+            return false;
         }
 
-        // connect to the server
-        _clientNetworkManager->init(inputServerAddress.ToStdString(), portAsLong);
+        return true;
+    }
 
+    void GameController::CreateLobby()
+    {
+        // get values form UI input fields
+        wxString inputServerAddress = GameController::_connectionPanel->getServerAddress().Trim();
+        wxString inputServerPort = GameController::_connectionPanel->getServerPort().Trim();
+        wxString inputPlayerName = GameController::_connectionPanel->getPlayerName().Trim();
+        wxString inputGameName = GameController::_connectionPanel->getGameName().Trim();
+        if ( GameController::validInput(inputServerAddress, inputServerPort, inputPlayerName, inputGameName) ) {
+            unsigned long portAsLong;
+            inputServerPort.ToULong(&portAsLong);
 
-        // detach gui from network atm
-        if ( inputPlayerName.ToStdString() == "testgigu" ) {
+            // connect to the server
+            _clientNetworkManager->init(inputServerAddress.ToStdString(), portAsLong);
 
-            GameController::_gameWindow->showPanel(GameController::_lobbyPanel);
+            // send request to join game
+            shared::CreateLobbyRequestMessage request(inputGameName.ToStdString(), uuid_generator::generate_uuid_v4(),
+                                                      inputPlayerName.ToStdString());
+            GameController::send_request(request.to_json());
         }
+    }
 
-        // send request to join game
-        shared::CreateLobbyRequestMessage request(inputGameName.ToStdString(), "stuart", inputPlayerName.ToStdString());
-        GameController::send_request(request.to_json());
+    void GameController::JoinLobby()
+    {
+        // get values form UI input fields
+        wxString inputServerAddress = GameController::_connectionPanel->getServerAddress().Trim();
+        wxString inputServerPort = GameController::_connectionPanel->getServerPort().Trim();
+        wxString inputPlayerName = GameController::_connectionPanel->getPlayerName().Trim();
+        wxString inputGameName = GameController::_connectionPanel->getGameName().Trim();
+        if ( GameController::validInput(inputServerAddress, inputServerPort, inputPlayerName, inputGameName) ) {
+            unsigned long portAsLong;
+            inputServerPort.ToULong(&portAsLong);
+
+            // connect to the server
+            _clientNetworkManager->init(inputServerAddress.ToStdString(), portAsLong);
+
+            // send request to join game
+            shared::JoinLobbyRequestMessage request(inputGameName.ToStdString(), uuid_generator::generate_uuid_v4(),
+                                                    inputPlayerName.ToStdString());
+            GameController::send_request(request.to_json());
+        }
     }
 
     void GameController::startGame()
@@ -91,8 +120,20 @@ namespace client
     }
 
 
+    void GameController::buyCard(const std::string &card_id)
+    {
+        // send request to buy card
+
+
+        // For testing delete later
+        LOG(DEBUG) << "Tried to buy card " << card_id << std::endl;
+        showStatus("Tried to buy card " + card_id);
+    }
+
+
     void GameController::showError(const std::string &title, const std::string &message)
     {
+        LOG(WARN) << title << ": " << message << std::endl;
         wxMessageBox(message, title, wxICON_ERROR);
     }
 
@@ -106,10 +147,36 @@ namespace client
 
     void GameController::receive_message(std::unique_ptr<shared::ServerToClientMessage> msg)
     {
-        // Show the lobby screen
-        GameController::_gameWindow->showPanel(GameController::_lobbyPanel);
-        // TODO maybe add player_id to the ServerToClientMessage ?
-        GameController::_lobbyPanel->AddPlayer(msg->game_id);
+
+        std::cerr << "Gamecontroller received message!" << std::endl;
+
+        if ( shared::CreateLobbyResponseMessage *clrm =
+                     dynamic_cast<shared::CreateLobbyResponseMessage *>(msg.get()) ) {
+            // Show the lobby screen
+            std::cerr << "Message is CreateLobbyResponse" << std::endl;
+            GameController::_gameWindow->showPanel(GameController::_lobbyPanel);
+            // TODO maybe add player_id to the ServerToClientMessage ?
+            GameController::_lobbyPanel->AddPlayer(
+                    GameController::_connectionPanel->getPlayerName().Trim().ToStdString());
+            msg.release();
+            std::cerr << "Done with Message" << std::endl;
+
+        } else if ( shared::ResultResponseMessage *jlrm = dynamic_cast<shared::ResultResponseMessage *>(msg.get()) ) {
+            std::cerr << "Message is ResultResponseMessage" << std::endl;
+            // Show the lobby screen
+            GameController::_gameWindow->showPanel(GameController::_lobbyPanel);
+            msg.release();
+            std::cerr << "Done with Message" << std::endl;
+        } else if ( shared::JoinLobbyBroadcastMessage *jlbm =
+                            dynamic_cast<shared::JoinLobbyBroadcastMessage *>(msg.get()) ) {
+            std::cerr << "Message is JoinLobbyBroadcastMessage" << std::endl;
+            GameController::_lobbyPanel->AddPlayer(jlbm->player_id);
+            msg.release();
+            std::cerr << "Done with Message" << std::endl;
+        } else {
+            // This code should never be reached
+            _ASSERT_FALSE(true, "Unknown message type");
+        }
     }
 
 } // namespace client

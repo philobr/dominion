@@ -16,5 +16,10 @@ namespace client
     {
     public:
         PilePanel(wxWindow *parent, shared::Pile pile);
+
+        shared::Pile getPile() const;
+
+    private:
+        shared::Pile Pile;
     };
 } // namespace client

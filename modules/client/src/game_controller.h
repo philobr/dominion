@@ -21,17 +21,28 @@ namespace client
         static void init(GameWindow *gameWindow);
 
         /**
-         * @brief Show the connection panel and send create lobby request
-         * @TODO: Implement this function where only the create/join lobby
-         * request is sent and no lobby panel is shown yet
+         * @brief Get all the necessary information to create a request message
          */
-        static void connectToServer();
+        static bool validInput(const wxString &inputServerAddress, const wxString &inputServerPort,
+                               const wxString &inputPlayerName, const wxString &inputGameName);
+
+        /**
+         * @brief Show the connection panel and send create lobby request
+         */
+        static void CreateLobby();
+
+        /**
+         * @brief Join a Lobby
+         */
+        static void JoinLobby();
 
         /**
          * @brief Show the main game panel
          *
          */
         static void startGame();
+
+        static void buyCard(const std::string &card_id);
         static void send_request(const std::string &req);
         static void receive_message(std::unique_ptr<shared::ServerToClientMessage> msg);
 

@@ -21,9 +21,10 @@ namespace client
          *
          * @param Player
          */
-        void DrawPlayer(const std::unique_ptr<shared::ReducedPlayer> & /*Player*/);
+        void DrawPlayer(const std::unique_ptr<shared::ReducedPlayer> &Player);
 
     private:
+        wxSize hand_card_size = wxSize(100, 125);
     };
 
 } // namespace client

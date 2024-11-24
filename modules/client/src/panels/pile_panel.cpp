@@ -4,7 +4,7 @@
 namespace client
 {
     PilePanel::PilePanel(wxWindow *parent, shared::Pile pile) :
-        wxPanel(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize)
+        wxPanel(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize), Pile(pile)
     {
         wxBoxSizer *sizer = new wxBoxSizer(wxVERTICAL);
 
@@ -24,4 +24,6 @@ namespace client
 
         this->SetSizer(sizer);
     }
+
+    shared::Pile PilePanel::getPile() const { return Pile; }
 } // namespace client

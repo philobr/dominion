@@ -70,7 +70,7 @@ namespace server
         board = server::ServerBoard::make(selected_cards, player_map.size());
     }
 
-    std::unique_ptr<shared::ReducedGameState> GameState::get_reduced_state(const Player::id_t &target_player)
+    std::unique_ptr<reduced::GameState> GameState::get_reduced_state(const Player::id_t &target_player)
     {
         std::vector<reduced::Enemy::ptr_t> reduced_enemies;
         std::for_each(player_map.begin(), player_map.end(),
@@ -85,8 +85,8 @@ namespace server
         Player::id_t active_player_id = getCurrentPlayerId();
         shared::Board::ptr_t reduced_board = board->getReduced();
 
-        return std::make_unique<shared::ReducedGameState>(reduced_board, std::move(reduced_player),
-                                                          std::move(reduced_enemies), active_player_id);
+        return std::make_unique<reduced::GameState>(reduced_board, std::move(reduced_player),
+                                                    std::move(reduced_enemies), active_player_id);
     }
 
     bool GameState::try_buy(const Player::id_t &player_id, const shared::CardBase::id_t &card_id)

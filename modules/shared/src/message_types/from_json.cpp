@@ -22,7 +22,7 @@ static std::unique_ptr<GameStateMessage> parse_game_state_message(const Document
         LOG(WARN) << "GameStateMessage: No game_state member";
         return nullptr;
     }
-    std::unique_ptr<ReducedGameState> game_state = ReducedGameState::fromJson(json["game_state"]);
+    std::unique_ptr<reduced::GameState> game_state = reduced::GameState::fromJson(json["game_state"]);
     if ( game_state == nullptr ) {
         LOG(WARN) << "GameStateMessage: Could not parse game_state";
         return nullptr;

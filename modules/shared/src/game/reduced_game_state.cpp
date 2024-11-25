@@ -5,9 +5,9 @@
 #include <shared/utils/json.h>
 #include <shared/utils/logger.h>
 
-namespace shared
+namespace reduced
 {
-    bool ReducedGameState::operator==(const ReducedGameState &other) const
+    bool GameState::operator==(const GameState &other) const
     {
         return *board == *other.board && *reduced_player == *other.reduced_player &&
                 std::equal(reduced_enemies.begin(), reduced_enemies.end(), other.reduced_enemies.begin(),
@@ -16,9 +16,9 @@ namespace shared
                 active_player == other.active_player;
     }
 
-    bool ReducedGameState::operator!=(const ReducedGameState &other) const { return !(*this == other); }
+    bool GameState::operator!=(const GameState &other) const { return !(*this == other); }
 
-    rapidjson::Document ReducedGameState::toJson() const
+    rapidjson::Document GameState::toJson() const
     {
         rapidjson::Document doc;
         doc.SetObject();
@@ -47,22 +47,22 @@ namespace shared
         return doc;
     }
 
-    std::unique_ptr<ReducedGameState> ReducedGameState::fromJson(const rapidjson::Value &json)
+    std::unique_ptr<GameState> GameState::fromJson(const rapidjson::Value &json)
     {
         if ( !json.IsObject() ) {
-            LOG(WARN) << "ReducedGameState::fromJson: JSON is not an object";
+            LOG(WARN) << "GameState::fromJson: JSON is not an object";
             return nullptr;
         }
 
-        Board::ptr_t board;
+        shared::Board::ptr_t board;
         if ( json.HasMember("board") ) {
-            board = Board::fromJson(json["board"]);
+            board = shared::Board::fromJson(json["board"]);
             if ( board == nullptr ) {
-                LOG(WARN) << "ReducedGameState::fromJson: Failed to parse board";
+                LOG(WARN) << "GameState::fromJson: Failed to parse board";
                 return nullptr;
             }
         } else {
-            LOG(WARN) << "ReducedGameState::fromJson: JSON does not have 'board' member";
+            LOG(WARN) << "GameState::fromJson: JSON does not have 'board' member";
             return nullptr;
         }
 
@@ -70,38 +70,38 @@ namespace shared
         if ( json.HasMember("reduced_player") ) {
             reduced_player = reduced::Player::fromJson(json["reduced_player"]);
             if ( reduced_player == nullptr ) {
-                LOG(WARN) << "ReducedGameState::fromJson: Failed to parse reduced_player";
+                LOG(WARN) << "GameState::fromJson: Failed to parse reduced_player";
                 return nullptr;
             }
         } else {
-            LOG(WARN) << "ReducedGameState::fromJson: JSON does not have 'reduced_player' member";
+            LOG(WARN) << "GameState::fromJson: JSON does not have 'reduced_player' member";
             return nullptr;
         }
 
         std::vector<reduced::Enemy::ptr_t> reduced_enemies;
         if ( json.HasMember("reduced_enemies") ) {
             if ( !json["reduced_enemies"].IsArray() ) {
-                LOG(WARN) << "ReducedGameState::fromJson: 'reduced_enemies' is not an array";
+                LOG(WARN) << "GameState::fromJson: 'reduced_enemies' is not an array";
                 return nullptr;
             }
 
             for ( const auto &reduced_enemy_json : json["reduced_enemies"].GetArray() ) {
                 reduced::Enemy::ptr_t reduced_enemy = reduced::Enemy::fromJson(reduced_enemy_json);
                 if ( reduced_enemy == nullptr ) {
-                    LOG(WARN) << "ReducedGameState::fromJson: Failed to parse reduced_enemy";
+                    LOG(WARN) << "GameState::fromJson: Failed to parse reduced_enemy";
                     return nullptr;
                 }
                 reduced_enemies.push_back(std::move(reduced_enemy));
             }
         } else {
-            LOG(WARN) << "ReducedGameState::fromJson: JSON does not have 'reduced_enemies' member";
+            LOG(WARN) << "GameState::fromJson: JSON does not have 'reduced_enemies' member";
             return nullptr;
         }
 
-        PlayerBase::id_t active_player;
+        shared::PlayerBase::id_t active_player;
         GET_STRING_MEMBER(active_player, json, "active_player");
 
-        return std::make_unique<ReducedGameState>(std::move(board), std::move(reduced_player),
-                                                  std::move(reduced_enemies), active_player);
+        return std::make_unique<GameState>(std::move(board), std::move(reduced_player), std::move(reduced_enemies),
+                                           active_player);
     }
 } // namespace shared

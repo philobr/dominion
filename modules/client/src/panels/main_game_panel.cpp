@@ -20,7 +20,7 @@ namespace client
     }
 
 
-    void MainGamePanel::DrawGameState(const std::unique_ptr<shared::ReducedGameState> &GameState)
+    void MainGamePanel::DrawGameState(const std::unique_ptr<reduced::GameState> &GameState)
     {
 
         bool is_active = (GameState->active_player == GameState->reduced_player->getId());

@@ -25,12 +25,12 @@ TEST(ReducedGameStateTest, Json2WayConversion)
     shared::Board::ptr_t board = shared::Board::make(kingdom_cards, 3);
 
     // Create the ReducedGameState
-    shared::ReducedGameState expected(board, std::move(reduced_player), std::move(enemies), active_player);
+    reduced::GameState expected(board, std::move(reduced_player), std::move(enemies), active_player);
 
     auto json = expected.toJson();
 
     // Convert back to ReducedGameState
-    std::unique_ptr<shared::ReducedGameState> actual = shared::ReducedGameState::fromJson(json);
+    std::unique_ptr<reduced::GameState> actual = reduced::GameState::fromJson(json);
 
     ASSERT_NE(actual, nullptr);
     EXPECT_EQ(*actual, expected);
@@ -55,7 +55,7 @@ TEST(ReducedGameStateTest, ParameterizedConstructor)
     shared::Board::ptr_t board = shared::Board::make(kingdom_cards, 2);
 
     // Create the ReducedGameState
-    shared::ReducedGameState game_state(board, std::move(reduced_player), std::move(enemies), active_player);
+    reduced::GameState game_state(board, std::move(reduced_player), std::move(enemies), active_player);
 
     // Check that the members are initialized correctly
     EXPECT_EQ(game_state.active_player, active_player);

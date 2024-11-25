@@ -31,6 +31,7 @@ namespace client
     {
         LOG(INFO) << "Called GameWindow::showPanel()";
 
+        /*
         // if we are already showing the panel, we don't need to do anything
         if ( this->_currentPanel == panel ) {
             return;
@@ -63,12 +64,14 @@ namespace client
                     LOG(INFO) << "Done with GameWindow::showPanel()";
                 });
         LOG(INFO) << "Done with GameWindow::showPanel()";
+        */
 
-        /*
-        OLD VERSION, AS BACKUP IF IT DOESNT WORK ON LINUX
+        OLD VERSION,
+                AS BACKUP IF IT DOESNT WORK ON LINUX
 
-        // if we are already showing the panel, we don't need to do anything
-        if ( this->_currentPanel == panel ) {
+                // if we are already showing the panel, we don't need to do anything
+                if ( this->_currentPanel == panel )
+        {
             return;
         }
 
@@ -89,8 +92,6 @@ namespace client
 
         // update window size
         this->Fit();
-
-        */
     }
 
 

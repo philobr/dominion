@@ -9,11 +9,6 @@ if [ "$USER" != "dominion" ]; then
     exit 1
 fi
 
-cd /opt/dominion/dominion
-
-# Pull the latest changes from the repository
-git pull
-
 cd docker
 
 docker-compose up -d --build

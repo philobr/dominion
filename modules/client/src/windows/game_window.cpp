@@ -1,6 +1,6 @@
+#include <shared/utils/logger.h>
 #include <windows/game_window.h>
 #include <wx/wx.h>
-#include <shared/utils/logger.h>
 
 namespace client
 {

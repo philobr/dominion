@@ -109,11 +109,10 @@ namespace server
                     message_handler(msg, socket.peer_address()); // attempt to parse client_request from 'msg'
                 } else {
                     LOG(ERROR) << "Could not read entire message. TCP stream ended before. Difference is "
-                              << msg_length - msg_bytes_read;
+                               << msg_length - msg_bytes_read;
                 }
             } catch ( std::exception &e ) { // Make sure the connection isn't torn down only because of a read error
-                LOG(ERROR) << "Error while reading message from " << socket.peer_address() << std::endl
-                          << e.what();
+                LOG(ERROR) << "Error while reading message from " << socket.peer_address() << std::endl << e.what();
             }
         }
 
@@ -147,8 +146,8 @@ namespace server
 
         } catch ( const std::exception &e ) {
             LOG(ERROR) << "Failed to execute client request. Content was :\n"
-                      << msg << std::endl
-                      << "Error was " << e.what();
+                       << msg << std::endl
+                       << "Error was " << e.what();
         }
     }
 

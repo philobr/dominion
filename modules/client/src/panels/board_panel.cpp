@@ -1,9 +1,9 @@
 #include <panels/board_panel.h>
 
-#include <wx/gbsizer.h>
-#include <wx/wx.h>
 #include <game_controller.h>
 #include <uiElements/pile_panel.h>
+#include <wx/gbsizer.h>
+#include <wx/wx.h>
 
 #include <shared/game/cards/card_factory.h>
 #include <shared/utils/test_helpers.h>

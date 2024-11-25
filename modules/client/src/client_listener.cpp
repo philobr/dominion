@@ -1,6 +1,6 @@
 #include "client_listener.h"
-#include "client_network_manager.h"
 #include <shared/utils/logger.h>
+#include "client_network_manager.h"
 
 
 ClientListener::ClientListener(sockpp::tcp_connector *connection) : _connection(connection) {}

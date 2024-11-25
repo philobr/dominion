@@ -1,6 +1,6 @@
 #include "game_controller.h"
-#include <shared/utils/uuid_generator.h>
 #include <shared/utils/logger.h>
+#include <shared/utils/uuid_generator.h>
 
 
 namespace client
@@ -211,10 +211,10 @@ namespace client
     void GameController::RefreshPlayers(shared::JoinLobbyBroadcastMessage *msg)
     {
         LOG(INFO) << "Refreshing Players";
-        //Removing current players
+        // Removing current players
         GameController::_lobbyPanel->DestroyChildren();
         LOG(INFO) << "Detached current players from lobby panel";
-        //Add all the players
+        // Add all the players
         for ( auto player : msg->players ) {
             GameController::_lobbyPanel->AddPlayer(player);
         }

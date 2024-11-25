@@ -47,7 +47,7 @@ test:
 deploy:
   stage: deploy
   image: ubuntu:22.04
-  before-script:
+  script:
     - apt-get update && apt-get install -y openssh-client
     - mkdir -p ~/.ssh
     # Decode the SSH deployment key
@@ -59,7 +59,7 @@ deploy:
     - ssh-keygen -lf ~/.ssh/id_rsa
     # Add the host to known_hosts
     - ssh-keyscan -H se.nicolabruhin.com >> ~/.ssh/known_hosts
-  script:
+    # Do the actual deployment
     - ssh dominion@se.nicolabruhin.com "cd /opt/dominion && pwd"
   dependencies:
     - test

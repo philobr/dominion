@@ -51,8 +51,9 @@ deploy:
     - apt-get update && apt-get install -y openssh-client
     - mkdir -p ~/.ssh
     # Decode the SSH deployment key
-    - base64 -d $SSH_DEPLOY_KEY > ~/.ssh/id_rsa
-    - cat ~/.ssh/id_rsa
+    - echo $SSH_DEPLOY_KEY | base64 -d > ~/.ssh/id_rsa
+    # - base64 -d $SSH_DEPLOY_KEY > ~/.ssh/id_rsa
+    # - cat ~/.ssh/id_rsa
     # Make SSH happy and protect the key
     - chmod 600 ~/.ssh/id_rsa
     # Check if the key is correct (TODO: Remove this line maybe?)

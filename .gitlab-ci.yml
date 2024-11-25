@@ -55,6 +55,8 @@ deploy:
     - base64 -d $SSH_DEPLOY_KEY > ~/.ssh/id_rsa
     # Make SSH happy and protect the key
     - chmod 600 ~/.ssh/id_rsa
+    # Check if the key is correct (TODO: Remove this line maybe?)
+    - ssh-keygen -lf id_rsa
     # Add the host to known_hosts
     - ssh-keyscan -H se.nicolabruhin.com >> ~/.ssh/known_hosts
     # Do the actual deployment

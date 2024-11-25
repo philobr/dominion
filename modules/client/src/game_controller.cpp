@@ -93,8 +93,7 @@ namespace client
             _clientNetworkManager->init(inputServerAddress.ToStdString(), portAsLong);
 
             // send request to join game
-            shared::CreateLobbyRequestMessage request(inputGameName.ToStdString(),
-                                                      inputPlayerName.ToStdString());
+            shared::CreateLobbyRequestMessage request(inputGameName.ToStdString(), inputPlayerName.ToStdString());
             GameController::send_request(request.to_json());
         }
         LOG(INFO) << "Done with GameController::CreateLobby()";
@@ -116,8 +115,7 @@ namespace client
             _clientNetworkManager->init(inputServerAddress.ToStdString(), portAsLong);
 
             // send request to join game
-            shared::JoinLobbyRequestMessage request(inputGameName.ToStdString(),
-                                                    inputPlayerName.ToStdString());
+            shared::JoinLobbyRequestMessage request(inputGameName.ToStdString(), inputPlayerName.ToStdString());
             GameController::send_request(request.to_json());
         }
         LOG(INFO) << "Done with GameController::JoinLobby()";

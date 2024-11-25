@@ -1,6 +1,5 @@
 #include "game_controller.h"
 #include <shared/utils/logger.h>
-#include <shared/utils/uuid_generator.h>
 
 
 namespace client
@@ -94,7 +93,7 @@ namespace client
             _clientNetworkManager->init(inputServerAddress.ToStdString(), portAsLong);
 
             // send request to join game
-            shared::CreateLobbyRequestMessage request(inputGameName.ToStdString(), uuid_generator::generate_uuid_v4(),
+            shared::CreateLobbyRequestMessage request(inputGameName.ToStdString(),
                                                       inputPlayerName.ToStdString());
             GameController::send_request(request.to_json());
         }
@@ -117,7 +116,7 @@ namespace client
             _clientNetworkManager->init(inputServerAddress.ToStdString(), portAsLong);
 
             // send request to join game
-            shared::JoinLobbyRequestMessage request(inputGameName.ToStdString(), uuid_generator::generate_uuid_v4(),
+            shared::JoinLobbyRequestMessage request(inputGameName.ToStdString(),
                                                     inputPlayerName.ToStdString());
             GameController::send_request(request.to_json());
         }

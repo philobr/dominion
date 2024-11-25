@@ -1,12 +1,13 @@
-#include "lobby_panel.h"
+#include <panels/lobby_panel.h>
 
-#include "../game_controller.h"
-#include "../uiElements/image_panel.h"
+#include <game_controller.h>
+#include <uiElements/image_panel.h>
 
 #include <wx/event.h>
 #include <wx/gdicmn.h>
 #include <wx/sizer.h>
 #include <wx/wx.h>
+#include "shared/utils/logger.h"
 
 
 namespace client
@@ -36,6 +37,15 @@ namespace client
 
 
         this->SetSizerAndFit(VerticalSizer);
+    }
+
+    void LobbyPanel::refreshPlayers(std::vector<std::string> &players)
+    {
+        NamesSizer->Clear(true);
+        for ( auto player : players ) {
+            LOG(DEBUG) << "Adding player " << player;
+            this->AddPlayer(player);
+        }
     }
 
 

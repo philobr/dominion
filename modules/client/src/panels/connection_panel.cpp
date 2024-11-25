@@ -1,9 +1,9 @@
-#include "connection_panel.h"
+#include <panels/connection_panel.h>
 #include <wx/gdicmn.h>
 #include <wx/wx.h>
 
-#include "../game_controller.h"
-#include "../uiElements/image_panel.h"
+#include <game_controller.h>
+#include <uiElements/image_panel.h>
 
 namespace client
 {

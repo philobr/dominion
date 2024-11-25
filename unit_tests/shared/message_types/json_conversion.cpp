@@ -57,7 +57,7 @@ TEST(SharedLibraryTest, CreateLobbyResponseMessageTwoWayConversion)
 
 TEST(SharedLibraryTest, JoinLobbyBroadcastMessageTwoWayConversion)
 {
-    JoinLobbyBroadcastMessage original_message("123", "player1");
+    JoinLobbyBroadcastMessage original_message("123", {"player_1", "player_2"}, "456");
 
     std::string json = original_message.to_json();
 

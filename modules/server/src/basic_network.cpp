@@ -1,4 +1,5 @@
 #include <server/network/basic_network.h>
+#include <shared/utils/logger.h>
 
 namespace server
 {
@@ -8,6 +9,7 @@ namespace server
 
         _rw_lock.lock();
 
+        LOG(INFO) << "Sending Message: " << message << " to Address: " << address;
         std::stringstream ss_msg;
         ss_msg << std::to_string(message.size()) << ':' << message; // prepend message length
         ssize_t ret = _address_to_socket.at(address).write(ss_msg.str());
@@ -22,7 +24,7 @@ namespace server
         if ( is_new_player(player_id) ) {
             // save connection to this client
             _rw_lock.unlock_shared();
-            std::cout << "New client with id " << player_id << std::endl;
+            LOG(INFO) << "New client with id " << player_id;
             _rw_lock.lock();
             _player_id_to_address.emplace(player_id, address);
             _rw_lock.unlock();

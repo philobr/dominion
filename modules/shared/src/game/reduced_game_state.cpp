@@ -104,4 +104,4 @@ namespace reduced
         return std::make_unique<GameState>(std::move(board), std::move(reduced_player), std::move(reduced_enemies),
                                            active_player);
     }
-} // namespace shared
+} // namespace reduced

@@ -149,8 +149,8 @@ namespace shared
                          std::optional<std::string> in_response_to = std::nullopt,
                          std::string message_id = uuid_generator::generate_uuid_v4()) :
 
-            ServerToClientMessage(game_id, message_id), game_state(std::move(game_state)),
-            in_response_to(in_response_to)
+            ServerToClientMessage(game_id, message_id),
+            game_state(std::move(game_state)), in_response_to(in_response_to)
         {}
         std::string to_json() override;
         bool operator==(const GameStateMessage &other) const;

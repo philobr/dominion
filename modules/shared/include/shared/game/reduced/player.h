@@ -42,4 +42,4 @@ namespace reduced
         Player(const shared::PlayerBase &player, const std::vector<shared::CardBase::id_t> &hand_cards);
         const std::vector<shared::CardBase::id_t> hand_cards;
     };
-};
+}; // namespace reduced

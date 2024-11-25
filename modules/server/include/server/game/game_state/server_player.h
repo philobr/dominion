@@ -80,7 +80,7 @@ namespace server
          */
         inline void draw(size_t n) { move<DRAW_PILE_TOP, HAND>(n); }
 
-        inline void play_card_from_hand(const size_t &card_index) { move_indices<HAND, PLAYED_CARDS>({hand_index})}
+        inline void play_card_from_hand(const size_t &card_index) { move_indices<HAND, PLAYED_CARDS>(std::vector{hand_index})}
 
         inline void play_card_from_staged(const size_t &card_index) { move_indices<STAGED_CARDS, PLAYED_CARDS>({hand_index})}
 
@@ -369,6 +369,16 @@ namespace server
             take<FROM>(n);
         } else {
             add<TO>(take<FROM>(n));
+        }
+    }
+
+    template <enum CardAccess FROM, enum CardAccess TO>
+    inline void Player::move_indices(const size_t &indices)
+    {
+        if constexpr ( TO == TRASH ) {
+            take_indices<FROM>(indices);
+        } else {
+            add<TO>(take_indices<FROM>(indices));
         }
     }
 

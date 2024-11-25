@@ -12,7 +12,7 @@ namespace shared
         return *board == *other.board && *reduced_player == *other.reduced_player &&
                 std::equal(reduced_enemies.begin(), reduced_enemies.end(), other.reduced_enemies.begin(),
                            other.reduced_enemies.end(),
-                           [](const ReducedEnemy::ptr_t &a, const ReducedEnemy::ptr_t &b) { return *a == *b; }) &&
+                           [](const reduced::Enemy::ptr_t &a, const reduced::Enemy::ptr_t &b) { return *a == *b; }) &&
                 active_player == other.active_player;
     }
 
@@ -66,9 +66,9 @@ namespace shared
             return nullptr;
         }
 
-        ReducedPlayer::ptr_t reduced_player;
+        reduced::Player::ptr_t reduced_player;
         if ( json.HasMember("reduced_player") ) {
-            reduced_player = ReducedPlayer::fromJson(json["reduced_player"]);
+            reduced_player = reduced::Player::fromJson(json["reduced_player"]);
             if ( reduced_player == nullptr ) {
                 LOG(WARN) << "ReducedGameState::fromJson: Failed to parse reduced_player";
                 return nullptr;
@@ -78,7 +78,7 @@ namespace shared
             return nullptr;
         }
 
-        std::vector<ReducedEnemy::ptr_t> reduced_enemies;
+        std::vector<reduced::Enemy::ptr_t> reduced_enemies;
         if ( json.HasMember("reduced_enemies") ) {
             if ( !json["reduced_enemies"].IsArray() ) {
                 LOG(WARN) << "ReducedGameState::fromJson: 'reduced_enemies' is not an array";
@@ -86,7 +86,7 @@ namespace shared
             }
 
             for ( const auto &reduced_enemy_json : json["reduced_enemies"].GetArray() ) {
-                ReducedEnemy::ptr_t reduced_enemy = ReducedEnemy::fromJson(reduced_enemy_json);
+                reduced::Enemy::ptr_t reduced_enemy = reduced::Enemy::fromJson(reduced_enemy_json);
                 if ( reduced_enemy == nullptr ) {
                     LOG(WARN) << "ReducedGameState::fromJson: Failed to parse reduced_enemy";
                     return nullptr;

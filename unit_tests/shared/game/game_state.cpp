@@ -9,16 +9,16 @@ TEST(ReducedGameStateTest, Json2WayConversion)
     // Create a list of ReducedEnemies
     shared::PlayerBase enemy1("Charlie");
     shared::PlayerBase enemy2("Jacob");
-    std::vector<shared::ReducedEnemy::ptr_t> enemies;
-    enemies.emplace_back(shared::ReducedEnemy::make(enemy1, 5));
-    enemies.emplace_back(shared::ReducedEnemy::make(enemy2, 7));
+    std::vector<reduced::Enemy::ptr_t> enemies;
+    enemies.emplace_back(reduced::Enemy::make(enemy1, 5));
+    enemies.emplace_back(reduced::Enemy::make(enemy2, 7));
 
     // Set the active player
     shared::PlayerBase::id_t active_player = "Charlie";
 
     // Create the player
     shared::PlayerBase player("Alice");
-    shared::ReducedPlayer::ptr_t reduced_player = shared::ReducedPlayer::make(player, {});
+    reduced::Player::ptr_t reduced_player = reduced::Player::make(player, {});
 
     // Create the board
     auto kingdom_cards = get_valid_kingdom_cards();
@@ -41,14 +41,14 @@ TEST(ReducedGameStateTest, ParameterizedConstructor)
     // Create a list of ReducedEnemies
     shared::PlayerBase enemy1("enemy1");
     shared::PlayerBase enemy2("enemy2");
-    std::vector<shared::ReducedEnemy::ptr_t> enemies;
-    enemies.emplace_back(shared::ReducedEnemy::make(enemy1, 0));
-    enemies.emplace_back(shared::ReducedEnemy::make(enemy2, 0));
+    std::vector<reduced::Enemy::ptr_t> enemies;
+    enemies.emplace_back(reduced::Enemy::make(enemy1, 0));
+    enemies.emplace_back(reduced::Enemy::make(enemy2, 0));
 
     // Set the active player ID
     shared::PlayerBase::id_t active_player = "player";
     shared::PlayerBase player(active_player);
-    shared::ReducedPlayer::ptr_t reduced_player = shared::ReducedPlayer::make(player, {});
+    reduced::Player::ptr_t reduced_player = reduced::Player::make(player, {});
 
     // Create a Board object
     auto kingdom_cards = get_valid_kingdom_cards();

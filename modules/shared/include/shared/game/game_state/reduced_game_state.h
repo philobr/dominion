@@ -11,11 +11,10 @@ namespace shared
     {
     public:
         // Constructor to use on the server side
-        ReducedGameState(Board::ptr_t board, ReducedPlayer::ptr_t reduced_player,
-                         std::vector<ReducedEnemy::ptr_t> &&reduced_enemies, const PlayerBase::id_t &active_player) :
-            board(std::move(board)),
-            reduced_player(std::move(reduced_player)), reduced_enemies(std::move(reduced_enemies)),
-            active_player(active_player)
+        ReducedGameState(Board::ptr_t board, reduced::Player::ptr_t reduced_player,
+                         std::vector<reduced::Enemy::ptr_t> &&reduced_enemies, const PlayerBase::id_t &active_player) :
+            board(std::move(board)), reduced_player(std::move(reduced_player)),
+            reduced_enemies(std::move(reduced_enemies)), active_player(active_player)
         {}
 
         ReducedGameState(ReducedGameState &&other) :
@@ -36,8 +35,8 @@ namespace shared
         static std::unique_ptr<ReducedGameState> fromJson(const rapidjson::Value &json);
 
         Board::ptr_t board;
-        ReducedPlayer::ptr_t reduced_player;
-        std::vector<ReducedEnemy::ptr_t> reduced_enemies;
+        reduced::Player::ptr_t reduced_player;
+        std::vector<reduced::Enemy::ptr_t> reduced_enemies;
         PlayerBase::id_t active_player;
     };
 } // namespace shared

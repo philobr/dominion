@@ -72,7 +72,7 @@ namespace server
 
     std::unique_ptr<shared::ReducedGameState> GameState::get_reduced_state(const Player::id_t &target_player)
     {
-        std::vector<shared::ReducedEnemy::ptr_t> reduced_enemies;
+        std::vector<reduced::Enemy::ptr_t> reduced_enemies;
         std::for_each(player_map.begin(), player_map.end(),
                       [&](auto &entry)
                       {

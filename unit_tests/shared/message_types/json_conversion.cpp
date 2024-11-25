@@ -15,10 +15,10 @@ TEST(SharedLibraryTest, GameStateMessageTwoWayConversion)
     const unsigned int num_players = 2;
     Board::ptr_t board = Board::make(kingdom_cards, num_players);
 
-    ReducedPlayer::ptr_t player =
-            ReducedPlayer::make(PlayerBase("Felix"), {"Copper", "Copper", "Estate", "Chapel", "Silver"});
-    std::vector<ReducedEnemy::ptr_t> enemies;
-    enemies.push_back(ReducedEnemy::make(PlayerBase("Marius"), 5));
+    reduced::Player::ptr_t player =
+            reduced::Player::make(PlayerBase("Felix"), {"Copper", "Copper", "Estate", "Chapel", "Silver"});
+    std::vector<reduced::Enemy::ptr_t> enemies;
+    enemies.push_back(reduced::Enemy::make(PlayerBase("Marius"), 5));
 
     const std::string active_player = "Felix";
 

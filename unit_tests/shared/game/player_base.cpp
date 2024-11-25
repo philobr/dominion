@@ -6,9 +6,9 @@ TEST(PlayerJsonConversions, ReducedPlayer2Way)
 {
     shared::PlayerBase base_player("Alice");
     std::vector<shared::CardBase::id_t> hand_cards = {"Province", "Copper", "Copper", "Village", "Estate"};
-    auto expected = shared::ReducedPlayer::make(base_player, hand_cards);
+    auto expected = reduced::Player::make(base_player, hand_cards);
     auto json = expected->toJson();
-    std::unique_ptr<shared::ReducedPlayer> actual = shared::ReducedPlayer::fromJson(json);
+    std::unique_ptr<reduced::Player> actual = reduced::Player::fromJson(json);
     EXPECT_EQ(*actual, *expected);
 }
 
@@ -16,9 +16,9 @@ TEST(PlayerJsonConversions, ReducedEnemy2Way)
 {
     shared::PlayerBase base_player("Bob");
     unsigned int hand_size = 3;
-    auto expected = shared::ReducedEnemy::make(base_player, hand_size);
+    auto expected = reduced::Enemy::make(base_player, hand_size);
     auto json = expected->toJson();
-    std::unique_ptr<shared::ReducedEnemy> actual = shared::ReducedEnemy::fromJson(json);
+    std::unique_ptr<reduced::Enemy> actual = reduced::Enemy::fromJson(json);
     EXPECT_EQ(*actual, *expected);
 }
 
@@ -135,7 +135,7 @@ TEST(ReducedEnemyTest, Initialization)
 
     // Initialize ReducedEnemy with PlayerBase and specific hand_size
     unsigned int hand_size = 3;
-    auto reduced_enemy = shared::ReducedEnemy::make(base_player, hand_size);
+    auto reduced_enemy = reduced::Enemy::make(base_player, hand_size);
 
     // Check that ReducedEnemy inherited PlayerBase attributes correctly
     EXPECT_EQ(reduced_enemy->getId(), "test_player");
@@ -161,7 +161,7 @@ TEST(ReducedPlayerTest, Initialization)
     std::vector<shared::CardBase::id_t> hand_cards = {"card1", "card2", "card3"};
 
     // Initialize ReducedPlayer with PlayerBase and specific hand_cards
-    auto reduced_player = shared::ReducedPlayer::make(base_player, hand_cards);
+    auto reduced_player = reduced::Player::make(base_player, hand_cards);
 
     // Check that ReducedPlayer inherited PlayerBase attributes correctly
     EXPECT_EQ(reduced_player->getId(), "test_player_2");

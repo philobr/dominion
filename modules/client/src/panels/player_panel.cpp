@@ -14,11 +14,11 @@ namespace client
     PlayerPanel::PlayerPanel(wxWindow *parent, wxSize size) : wxPanel(parent, wxID_ANY, wxDefaultPosition, size)
     {
         auto player = shared::PlayerBase("gigu");
-        auto reduced = shared::ReducedPlayer::make(player, {"Village", "Copper", "Copper", "Copper", "Estate"});
+        auto reduced = reduced::Player::make(player, {"Village", "Copper", "Copper", "Copper", "Estate"});
         this->DrawPlayer(reduced, true);
     }
 
-    void PlayerPanel::DrawPlayer(const std::unique_ptr<shared::ReducedPlayer> &Player, bool is_active)
+    void PlayerPanel::DrawPlayer(const std::unique_ptr<reduced::Player> &Player, bool is_active)
     {
 
         const auto &cards = Player->getHandCards();

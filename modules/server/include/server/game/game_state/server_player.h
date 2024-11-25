@@ -64,8 +64,8 @@ namespace server
             currently_playing_card(other.currently_playing_card), current_behaviour_idx(other.current_behaviour_idx)
         {}
 
-        shared::ReducedPlayer::ptr_t get_reduced_player();
-        shared::ReducedEnemy::ptr_t get_reduced_enemy();
+        reduced::Player::ptr_t get_reduced_player();
+        reduced::Enemy::ptr_t get_reduced_enemy();
 
         bool canBlock() const
         {

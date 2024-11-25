@@ -2,6 +2,7 @@ stages:
   - format
   - lint
   - test
+  - deploy
 
 format:
   stage: format
@@ -42,3 +43,17 @@ test:
   allow_failure: false
   rules:
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event' || ($CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_REF_NAME == 'main')
+
+deploy:
+  stage: deploy
+  image: ubuntu:22.04
+  script:
+    - echo "Deploying the application..."
+    - ssh -i $SSH_DEPLOY_KEY dominion@se.nicolabruhin.com "cd /opt/dominion && pwd"
+  dependencies:
+    - test
+  environment:
+    name: production
+  rules:
+    # - if: $CI_PIPELINE_SOURCE == 'merge_request_event' || ($CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_REF_NAME == 'main')
+    - when: manual

@@ -1,10 +1,5 @@
-#include <client_listener.h>
-
-#include <sstream>
-#include <string>
-
-#include "client/client_listener.h"
-#include "client/client_network_manager.h"
+#include "client_listener.h"
+#include "client_network_manager.h"
 #include <shared/utils/logger.h>
 
 

@@ -12,7 +12,7 @@ namespace client
     bool Dominion::OnInit()
     {
         //initialize logger
-        shared::Logger::initialize("client.log");
+        shared::Logger::initialize();
         LOG(INFO) << "Called Dominion::OnInit()";
         // Allow loading of JPEG  and PNG image files
         wxImage::AddHandler(new wxJPEGHandler());

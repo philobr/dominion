@@ -71,6 +71,13 @@ namespace server
     GameInterface::PlayActionCardDecision_handler(std::unique_ptr<shared::PlayActionCardDecision> /*action_decision*/,
                                                   const Player::id_t & /*player_id*/)
     {
+        if (game_state->getPhase() != GamePhase::ACTION_PHASE) {
+            LOG(WARN) << "player(" << player_id << ") is currently not in the action phase, retrying";
+            return std::make_unique<shared::ActionPhaseOrder>();
+        }
+        
+        game_state->try_play(player_id, action_decision->card);
+
         // TODO: Implement for MVP 3
         LOG(ERROR) << "Not implemented yet, i will kill myself now:) much fun debugging!";
         throw std::runtime_error("Not implemented yet");

@@ -110,6 +110,37 @@ namespace server
         return true;
     }
 
+    bool GameState::try_play(const Player::id_t &affected_player, size_t hand_index){
+        auto &player = get_player(affected_player);
+        auto &card_id = player.get<PLAYER_HAND>()[hand_index];
+        auto &card = shared::CardFactory::getCard(card_id);
+
+        if ( card.isAction() ) {
+            if ( phase != GamePhase::ACTION_PHASE ) {
+                LOG(ERROR) << "tried to play an action card in GamePhase::" << static_cast<int>(phase);
+                throw exception::OutOfPhase("");
+            }
+
+            if ( player.getActions() == 0 ) {
+                force_switch_phase();
+                LOG(ERROR) << "tried to play an action card, but has no actions left";
+                throw exception::OutOfActions("");
+            }
+
+            player.decActions();
+            phase = GamePhase::PLAYING_ACTION_CARD;
+            player.move_indices<HAND, PLAYED_CARDS>({hand_index}); // PHILIPP
+
+            // PHILIPP: How can i access the behaviourchain and what function should be called that does the actual playing?
+
+            
+            return true;
+        }
+
+        LOG(WARN) << "tried to play a card that isn't an action card";
+        throw exception::InvalidCardType("");
+    }
+
     void GameState::end_turn()
     {
         get_current_player().end_turn();

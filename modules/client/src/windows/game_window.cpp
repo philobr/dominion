@@ -1,4 +1,4 @@
-#include "game_window.h"
+#include <windows/game_window.h>
 #include <wx/wx.h>
 #include <shared/utils/logger.h>
 

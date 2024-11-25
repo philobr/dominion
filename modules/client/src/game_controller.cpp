@@ -1,6 +1,6 @@
 #include "game_controller.h"
-#include <shared/utils/logger.h>
 #include <shared/utils/uuid_generator.h>
+#include <shared/utils/logger.h>
 
 
 namespace client
@@ -93,12 +93,6 @@ namespace client
             // connect to the server
             _clientNetworkManager->init(inputServerAddress.ToStdString(), portAsLong);
 
-            // detach gui from network atm
-            if ( inputPlayerName == "testgigu" ) {
-
-                GameController::_gameWindow->showPanel(GameController::_lobbyPanel);
-            }
-
             // send request to join game
             shared::CreateLobbyRequestMessage request(inputGameName.ToStdString(), uuid_generator::generate_uuid_v4(),
                                                       inputPlayerName.ToStdString());
@@ -139,9 +133,29 @@ namespace client
     }
 
 
+    void GameController::buyCard(const std::string &card_id)
+    {
+        // send request to buy card
+
+
+        // For testing delete later
+        LOG(DEBUG) << "Tried to buy card " << card_id << std::endl;
+        showStatus("Tried to buy card " + card_id);
+    }
+
+    void GameController::playCard(const std::string &card_id)
+    {
+        // send request to play card
+
+        // For testing delete later
+        LOG(DEBUG) << "Tried to play card " << card_id << std::endl;
+        showStatus("Tried to play card " + card_id);
+    }
+
+
     void GameController::showError(const std::string &title, const std::string &message)
     {
-        LOG(INFO) << "GameController called in function showError()";
+        LOG(WARN) << title << ": " << message << std::endl;
         wxMessageBox(message, title, wxICON_ERROR);
         LOG(INFO) << "Done with GameController::showError()";
     }

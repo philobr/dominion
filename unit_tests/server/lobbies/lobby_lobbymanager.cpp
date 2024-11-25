@@ -1,8 +1,8 @@
 #include <server/lobbies/lobby.h>
 #include <server/lobbies/lobby_manager.h>
 #include <shared/message_types.h>
+#include <shared/utils/logger.h>
 #include <shared/utils/test_helpers.h>
-#include <shared/utils/uuid_generator.h>
 #include <typeinfo>
 #include "mock_templates.h"
 
@@ -13,10 +13,8 @@ TEST(ServerLibraryTest, CreateLobby)
     shared::PlayerBase::id_t player_1 = "Max";
     shared::PlayerBase::id_t player_2 = "Peter";
 
-    auto request1 =
-            std::make_unique<shared::CreateLobbyRequestMessage>("123", uuid_generator::generate_uuid_v4(), player_1);
-    auto request2 =
-            std::make_unique<shared::CreateLobbyRequestMessage>("123", uuid_generator::generate_uuid_v4(), player_2);
+    auto request1 = std::make_unique<shared::CreateLobbyRequestMessage>("123", player_1);
+    auto request2 = std::make_unique<shared::CreateLobbyRequestMessage>("123", player_2);
 
     // All expected function calls of send_message
     {
@@ -27,24 +25,24 @@ TEST(ServerLibraryTest, CreateLobby)
                 .Times(1); // Error for second time creating lobby
     }
 
-    const auto *games = lobby_manager.get_games();
-    ASSERT_EQ(games->empty(), true) << "LobbyManager should be empty at the beginning";
+    const std::map<std::string, std::shared_ptr<server::Lobby>> &games = lobby_manager.get_games();
+    ASSERT_EQ(games.empty(), true) << "LobbyManager should be empty at the beginning";
 
     lobby_manager.create_lobby(std::move(request1));
 
-    ASSERT_EQ(games->size(), 1) << "LobbyManager should contain one lobby after creating one";
-    ASSERT_EQ(games->find("123") != games->end(), true) << "Lobby with id 123 should exist";
-    ASSERT_EQ(games->at("123")->get_game_master(), player_1) << "Game master should be player_1";
-    ASSERT_EQ(games->at("123")->get_players().size(), 1) << "There should be one player in the lobby";
+    ASSERT_EQ(games.size(), 1) << "LobbyManager should contain one lobby after creating one";
+    ASSERT_EQ(games.find("123") != games.end(), true) << "Lobby with id 123 should exist";
+    ASSERT_EQ(games.at("123")->get_game_master(), player_1) << "Game master should be player_1";
+    ASSERT_EQ(games.at("123")->get_players().size(), 1) << "There should be one player in the lobby";
 
     // No new lobby should be created, because game with id 123 already exists
     lobby_manager.create_lobby(std::move(request2));
-    ASSERT_EQ(games->size(), 1);
+    ASSERT_EQ(games.size(), 1);
     // Check if the lobby with id really 123 exists
-    ASSERT_EQ(games->find("123") != games->end(), true);
+    ASSERT_EQ(games.find("123") != games.end(), true);
     // Check if the game_master didn't change
-    ASSERT_EQ(games->at("123")->get_game_master(), player_1);
-    ASSERT_EQ(games->at("123")->get_players().size(), 1);
+    ASSERT_EQ(games.at("123")->get_game_master(), player_1);
+    ASSERT_EQ(games.at("123")->get_players().size(), 1);
 }
 
 // TODO: Implement tests for the following methods
@@ -58,22 +56,15 @@ TEST(ServerLibraryTest, JoinLobby)
     shared::PlayerBase::id_t player_4 = "John";
     shared::PlayerBase::id_t player_5 = "George";
 
-    auto request1 =
-            std::make_unique<shared::CreateLobbyRequestMessage>("123", uuid_generator::generate_uuid_v4(), player_1);
-    auto request2 =
-            std::make_unique<shared::JoinLobbyRequestMessage>("123", uuid_generator::generate_uuid_v4(), player_2);
-    auto request2_again =
-            std::make_unique<shared::JoinLobbyRequestMessage>("123", uuid_generator::generate_uuid_v4(), player_2);
-    auto false_request3 =
-            std::make_unique<shared::JoinLobbyRequestMessage>("222", uuid_generator::generate_uuid_v4(), player_3);
-    auto corrected_request3 =
-            std::make_unique<shared::JoinLobbyRequestMessage>("123", uuid_generator::generate_uuid_v4(), player_3);
-    auto request4 =
-            std::make_unique<shared::JoinLobbyRequestMessage>("123", uuid_generator::generate_uuid_v4(), player_4);
-    auto request5 =
-            std::make_unique<shared::JoinLobbyRequestMessage>("123", uuid_generator::generate_uuid_v4(), player_5);
+    auto request1 = std::make_unique<shared::CreateLobbyRequestMessage>("123", player_1);
+    auto request2 = std::make_unique<shared::JoinLobbyRequestMessage>("123", player_2);
+    auto request2_again = std::make_unique<shared::JoinLobbyRequestMessage>("123", player_2);
+    auto false_request3 = std::make_unique<shared::JoinLobbyRequestMessage>("222", player_3);
+    auto corrected_request3 = std::make_unique<shared::JoinLobbyRequestMessage>("123", player_3);
+    auto request4 = std::make_unique<shared::JoinLobbyRequestMessage>("123", player_4);
+    auto request5 = std::make_unique<shared::JoinLobbyRequestMessage>("123", player_5);
 
-    const auto *games = lobby_manager.get_games();
+    const std::map<std::string, std::shared_ptr<server::Lobby>> &games = lobby_manager.get_games();
 
     lobby_manager.create_lobby(std::move(request1));
 
@@ -94,16 +85,16 @@ TEST(ServerLibraryTest, JoinLobby)
         EXPECT_CALL(*message_interface, send_message(IsFailureMessage(), player_5)).Times(1);
     }
     lobby_manager.join_lobby(std::move(request2));
-    ASSERT_EQ(games->at("123")->get_players().size(), 2) << "There should be two players in the lobby";
-    ASSERT_EQ(games->at("123")->get_players().at(1), player_2) << "Player 2 should be in the lobby";
+    ASSERT_EQ(games.at("123")->get_players().size(), 2) << "There should be two players in the lobby";
+    ASSERT_EQ(games.at("123")->get_players().at(1), player_2) << "Player 2 should be in the lobby";
 
     // Player 2 should not be added again
     lobby_manager.join_lobby(std::move(request2_again));
-    ASSERT_EQ(games->at("123")->get_players().size(), 2) << "There should still be two players in the lobby";
+    ASSERT_EQ(games.at("123")->get_players().size(), 2) << "There should still be two players in the lobby";
 
     // Player 3 should not be able to join the lobby with id 123
     lobby_manager.join_lobby(std::move(false_request3));
-    ASSERT_EQ(games->at("123")->get_players().size(), 2) << "There should still be two players in the lobby";
+    ASSERT_EQ(games.at("123")->get_players().size(), 2) << "There should still be two players in the lobby";
 
     // Player 3 should be able to join the lobby with id 123
     lobby_manager.join_lobby(std::move(corrected_request3));
@@ -113,7 +104,7 @@ TEST(ServerLibraryTest, JoinLobby)
 
     // Player 5 should not be able to join because the lobby is full
     lobby_manager.join_lobby(std::move(request5));
-    ASSERT_EQ(games->at("123")->get_players().size(), 4) << "There should still be four players in the lobby";
+    ASSERT_EQ(games.at("123")->get_players().size(), 4) << "There should still be four players in the lobby";
 }
 
 TEST(ServerLibraryTest, StartGame)
@@ -123,22 +114,22 @@ TEST(ServerLibraryTest, StartGame)
     shared::PlayerBase::id_t player_1 = "Max";
     shared::PlayerBase::id_t player_2 = "Peter";
 
-    auto request1 = std::make_unique<shared::CreateLobbyRequestMessage>("123", "101", player_1);
-    auto request2 = std::make_unique<shared::JoinLobbyRequestMessage>("123", "102", player_2);
+    auto request1 = std::make_unique<shared::CreateLobbyRequestMessage>("123", player_1);
+    auto request2 = std::make_unique<shared::JoinLobbyRequestMessage>("123", player_2);
 
     std::vector<shared::CardBase::id_t> selected_cards = get_valid_kingdom_cards();
 
     // Start game request with wrong game_id
-    auto request3 = std::make_unique<shared::StartGameRequestMessage>("abc", uuid_generator::generate_uuid_v4(),
-                                                                      player_1, selected_cards);
+    auto request3 = std::make_unique<shared::StartGameRequestMessage>("abc", player_1, selected_cards);
 
     // Start game request not as game_master
-    auto request4 = std::make_unique<shared::StartGameRequestMessage>("123", uuid_generator::generate_uuid_v4(),
-                                                                      player_2, selected_cards);
+    auto request4 = std::make_unique<shared::StartGameRequestMessage>("123", player_2, selected_cards);
 
     // Start game request as game_master
-    auto request5 = std::make_unique<shared::StartGameRequestMessage>("123", uuid_generator::generate_uuid_v4(),
-                                                                      player_1, selected_cards);
+    auto request5 = std::make_unique<shared::StartGameRequestMessage>("123", player_1, selected_cards);
+
+    LOG(DEBUG) << "StartGameRequestMessage(player, game, message): " << request3->player_id << " " << request3->game_id
+               << " " << request3->message_id;
 
     lobby_manager.create_lobby(std::move(request1));
     lobby_manager.join_lobby(std::move(request2));
@@ -169,15 +160,12 @@ TEST(ServerLibraryTest, ReceiveAction)
     shared::PlayerBase::id_t player_3 = "Paul";
 
     /* Setup of the lobby */
-    auto request1 =
-            std::make_unique<shared::CreateLobbyRequestMessage>("123", uuid_generator::generate_uuid_v4(), player_1);
-    auto request2 =
-            std::make_unique<shared::JoinLobbyRequestMessage>("123", uuid_generator::generate_uuid_v4(), player_2);
+    auto request1 = std::make_unique<shared::CreateLobbyRequestMessage>("123", player_1);
+    auto request2 = std::make_unique<shared::JoinLobbyRequestMessage>("123", player_2);
 
     std::vector<shared::CardBase::id_t> selected_cards = get_valid_kingdom_cards();
 
-    auto request3 = std::make_unique<shared::StartGameRequestMessage>("123", uuid_generator::generate_uuid_v4(),
-                                                                      player_1, selected_cards);
+    auto request3 = std::make_unique<shared::StartGameRequestMessage>("123", player_1, selected_cards);
 
     lobby_manager.create_lobby(std::move(request1));
     lobby_manager.join_lobby(std::move(request2));
@@ -185,19 +173,19 @@ TEST(ServerLibraryTest, ReceiveAction)
 
     // ActionDecision for a lobby that doesn't exist
     auto request4 = std::make_unique<shared::ActionDecisionMessage>(
-            "456", uuid_generator::generate_uuid_v4(), player_1, std::make_unique<shared::PlayActionCardDecision>(1));
+            "456", player_1, std::make_unique<shared::PlayActionCardDecision>(1));
 
     // ActionDecision for a game that hasn't started yet
     auto request5 = std::make_unique<shared::ActionDecisionMessage>(
-            "123", uuid_generator::generate_uuid_v4(), player_1, std::make_unique<shared::PlayActionCardDecision>(1));
+            "123", player_1, std::make_unique<shared::PlayActionCardDecision>(1));
 
     // ActionDecision for a player that is not in the lobby
     auto request6 = std::make_unique<shared::ActionDecisionMessage>(
-            "123", uuid_generator::generate_uuid_v4(), player_3, std::make_unique<shared::BuyCardDecision>("Village"));
+            "123", player_3, std::make_unique<shared::BuyCardDecision>("Village"));
 
     // ActionDecision should be handled correctly
     auto request7 = std::make_unique<shared::ActionDecisionMessage>(
-            "123", uuid_generator::generate_uuid_v4(), player_1, std::make_unique<shared::BuyCardDecision>("Village"));
+            "123", player_1, std::make_unique<shared::BuyCardDecision>("Village"));
 
     // First part of expected function calls of send_message
     {

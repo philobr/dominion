@@ -1,10 +1,12 @@
 #pragma once
 
-#include "client/client_network_manager.h"
+#include "client_network_manager.h"
 #include "panels/connection_panel.h"
 #include "panels/lobby_panel.h"
 #include "panels/main_game_panel.h"
 #include "windows/game_window.h"
+
+#include <shared/message_types.h>
 
 namespace client
 {
@@ -41,6 +43,9 @@ namespace client
          *
          */
         static void startGame();
+
+        static void buyCard(const std::string &card_id);
+        static void playCard(const std::string &card_id);
         static void send_request(const std::string &req);
         static void receive_message(std::unique_ptr<shared::ServerToClientMessage> msg);
 

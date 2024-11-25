@@ -1,8 +1,6 @@
 #pragma once
 
 #include <wx/wx.h>
-// #include "../windows/GameWindow.h"
-// #include "../GameController.h"
 
 namespace client
 {
@@ -14,7 +12,7 @@ namespace client
     class Dominion : public wxApp
     {
     public:
-        virtual bool OnInit();
+        bool OnInit() final;
     };
 
 } // namespace client

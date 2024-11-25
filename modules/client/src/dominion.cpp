@@ -1,4 +1,4 @@
-#include "client/dominion.h"
+#include "dominion.h"
 
 #include "game_controller.h"
 #include "windows/game_window.h"
@@ -24,6 +24,9 @@ namespace client
                                                 wxDefaultSize // size of the window
         );
         gameWindow->Show(true);
+
+        shared::Logger::initialize();
+        shared::Logger::setLevel(DEBUG);
 
         // Initialize game controller
         GameController::init(gameWindow);

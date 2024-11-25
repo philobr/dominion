@@ -1,7 +1,7 @@
-#include "lobby_panel.h"
+#include <panels/lobby_panel.h>
 
-#include "../game_controller.h"
-#include "../uiElements/image_panel.h"
+#include <game_controller.h>
+#include <uiElements/image_panel.h>
 
 #include <wx/event.h>
 #include <wx/gdicmn.h>

@@ -1,8 +1,8 @@
 #pragma once
 
+#include <cstdint>
 #include <string>
-#include "client/client_listener.h"
-#include "shared/message_types.h"
+#include "sockpp/tcp_connector.h"
 
 class ClientNetworkManager
 {

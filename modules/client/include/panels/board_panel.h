@@ -3,6 +3,7 @@
 #include <shared/game/game_state/board_base.h>
 
 #include <wx/wx.h>
+#include "../uiElements/pile_panel.h"
 
 namespace client
 {
@@ -28,9 +29,16 @@ namespace client
          *
          * @param Board
          */
-        void DrawBoard(std::shared_ptr<shared::Board> Board);
+        void DrawBoard(std::shared_ptr<shared::Board> Board, bool is_active, unsigned int treasure);
 
     private:
+        /**
+         * @brief Make a pile buyable
+         * by making it clickable and attaching an Event handler that sends a buy request
+         */
+        void makeBuyable(PilePanel *Pile);
+
+        std::shared_ptr<shared::Board> board_;
     };
 
 } // namespace client

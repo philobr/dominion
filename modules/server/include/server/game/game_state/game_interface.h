@@ -1,12 +1,14 @@
 #pragma once
 
 #include <server/game/game.h>
+#include <server/game/game_state/behaviour_chain.h>
 
 namespace server
 {
     class GameInterface
     {
         std::shared_ptr<GameState> game_state;
+        std::shared_ptr<BehaviourChain> cur_behaviours;
         const std::string game_id;
 
     public:
@@ -40,9 +42,13 @@ namespace server
     private:
         GameInterface(const std::string &game_id, const std::vector<shared::CardBase::id_t> &play_cards,
                       const std::vector<Player::id_t> &player_ids) :
-            game_state(std::make_unique<GameState>(play_cards, player_ids)),
-            game_id(game_id)
-        {}
+            game_state(std::make_shared<GameState>(play_cards, player_ids)),
+            cur_behaviours(std::make_unique<BehaviourChain>()), game_id(game_id)
+        {
+            // TODO: just for testing, remove later
+            cur_behaviours->loadBehaviours("Laboratory");
+            cur_behaviours->receiveAction(*game_state.get(), std::nullopt);
+        }
 
         response_t handle_action(std::unique_ptr<shared::ActionDecision> action_decision,
                                  const Player::id_t &affected_player_id);

@@ -4,6 +4,8 @@
 
 #include <wx/wx.h>
 
+#include "../uiElements/image_panel.h"
+
 namespace client
 {
     /**
@@ -21,9 +23,12 @@ namespace client
          *
          * @param Player
          */
-        void DrawPlayer(const std::unique_ptr<shared::ReducedPlayer> & /*Player*/);
+        void DrawPlayer(const std::unique_ptr<shared::ReducedPlayer> &Player, bool is_active);
 
     private:
+        void makePlayable(ImagePanel *Image, std::string card_id);
+
+        wxSize hand_card_size = wxSize(100, 125);
     };
 
 } // namespace client

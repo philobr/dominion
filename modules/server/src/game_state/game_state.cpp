@@ -2,6 +2,8 @@
 #include <random>
 
 #include <server/game/game_state/game_state.h>
+
+#include <shared/game/cards/card_factory.h>
 #include <shared/utils/assert.h>
 #include <shared/utils/exception.h>
 #include <shared/utils/logger.h>
@@ -50,9 +52,9 @@ namespace server
 
             for ( unsigned i = 0; i < 7; i++ ) {
                 if ( i < 3 ) {
-                    player_map[id]->add_to_discard_pile("Estate");
+                    player_map[id]->gain("Estate");
                 }
-                player_map[id]->add_to_discard_pile("Copper");
+                player_map[id]->gain("Copper");
             }
 
             player_map[id]->draw(5);
@@ -90,7 +92,7 @@ namespace server
     bool GameState::try_buy(const Player::id_t &player_id, const shared::CardBase::id_t &card_id)
     {
         auto &player = get_player(player_id);
-        const auto card_cost = CardFactory::getCard(card_id)->getCost();
+        const auto card_cost = shared::CardFactory::getCard(card_id).getCost();
 
         if ( player.getTreasure() < card_cost ) {
             LOG(ERROR) << player_id << " has " << player.getTreasure() << " coins but needs " << card_cost;
@@ -102,7 +104,7 @@ namespace server
             throw exception::CardNotAvailable("");
         }
 
-        player.add_to_discard_pile(card_id);
+        player.gain(card_id);
         player.decTreasure(card_cost);
 
         return true;
@@ -126,11 +128,8 @@ namespace server
         return std::all_of(kingdom_cards.begin(), kingdom_cards.end(),
                            [](const auto &card_id)
                            {
-                               if ( const auto &card = CardFactory::getCard(card_id); card != nullptr ) {
-                                   return card->isAction() || card->isAttack() || card->isReaction();
-                               } else {
-                                   return false;
-                               }
+                               const auto &card = shared::CardFactory::getCard(card_id);
+                               return card.isAction() || card.isAttack() || card.isReaction();
                            });
     }
 

@@ -48,6 +48,7 @@ deploy:
   stage: deploy
   image: ubuntu:22.04
   script:
+    - apt-get update && apt-get install -y openssh-client
     - echo "Deploying the application..."
     - ssh -i $SSH_DEPLOY_KEY dominion@se.nicolabruhin.com "cd /opt/dominion && pwd"
   dependencies:

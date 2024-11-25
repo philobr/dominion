@@ -1,4 +1,5 @@
 #include <shared/game/game_state/player_base.h>
+#include <shared/game/reduced/player.h>
 
 #include <gtest/gtest.h>
 

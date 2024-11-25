@@ -9,6 +9,7 @@ add_library(shared_lib STATIC
     
     src/game/cards.cpp
     src/game/player_base.cpp
+    src/game/reduced_player.cpp
     src/game/board_base.cpp
     src/game/reduced_game_state.cpp
     

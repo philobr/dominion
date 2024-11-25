@@ -3,7 +3,7 @@
 #include <vector>
 
 #include <shared/game/game_state/board_base.h>
-#include <shared/game/game_state/player_base.h>
+#include <shared/game/reduced/player.h>
 
 namespace reduced
 {

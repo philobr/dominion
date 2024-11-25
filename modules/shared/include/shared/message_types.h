@@ -180,8 +180,8 @@ namespace shared
     {
     public:
         ~JoinLobbyBroadcastMessage() = default;
-        JoinLobbyBroadcastMessage(std::string game_id, std::string message_id,
-                                  std::vector<shared::PlayerBase::id_t> players) :
+        JoinLobbyBroadcastMessage(std::string game_id, std::vector<shared::PlayerBase::id_t> players,
+                                  std::string message_id = uuid_generator::generate_uuid_v4()) :
             ServerToClientMessage(game_id, message_id),
             players(players)
         {}

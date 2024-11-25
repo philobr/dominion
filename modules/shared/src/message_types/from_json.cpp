@@ -51,7 +51,7 @@ parse_join_game_broadcast(const Document &json, const std::string &game_id, cons
     std::vector<shared::PlayerBase::id_t> players;
     GET_STRING_ARRAY_MEMBER(players, json, "players");
 
-    return std::make_unique<JoinLobbyBroadcastMessage>(game_id, message_id, players);
+    return std::make_unique<JoinLobbyBroadcastMessage>(game_id, players, message_id);
 }
 
 static std::unique_ptr<StartGameBroadcastMessage>

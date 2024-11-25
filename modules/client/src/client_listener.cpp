@@ -1,10 +1,9 @@
+#include <client_listener.h>
 
-#include <iostream>
 #include <sstream>
 #include <string>
 
-#include "client/client_listener.h"
-#include "client/client_network_manager.h"
+#include <client_network_manager.h>
 
 
 ClientListener::ClientListener(sockpp::tcp_connector *connection) : _connection(connection) {}

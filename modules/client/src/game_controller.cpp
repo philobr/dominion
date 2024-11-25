@@ -1,6 +1,7 @@
 #include "game_controller.h"
+
 #include <shared/utils/uuid_generator.h>
-#include "shared/utils/logger.h"
+#include <shared/utils/logger.h>
 
 
 namespace client

@@ -1,10 +1,12 @@
 #pragma once
 
-#include "client/client_network_manager.h"
+#include "client_network_manager.h"
 #include "panels/connection_panel.h"
 #include "panels/lobby_panel.h"
 #include "panels/main_game_panel.h"
 #include "windows/game_window.h"
+
+#include <shared/message_types.h>
 
 namespace client
 {

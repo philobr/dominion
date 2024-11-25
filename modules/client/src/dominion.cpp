@@ -1,8 +1,8 @@
-#include "client/dominion.h"
+#include "dominion.h"
 
 #include "game_controller.h"
-#include "shared/utils/logger.h"
-#include "windows/game_window.h"
+#include <shared/utils/logger.h>
+#include <windows/game_window.h>
 
 
 namespace client

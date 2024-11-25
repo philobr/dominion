@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../uiElements/image_panel.h"
+#include "image_panel.h"
 
 #include <shared/game/game_state/reduced_game_state.h>
 

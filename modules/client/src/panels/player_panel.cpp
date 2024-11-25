@@ -1,12 +1,12 @@
-#include "player_panel.h"
+#include <panels/player_panel.h>
 
 #include <shared/game/cards/card_factory.h>
 #include <shared/utils/logger.h>
 #include <wx/event.h>
 #include <wx/sizer.h>
 #include <wx/wx.h>
-#include "../game_controller.h"
-#include "../uiElements/image_panel.h"
+#include <game_controller.h>
+#include <uiElements/image_panel.h>
 
 namespace client
 {

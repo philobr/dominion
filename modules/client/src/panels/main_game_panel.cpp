@@ -1,4 +1,4 @@
-#include "main_game_panel.h"
+#include <panels/main_game_panel.h>
 
 #include <wx/wx.h>
 

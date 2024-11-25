@@ -208,13 +208,11 @@ namespace client
     void GameController::RefreshPlayers(shared::JoinLobbyBroadcastMessage *msg)
     {
         LOG(INFO) << "Refreshing Players";
-        // Removing current players
-        GameController::_lobbyPanel->DestroyChildren();
-        LOG(INFO) << "Detached current players from lobby panel";
-        // Add all the players
+        GameController::_lobbyPanel->refreshPlayers(msg->players);
+        /*
         for ( auto player : msg->players ) {
             GameController::_lobbyPanel->AddPlayer(player);
-        }
+        }*/
         LOG(INFO) << "Added new players";
     }
 } // namespace client

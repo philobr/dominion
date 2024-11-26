@@ -1,9 +1,9 @@
 
 #include <server/lobbies/lobby.h>
+#include <shared/game/game_state/board_base.h>
 #include <shared/utils/assert.h>
 #include <shared/utils/logger.h>
 
-const unsigned int MAX_PLAYERS = 4;
 namespace server
 {
     bool Lobby::player_in_lobby(const Player::id_t &player_id)
@@ -32,9 +32,9 @@ namespace server
             return;
         }
 
-        if ( players.size() >= MAX_PLAYERS ) {
+        if ( players.size() >= shared::BoardConfig::MAX_PLAYER_COUNT ) {
             LOG(DEBUG) << "Lobby is full. Lobby ID: " << lobby_id << " , Player ID: " << player_id
-                       << " , Max players: " << MAX_PLAYERS;
+                       << " , Max players: " << shared::BoardConfig::MAX_PLAYER_COUNT;
             shared::ResultResponseMessage failure_message =
                     shared::ResultResponseMessage(lobby_id, false, request->message_id, "Lobby is full");
             message_interface.send_message(std::make_unique<shared::ResultResponseMessage>(failure_message), player_id);
@@ -74,19 +74,14 @@ namespace server
             return;
         }
 
-        if ( players.size() < 2 ) {
-            LOG(DEBUG) << "Lobby::start_game is called with less than 2 players. Lobby ID: " << lobby_id
+        if ( players.size() < shared::BoardConfig::MIN_PLAYER_COUNT ||
+             players.size() > shared::BoardConfig::MAX_PLAYER_COUNT ) {
+            LOG(DEBUG) << "Lobby::start_game is called with not enough or to many players. Lobby ID: " << lobby_id
                        << " , Player ID: " << player_id << " , Number of players: " << players.size();
             shared::ResultResponseMessage failure_message = shared::ResultResponseMessage(
-                    lobby_id, false, request->message_id, "Not enough players to start game");
+                    lobby_id, false, request->message_id, "Invalid player count to start game");
             message_interface.send_message(std::make_unique<shared::ResultResponseMessage>(failure_message), player_id);
             return;
-        }
-
-        if ( players.size() > MAX_PLAYERS ) {
-            LOG(ERROR) << "Tried starting a game with more than MAX_PLAYERS: " << MAX_PLAYERS
-                       << " players. Lobby ID: " << lobby_id;
-            throw std::runtime_error("Tried starting a game with more than MAX_PLAYERS players");
         }
 
         // Create new game interface

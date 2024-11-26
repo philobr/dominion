@@ -136,6 +136,7 @@ namespace shared
         if ( PlayActionCardDecision *play_action_card = dynamic_cast<PlayActionCardDecision *>(action_decision) ) {
             ADD_STRING_MEMBER("play_action_card", action);
             ADD_UINT_MEMBER(play_action_card->cardIndex, card_index);
+            ADD_UINT_MEMBER(static_cast<unsigned int>(play_action_card->from), from);
         } else if ( BuyCardDecision *buy_card = dynamic_cast<BuyCardDecision *>(action_decision) ) {
             ADD_STRING_MEMBER("buy_card", action);
             ADD_STRING_MEMBER(buy_card->card.c_str(), card);

@@ -14,7 +14,7 @@ using namespace rapidjson;
 /* ======= SERVER TO CLIENT MESSAGES ======= */
 
 static std::unique_ptr<GameStateMessage> parseGameStateMessage(const Document &json, const std::string &game_id,
-                                                                  const std::string &message_id)
+                                                               const std::string &message_id)
 {
     std::optional<std::string> in_response_to;
 
@@ -67,7 +67,7 @@ parseEndGameBroadcast(const Document & /*json*/, const std::string &game_id, con
 }
 
 static std::unique_ptr<ResultResponseMessage> parseResultResponse(const Document &json, const std::string &game_id,
-                                                                    const std::string &message_id)
+                                                                  const std::string &message_id)
 {
     std::optional<std::string> in_response_to;
     GET_OPTIONAL_STRING_MEMBER(in_response_to, json, "in_response_to");
@@ -81,7 +81,7 @@ static std::unique_ptr<ResultResponseMessage> parseResultResponse(const Document
 }
 
 static std::unique_ptr<ActionOrderMessage> parseActionOrder(const Document &json, const std::string &game_id,
-                                                              const std::string &message_id)
+                                                            const std::string &message_id)
 {
     std::optional<std::string> description;
 
@@ -134,33 +134,32 @@ namespace shared
 } // namespace shared
 
 static std::unique_ptr<GameStateRequestMessage> parseGameStateRequest(const Document & /*json*/,
-                                                                         const std::string &game_id,
-                                                                         const PlayerBase::id_t &player_id,
-                                                                         const std::string &message_id)
+                                                                      const std::string &game_id,
+                                                                      const PlayerBase::id_t &player_id,
+                                                                      const std::string &message_id)
 {
     return std::make_unique<GameStateRequestMessage>(game_id, player_id, message_id);
 }
 
 static std::unique_ptr<CreateLobbyRequestMessage> parseCreateLobbyRequest(const Document & /*json*/,
-                                                                             const std::string &game_id,
-                                                                             const PlayerBase::id_t &player_id,
-                                                                             const std::string &message_id)
+                                                                          const std::string &game_id,
+                                                                          const PlayerBase::id_t &player_id,
+                                                                          const std::string &message_id)
 {
     return std::make_unique<CreateLobbyRequestMessage>(game_id, player_id, message_id);
 }
 
 static std::unique_ptr<JoinLobbyRequestMessage> parseJoinGameRequest(const Document & /*json*/,
-                                                                        const std::string &game_id,
-                                                                        const PlayerBase::id_t &player_id,
-                                                                        const std::string &message_id)
+                                                                     const std::string &game_id,
+                                                                     const PlayerBase::id_t &player_id,
+                                                                     const std::string &message_id)
 {
     return std::make_unique<JoinLobbyRequestMessage>(game_id, player_id, message_id);
 }
 
-static std::unique_ptr<StartGameRequestMessage> parseStartGameRequest(const Document &json,
-                                                                         const std::string &game_id,
-                                                                         const PlayerBase::id_t &player_id,
-                                                                         const std::string &message_id)
+static std::unique_ptr<StartGameRequestMessage> parseStartGameRequest(const Document &json, const std::string &game_id,
+                                                                      const PlayerBase::id_t &player_id,
+                                                                      const std::string &message_id)
 {
     std::vector<CardBase::id_t> selected_cards;
     GET_STRING_ARRAY_MEMBER(selected_cards, json, "selected_cards");
@@ -172,8 +171,8 @@ static std::unique_ptr<StartGameRequestMessage> parseStartGameRequest(const Docu
 }
 
 static std::unique_ptr<ActionDecisionMessage> parseActionDecision(const Document &json, const std::string &game_id,
-                                                                    const PlayerBase::id_t &player_id,
-                                                                    const std::string &message_id)
+                                                                  const PlayerBase::id_t &player_id,
+                                                                  const std::string &message_id)
 {
     std::optional<std::string> in_response_to;
     GET_OPTIONAL_STRING_MEMBER(in_response_to, json, "in_response_to");

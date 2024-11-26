@@ -34,7 +34,7 @@ namespace utils
             for ( const auto &elem : container ) {
                 if ( !first ) {
                     os << ", ";
-}
+                }
                 os << elem;
                 first = false;
             }

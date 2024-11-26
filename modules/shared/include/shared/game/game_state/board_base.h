@@ -40,7 +40,7 @@ namespace shared
             return MIN_PLAYER_COUNT <= num_players && num_players <= MAX_PLAYER_COUNT;
         }
 
-    } // namespace BoardConfig
+    } // namespace board_config
 
     struct Pile
     {

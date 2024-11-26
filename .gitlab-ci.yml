@@ -61,10 +61,8 @@ deploy:
     - ssh-keyscan -H se.nicolabruhin.com >> ~/.ssh/known_hosts
     # Do the actual deployment
     - ssh dominion@se.nicolabruhin.com "cd /opt/dominion/dominion && git pull && cd docker && docker compose up -d --build"
-  dependencies:
-    - test
   environment:
     name: production
   rules:
-    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
+    - if: $CI_PIPELINE_SOURCE == 'push' && $CI_COMMIT_REF_NAME == 'main'
     - when: manual

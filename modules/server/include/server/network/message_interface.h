@@ -19,7 +19,6 @@ namespace server
         /**
          * @brief gets a response that has to be sent to a client and passes it to the network manager as json string
          */
-        // TODO: I think this also needs to take in a player ID
         virtual void sendMessage(std::unique_ptr<shared::ServerToClientMessage> message,
                                   const shared::PlayerBase::id_t &player_id) = 0;
     };

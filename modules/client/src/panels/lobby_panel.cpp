@@ -41,7 +41,8 @@ namespace client
 
     void LobbyPanel::refreshPlayers(std::vector<std::string> &players)
     {
-        NamesSizer->Clear(true);
+        NamesSizer->Clear(false);
+        playerCount = 0;
         for ( auto player : players ) {
             LOG(DEBUG) << "Adding player " << player;
             this->AddPlayer(player);

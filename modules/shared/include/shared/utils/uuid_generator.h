@@ -9,7 +9,7 @@
 #include <random>
 #include <sstream>
 
-class uuid_generator
+class UuidGenerator
 {
 
 private:

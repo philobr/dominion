@@ -14,7 +14,7 @@ namespace utils
     namespace assert_helpers
     {
         template <typename T, typename = void>
-        struct is_container : std::false_type
+        struct IsContainer : std::false_type
         {};
 
         // Checks if T has begin/end functions to determine whether it's a container
@@ -26,7 +26,7 @@ namespace utils
 
         // Overload operator<< for containers
         template <typename Container>
-        std::enable_if_t<is_container<Container>::value, std::ostream &> operator<<(std::ostream &os,
+        std::enable_if_t<IsContainer<Container>::value, std::ostream &> operator<<(std::ostream &os,
                                                                                     const Container &container)
         {
             os << "[";
@@ -59,7 +59,7 @@ namespace utils
                            std::string_view msg, std::string_view file, int line, std::string_view function)
         {
 #ifndef NDEBUG
-            if constexpr ( is_container<T1>::value && is_container<T2>::value ) {
+            if constexpr ( IsContainer<T1>::value && IsContainer<T2>::value ) {
                 if ( op == "==" || op == "!=" ) {
                     bool result = std::equal(actual.begin(), actual.end(), expected.begin(), expected.end());
                     if ( (op == "==" && !result) || (op == "!=" && result) ) {

@@ -4,13 +4,11 @@
 # - bugprone-narrowing-conversions
 # - bugprone-easily-swappable-parameters
 # - bugprone-use-after-move
-# - bugprone-suspicious-enum-usage,
 Checks: |
   -*,
   bugprone-*,
   -bugprone-narrowing-conversions,
   -bugprone-easily-swappable-parameters,
-  -bugprone-suspicious-enum-usage,
   -bugprone-use-after-move,
   cppcoreguidelines-prefer-member-initializer,
   misc-definitions-in-headers,

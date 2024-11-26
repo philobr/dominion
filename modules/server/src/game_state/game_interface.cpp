@@ -68,8 +68,8 @@ namespace server
     }
 
     GameInterface::response_t
-    GameInterface::PlayActionCardDecision_handler(std::unique_ptr<shared::PlayActionCardDecision> /*action_decision*/,
-                                                  const Player::id_t & /*player_id*/)
+    GameInterface::PlayActionCardDecision_handler(std::unique_ptr<shared::PlayActionCardDecision> action_decision,
+                                                  const Player::id_t &player_id)
     {
         if ( game_state->getPhase() != GamePhase::ACTION_PHASE ) {
             LOG(WARN) << "player(" << player_id << ") is currently not in the action phase, retrying";

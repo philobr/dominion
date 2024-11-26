@@ -75,7 +75,7 @@ namespace server
          * @return false
          */
         bool try_buy(const Player::id_t &player_id, const shared::CardBase::id_t &card);
-        bool try_play(const Player::id_t &affected_player, size_t hand_index);
+        bool try_play(const Player::id_t &affected_player, size_t hand_index, shared::CardAccess from);
 
         /**
          * @brief Switches phases if necessary, this means: if a player is out of buys or out of actions

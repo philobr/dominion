@@ -110,10 +110,10 @@ namespace server
         return true;
     }
 
-    bool GameState::try_play(const Player::id_t &affected_player, size_t hand_index, CardAccess from)
+    bool GameState::try_play(const Player::id_t &affected_player, size_t hand_index, shared::CardAccess from)
     {
         auto &player = get_player(affected_player);
-        auto &card_id = player.get<PLAYER_HAND>()[hand_index];
+        auto &card_id = player.get<shared::CardAccess::HAND>()[hand_index];
         auto &card = shared::CardFactory::getCard(card_id);
 
         if ( card.isAction() ) {
@@ -131,19 +131,21 @@ namespace server
             player.decActions();
             phase = GamePhase::PLAYING_ACTION_CARD;
 
-            if ( from == CardAccess::HAND ) {
+            if ( from == shared::CardAccess::HAND ) {
                 player.play_card_from_hand(hand_index);
-            } else if ( from == CardAccess::STAGED_CARDS ) {
+            } else if ( from == shared::CardAccess::STAGED_CARDS ) {
                 player.play_card_from_staged(hand_index);
             } else {
                 LOG(ERROR) << "tried to play a card from an invalid pile";
-                throw exception::InvalidCardAccess("");
+                // throw exception::InvalidCardAccess("");
             }
             return true;
         }
 
         LOG(WARN) << "tried to play a card that isn't an action card";
-        throw exception::InvalidCardType("");
+
+        return true; // todo
+        // throw exception::InvalidCardType("");
     }
 
     void GameState::end_turn()

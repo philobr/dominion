@@ -29,8 +29,8 @@ namespace server
     {
         reset_values();
 
-        move<HAND, DISCARD_PILE>();
-        move<PLAYED_CARDS, DISCARD_PILE>();
+        move<shared::HAND, shared::DISCARD_PILE>();
+        move<shared::PLAYED_CARDS, shared::DISCARD_PILE>();
 
         draw(5);
     }

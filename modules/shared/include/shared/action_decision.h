@@ -4,8 +4,7 @@
 #include <vector>
 
 #include <shared/game/cards/card_base.h>
-#include <server/game/game_state/server_player.h>
-
+#include <shared/game/game_state/player_base.h>
 namespace shared
 {
     class ActionDecision
@@ -24,9 +23,11 @@ namespace shared
     public:
         bool operator==(const PlayActionCardDecision &other) const;
         bool operator!=(const PlayActionCardDecision &other) const;
-        PlayActionCardDecision(unsigned int cardIndex, server::CardAccess fromPile = server::CardAccess::HAND) : cardIndex(cardIndex), from(fromPile) {}
+        PlayActionCardDecision(unsigned int cardIndex, shared::CardAccess fromPile = shared::CardAccess::HAND) :
+            cardIndex(cardIndex), from(fromPile)
+        {}
         unsigned int cardIndex;
-        server::CardAccess from;
+        shared::CardAccess from;
 
     protected:
         bool equals(const ActionDecision &other) const override;

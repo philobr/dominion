@@ -110,7 +110,8 @@ namespace server
         return true;
     }
 
-    bool GameState::try_play(const Player::id_t &affected_player, size_t hand_index){
+    bool GameState::try_play(const Player::id_t &affected_player, size_t hand_index, CardAccess from)
+    {
         auto &player = get_player(affected_player);
         auto &card_id = player.get<PLAYER_HAND>()[hand_index];
         auto &card = shared::CardFactory::getCard(card_id);
@@ -129,11 +130,15 @@ namespace server
 
             player.decActions();
             phase = GamePhase::PLAYING_ACTION_CARD;
-            player.move_indices<HAND, PLAYED_CARDS>({hand_index}); // PHILIPP
 
-            // PHILIPP: How can i access the behaviourchain and what function should be called that does the actual playing?
-
-            
+            if ( from == CardAccess::HAND ) {
+                player.play_card_from_hand(hand_index);
+            } else if ( from == CardAccess::STAGED_CARDS ) {
+                player.play_card_from_staged(hand_index);
+            } else {
+                LOG(ERROR) << "tried to play a card from an invalid pile";
+                throw exception::InvalidCardAccess("");
+            }
             return true;
         }
 

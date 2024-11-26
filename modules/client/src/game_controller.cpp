@@ -149,6 +149,15 @@ namespace client
         showStatus("Tried to play card " + card_id);
     }
 
+    void GameController::endTurn()
+    {
+        // send request to end turn
+
+        // For testing delete later
+        LOG(DEBUG) << "Tried to end turn" << std::endl;
+        showStatus("Tried to end turn");
+    }
+
 
     void GameController::showError(const std::string &title, const std::string &message)
     {

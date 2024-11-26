@@ -122,8 +122,9 @@ namespace server
                 return false;
             }
             if ( player.is_currently_playing_card() ) {
-                LOG(WARN) << "player(" << affected_player << ") is already playing a different card, retrying";
-                return false;
+                LOG(ERROR) << "player(" << affected_player
+                           << ") is already playing a different card, landed in the wrong handler";
+                throw std::runtime_error("message landed up in the wrong handler");
             }
             if ( player.getActions() == 0 ) {
                 force_switch_phase();

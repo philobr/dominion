@@ -77,4 +77,13 @@ namespace shared
     {
         return *this == dynamic_cast<const ChooseNCardsFromHandOrder &>(other);
     }
+
+    bool EndTurnOrder::operator==(const EndTurnOrder &other) const { return this->equals(other); }
+
+    bool EndTurnOrder::operator!=(const EndTurnOrder &other) const { return !EndTurnOrder::operator==(other); }
+
+    bool EndTurnOrder::equals(const ActionOrder &other) const
+    {
+        return *this == dynamic_cast<const EndTurnOrder &>(other);
+    }
 } // namespace shared

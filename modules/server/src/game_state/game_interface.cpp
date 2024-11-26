@@ -78,6 +78,13 @@ namespace server
             cur_behaviours->loadBehaviours(card_id);
             return (cur_behaviours->receiveAction(*game_state, player_id, std::nullopt, std::nullopt)).value();
         }
+        // If the player was forced to switch to the buy phase, we return a BuyPhaseOrder or end the turn
+        if ( game_state->getPhase() == GamePhase::BUY_PHASE ) {
+            if ( game_state->get_player(player_id).getBuys() == 0 ) {
+                return std::make_unique<shared::EndTurnOrder>();
+            }
+            return std::make_unique<shared::BuyPhaseOrder>();
+        }
 
         // something went wrong, retry ActionPhase
         return std::make_unique<shared::ActionPhaseOrder>();

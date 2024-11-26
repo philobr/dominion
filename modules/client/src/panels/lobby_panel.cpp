@@ -9,7 +9,7 @@
 #include <wx/wx.h>
 #include "shared/utils/logger.h"
 
-
+// NOLINTBEGIN(bugprone-suspicious-enum-usage)
 namespace client
 {
     LobbyPanel::LobbyPanel(wxWindow *parent) :
@@ -78,3 +78,4 @@ namespace client
         NamesSizer->Layout();
     }
 } // namespace client
+// NOLINTEND(bugprone-suspicious-enum-usage)

@@ -182,8 +182,8 @@ namespace client
 
         LOG(INFO) << "Gamecontroller called in function receive_message()";
 
-        if ( shared::CreateLobbyResponseMessage *clrm =
-                     dynamic_cast<shared::CreateLobbyResponseMessage *>(msg.get()) ) {
+        shared::ServerToClientMessage &msgRef = *msg;
+        if ( typeid(msgRef) == typeid(shared::CreateLobbyResponseMessage) ) {
             // Show the lobby screen
             LOG(INFO) << "Message is CreateLobbyResponse";
             GameController::_gameWindow->showPanel(GameController::_lobbyPanel);
@@ -192,21 +192,15 @@ namespace client
             GameController::_lobbyPanel->AddPlayer(
                     GameController::_connectionPanel->getPlayerName().Trim().ToStdString());
             LOG(INFO) << "Added Player";
-            msg.release();
-            LOG(INFO) << "Done with Message";
-
-        } else if ( shared::ResultResponseMessage *jlrm = dynamic_cast<shared::ResultResponseMessage *>(msg.get()) ) {
+        } else if ( typeid(msgRef) == typeid(shared::ResultResponseMessage) ) {
             LOG(INFO) << "Message is ResultResponseMessage";
             // Show the lobby screen
             GameController::_gameWindow->showPanel(GameController::_lobbyPanel);
-            msg.release();
-            LOG(INFO) << "Done with Message";
-        } else if ( shared::JoinLobbyBroadcastMessage *jlbm =
-                            dynamic_cast<shared::JoinLobbyBroadcastMessage *>(msg.get()) ) {
+        } else if ( typeid(msgRef) == typeid(shared::JoinLobbyBroadcastMessage) ) {
+            std::unique_ptr<shared::JoinLobbyBroadcastMessage> jlbm(
+                    static_cast<shared::JoinLobbyBroadcastMessage *>(msg.release()));
             LOG(INFO) << "Message is JoinLobbyBroadcastMessage";
-            GameController::RefreshPlayers(jlbm);
-            msg.release();
-            LOG(INFO) << "Done with Message";
+            GameController::RefreshPlayers(*jlbm);
         } else {
             // This code should never be reached
             LOG(ERROR) << "Unknown message";
@@ -214,10 +208,10 @@ namespace client
         }
     }
 
-    void GameController::RefreshPlayers(shared::JoinLobbyBroadcastMessage *msg)
+    void GameController::RefreshPlayers(shared::JoinLobbyBroadcastMessage &msg)
     {
         LOG(INFO) << "Refreshing Players";
-        GameController::_lobbyPanel->refreshPlayers(msg->players);
+        GameController::_lobbyPanel->refreshPlayers(msg.players);
         /*
         for ( auto player : msg->players ) {
             GameController::_lobbyPanel->AddPlayer(player);

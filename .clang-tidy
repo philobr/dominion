@@ -4,12 +4,16 @@
 # - bugprone-narrowing-conversions
 # - bugprone-easily-swappable-parameters
 # - bugprone-use-after-move
+# - bugprone-reserved-identifier
+# - bugprone-branch-clone
 Checks: |
   -*,
   bugprone-*,
   -bugprone-narrowing-conversions,
   -bugprone-easily-swappable-parameters,
   -bugprone-use-after-move,
+  -bugprone-reserved-identifier,
+  -bugprone-branch-clone,
   cppcoreguidelines-prefer-member-initializer,
   misc-definitions-in-headers,
   misc-redundant-expression,

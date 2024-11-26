@@ -6,6 +6,8 @@ namespace server
     {
         // TODO: define a stateful behaviour, ask @aaron if you need this
 
+// False positive of clang-tidy
+// NOLINTBEGIN(bugprone-macro-parentheses)
 #define DEFINE_BEHAVIOUR(name, types)                                                                                  \
     class name : public BehaviourBase                                                                                  \
     {                                                                                                                  \
@@ -17,7 +19,10 @@ namespace server
     inline BehaviourBase::ret_t name::apply(server::GameState &game_state,                                             \
                                             std::optional<std::unique_ptr<shared::ActionDecision>> action_decision)    \
             const
+// NOLINTEND(bugprone-macro-parentheses)
 
+// False positive of clang-tidy
+// NOLINTBEGIN(bugprone-macro-parentheses)
 #define DEFINE_TEMPLATED_BEHAVIOUR(name, types, template_type, template_name)                                          \
     template <template_type template_name>                                                                             \
     class name : public BehaviourBase                                                                                  \
@@ -31,6 +36,7 @@ namespace server
     inline BehaviourBase::ret_t name<template_name>::apply(                                                            \
             server::GameState &game_state, std::optional<std::unique_ptr<shared::ActionDecision>> action_decision)     \
             const
+// NOLINTEND(bugprone-macro-parentheses)
 
 // ================================
 // HELPER MACROS
@@ -62,7 +68,7 @@ namespace server
     [](std::optional<std::unique_ptr<shared::ActionDecision>> &action_decision) -> type *                              \
     {                                                                                                                  \
         ASSERT_DECISION                                                                                                \
-        auto *casted_decision = dynamic_cast<type *>(action_decision->get());                                          \
+        auto *casted_decision = dynamic_cast<(type) *>(action_decision->get());                                          \
         if ( !casted_decision ) {                                                                                      \
             LOG(ERROR) << "Decision has wrong type! Expected: " << utils::demangle(typeid(type).name())                \
                        << ", but got: " << utils::demangle(typeid(*action_decision->get()).name());                    \

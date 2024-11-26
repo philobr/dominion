@@ -41,6 +41,8 @@ namespace exception
 
 } // namespace exception
 
+// False positive of clang-tidy
+// NOLINTBEGIN(bugprone-macro-parentheses)
 #define NEW_BASE_EXCPETION(class_name)                                                                                 \
     namespace exception                                                                                                \
     {                                                                                                                  \
@@ -52,7 +54,10 @@ namespace exception
             explicit class_name(std::string &&error_msg) : BaseExceptionType(std::move(error_msg)) {}                  \
         };                                                                                                             \
     }
+// NOLINTEND(bugprone-macro-parentheses)
 
+// False positive of clang-tidy
+// NOLINTBEGIN(bugprone-macro-parentheses)
 #define NEW_INHERITED_EXCEPTION(class_name, base_class_name)                                                           \
     namespace exception                                                                                                \
     {                                                                                                                  \
@@ -64,6 +69,7 @@ namespace exception
             explicit class_name(std::string &&error_msg) : base_class_name(std::move(error_msg)) {}                    \
         };                                                                                                             \
     }
+// NOLINTEND(bugprone-macro-parentheses)
 
 
 /*

@@ -74,6 +74,21 @@ namespace server
             return;
         }
 
+        if ( players.size() < 2 ) {
+            LOG(DEBUG) << "Lobby::start_game is called with less than 2 players. Lobby ID: " << lobby_id
+                       << " , Player ID: " << player_id << " , Number of players: " << players.size();
+            shared::ResultResponseMessage failure_message = shared::ResultResponseMessage(
+                    lobby_id, false, request->message_id, "Not enough players to start game");
+            message_interface.send_message(std::make_unique<shared::ResultResponseMessage>(failure_message), player_id);
+            return;
+        }
+
+        if ( players.size() > MAX_PLAYERS ) {
+            LOG(ERROR) << "Tried starting a game with more than MAX_PLAYERS: " << MAX_PLAYERS
+                       << " players. Lobby ID: " << lobby_id;
+            throw std::runtime_error("Tried starting a game with more than MAX_PLAYERS players");
+        }
+
         // Create new game interface
         game_interface = GameInterface::make(lobby_id, request->selected_cards, players);
 

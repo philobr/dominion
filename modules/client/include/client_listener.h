@@ -1,9 +1,7 @@
 #pragma once
 
-#include <functional>
 #include <wx/wx.h>
 #include "sockpp/tcp_connector.h"
-#include "sockpp/tcp_socket.h"
 
 
 class ClientListener : public wxThread

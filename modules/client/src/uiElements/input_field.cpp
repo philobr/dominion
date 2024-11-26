@@ -1,4 +1,4 @@
-#include "input_field.h"
+#include <uiElements/input_field.h>
 
 namespace client
 {
@@ -26,6 +26,7 @@ namespace client
         );
         horizontalLayout->Add(this->_field, 0, wxALIGN_CENTER);
         this->_label->SetForegroundColour(wxColor(*wxBLACK));
+        this->_field->SetForegroundColour(wxColor(*wxBLACK));
         this->SetSizerAndFit(horizontalLayout);
     }
 

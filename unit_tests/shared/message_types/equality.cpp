@@ -178,19 +178,19 @@ TEST(SharedLibraryTest, CreateLobbyResponseMessageEquality)
 
 TEST(SharedLibraryTest, JoinLobbyBroadcastMessageEquality)
 {
-    JoinLobbyBroadcastMessage message1("game1", "player1", "message1");
+    JoinLobbyBroadcastMessage message1("game1", {"player_1", "player_2"}, "message1");
     ASSERT_EQ(message1, message1);
 
-    JoinLobbyBroadcastMessage message2("game1", "player1", "message1");
+    JoinLobbyBroadcastMessage message2("game1", {"player_1", "player_2"}, "message1");
     ASSERT_EQ(message1, message2);
 
-    JoinLobbyBroadcastMessage message3("game2", "player1", "message1");
+    JoinLobbyBroadcastMessage message3("game2", {"player_1", "player_2"}, "message1");
     ASSERT_NE(message1, message3);
 
-    JoinLobbyBroadcastMessage message4("game1", "player1", "message2");
+    JoinLobbyBroadcastMessage message4("game1", {"player_1", "player_2"}, "message2");
     ASSERT_NE(message1, message4);
 
-    JoinLobbyBroadcastMessage message5("game1", "player2", "message1");
+    JoinLobbyBroadcastMessage message5("game1", {"player_1", "player_3"}, "message1");
     ASSERT_NE(message1, message5);
 }
 

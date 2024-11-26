@@ -32,9 +32,6 @@ namespace server
         move<HAND, DISCARD_PILE>();
         move<PLAYED_CARDS, DISCARD_PILE>();
 
-        shuffle<DISCARD_PILE>();
-        move<DISCARD_PILE, DRAW_PILE_BOTTOM>();
-
         draw(5);
     }
 

@@ -41,16 +41,15 @@ namespace server
             return;
         }
 
-        // Send JoinLobbyBroadcast to all players
-        for ( const auto &p_id : players ) {
-            LOG(INFO) << "Sending JoinLobbyBroadcastMessage to Player ID: " << p_id;
-            shared::JoinLobbyBroadcastMessage join_message = shared::JoinLobbyBroadcastMessage(lobby_id, p_id);
-            message_interface.send_message(std::make_unique<shared::JoinLobbyBroadcastMessage>(join_message), p_id);
-        }
-
         // Add player to the lobby
-        LOG(DEBUG) << "Adding player to the lobby. Lobby ID: " << lobby_id << " , Player ID: " << player_id;
         players.push_back(player_id);
+
+        // Send JoinLobbyBroadcast to all players
+        for ( const auto &player_id : players ) {
+            shared::JoinLobbyBroadcastMessage join_message = shared::JoinLobbyBroadcastMessage(lobby_id, players);
+            message_interface.send_message(std::make_unique<shared::JoinLobbyBroadcastMessage>(join_message),
+                                           player_id);
+        }
 
         shared::ResultResponseMessage success_message =
                 shared::ResultResponseMessage(lobby_id, true, request->message_id);

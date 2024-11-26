@@ -65,7 +65,7 @@ namespace shared
     std::string JoinLobbyBroadcastMessage::to_json()
     {
         Document doc = document_from_server_to_client_msg("join_game_broadcast", *this);
-        ADD_STRING_MEMBER(this->player_id.c_str(), player_id);
+        ADD_ARRAY_OF_STRINGS_MEMBER(this->players, players);
         return document_to_string(doc);
     }
 

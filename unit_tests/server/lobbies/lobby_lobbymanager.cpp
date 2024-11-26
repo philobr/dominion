@@ -16,12 +16,12 @@ TEST(ServerLibraryTest, CreateLobby)
     auto request1 = std::make_unique<shared::CreateLobbyRequestMessage>("123", player_1);
     auto request2 = std::make_unique<shared::CreateLobbyRequestMessage>("123", player_2);
 
-    // All expected function calls of send_message
+    // All expected function calls of sendMessage
     {
         InSequence s;
-        EXPECT_CALL(*message_interface, send_message(IsCreateLobbyResponseMessage(), _))
+        EXPECT_CALL(*message_interface, sendMessage(IsCreateLobbyResponseMessage(), _))
                 .Times(1); // Success for first time creating lobby
-        EXPECT_CALL(*message_interface, send_message(IsFailureMessage(), _))
+        EXPECT_CALL(*message_interface, sendMessage(IsFailureMessage(), _))
                 .Times(1); // Error for second time creating lobby
     }
 
@@ -68,21 +68,21 @@ TEST(ServerLibraryTest, JoinLobby)
 
     lobby_manager.createLobby(std::move(request1));
 
-    // All expected function calls of send_message
+    // All expected function calls of sendMessage
     {
         InSequence s;
         // request 2
-        EXPECT_CALL(*message_interface, send_message(IsJoinLobbyBroadcastMessage(), _)).Times(2);
-        EXPECT_CALL(*message_interface, send_message(IsSuccessMessage(), player_2)).Times(1);
+        EXPECT_CALL(*message_interface, sendMessage(IsJoinLobbyBroadcastMessage(), _)).Times(2);
+        EXPECT_CALL(*message_interface, sendMessage(IsSuccessMessage(), player_2)).Times(1);
         // request 2 again
-        EXPECT_CALL(*message_interface, send_message(IsFailureMessage(), player_2)).Times(1);
+        EXPECT_CALL(*message_interface, sendMessage(IsFailureMessage(), player_2)).Times(1);
         // false_request 3
-        EXPECT_CALL(*message_interface, send_message(IsFailureMessage(), player_3)).Times(1);
+        EXPECT_CALL(*message_interface, sendMessage(IsFailureMessage(), player_3)).Times(1);
         // corrected_request 3 (1x ResultResponseMessage + 3x JoinLobbyBroadcastMessage)
         // + request 4 (1x ResultResponseMessage + 4x JoinLobbyBroadcastMessage)
-        EXPECT_CALL(*message_interface, send_message(_, _)).Times(9);
+        EXPECT_CALL(*message_interface, sendMessage(_, _)).Times(9);
         // request 5
-        EXPECT_CALL(*message_interface, send_message(IsFailureMessage(), player_5)).Times(1);
+        EXPECT_CALL(*message_interface, sendMessage(IsFailureMessage(), player_5)).Times(1);
     }
     lobby_manager.joinLobby(std::move(request2));
     ASSERT_EQ(games.at("123")->getPlayers().size(), 2) << "There should be two players in the lobby";
@@ -134,15 +134,15 @@ TEST(ServerLibraryTest, StartGame)
     lobby_manager.createLobby(std::move(request1));
     lobby_manager.joinLobby(std::move(request2));
 
-    // All expected function calls of send_message
+    // All expected function calls of sendMessage
     {
         InSequence s;
         // request3
-        EXPECT_CALL(*message_interface, send_message(IsFailureMessage(), player_1)).Times(1);
+        EXPECT_CALL(*message_interface, sendMessage(IsFailureMessage(), player_1)).Times(1);
         // request4
-        EXPECT_CALL(*message_interface, send_message(IsFailureMessage(), player_2)).Times(1);
+        EXPECT_CALL(*message_interface, sendMessage(IsFailureMessage(), player_2)).Times(1);
         // request5
-        EXPECT_CALL(*message_interface, send_message(_, _)).Times(4);
+        EXPECT_CALL(*message_interface, sendMessage(_, _)).Times(4);
     }
 
     lobby_manager.startGame(std::move(request3));
@@ -187,18 +187,18 @@ TEST(ServerLibraryTest, ReceiveAction)
     auto request7 = std::make_unique<shared::ActionDecisionMessage>(
             "123", player_1, std::make_unique<shared::BuyCardDecision>("Village"));
 
-    // First part of expected function calls of send_message
+    // First part of expected function calls of sendMessage
     {
         InSequence s;
         // request4
-        EXPECT_CALL(*message_interface, send_message(IsFailureMessage(), player_1)).Times(1);
+        EXPECT_CALL(*message_interface, sendMessage(IsFailureMessage(), player_1)).Times(1);
         // Start game messages
-        EXPECT_CALL(*message_interface, send_message(_, _)).Times(4);
+        EXPECT_CALL(*message_interface, sendMessage(_, _)).Times(4);
         // request6
-        EXPECT_CALL(*message_interface, send_message(IsFailureMessage(), player_3)).Times(1);
+        EXPECT_CALL(*message_interface, sendMessage(IsFailureMessage(), player_3)).Times(1);
         // request7
         // TODO: uncomment as soon as game_interface is implemented
-        // EXPECT_CALL(*message_interface, send_message(_, player_1)).Times(1);
+        // EXPECT_CALL(*message_interface, sendMessage(_, player_1)).Times(1);
     }
 
     lobby_manager.receiveAction(std::move(request4));

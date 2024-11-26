@@ -47,8 +47,7 @@ namespace server
         // Send JoinLobbyBroadcast to all players
         for ( const auto &player_id : players ) {
             shared::JoinLobbyBroadcastMessage join_message = shared::JoinLobbyBroadcastMessage(lobby_id, players);
-            message_interface.sendMessage(std::make_unique<shared::JoinLobbyBroadcastMessage>(join_message),
-                                           player_id);
+            message_interface.sendMessage(std::make_unique<shared::JoinLobbyBroadcastMessage>(join_message), player_id);
         }
 
         shared::ResultResponseMessage success_message =
@@ -59,8 +58,7 @@ namespace server
     };
 
     // PRE: selected_cards are validated in message parsing
-    void Lobby::startGame(MessageInterface &message_interface,
-                           std::unique_ptr<shared::StartGameRequestMessage> request)
+    void Lobby::startGame(MessageInterface &message_interface, std::unique_ptr<shared::StartGameRequestMessage> request)
     {
         // Check if gamemaster is starting the game
         Player::id_t player_id = request->player_id;
@@ -101,7 +99,7 @@ namespace server
     }
 
     void Lobby::receiveAction(MessageInterface &message_interface,
-                               std::unique_ptr<shared::ActionDecisionMessage> action)
+                              std::unique_ptr<shared::ActionDecisionMessage> action)
     {
         LOG(INFO) << "Lobby::receive_action called with Lobby ID: " << lobby_id
                   << " and Player ID: " << action->player_id;

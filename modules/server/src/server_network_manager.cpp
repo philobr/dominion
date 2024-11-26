@@ -152,7 +152,7 @@ namespace server
     }
 
     ssize_t ServerNetworkManager::sendMessage(std::unique_ptr<shared::ServerToClientMessage> message,
-                                               const shared::PlayerBase::id_t &player_id)
+                                              const shared::PlayerBase::id_t &player_id)
     {
         std::string address = BasicNetwork::getInstance()->getAddress(player_id);
         std::string msg = message->toJson();

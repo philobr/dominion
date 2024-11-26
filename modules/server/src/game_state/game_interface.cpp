@@ -12,8 +12,8 @@ namespace server
     }
 
     GameInterface::response_t GameInterface::receiveAction(std::unique_ptr<shared::ActionDecision> action_decision,
-                                                            const std::optional<std::string> &in_response_to,
-                                                            const Player::id_t &affected_player_id)
+                                                           const std::optional<std::string> &in_response_to,
+                                                           const Player::id_t &affected_player_id)
     {
         if ( in_response_to.has_value() ) {
             LOG(ERROR) << "this is not implemented yet!";
@@ -30,7 +30,7 @@ namespace server
     }
 
     GameInterface::response_t GameInterface::handleAction(std::unique_ptr<shared::ActionDecision> action_decision,
-                                                           const Player::id_t &affected_player_id)
+                                                          const Player::id_t &affected_player_id)
     {
 #define HANDLE_ACTION(type)                                                                                            \
     if ( dynamic_cast<shared::type *>(action_decision.get()) ) {                                                       \
@@ -47,9 +47,9 @@ namespace server
         throw std::runtime_error("Unreachable code");
     }
 
-    GameInterface::response_t
-    GameInterface::handleResponse(std::unique_ptr<shared::ActionDecision> /*action_decision*/,
-                                   const std::string & /*in_response_to*/, const Player::id_t & /*affected_player_id*/)
+    GameInterface::response_t GameInterface::handleResponse(std::unique_ptr<shared::ActionDecision> /*action_decision*/,
+                                                            const std::string & /*in_response_to*/,
+                                                            const Player::id_t & /*affected_player_id*/)
     {
 #define HANDLE_RESPONSE(type)                                                                                          \
     if ( dynamic_cast<shared::type *>(action_decision.get()) ) {                                                       \

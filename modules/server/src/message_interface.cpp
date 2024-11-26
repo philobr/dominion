@@ -7,7 +7,7 @@ namespace server
      * @brief Initializes the Message interface and thereby starts the server listener loop
      */
     void ImplementedMessageInterface::sendMessage(std::unique_ptr<shared::ServerToClientMessage> message,
-                                                   const shared::PlayerBase::id_t &player_id)
+                                                  const shared::PlayerBase::id_t &player_id)
     {
         LOG(INFO) << "Message Interface called";
         std::string address = BasicNetwork::getInstance()->getAddress(player_id);

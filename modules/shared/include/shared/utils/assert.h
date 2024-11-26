@@ -27,7 +27,7 @@ namespace utils
         // Overload operator<< for containers
         template <typename Container>
         std::enable_if_t<IsContainer<Container>::value, std::ostream &> operator<<(std::ostream &os,
-                                                                                    const Container &container)
+                                                                                   const Container &container)
         {
             os << "[";
             bool first = true;
@@ -43,7 +43,7 @@ namespace utils
 
         template <typename T1, typename T2>
         void logAssertionFailure(const T1 &actual, const T2 &expected, std::string_view op, std::string_view msg,
-                                   std::string_view file, int line, std::string_view function)
+                                 std::string_view file, int line, std::string_view function)
         {
             std::cerr << utils::colors::RED << "Assertion failed (" << op << "): " << utils::colors::RESET << std::endl
                       << utils::colors::BLUE << "Message:   " << utils::colors::RESET << msg << std::endl
@@ -55,8 +55,8 @@ namespace utils
         }
 
         template <typename T1, typename T2, typename Compare>
-        void customAssert(const T1 &actual, const T2 &expected, Compare comp, std::string_view op,
-                           std::string_view msg, std::string_view file, int line, std::string_view function)
+        void customAssert(const T1 &actual, const T2 &expected, Compare comp, std::string_view op, std::string_view msg,
+                          std::string_view file, int line, std::string_view function)
         {
 #ifndef NDEBUG
             if constexpr ( IsContainer<T1>::value && IsContainer<T2>::value ) {
@@ -92,56 +92,56 @@ namespace utils
  * @brief Asserts (expr)
  */
 #define _ASSERT_TRUE(expr, msg)                                                                                        \
-    utils::assert_helpers::customAssert((expr), true, [](const auto &a, const auto &b) { return a == b; },            \
-                                         "==", (msg), __FILE__, __LINE__, __func__)
+    utils::assert_helpers::customAssert((expr), true, [](const auto &a, const auto &b) { return a == b; },             \
+                                        "==", (msg), __FILE__, __LINE__, __func__)
 
 /**
  * @brief Asserts (!expr)
  */
 #define _ASSERT_FALSE(expr, msg)                                                                                       \
-    utils::assert_helpers::customAssert((expr), false, [](const auto &a, const auto &b) { return a == b; },           \
-                                         "==", (msg), __FILE__, __LINE__, __func__)
+    utils::assert_helpers::customAssert((expr), false, [](const auto &a, const auto &b) { return a == b; },            \
+                                        "==", (msg), __FILE__, __LINE__, __func__)
 
 /**
  * @brief Asserts (actual == expected)
  * Also works for containers
  */
 #define _ASSERT_EQ(actual, expected, msg)                                                                              \
-    utils::assert_helpers::customAssert((actual), (expected), [](const auto &a, const auto &b) { return a == b; },    \
-                                         "==", (msg), __FILE__, __LINE__, __func__)
+    utils::assert_helpers::customAssert((actual), (expected), [](const auto &a, const auto &b) { return a == b; },     \
+                                        "==", (msg), __FILE__, __LINE__, __func__)
 
 /**
  * @brief Asserts (actual != expected)
  * Also works for containers
  */
 #define _ASSERT_NEQ(actual, expected, msg)                                                                             \
-    utils::assert_helpers::customAssert((actual), (expected), [](const auto &a, const auto &b) { return a != b; },    \
-                                         "!=", (msg), __FILE__, __LINE__, __func__)
+    utils::assert_helpers::customAssert((actual), (expected), [](const auto &a, const auto &b) { return a != b; },     \
+                                        "!=", (msg), __FILE__, __LINE__, __func__)
 
 /**
  * @brief Asserts (actual < expected)
  */
 #define _ASSERT_LT(actual, expected, msg)                                                                              \
-    utils::assert_helpers::customAssert((actual), (expected), [](const auto &a, const auto &b) { return a < b; },     \
-                                         "<", (msg), __FILE__, __LINE__, __func__)
+    utils::assert_helpers::customAssert((actual), (expected), [](const auto &a, const auto &b) { return a < b; }, "<", \
+                                        (msg), __FILE__, __LINE__, __func__)
 
 /**
  * @brief Asserts (actual > expected)
  */
 #define _ASSERT_GT(actual, expected, msg)                                                                              \
-    utils::assert_helpers::customAssert((actual), (expected), [](const auto &a, const auto &b) { return a > b; },     \
-                                         ">", (msg), __FILE__, __LINE__, __func__)
+    utils::assert_helpers::customAssert((actual), (expected), [](const auto &a, const auto &b) { return a > b; }, ">", \
+                                        (msg), __FILE__, __LINE__, __func__)
 
 /**
  * @brief Asserts (actual <= expected)
  */
 #define _ASSERT_LE(actual, expected, msg)                                                                              \
-    utils::assert_helpers::customAssert((actual), (expected), [](const auto &a, const auto &b) { return a <= b; },    \
-                                         "<=", (msg), __FILE__, __LINE__, __func__)
+    utils::assert_helpers::customAssert((actual), (expected), [](const auto &a, const auto &b) { return a <= b; },     \
+                                        "<=", (msg), __FILE__, __LINE__, __func__)
 
 /**
  * @brief Asserts (actual >= expected)
  */
 #define _ASSERT_GE(actual, expected, msg)                                                                              \
-    utils::assert_helpers::customAssert((actual), (expected), [](const auto &a, const auto &b) { return a >= b; },    \
-                                         ">=", (msg), __FILE__, __LINE__, __func__)
+    utils::assert_helpers::customAssert((actual), (expected), [](const auto &a, const auto &b) { return a >= b; },     \
+                                        ">=", (msg), __FILE__, __LINE__, __func__)

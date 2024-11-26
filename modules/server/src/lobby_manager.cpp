@@ -18,7 +18,7 @@ namespace server
             shared::ResultResponseMessage failure_message =
                     shared::ResultResponseMessage(lobby_id, false, request->message_id, "Lobby already exists");
             message_interface->sendMessage(std::make_unique<shared::ResultResponseMessage>(failure_message),
-                                            game_master_id);
+                                           game_master_id);
             return;
         }
 
@@ -30,7 +30,7 @@ namespace server
         shared::CreateLobbyResponseMessage create_lobby_message =
                 shared::CreateLobbyResponseMessage(lobby_id, available_cards, request->message_id);
         message_interface->sendMessage(std::make_unique<shared::CreateLobbyResponseMessage>(create_lobby_message),
-                                        game_master_id);
+                                       game_master_id);
         return;
     };
 
@@ -46,8 +46,7 @@ namespace server
             // TODO: Provide game_id and message_id
             shared::ResultResponseMessage failure_message =
                     shared::ResultResponseMessage(lobby_id, false, request->message_id, "Lobby does not exist");
-            message_interface->sendMessage(std::make_unique<shared::ResultResponseMessage>(failure_message),
-                                            player_id);
+            message_interface->sendMessage(std::make_unique<shared::ResultResponseMessage>(failure_message), player_id);
             return;
         }
 
@@ -65,8 +64,7 @@ namespace server
                        << " , Player ID: " << player_id;
             shared::ResultResponseMessage failure_message =
                     shared::ResultResponseMessage(lobby_id, false, request->message_id, "Lobby does not exist");
-            message_interface->sendMessage(std::make_unique<shared::ResultResponseMessage>(failure_message),
-                                            player_id);
+            message_interface->sendMessage(std::make_unique<shared::ResultResponseMessage>(failure_message), player_id);
             return;
         }
 
@@ -85,8 +83,7 @@ namespace server
                        << " , Player ID: " << player_id;
             shared::ResultResponseMessage failure_message =
                     shared::ResultResponseMessage(lobby_id, false, msg->message_id, "Lobby does not exist");
-            message_interface->sendMessage(std::make_unique<shared::ResultResponseMessage>(failure_message),
-                                            player_id);
+            message_interface->sendMessage(std::make_unique<shared::ResultResponseMessage>(failure_message), player_id);
             return;
         }
         games.at(lobby_id)->receiveAction(*message_interface, std::move(msg));

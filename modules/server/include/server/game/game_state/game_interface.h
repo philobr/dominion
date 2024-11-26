@@ -36,8 +36,8 @@ namespace server
          * @return response_t
          */
         response_t receiveAction(std::unique_ptr<shared::ActionDecision> action_decision,
-                                  const std::optional<std::string> &in_response_to,
-                                  const Player::id_t &affected_player_id);
+                                 const std::optional<std::string> &in_response_to,
+                                 const Player::id_t &affected_player_id);
 
     private:
         GameInterface(const std::string &game_id, const std::vector<shared::CardBase::id_t> &play_cards,
@@ -51,10 +51,10 @@ namespace server
         }
 
         response_t handleAction(std::unique_ptr<shared::ActionDecision> action_decision,
-                                 const Player::id_t &affected_player_id);
+                                const Player::id_t &affected_player_id);
 
         response_t handleResponse(std::unique_ptr<shared::ActionDecision> action_decision,
-                                   const std::string &in_response_to, const Player::id_t &affected_player_id);
+                                  const std::string &in_response_to, const Player::id_t &affected_player_id);
 
 #define HANDLER(decision_type) /* can also be used to define the func outside of the class */                          \
     response_t decision_type##_handler(std::unique_ptr<shared::decision_type> decision,                                \

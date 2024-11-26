@@ -32,7 +32,7 @@ namespace server
 
         // function to send via the BasicNetwork class
         static ssize_t sendMessage(std::unique_ptr<shared::ServerToClientMessage> message,
-                                    const shared::PlayerBase::id_t &player_id);
+                                   const shared::PlayerBase::id_t &player_id);
 
     private:
         // Lobby object to pass received messages to

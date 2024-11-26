@@ -72,15 +72,15 @@ TEST(ServerLibraryTest, JoinLobby)
     {
         InSequence s;
         // request 2
-        EXPECT_CALL(*message_interface, send_message(IsJoinLobbyBroadcastMessage(), player_1)).Times(1);
+        EXPECT_CALL(*message_interface, send_message(IsJoinLobbyBroadcastMessage(), _)).Times(2);
         EXPECT_CALL(*message_interface, send_message(IsSuccessMessage(), player_2)).Times(1);
         // request 2 again
         EXPECT_CALL(*message_interface, send_message(IsFailureMessage(), player_2)).Times(1);
         // false_request 3
         EXPECT_CALL(*message_interface, send_message(IsFailureMessage(), player_3)).Times(1);
-        // corrected_request 3 (1x ResultResponseMessage + 2x JoinLobbyBroadcastMessage)
-        // + request 4 (1x ResultResponseMessage + 3x JoinLobbyBroadcastMessage)
-        EXPECT_CALL(*message_interface, send_message(_, _)).Times(7);
+        // corrected_request 3 (1x ResultResponseMessage + 3x JoinLobbyBroadcastMessage)
+        // + request 4 (1x ResultResponseMessage + 4x JoinLobbyBroadcastMessage)
+        EXPECT_CALL(*message_interface, send_message(_, _)).Times(9);
         // request 5
         EXPECT_CALL(*message_interface, send_message(IsFailureMessage(), player_5)).Times(1);
     }

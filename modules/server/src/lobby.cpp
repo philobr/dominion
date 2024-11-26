@@ -41,16 +41,15 @@ namespace server
             return;
         }
 
-        // Send JoinLobbyBroadcast to all players
-        for ( const auto &p_id : players ) {
-            LOG(INFO) << "Sending JoinLobbyBroadcastMessage to Player ID: " << p_id;
-            shared::JoinLobbyBroadcastMessage join_message = shared::JoinLobbyBroadcastMessage(lobby_id, p_id);
-            message_interface.send_message(std::make_unique<shared::JoinLobbyBroadcastMessage>(join_message), p_id);
-        }
-
         // Add player to the lobby
-        LOG(DEBUG) << "Adding player to the lobby. Lobby ID: " << lobby_id << " , Player ID: " << player_id;
         players.push_back(player_id);
+
+        // Send JoinLobbyBroadcast to all players
+        for ( const auto &player_id : players ) {
+            shared::JoinLobbyBroadcastMessage join_message = shared::JoinLobbyBroadcastMessage(lobby_id, players);
+            message_interface.send_message(std::make_unique<shared::JoinLobbyBroadcastMessage>(join_message),
+                                           player_id);
+        }
 
         shared::ResultResponseMessage success_message =
                 shared::ResultResponseMessage(lobby_id, true, request->message_id);
@@ -94,7 +93,7 @@ namespace server
 
             // send game state to all players
             LOG(INFO) << "Sending GameStateMessage in Lobby ID: " << lobby_id << " to Player ID: " << p_id;
-            std::unique_ptr<shared::ReducedGameState> reduced_game_state = game_state->get_reduced_state(p_id);
+            std::unique_ptr<reduced::GameState> reduced_game_state = game_state->get_reduced_state(p_id);
             std::unique_ptr<shared::GameStateMessage> game_state_message =
                     std::make_unique<shared::GameStateMessage>(lobby_id, std::move(reduced_game_state));
             message_interface.send_message(std::move(game_state_message), p_id);

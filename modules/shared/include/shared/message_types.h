@@ -145,7 +145,7 @@ namespace shared
     {
     public:
         ~GameStateMessage() = default;
-        GameStateMessage(std::string game_id, std::unique_ptr<ReducedGameState> game_state,
+        GameStateMessage(std::string game_id, std::unique_ptr<reduced::GameState> game_state,
                          std::optional<std::string> in_response_to = std::nullopt,
                          std::string message_id = uuid_generator::generate_uuid_v4()) :
 
@@ -155,7 +155,7 @@ namespace shared
         std::string to_json() override;
         bool operator==(const GameStateMessage &other) const;
 
-        std::unique_ptr<ReducedGameState> game_state;
+        std::unique_ptr<reduced::GameState> game_state;
         std::optional<std::string> in_response_to;
     };
 
@@ -180,14 +180,14 @@ namespace shared
     {
     public:
         ~JoinLobbyBroadcastMessage() = default;
-        JoinLobbyBroadcastMessage(std::string game_id, PlayerBase::id_t player_id,
+        JoinLobbyBroadcastMessage(std::string game_id, std::vector<shared::PlayerBase::id_t> players,
                                   std::string message_id = uuid_generator::generate_uuid_v4()) :
             ServerToClientMessage(game_id, message_id),
-            player_id(player_id)
+            players(players)
         {}
         std::string to_json() override;
         bool operator==(const JoinLobbyBroadcastMessage &other) const;
-        PlayerBase::id_t player_id;
+        std::vector<shared::PlayerBase::id_t> players;
     };
 
     class StartGameBroadcastMessage final : public ServerToClientMessage

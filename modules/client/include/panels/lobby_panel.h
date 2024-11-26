@@ -1,5 +1,7 @@
 #pragma once
 
+#include <string>
+#include <vector>
 #include <wx/sizer.h>
 #include <wx/wx.h>
 
@@ -17,6 +19,12 @@ namespace client
          * @param parent The parent window.
          */
         explicit LobbyPanel(wxWindow *parent);
+
+        /**
+         * @brief Refreshes the players in the lobby.
+         * @param players The list of players.
+         */
+        void refreshPlayers(std::vector<std::string> &players);
 
         /// @brief Adds a player visually to the lobby
         /// This is specifically not doing any logic

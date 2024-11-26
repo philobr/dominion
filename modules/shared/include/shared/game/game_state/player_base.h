@@ -77,44 +77,4 @@ namespace shared
         static std::unique_ptr<PlayerBase> fromJson(const rapidjson::Value &json);
     };
 
-    class ReducedEnemy : public PlayerBase
-    {
-    public:
-        using ptr_t = std::unique_ptr<ReducedEnemy>;
-
-        static ptr_t make(const PlayerBase &player, unsigned int hand_size);
-
-        ReducedEnemy(ReducedEnemy &&other) noexcept : PlayerBase(std::move(other)), hand_size(other.hand_size) {}
-
-        rapidjson::Document toJson() const;
-        static std::unique_ptr<ReducedEnemy> fromJson(const rapidjson::Value &json);
-
-        unsigned int getHandSize() const;
-
-    protected:
-        ReducedEnemy(const PlayerBase &player, unsigned int hand);
-        unsigned int hand_size;
-    };
-
-    class ReducedPlayer : public PlayerBase
-    {
-    public:
-        using ptr_t = std::unique_ptr<ReducedPlayer>;
-
-        static ptr_t make(const PlayerBase &player, std::vector<CardBase::id_t> hand_cards);
-
-        ReducedPlayer(ReducedPlayer &&other) noexcept :
-            PlayerBase(std::move(other)), hand_cards(std::move(other.hand_cards))
-        {}
-
-        rapidjson::Document toJson() const;
-        static std::unique_ptr<ReducedPlayer> fromJson(const rapidjson::Value &json);
-
-        const std::vector<CardBase::id_t> &getHandCards() const;
-
-    protected:
-        ReducedPlayer(const PlayerBase &player, const std::vector<CardBase::id_t> &hand_cards);
-        const std::vector<CardBase::id_t> hand_cards;
-    };
-
 } // namespace shared

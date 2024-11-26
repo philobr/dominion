@@ -80,9 +80,9 @@ namespace server
          */
         inline void draw(size_t n) { move<DRAW_PILE_TOP, HAND>(n); }
 
-        inline void play_card_from_hand(const size_t &card_index) { move_indices<HAND, PLAYED_CARDS>(std::vector{hand_index})}
+        inline void play_card_from_hand(const size_t &card_index) { move_indices<HAND, PLAYED_CARDS>(card_index)}
 
-        inline void play_card_from_staged(const size_t &card_index) { move_indices<STAGED_CARDS, PLAYED_CARDS>({hand_index})}
+        inline void play_card_from_staged(const size_t &card_index) { move_indices<STAGED_CARDS, PLAYED_CARDS>(card_index)}
 
         /**
          * @brief Adds a card to the discard_pile
@@ -198,6 +198,17 @@ namespace server
         template <enum CardAccess FROM>
         inline std::vector<shared::CardBase::id_t> take(unsigned int num_cards = 0);
 
+         /**
+         * @brief Removes the card at the index and returns it.
+         * If the index is out of bounds we throw (gets checked before taking cards).
+         *
+         * @tparam FROM
+         * @param index
+         * @return shared::CardBase::id_t
+         */
+        template <enum CardAccess FROM>
+        inline shared::CardBase::id_t take_indices(const size_t &index);
+
         /**
          * @brief Removes the cards at the indices and returns a vector of those.
          * If the indices are out of bounds we throw (gets checked before taking cards).
@@ -219,6 +230,18 @@ namespace server
          */
         template <enum CardAccess FROM, enum CardAccess TO>
         inline void move(unsigned int n = 0);
+
+        /**
+         * @brief Moves the card at the index form FROM to TO (push_back, except for draw_pile top).
+         * We throw if index is out of bounds.
+         * We throw if we try to move from trash.
+         *
+         * @tparam FROM
+         * @tparam TO
+         * @param indices
+         */
+        template <enum CardAccess FROM, enum CardAccess TO>
+        inline void move_indices(const size_t &index);
 
         /**
          * @brief Moves the cards at the indices form FROM to TO (push_back, except for draw_pile top).
@@ -304,6 +327,21 @@ namespace server
     }
 
     template <enum CardAccess FROM>
+    inline shared::CardBase::id_t Player::take_indices(const size_t &index)
+    {
+        auto &pile = getMutable<FROM>();
+
+        // check for overflow
+        if ( index >= pile.size() ) {
+            throw std::out_of_range("Index out of range for the pile.");
+        }
+
+        shared::CardBase::id_t taken_card = std::move(pile[index]);
+        pile.erase(pile.begin() + index);
+        return taken_card;
+    }
+
+    template <enum CardAccess FROM>
     inline std::vector<shared::CardBase::id_t> Player::take_indices(const std::vector<unsigned int> &indices)
     {
         auto &pile = getMutable<FROM>();
@@ -373,7 +411,7 @@ namespace server
     }
 
     template <enum CardAccess FROM, enum CardAccess TO>
-    inline void Player::move_indices(const size_t &indices)
+    inline void Player::move_indices(const size_t &index)
     {
         if constexpr ( TO == TRASH ) {
             take_indices<FROM>(indices);

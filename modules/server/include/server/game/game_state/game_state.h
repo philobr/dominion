@@ -75,6 +75,12 @@ namespace server
          * @return false
          */
         bool try_buy(const Player::id_t &player_id, const shared::CardBase::id_t &card);
+
+        /**
+         * @brief This function checks if the player is in Action phase, the card is an action card and if the player
+         * has actions left. If both conditions are met, the card is moved from the hand/staged cards to the played
+         * cards and the currently_playing_card (in Player) and the actions are decremented.
+         */
         bool try_play(const Player::id_t &affected_player, size_t hand_index, shared::CardAccess from);
 
         /**

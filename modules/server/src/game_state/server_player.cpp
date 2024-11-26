@@ -18,14 +18,15 @@ namespace server
         return std::find(staged_cards.begin(), staged_cards.end(), card_id) != staged_cards.end();
     }
 
-    shared::ReducedPlayer::ptr_t Player::get_reduced_player()
+    reduced::Player::ptr_t Player::get_reduced_player()
+
     {
-        return shared::ReducedPlayer::make(static_cast<shared::PlayerBase>(*this), hand_cards);
+        return reduced::Player::make(static_cast<shared::PlayerBase>(*this), hand_cards);
     }
 
-    shared::ReducedEnemy::ptr_t Player::get_reduced_enemy()
+    reduced::Enemy::ptr_t Player::get_reduced_enemy()
     {
-        return shared::ReducedEnemy::make(static_cast<shared::PlayerBase>(*this), hand_cards.size());
+        return reduced::Enemy::make(static_cast<shared::PlayerBase>(*this), hand_cards.size());
     }
 
     void Player::reset_values()

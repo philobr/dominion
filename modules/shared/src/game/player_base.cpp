@@ -4,56 +4,6 @@
 
 namespace shared
 {
-    ReducedPlayer::ReducedPlayer(const PlayerBase &player, const std::vector<CardBase::id_t> &hand_cards) :
-        PlayerBase(player), hand_cards(std::move(hand_cards))
-    {}
-
-    ReducedPlayer::ptr_t ReducedPlayer::make(const PlayerBase &player, std::vector<CardBase::id_t> hand_cards)
-    {
-        return ptr_t(new ReducedPlayer(player, hand_cards));
-    }
-
-    rapidjson::Document ReducedPlayer::toJson() const
-    {
-        rapidjson::Document doc = PlayerBase::toJson();
-        ADD_ARRAY_OF_STRINGS_MEMBER(this->hand_cards, hand_cards);
-        return doc;
-    }
-
-    std::unique_ptr<ReducedPlayer> ReducedPlayer::fromJson(const rapidjson::Value &json)
-    {
-        std::unique_ptr<PlayerBase> player_base = PlayerBase::fromJson(json);
-        std::vector<CardBase::id_t> hand_cards;
-        GET_STRING_ARRAY_MEMBER(hand_cards, json, "hand_cards");
-        return std::unique_ptr<ReducedPlayer>(new ReducedPlayer(*player_base, hand_cards));
-    }
-
-    const std::vector<CardBase::id_t> &ReducedPlayer::getHandCards() const { return hand_cards; }
-
-    ReducedEnemy::ReducedEnemy(const PlayerBase &player, unsigned int hand) : PlayerBase(player), hand_size(hand) {}
-
-    ReducedEnemy::ptr_t ReducedEnemy::make(const PlayerBase &player, unsigned int hand_size)
-    {
-        return ptr_t(new ReducedEnemy(player, hand_size));
-    }
-
-    rapidjson::Document ReducedEnemy::toJson() const
-    {
-        rapidjson::Document doc = PlayerBase::toJson();
-        ADD_UINT_MEMBER(this->hand_size, hand_size);
-        return doc;
-    }
-
-    std::unique_ptr<ReducedEnemy> ReducedEnemy::fromJson(const rapidjson::Value &json)
-    {
-        std::unique_ptr<PlayerBase> player_base = PlayerBase::fromJson(json);
-        unsigned int hand_size;
-        GET_UINT_MEMBER(hand_size, json, "hand_size");
-        return std::unique_ptr<ReducedEnemy>(new ReducedEnemy(*player_base, hand_size));
-    }
-
-    unsigned int ReducedEnemy::getHandSize() const { return hand_size; }
-
     PlayerBase::PlayerBase(id_t player_id) :
         player_id(player_id), victory_points(0), actions(1), buys(1), treasure(0), draw_pile_size(0)
     {}

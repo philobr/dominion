@@ -71,17 +71,16 @@ namespace server
     GameInterface::PlayActionCardDecision_handler(std::unique_ptr<shared::PlayActionCardDecision> action_decision,
                                                   const Player::id_t &player_id)
     {
-        if ( game_state->getPhase() != GamePhase::ACTION_PHASE ) {
-            LOG(WARN) << "player(" << player_id << ") is currently not in the action phase, retrying";
-            return std::make_unique<shared::ActionPhaseOrder>();
-        }
-
+        // checks if the card is currently playable (multiple checks done)
         if ( game_state->try_play(player_id, action_decision->cardIndex, action_decision->from) ) {
+            const auto &card_id =
+                    game_state->get_player(player_id).get<shared::CardAccess::HAND>()[action_decision->cardIndex];
+            cur_behaviours->loadBehaviours(card_id);
+            return (cur_behaviours->receiveAction(*game_state, player_id, std::nullopt, std::nullopt)).value();
         }
 
-        // TODO: Implement for MVP 3
-        LOG(ERROR) << "Not implemented yet, i will kill myself now:) much fun debugging!";
-        throw std::runtime_error("Not implemented yet");
+        // something went wrong, retry ActionPhase
+        return std::make_unique<shared::ActionPhaseOrder>();
     }
 
     GameInterface::response_t
@@ -125,12 +124,12 @@ namespace server
     }
 
     GameInterface::response_t GameInterface::PlayActionCardDecision_response_handler(
-            std::unique_ptr<shared::PlayActionCardDecision> /*action_decision*/, const Player::id_t & /*player_id*/,
-            const std::string & /*in_response_to*/)
+            std::unique_ptr<shared::PlayActionCardDecision> action_decision, const Player::id_t &player_id,
+            const std::string &in_response_to)
     {
-        // TODO: Implement for MVP 3
-        LOG(ERROR) << "Not implemented";
-        throw std::runtime_error("Not implemented");
+        // Checks for validity are done in the behaviour chain
+        return (cur_behaviours->receiveAction(*game_state, player_id, std::move(action_decision), in_response_to))
+                .value();
     }
 
     GameInterface::response_t

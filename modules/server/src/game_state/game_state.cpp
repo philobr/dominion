@@ -113,21 +113,29 @@ namespace server
     bool GameState::try_play(const Player::id_t &affected_player, size_t hand_index, shared::CardAccess from)
     {
         auto &player = get_player(affected_player);
-        auto &card_id = player.get<shared::CardAccess::HAND>()[hand_index];
-        auto &card = shared::CardFactory::getCard(card_id);
+        const auto &card_id = player.get<shared::CardAccess::HAND>()[hand_index];
+        const auto &card = shared::CardFactory::getCard(card_id);
 
         if ( card.isAction() ) {
-            if ( phase != GamePhase::ACTION_PHASE ) {
-                LOG(ERROR) << "tried to play an action card in GamePhase::" << static_cast<int>(phase);
-                throw exception::OutOfPhase("");
+            if ( getPhase() != GamePhase::ACTION_PHASE ) {
+                LOG(WARN) << "player(" << affected_player << ") is currently not in the action phase, retrying";
+                return false;
             }
-
+            if ( player.is_currently_playing_card() ) {
+                LOG(WARN) << "player(" << affected_player << ") is already playing a different card, retrying";
+                return false;
+            }
             if ( player.getActions() == 0 ) {
                 force_switch_phase();
-                LOG(ERROR) << "tried to play an action card, but has no actions left";
-                throw exception::OutOfActions("");
+                LOG(WARN) << "tried to play an action card, but has no actions left";
+                return false;
+            }
+            if ( !player.has_card_playable(card_id) ) {
+                LOG(ERROR) << "tried to play a card that is not in the hand or staged cards";
+                throw exception::InvalidCardAccess("");
             }
 
+            player.set_currently_playing_card(card_id);
             player.decActions();
             phase = GamePhase::PLAYING_ACTION_CARD;
 
@@ -137,15 +145,14 @@ namespace server
                 player.play_card_from_staged(hand_index);
             } else {
                 LOG(ERROR) << "tried to play a card from an invalid pile";
-                // throw exception::InvalidCardAccess("");
+                throw exception::InvalidCardAccess("");
             }
             return true;
         }
 
         LOG(WARN) << "tried to play a card that isn't an action card";
 
-        return true; // todo
-        // throw exception::InvalidCardType("");
+        return false;
     }
 
     void GameState::end_turn()

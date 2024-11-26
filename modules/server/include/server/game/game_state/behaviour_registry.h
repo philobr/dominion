@@ -34,7 +34,7 @@ namespace server
         /**
          * @brief Initialises all behaviours for the the cards of the basegame 2nd edition.
          */
-        void initialise_behaviours();
+        void initialiseBehaviours();
 
         /**
          * @brief Inserts a list of behaviours into the registry. This will be called from the constructor.

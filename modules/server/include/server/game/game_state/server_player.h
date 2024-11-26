@@ -64,8 +64,8 @@ namespace server
             currently_playing_card(other.currently_playing_card), current_behaviour_idx(other.current_behaviour_idx)
         {}
 
-        reduced::Player::ptr_t get_reduced_player();
-        reduced::Enemy::ptr_t get_reduced_enemy();
+        reduced::Player::ptr_t getReducedPlayer();
+        reduced::Enemy::ptr_t getReducedEnemy();
 
         bool canBlock() const
         {
@@ -119,7 +119,7 @@ namespace server
          * @param indices
          */
         template <enum CardAccess TO_PILE>
-        inline void un_stage(const std::vector<unsigned int> &indices);
+        inline void unStage(const std::vector<unsigned int> &indices);
 
         void addActions(unsigned int n) { actions += n; }
         void addBuys(unsigned int n) { buys += n; }
@@ -138,7 +138,7 @@ namespace server
         /**
          * @brief Moves the played_cards & hand_cards to the discard_pile, then draws 5 cards again.
          */
-        void end_turn();
+        void endTurn();
 
     protected:
         /**
@@ -148,7 +148,7 @@ namespace server
          * - treasure               0
          * - victory_points         0
          */
-        void reset_values();
+        void resetValues();
 
         template <enum CardAccess PILE>
         inline std::vector<shared::CardBase::id_t> &getMutable();
@@ -203,7 +203,7 @@ namespace server
          * @return std::vector<shared::CardBase::id_t>
          */
         template <enum CardAccess FROM>
-        inline std::vector<shared::CardBase::id_t> take_indices(const std::vector<unsigned int> &indices);
+        inline std::vector<shared::CardBase::id_t> takeIndices(const std::vector<unsigned int> &indices);
 
         /**
          * @brief Moves cards from pile FROM to pile TO (push_back, except for draw_pile top).
@@ -226,7 +226,7 @@ namespace server
          * @param indices
          */
         template <enum CardAccess FROM, enum CardAccess TO>
-        inline void move_indices(const std::vector<unsigned int> &indices);
+        inline void moveIndices(const std::vector<unsigned int> &indices);
     };
 
     template <enum CardAccess PILE>
@@ -300,7 +300,7 @@ namespace server
     }
 
     template <enum CardAccess FROM>
-    inline std::vector<shared::CardBase::id_t> Player::take_indices(const std::vector<unsigned int> &indices)
+    inline std::vector<shared::CardBase::id_t> Player::takeIndices(const std::vector<unsigned int> &indices)
     {
         auto &pile = getMutable<FROM>();
 
@@ -369,25 +369,25 @@ namespace server
     }
 
     template <enum CardAccess FROM, enum CardAccess TO>
-    inline void Player::move_indices(const std::vector<unsigned int> &indices)
+    inline void Player::moveIndices(const std::vector<unsigned int> &indices)
     {
         if constexpr ( TO == TRASH ) {
-            take_indices<FROM>(indices);
+            takeIndices<FROM>(indices);
         } else {
-            add<TO>(take_indices<FROM>(indices));
+            add<TO>(takeIndices<FROM>(indices));
         }
     }
 
     template <enum CardAccess PILE>
     inline void Player::trash(const std::vector<unsigned int> &indices)
     {
-        move_indices<PILE, TRASH>(indices);
+        moveIndices<PILE, TRASH>(indices);
     }
 
     template <enum CardAccess PILE>
     inline void Player::discard(const std::vector<unsigned int> &indices)
     {
-        move_indices<PILE, DISCARD_PILE>(indices);
+        moveIndices<PILE, DISCARD_PILE>(indices);
     }
 
     template <enum CardAccess PILE>
@@ -403,7 +403,7 @@ namespace server
     }
 
     template <enum CardAccess TO_PILE>
-    inline void Player::un_stage(const std::vector<unsigned int> &indices)
+    inline void Player::unStage(const std::vector<unsigned int> &indices)
     {
         move_indices<STAGED_CARDS, TO_PILE>(indices);
     }

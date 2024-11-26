@@ -39,11 +39,11 @@ namespace server
         }
 
         std::cout << "Awaiting connections on port " << port << "..." << std::endl;
-        listener_loop();
+        listenerLoop();
         // start endless loop
     }
 
-    void ServerNetworkManager::listener_loop()
+    void ServerNetworkManager::listenerLoop()
     {
         // intentional endless loop
         while ( true ) {
@@ -57,10 +57,10 @@ namespace server
                 LOG(ERROR) << "Error accepting incoming connection: " << _acc.last_error_str();
             } else {
                 std::string address = sock.peer_address().to_string();
-                BasicNetwork::getInstance()->add_address_to_socket(address, sock.clone());
+                BasicNetwork::getInstance()->addAddressToSocket(address, sock.clone());
                 // Create a listener thread and transfer the new stream to it.
                 // Incoming messages will be passed to handle_message().
-                std::thread listener(read_loop, std::move(sock), handle_message);
+                std::thread listener(readLoop, std::move(sock), handleMessage);
 
                 listener.detach();
             }
@@ -69,7 +69,7 @@ namespace server
 
     // Runs in a thread and reads anything coming in on the 'socket'.
     // Once a message is fully received, the string is passed on to the 'handle_message()' function
-    void ServerNetworkManager::read_loop(sockpp::tcp_socket socket, const handler &message_handler)
+    void ServerNetworkManager::readLoop(sockpp::tcp_socket socket, const handler &message_handler)
     {
         sockpp::socket_initializer sockInit; // initializes socket framework underneath
 
@@ -123,11 +123,11 @@ namespace server
     }
 
 
-    void ServerNetworkManager::handle_message(const std::string &msg, const sockpp::tcp_socket::addr_t &peer_address)
+    void ServerNetworkManager::handleMessage(const std::string &msg, const sockpp::tcp_socket::addr_t &peer_address)
     {
         try {
             // try to parse a client_request from msg
-            std::unique_ptr<shared::ClientToServerMessage> req = shared::ClientToServerMessage::from_json(msg);
+            std::unique_ptr<shared::ClientToServerMessage> req = shared::ClientToServerMessage::fromJson(msg);
 
             if ( req == nullptr ) {
                 // TODO: handle invalid message
@@ -137,11 +137,11 @@ namespace server
             // check if this is a connection to a new player
             shared::PlayerBase::id_t player_id = req->player_id;
             std::string address = peer_address.to_string();
-            BasicNetwork::getInstance()->add_player_to_address(player_id, address);
+            BasicNetwork::getInstance()->addPlayerToAddress(player_id, address);
             LOG(INFO) << "Received valid request : " << msg;
             // execute client request
             // TODO Change to message handler
-            _messageHandler->HandleMessage(std::move(req));
+            _messageHandler->handleMessage(std::move(req));
             LOG(INFO) << "Handled Message from player: " << player_id;
 
         } catch ( const std::exception &e ) {
@@ -151,13 +151,13 @@ namespace server
         }
     }
 
-    ssize_t ServerNetworkManager::send_message(std::unique_ptr<shared::ServerToClientMessage> message,
+    ssize_t ServerNetworkManager::sendMessage(std::unique_ptr<shared::ServerToClientMessage> message,
                                                const shared::PlayerBase::id_t &player_id)
     {
-        std::string address = BasicNetwork::getInstance()->get_address(player_id);
-        std::string msg = message->to_json();
+        std::string address = BasicNetwork::getInstance()->getAddress(player_id);
+        std::string msg = message->toJson();
 
-        return BasicNetwork::getInstance()->send_message(msg, address);
+        return BasicNetwork::getInstance()->sendMessage(msg, address);
     }
 
 } // namespace server

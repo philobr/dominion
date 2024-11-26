@@ -37,7 +37,7 @@ public:
 
     // Expose protected methods as public for testing
     using server::ServerBoard::buy;
-    using server::ServerBoard::trash_card;
+    using server::ServerBoard::trashCard;
 
     // Accessors for protected data members
     const server::ServerBoard::pile_container_t &getKingdomCards() const { return kingdom_cards; }
@@ -72,7 +72,7 @@ class ServerBoardBuyCardTest : public ::testing::TestWithParam<BuyCardTestParam>
 protected:
     void SetUp() override
     {
-        kingdom_cards = get_valid_kingdom_cards();
+        kingdom_cards = getValidKingdomCards();
         const auto &param = GetParam();
         player_count = param.player_count;
         board = new TestableServerBoard(kingdom_cards, player_count);
@@ -186,7 +186,7 @@ class ServerBoardTrashCardTest : public ::testing::TestWithParam<TrashCardTestPa
 protected:
     void SetUp() override
     {
-        kingdom_cards = get_valid_kingdom_cards();
+        kingdom_cards = getValidKingdomCards();
         player_count = GetParam().player_count;
         board = new TestableServerBoard(kingdom_cards, player_count);
     }
@@ -208,7 +208,7 @@ TEST_P(ServerBoardTrashCardTest, TrashCardTest)
 
     // Perform the trash operations
     for ( const auto &card : cards_to_trash ) {
-        board->trash_card(card);
+        board->trashCard(card);
     }
 
     // After trashing, trash pile should contain all the cards
@@ -231,7 +231,7 @@ INSTANTIATE_TEST_SUITE_P(TrashCardTests, ServerBoardTrashCardTest,
 TEST(ServerBoardTest, BuyAllCopiesOfCard)
 {
     // Setup
-    auto kingdom_cards = get_valid_kingdom_cards();
+    auto kingdom_cards = getValidKingdomCards();
     size_t player_count = 2;
     TestableServerBoard board(kingdom_cards, player_count);
 

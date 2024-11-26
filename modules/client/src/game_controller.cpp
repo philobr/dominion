@@ -77,7 +77,7 @@ namespace client
         return true;
     }
 
-    void GameController::CreateLobby()
+    void GameController::createLobby()
     {
         LOG(INFO) << "GameController called in function CreateLobby()";
         // get values form UI input fields
@@ -94,12 +94,12 @@ namespace client
 
             // send request to join game
             shared::CreateLobbyRequestMessage request(inputGameName.ToStdString(), inputPlayerName.ToStdString());
-            GameController::send_request(request.to_json());
+            GameController::sendRequest(request.toJson());
         }
         LOG(INFO) << "Done with GameController::CreateLobby()";
     }
 
-    void GameController::JoinLobby()
+    void GameController::joinLobby()
     {
         LOG(INFO) << "GameController called in function JoinLobby()";
         // get values form UI input fields
@@ -116,7 +116,7 @@ namespace client
 
             // send request to join game
             shared::JoinLobbyRequestMessage request(inputGameName.ToStdString(), inputPlayerName.ToStdString());
-            GameController::send_request(request.to_json());
+            GameController::sendRequest(request.toJson());
         }
         LOG(INFO) << "Done with GameController::JoinLobby()";
     }
@@ -160,7 +160,7 @@ namespace client
 
     void GameController::showStatus(const std::string &message) { GameController::_gameWindow->setStatus(message); }
 
-    void GameController::send_request(const std::string &req)
+    void GameController::sendRequest(const std::string &req)
     {
         LOG(INFO) << "GameController called in function send_request()";
         GameController::_clientNetworkManager->sendRequest(req);
@@ -168,7 +168,7 @@ namespace client
     }
 
 
-    void GameController::receive_message(std::unique_ptr<shared::ServerToClientMessage> msg)
+    void GameController::receiveMessage(std::unique_ptr<shared::ServerToClientMessage> msg)
     {
 
         LOG(INFO) << "Gamecontroller called in function receive_message()";
@@ -180,7 +180,7 @@ namespace client
             GameController::_gameWindow->showPanel(GameController::_lobbyPanel);
             LOG(INFO) << "Switched panel";
             // TODO maybe add player_id to the ServerToClientMessage ?
-            GameController::_lobbyPanel->AddPlayer(
+            GameController::_lobbyPanel->addPlayer(
                     GameController::_connectionPanel->getPlayerName().Trim().ToStdString());
             LOG(INFO) << "Added Player";
             msg.release();
@@ -195,7 +195,7 @@ namespace client
         } else if ( shared::JoinLobbyBroadcastMessage *jlbm =
                             dynamic_cast<shared::JoinLobbyBroadcastMessage *>(msg.get()) ) {
             LOG(INFO) << "Message is JoinLobbyBroadcastMessage";
-            GameController::RefreshPlayers(jlbm);
+            GameController::refreshPlayers(jlbm);
             msg.release();
             LOG(INFO) << "Done with Message";
         } else {
@@ -205,7 +205,7 @@ namespace client
         }
     }
 
-    void GameController::RefreshPlayers(shared::JoinLobbyBroadcastMessage *msg)
+    void GameController::refreshPlayers(shared::JoinLobbyBroadcastMessage *msg)
     {
         LOG(INFO) << "Refreshing Players";
         GameController::_lobbyPanel->refreshPlayers(msg->players);

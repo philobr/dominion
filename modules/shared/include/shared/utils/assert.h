@@ -20,7 +20,7 @@ namespace utils
         // Checks if T has begin/end functions to determine whether it's a container
         // Explicitly excludes std::string and std::string_view, as those already provide '<<' overloads
         template <typename T>
-        struct is_container<T, std::void_t<decltype(std::declval<T>().begin()), decltype(std::declval<T>().end())>>
+        struct IsContainer<T, std::void_t<decltype(std::declval<T>().begin()), decltype(std::declval<T>().end())>>
             : std::integral_constant<bool, !std::is_same_v<T, std::string> && !std::is_same_v<T, std::string_view>>
         {};
 
@@ -42,7 +42,7 @@ namespace utils
         }
 
         template <typename T1, typename T2>
-        void log_assertion_failure(const T1 &actual, const T2 &expected, std::string_view op, std::string_view msg,
+        void logAssertionFailure(const T1 &actual, const T2 &expected, std::string_view op, std::string_view msg,
                                    std::string_view file, int line, std::string_view function)
         {
             std::cerr << utils::colors::RED << "Assertion failed (" << op << "): " << utils::colors::RESET << std::endl
@@ -55,7 +55,7 @@ namespace utils
         }
 
         template <typename T1, typename T2, typename Compare>
-        void custom_assert(const T1 &actual, const T2 &expected, Compare comp, std::string_view op,
+        void customAssert(const T1 &actual, const T2 &expected, Compare comp, std::string_view op,
                            std::string_view msg, std::string_view file, int line, std::string_view function)
         {
 #ifndef NDEBUG
@@ -78,7 +78,7 @@ namespace utils
             } else {
                 using CommonType = std::common_type_t<T1, T2>;
                 if ( !comp(static_cast<CommonType>(actual), static_cast<CommonType>(expected)) ) {
-                    log_assertion_failure(actual, expected, op, msg, file, line, function);
+                    logAssertionFailure(actual, expected, op, msg, file, line, function);
                     std::abort();
                 }
             }
@@ -92,14 +92,14 @@ namespace utils
  * @brief Asserts (expr)
  */
 #define _ASSERT_TRUE(expr, msg)                                                                                        \
-    utils::assert_helpers::custom_assert((expr), true, [](const auto &a, const auto &b) { return a == b; },            \
+    utils::assert_helpers::customAssert((expr), true, [](const auto &a, const auto &b) { return a == b; },            \
                                          "==", (msg), __FILE__, __LINE__, __func__)
 
 /**
  * @brief Asserts (!expr)
  */
 #define _ASSERT_FALSE(expr, msg)                                                                                       \
-    utils::assert_helpers::custom_assert((expr), false, [](const auto &a, const auto &b) { return a == b; },           \
+    utils::assert_helpers::customAssert((expr), false, [](const auto &a, const auto &b) { return a == b; },           \
                                          "==", (msg), __FILE__, __LINE__, __func__)
 
 /**
@@ -107,7 +107,7 @@ namespace utils
  * Also works for containers
  */
 #define _ASSERT_EQ(actual, expected, msg)                                                                              \
-    utils::assert_helpers::custom_assert((actual), (expected), [](const auto &a, const auto &b) { return a == b; },    \
+    utils::assert_helpers::customAssert((actual), (expected), [](const auto &a, const auto &b) { return a == b; },    \
                                          "==", (msg), __FILE__, __LINE__, __func__)
 
 /**
@@ -115,33 +115,33 @@ namespace utils
  * Also works for containers
  */
 #define _ASSERT_NEQ(actual, expected, msg)                                                                             \
-    utils::assert_helpers::custom_assert((actual), (expected), [](const auto &a, const auto &b) { return a != b; },    \
+    utils::assert_helpers::customAssert((actual), (expected), [](const auto &a, const auto &b) { return a != b; },    \
                                          "!=", (msg), __FILE__, __LINE__, __func__)
 
 /**
  * @brief Asserts (actual < expected)
  */
 #define _ASSERT_LT(actual, expected, msg)                                                                              \
-    utils::assert_helpers::custom_assert((actual), (expected), [](const auto &a, const auto &b) { return a < b; },     \
+    utils::assert_helpers::customAssert((actual), (expected), [](const auto &a, const auto &b) { return a < b; },     \
                                          "<", (msg), __FILE__, __LINE__, __func__)
 
 /**
  * @brief Asserts (actual > expected)
  */
 #define _ASSERT_GT(actual, expected, msg)                                                                              \
-    utils::assert_helpers::custom_assert((actual), (expected), [](const auto &a, const auto &b) { return a > b; },     \
+    utils::assert_helpers::customAssert((actual), (expected), [](const auto &a, const auto &b) { return a > b; },     \
                                          ">", (msg), __FILE__, __LINE__, __func__)
 
 /**
  * @brief Asserts (actual <= expected)
  */
 #define _ASSERT_LE(actual, expected, msg)                                                                              \
-    utils::assert_helpers::custom_assert((actual), (expected), [](const auto &a, const auto &b) { return a <= b; },    \
+    utils::assert_helpers::customAssert((actual), (expected), [](const auto &a, const auto &b) { return a <= b; },    \
                                          "<=", (msg), __FILE__, __LINE__, __func__)
 
 /**
  * @brief Asserts (actual >= expected)
  */
 #define _ASSERT_GE(actual, expected, msg)                                                                              \
-    utils::assert_helpers::custom_assert((actual), (expected), [](const auto &a, const auto &b) { return a >= b; },    \
+    utils::assert_helpers::customAssert((actual), (expected), [](const auto &a, const auto &b) { return a >= b; },    \
                                          ">=", (msg), __FILE__, __LINE__, __func__)

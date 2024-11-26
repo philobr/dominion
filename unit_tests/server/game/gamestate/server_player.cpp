@@ -191,7 +191,7 @@ TEST(PlayerTest, EndTurn)
     player.getMutable<CardAccess::DISCARD_PILE>() = {"Card4"};
 
     // Call end_turn()
-    player.end_turn();
+    player.endTurn();
 
     // Check that values are reset
     EXPECT_EQ(player.getActions(), 1);

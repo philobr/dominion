@@ -15,17 +15,17 @@ namespace server
     class BasicNetwork
     {
     public:
-        ssize_t send_message(const std::string &message, const std::string &address);
+        ssize_t sendMessage(const std::string &message, const std::string &address);
 
-        void add_player_to_address(const player_id_t &player_id, const std::string &address);
+        void addPlayerToAddress(const player_id_t &player_id, const std::string &address);
 
-        void add_address_to_socket(const std::string &address, sockpp::tcp_socket socket);
+        void addAddressToSocket(const std::string &address, sockpp::tcp_socket socket);
 
-        bool is_new_player(const player_id_t &player_id);
+        bool isNewPlayer(const player_id_t &player_id);
 
-        std::string get_address(const player_id_t &player_id);
+        std::string getAddress(const player_id_t &player_id);
 
-        void player_disconnect(const player_id_t player_id);
+        void playerDisconnect(const player_id_t player_id);
 
         static BasicNetwork *getInstance();
 

@@ -15,10 +15,10 @@ namespace client
     {
         auto player = shared::PlayerBase("gigu");
         auto reduced = reduced::Player::make(player, {"Village", "Copper", "Copper", "Copper", "Estate"});
-        this->DrawPlayer(reduced, true);
+        this->drawPlayer(reduced, true);
     }
 
-    void PlayerPanel::DrawPlayer(const std::unique_ptr<reduced::Player> &Player, bool is_active)
+    void PlayerPanel::drawPlayer(const std::unique_ptr<reduced::Player> &Player, bool is_active)
     {
 
         const auto &cards = Player->getHandCards();

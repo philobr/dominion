@@ -14,7 +14,7 @@ class UuidGenerator
 
 private:
 public:
-    static std::string generate_uuid_v4()
+    static std::string generateUuidV4()
     {
         std::stringstream ss;
         std::random_device rd;

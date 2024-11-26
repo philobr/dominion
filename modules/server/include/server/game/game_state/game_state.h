@@ -46,24 +46,24 @@ namespace server
         ~GameState();
         GameState(GameState &&other);
 
-        std::unique_ptr<reduced::GameState> get_reduced_state(const Player::id_t &affected_player);
+        std::unique_ptr<reduced::GameState> getReducedState(const Player::id_t &affected_player);
 
         const Player::id_t &getCurrentPlayerId() const { return player_order[current_player_idx]; }
-        Player &get_current_player() { return *player_map[getCurrentPlayerId()]; }
-        Player &get_player(const Player::id_t &id) { return *player_map.at(id); }
+        Player &getCurrentPlayer() { return *player_map[getCurrentPlayerId()]; }
+        Player &getPlayer(const Player::id_t &id) { return *player_map.at(id); }
 
         GamePhase getPhase() const { return phase; }
 
-        void start_game();
-        void end_game() { return; }
+        void startGame();
+        void endGame() { return; }
 
-        void initialise_players(const std::vector<Player::id_t> &player_ids);
-        void initialise_board(const std::vector<shared::CardBase::id_t> &selected_cards);
+        void initialisePlayers(const std::vector<Player::id_t> &player_ids);
+        void initialiseBoard(const std::vector<shared::CardBase::id_t> &selected_cards);
 
-        void start_turn();
-        void end_turn();
+        void startTurn();
+        void endTurn();
 
-        bool is_game_over() const;
+        bool isGameOver() const;
 
         /**
          * @brief As of now, this function tries to buy a card for the given player.
@@ -74,23 +74,23 @@ namespace server
          * @return true
          * @return false
          */
-        bool try_buy(const Player::id_t &player_id, const shared::CardBase::id_t &card);
-        bool try_play(const Player::id_t &affected_player, size_t hand_index, size_t behaviour_index);
+        bool tryBuy(const Player::id_t &player_id, const shared::CardBase::id_t &card);
+        bool tryPlay(const Player::id_t &affected_player, size_t hand_index, size_t behaviour_index);
 
         /**
          * @brief Switches phases if necessary, this means: if a player is out of buys or out of actions
          * (im not happy with this name but i got nothing better rn)
          */
-        void maybe_switch_phase();
+        void maybeSwitchPhase();
 
     private:
         /**
          * @brief Forces a phase switch. This is called if a player ends a phase early
          */
-        void force_switch_phase();
+        void forceSwitchPhase();
 
-        void reset_phase() { phase = GamePhase::ACTION_PHASE; }
-        void switch_player() { current_player_idx = ++current_player_idx % player_map.size(); }
+        void resetPhase() { phase = GamePhase::ACTION_PHASE; }
+        void switchPlayer() { current_player_idx = ++current_player_idx % player_map.size(); }
 
         /**
          * @brief Checks if all ids exist and if the CardType is one of:

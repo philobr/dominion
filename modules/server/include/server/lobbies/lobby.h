@@ -36,7 +36,7 @@ namespace server
          * @pre The lobby exists.
          */
         void join(MessageInterface &message_interface, std::unique_ptr<shared::JoinLobbyRequestMessage> request);
-        void start_game(MessageInterface &message_interface, std::unique_ptr<shared::StartGameRequestMessage> request);
+        void startGame(MessageInterface &message_interface, std::unique_ptr<shared::StartGameRequestMessage> request);
 
         /**
          * @brief Receive an action from a player and handle it correctly.
@@ -48,21 +48,21 @@ namespace server
          * @pre The lobby exists.
          * @pre Valid ActionDecisionMessage.
          */
-        void receive_action(MessageInterface &message_interface, std::unique_ptr<shared::ActionDecisionMessage> action);
+        void receiveAction(MessageInterface &message_interface, std::unique_ptr<shared::ActionDecisionMessage> action);
 
         /**
          * @brief Get the players in the lobby.
          *
          * @return A const reference vector of player ids.
          */
-        const std::vector<Player::id_t> &get_players() const { return players; }
+        const std::vector<Player::id_t> &getPlayers() const { return players; }
 
         /**
          * @brief Get the id of the game master.
          *
          * @return The id of the game master.
          */
-        const Player::id_t &get_game_master() const { return game_master; };
+        const Player::id_t &getGameMaster() const { return game_master; };
 
     private:
         GameInterface::ptr_t game_interface;
@@ -78,6 +78,6 @@ namespace server
          *
          * @return True if the player is in the lobby, false otherwise.
          */
-        bool player_in_lobby(const Player::id_t &player_id);
+        bool playerInLobby(const Player::id_t &player_id);
     };
 } // namespace server

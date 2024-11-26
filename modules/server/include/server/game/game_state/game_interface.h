@@ -23,7 +23,7 @@ namespace server
         static ptr_t make(const std::string &game_id, const std::vector<shared::CardBase::id_t> &play_cards,
                           const std::vector<Player::id_t> &player_ids);
 
-        std::shared_ptr<GameState> get_game_state() { return game_state; }
+        std::shared_ptr<GameState> getGameState() { return game_state; }
 
         /**
          * @brief Receives an ActionDecision from the Lobby and handles it accordingly.
@@ -35,7 +35,7 @@ namespace server
          * @param affected_player_id
          * @return response_t
          */
-        response_t receive_action(std::unique_ptr<shared::ActionDecision> action_decision,
+        response_t receiveAction(std::unique_ptr<shared::ActionDecision> action_decision,
                                   const std::optional<std::string> &in_response_to,
                                   const Player::id_t &affected_player_id);
 
@@ -50,10 +50,10 @@ namespace server
             cur_behaviours->receiveAction(*game_state, std::nullopt);
         }
 
-        response_t handle_action(std::unique_ptr<shared::ActionDecision> action_decision,
+        response_t handleAction(std::unique_ptr<shared::ActionDecision> action_decision,
                                  const Player::id_t &affected_player_id);
 
-        response_t handle_response(std::unique_ptr<shared::ActionDecision> action_decision,
+        response_t handleResponse(std::unique_ptr<shared::ActionDecision> action_decision,
                                    const std::string &in_response_to, const Player::id_t &affected_player_id);
 
 #define HANDLER(decision_type) /* can also be used to define the func outside of the class */                          \

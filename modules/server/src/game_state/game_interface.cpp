@@ -11,7 +11,7 @@ namespace server
         return ptr_t(new GameInterface(game_id, play_cards, player_ids));
     }
 
-    GameInterface::response_t GameInterface::receive_action(std::unique_ptr<shared::ActionDecision> action_decision,
+    GameInterface::response_t GameInterface::receiveAction(std::unique_ptr<shared::ActionDecision> action_decision,
                                                             const std::optional<std::string> &in_response_to,
                                                             const Player::id_t &affected_player_id)
     {
@@ -20,7 +20,7 @@ namespace server
             throw std::runtime_error("not implemented");
         }
 
-        return handle_action(std::move(action_decision), affected_player_id);
+        return handleAction(std::move(action_decision), affected_player_id);
         /* This might become useful later on
          * TODO: use this or delete it
         return in_response_to.has_value()
@@ -29,7 +29,7 @@ namespace server
         */
     }
 
-    GameInterface::response_t GameInterface::handle_action(std::unique_ptr<shared::ActionDecision> action_decision,
+    GameInterface::response_t GameInterface::handleAction(std::unique_ptr<shared::ActionDecision> action_decision,
                                                            const Player::id_t &affected_player_id)
     {
 #define HANDLE_ACTION(type)                                                                                            \
@@ -48,7 +48,7 @@ namespace server
     }
 
     GameInterface::response_t
-    GameInterface::handle_response(std::unique_ptr<shared::ActionDecision> /*action_decision*/,
+    GameInterface::handleResponse(std::unique_ptr<shared::ActionDecision> /*action_decision*/,
                                    const std::string & /*in_response_to*/, const Player::id_t & /*affected_player_id*/)
     {
 #define HANDLE_RESPONSE(type)                                                                                          \
@@ -86,7 +86,7 @@ namespace server
             return std::make_unique<shared::BuyPhaseOrder>();
         }
 
-        game_state->try_buy(player_id, action_decision->card);
+        game_state->tryBuy(player_id, action_decision->card);
 
         // TODO: turn should end automatically if a player cant buy anymore
         return std::make_unique<shared::BuyPhaseOrder>();
@@ -102,7 +102,7 @@ namespace server
         }
 
         LOG(INFO) << "ending " << player_id << "\'s turn";
-        game_state->end_turn();
+        game_state->endTurn();
         // We put the next player into action phase
         return std::make_unique<shared::ActionPhaseOrder>();
     }

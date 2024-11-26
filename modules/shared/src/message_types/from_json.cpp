@@ -88,7 +88,7 @@ static std::unique_ptr<ActionOrderMessage> parseActionOrder(const Document &json
     if ( !json.HasMember("order") && !json["order"].IsObject() ) {
         return nullptr;
     }
-    std::unique_ptr<ActionOrder> order = ActionOrder::from_json(json["order"]);
+    std::unique_ptr<ActionOrder> order = ActionOrder::fromJson(json["order"]);
 
     GET_OPTIONAL_STRING_MEMBER(description, json, "description");
 
@@ -97,7 +97,7 @@ static std::unique_ptr<ActionOrderMessage> parseActionOrder(const Document &json
 
 namespace shared
 {
-    std::unique_ptr<ServerToClientMessage> ServerToClientMessage::from_json(const std::string &json)
+    std::unique_ptr<ServerToClientMessage> ServerToClientMessage::fromJson(const std::string &json)
     {
         Document doc;
         doc.Parse(json.c_str());
@@ -206,7 +206,7 @@ static std::unique_ptr<ActionDecisionMessage> parseActionDecision(const Document
 
 namespace shared
 {
-    std::unique_ptr<ClientToServerMessage> ClientToServerMessage::from_json(const std::string &json)
+    std::unique_ptr<ClientToServerMessage> ClientToServerMessage::fromJson(const std::string &json)
     {
         Document doc;
         doc.Parse(json.c_str());

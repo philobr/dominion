@@ -12,7 +12,7 @@ public:
 
     static void sendRequest(const std::string message);
 
-    static void receive_message(const std::string &message);
+    static void receiveMessage(const std::string &message);
 
     static void shutdown();
 

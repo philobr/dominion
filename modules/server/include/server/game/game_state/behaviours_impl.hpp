@@ -80,7 +80,7 @@ namespace server
             LOG_CALL;
             ASSERT_NO_DECISION;
 
-            auto &affected_player = game_state.get_current_player();
+            auto &affected_player = game_state.getCurrentPlayer();
             affected_player.addTreasure(coins);
             return std::nullopt;
         }
@@ -90,7 +90,7 @@ namespace server
             LOG_CALL;
             ASSERT_NO_DECISION;
 
-            auto &affected_player = game_state.get_current_player();
+            auto &affected_player = game_state.getCurrentPlayer();
             affected_player.addBuys(buys);
             return std::nullopt;
         }
@@ -100,7 +100,7 @@ namespace server
             LOG_CALL;
             ASSERT_NO_DECISION;
 
-            auto &affected_player = game_state.get_current_player();
+            auto &affected_player = game_state.getCurrentPlayer();
             affected_player.addActions(actions);
             return std::nullopt;
         }
@@ -110,7 +110,7 @@ namespace server
             LOG_CALL;
             ASSERT_NO_DECISION;
 
-            auto &affected_player = game_state.get_current_player();
+            auto &affected_player = game_state.getCurrentPlayer();
             affected_player.addPoints(points);
             return std::nullopt;
         }
@@ -120,7 +120,7 @@ namespace server
             LOG_CALL;
             ASSERT_NO_DECISION;
 
-            auto &affected_player = game_state.get_current_player();
+            auto &affected_player = game_state.getCurrentPlayer();
             affected_player.draw(n_cards);
 
             // assuming the state is updated automatically from the lobby/game_interface

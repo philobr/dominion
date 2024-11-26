@@ -29,7 +29,7 @@ namespace client
 
         wxButton *AddPlayerButton = new wxButton(this, wxID_ANY, "Add Player");
         wxString name = "dummy name";
-        AddPlayerButton->Bind(wxEVT_BUTTON, [this, name](const wxCommandEvent &) { this->AddPlayer(name); });
+        AddPlayerButton->Bind(wxEVT_BUTTON, [this, name](const wxCommandEvent &) { this->addPlayer(name); });
         VerticalSizer->Add(AddPlayerButton, 0, wxALIGN_CENTER | wxALL, 5);
 
 
@@ -44,7 +44,7 @@ namespace client
         NamesSizer->Clear(true);
         for ( auto player : players ) {
             LOG(DEBUG) << "Adding player " << player;
-            this->AddPlayer(player);
+            this->addPlayer(player);
         }
     }
 
@@ -54,7 +54,7 @@ namespace client
     /// This is specifically not doing any logic
     /// @pre playerCount < 4
     /// @post playerCount = playerCount + 1
-    void LobbyPanel::AddPlayer(wxString name)
+    void LobbyPanel::addPlayer(wxString name)
     {
         this->playerCount++;
         wxPanel *Player = new wxPanel(NamesSizer->GetContainingWindow(), wxID_ANY, wxDefaultPosition, wxSize(256, 256));

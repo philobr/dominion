@@ -55,7 +55,8 @@ namespace server
         shared::ReducedPlayer::ptr_t get_reduced_player();
         shared::ReducedEnemy::ptr_t get_reduced_enemy();
 
-        bool has_card_playable(const shared::CardBase::id_t &card_id) const;
+        bool hasCardInHand(const shared::CardBase::id_t &card_id) const;
+        bool hasCardStaged(const shared::CardBase::id_t &card_id) const;
 
         bool canBlock() const
         {

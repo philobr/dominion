@@ -25,9 +25,8 @@ CheckOptions:
     value: UPPER_CASE
   - key: readability-identifier-naming.EnumCase
     value: UPPER_CASE
-    # TODO: enforce
-    #  - key: readability-identifier-naming.FunctionCase
-    # value: CamelCase
+  - key: readability-identifier-naming.FunctionCase
+    value: camelBack
 WarningsAsErrors: '*'
 ...
 

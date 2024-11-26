@@ -188,7 +188,7 @@ namespace client
             GameController::_gameWindow->showPanel(GameController::_lobbyPanel);
         } else if ( typeid(*msg) == typeid(shared::JoinLobbyBroadcastMessage) ) {
             std::unique_ptr<shared::JoinLobbyBroadcastMessage> jlbm(
-                    static_cast<shared::JoinLobbyBroadcastMessage *>(msg.get()));
+                    static_cast<shared::JoinLobbyBroadcastMessage *>(msg.release()));
             LOG(INFO) << "Message is JoinLobbyBroadcastMessage";
             GameController::RefreshPlayers(*jlbm);
         } else {

@@ -60,7 +60,7 @@ deploy:
     # Add the host to known_hosts
     - ssh-keyscan -H se.nicolabruhin.com >> ~/.ssh/known_hosts
     # Do the actual deployment
-    - ssh dominion@se.nicolabruhin.com "cd /opt/dominion/dominion && git pull && ls scripts/deploy.sh && bash ./scripts/deploy.sh"
+    - ssh dominion@se.nicolabruhin.com "cd /opt/dominion/dominion && git pull && cd docker && docker compose up -d --build"
   dependencies:
     - test
   environment:

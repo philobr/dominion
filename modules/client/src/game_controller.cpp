@@ -173,7 +173,8 @@ namespace client
 
         LOG(INFO) << "Gamecontroller called in function receive_message()";
 
-        if ( typeid(*msg) == typeid(shared::CreateLobbyResponseMessage) ) {
+        shared::ServerToClientMessage &msgRef = *msg;
+        if ( typeid(msgRef) == typeid(shared::CreateLobbyResponseMessage) ) {
             // Show the lobby screen
             LOG(INFO) << "Message is CreateLobbyResponse";
             GameController::_gameWindow->showPanel(GameController::_lobbyPanel);
@@ -182,11 +183,11 @@ namespace client
             GameController::_lobbyPanel->AddPlayer(
                     GameController::_connectionPanel->getPlayerName().Trim().ToStdString());
             LOG(INFO) << "Added Player";
-        } else if ( typeid(*msg) == typeid(shared::ResultResponseMessage) ) {
+        } else if ( typeid(msgRef) == typeid(shared::ResultResponseMessage) ) {
             LOG(INFO) << "Message is ResultResponseMessage";
             // Show the lobby screen
             GameController::_gameWindow->showPanel(GameController::_lobbyPanel);
-        } else if ( typeid(*msg) == typeid(shared::JoinLobbyBroadcastMessage) ) {
+        } else if ( typeid(msgRef) == typeid(shared::JoinLobbyBroadcastMessage) ) {
             std::unique_ptr<shared::JoinLobbyBroadcastMessage> jlbm(
                     static_cast<shared::JoinLobbyBroadcastMessage *>(msg.release()));
             LOG(INFO) << "Message is JoinLobbyBroadcastMessage";

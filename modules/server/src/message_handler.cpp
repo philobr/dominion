@@ -18,22 +18,23 @@ namespace server
 
         LOG(INFO) << "Message Handler called";
 
-        if ( typeid(*message) == typeid(GameStateRequestMessage) ) {
+        shared::ClientToServerMessage &msgRef = *message;
+        if ( typeid(msgRef) == typeid(GameStateRequestMessage) ) {
             LOG(INFO) << "Handler: Processed GameStateRequest";
-        } else if ( typeid(*message) == typeid(CreateLobbyRequestMessage) ) {
+        } else if ( typeid(msgRef) == typeid(CreateLobbyRequestMessage) ) {
             std::unique_ptr<CreateLobbyRequestMessage> clrm(
                     static_cast<CreateLobbyRequestMessage *>(message.release()));
             this->lobby_manager_.create_lobby(std::move(clrm));
             LOG(INFO) << "Handler: Processed CreateLobbyRequest";
-        } else if ( typeid(*message) == typeid(JoinLobbyRequestMessage) ) {
+        } else if ( typeid(msgRef) == typeid(JoinLobbyRequestMessage) ) {
             std::unique_ptr<JoinLobbyRequestMessage> jlrm(static_cast<JoinLobbyRequestMessage *>(message.release()));
             this->lobby_manager_.join_lobby(std::move(jlrm));
             LOG(INFO) << "Handler: Processed JoinLobbyRequest";
-        } else if ( typeid(*message) == typeid(StartGameRequestMessage) ) {
+        } else if ( typeid(msgRef) == typeid(StartGameRequestMessage) ) {
             std::unique_ptr<StartGameRequestMessage> sgrm(static_cast<StartGameRequestMessage *>(message.release()));
             this->lobby_manager_.start_game(std::move(sgrm));
             LOG(INFO) << "Handler: Processed StartGameRequest";
-        } else if ( typeid(*message) == typeid(ActionDecisionMessage) ) {
+        } else if ( typeid(msgRef) == typeid(ActionDecisionMessage) ) {
             std::unique_ptr<ActionDecisionMessage> adm(static_cast<ActionDecisionMessage *>(message.release()));
             this->lobby_manager_.receive_action(std::move(adm));
             LOG(INFO) << "Handler: Processed ActionDecisionMessage";

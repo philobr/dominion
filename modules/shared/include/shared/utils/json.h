@@ -89,6 +89,11 @@
     key##_value.SetUint(var);                                                                                          \
     doc.AddMember(#key, key##_value, doc.GetAllocator());
 
+#define ADD_ENUM_MEMBER(var, key)                                                                                      \
+    rapidjson::Value key##_value;                                                                                      \
+    key##_value.SetUint(static_cast<unsigned int>(var));                                                               \
+    doc.AddMember(#key, key##_value, doc.GetAllocator());
+
 #define ADD_OPTIONAL_STRING_MEMBER(var, key)                                                                           \
     if ( var ) {                                                                                                       \
         rapidjson::Value key##_value;                                                                                  \

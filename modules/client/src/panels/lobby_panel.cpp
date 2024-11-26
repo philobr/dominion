@@ -9,7 +9,7 @@
 #include <wx/wx.h>
 #include "shared/utils/logger.h"
 
-
+// NOLINTBEGIN(bugprone-suspicious-enum-usage)
 namespace client
 {
     LobbyPanel::LobbyPanel(wxWindow *parent) :
@@ -41,7 +41,8 @@ namespace client
 
     void LobbyPanel::refreshPlayers(std::vector<std::string> &players)
     {
-        NamesSizer->Clear(true);
+        NamesSizer->Clear(false);
+        playerCount = 0;
         for ( auto player : players ) {
             LOG(DEBUG) << "Adding player " << player;
             this->addPlayer(player);
@@ -77,3 +78,4 @@ namespace client
         NamesSizer->Layout();
     }
 } // namespace client
+// NOLINTEND(bugprone-suspicious-enum-usage)

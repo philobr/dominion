@@ -29,7 +29,6 @@ namespace client
         size_t card_width_borders = hand_card_size.GetWidth() + 8;
         outersizer->SetMinSize(wxSize(7 * card_width_borders, 150));
 
-        wxSize info_size = wxSize(150, 150);
         wxPanel *DrawPilePanel = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDefaultSize);
 
         DrawPilePanel->SetBackgroundColour(wxColour(255, 0, 0));

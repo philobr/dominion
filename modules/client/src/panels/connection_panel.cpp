@@ -5,6 +5,7 @@
 #include <game_controller.h>
 #include <uiElements/image_panel.h>
 
+// NOLINTBEGIN(bugprone-suspicious-enum-usage)
 namespace client
 {
 
@@ -88,3 +89,4 @@ namespace client
     wxString ConnectionPanel::getGameName() { return this->_gameName->getValue(); }
 
 } // namespace client
+// NOLINTEND(bugprone-suspicious-enum-usage)

@@ -31,7 +31,6 @@ namespace client
     {
         LOG(INFO) << "Called GameWindow::showPanel()";
 
-        /*
         // if we are already showing the panel, we don't need to do anything
         if ( this->_currentPanel == panel ) {
             return;
@@ -64,32 +63,6 @@ namespace client
                     LOG(INFO) << "Done with GameWindow::showPanel()";
                 });
         LOG(INFO) << "Done with GameWindow::showPanel()";
-
-        OLD VERSION,
-                AS BACKUP IF IT DOESNT WORK ON LINUX
-        */
-        // if we are already showing the panel, we don't need to do anything
-        if ( this->_currentPanel == panel ) {
-            return;
-        }
-
-        // remove previous panel
-        if ( this->_currentPanel != nullptr ) {
-            this->_mainLayout->Detach(this->_currentPanel);
-            this->_currentPanel->Show(false);
-            this->_currentPanel = nullptr;
-        }
-
-        // add new panel
-        this->_mainLayout->Add(panel, 1, wxALIGN_CENTER, 20); // 20 pixel spacing
-        panel->Show(true);
-        this->_currentPanel = panel;
-
-        // update layout
-        this->_mainLayout->Layout();
-
-        // update window size
-        this->Fit();
     }
 
 

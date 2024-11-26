@@ -1,5 +1,5 @@
 
-#include "enemy_info_panel.h"
+#include <panels/enemy_info_panel.h>
 #include <wx/wx.h>
 
 namespace client

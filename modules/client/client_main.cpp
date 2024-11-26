@@ -1,6 +1,6 @@
 #include <wx/wx.h>
 
-#include <client/dominion.h>
+#include <dominion.h>
 
 
 wxIMPLEMENT_APP(client::Dominion);

@@ -3,7 +3,7 @@
 #include <shared/game/game_state/board_base.h>
 
 #include <wx/wx.h>
-#include "pile_panel.h"
+#include "../uiElements/pile_panel.h"
 
 namespace client
 {

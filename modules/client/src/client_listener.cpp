@@ -1,10 +1,6 @@
-
-#include <iostream>
-#include <sstream>
-#include <string>
-
-#include "client/client_listener.h"
-#include "client/client_network_manager.h"
+#include "client_listener.h"
+#include <shared/utils/logger.h>
+#include "client_network_manager.h"
 
 
 ClientListener::ClientListener(sockpp::tcp_connector *connection) : _connection(connection) {}
@@ -15,6 +11,7 @@ ClientListener::~ClientListener() { this->_connection->shutdown(); }
 
 wxThread::ExitCode ClientListener::Entry()
 {
+    LOG(INFO) << "Called ClientListener::Entry()";
     try {
         char buffer[512]; // 512 bytes
         ssize_t count = 0;
@@ -75,7 +72,7 @@ wxThread::ExitCode ClientListener::Entry()
     }
 
     this->_connection->shutdown();
-
+    LOG(INFO) << "Done with ClientListener::Entry()";
     return (wxThread::ExitCode)0; // everything okay
 }
 

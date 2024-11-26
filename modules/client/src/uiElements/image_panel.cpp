@@ -1,4 +1,4 @@
-#include "image_panel.h"
+#include <uiElements/image_panel.h>
 
 namespace client
 {

@@ -79,7 +79,7 @@ namespace shared
 
     bool JoinLobbyBroadcastMessage::operator==(const JoinLobbyBroadcastMessage &other) const
     {
-        return ServerToClientMessage::operator==(other) && this->player_id == other.player_id;
+        return ServerToClientMessage::operator==(other) && this->players == other.players;
     }
 
     bool StartGameBroadcastMessage::operator==(const StartGameBroadcastMessage &other) const

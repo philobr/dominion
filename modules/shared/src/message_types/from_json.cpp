@@ -48,10 +48,10 @@ parse_create_lobby_response(const Document &json, const std::string &game_id, co
 static std::unique_ptr<JoinLobbyBroadcastMessage>
 parse_join_game_broadcast(const Document &json, const std::string &game_id, const std::string &message_id)
 {
-    PlayerBase::id_t player_id;
-    GET_STRING_MEMBER(player_id, json, "player_id");
+    std::vector<shared::PlayerBase::id_t> players;
+    GET_STRING_ARRAY_MEMBER(players, json, "players");
 
-    return std::make_unique<JoinLobbyBroadcastMessage>(game_id, player_id, message_id);
+    return std::make_unique<JoinLobbyBroadcastMessage>(game_id, players, message_id);
 }
 
 static std::unique_ptr<StartGameBroadcastMessage>

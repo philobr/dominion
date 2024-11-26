@@ -35,8 +35,8 @@ namespace shared
     class ClientToServerMessage : public Message
     {
     public:
-        ~ClientToServerMessage() = default;
-        virtual std::string to_json() = 0;
+        ~ClientToServerMessage() override = default;
+        std::string to_json() override = 0;
         static std::unique_ptr<ClientToServerMessage> from_json(const std::string &json);
 
         PlayerBase::id_t player_id;
@@ -57,7 +57,7 @@ namespace shared
                                 std::string message_id = uuid_generator::generate_uuid_v4()) :
             ClientToServerMessage(game_id, player_id, message_id)
         {}
-        ~GameStateRequestMessage() = default;
+        ~GameStateRequestMessage() override = default;
         std::string to_json() override;
         bool operator==(const GameStateRequestMessage &other) const;
     };
@@ -69,7 +69,7 @@ namespace shared
                                   std::string message_id = uuid_generator::generate_uuid_v4()) :
             ClientToServerMessage(game_id, player_id, message_id)
         {}
-        ~CreateLobbyRequestMessage() = default;
+        ~CreateLobbyRequestMessage() override = default;
         std::string to_json() override;
         bool operator==(const CreateLobbyRequestMessage &other) const;
     };
@@ -77,7 +77,7 @@ namespace shared
     class JoinLobbyRequestMessage final : public ClientToServerMessage
     {
     public:
-        ~JoinLobbyRequestMessage() = default;
+        ~JoinLobbyRequestMessage() override = default;
         JoinLobbyRequestMessage(std::string game_id, PlayerBase::id_t player_id,
                                 std::string message_id = uuid_generator::generate_uuid_v4()) :
             ClientToServerMessage(game_id, player_id, message_id)
@@ -89,7 +89,7 @@ namespace shared
     class StartGameRequestMessage final : public ClientToServerMessage
     {
     public:
-        ~StartGameRequestMessage() = default;
+        ~StartGameRequestMessage() override = default;
         /**
          * @param selected_cards The 10 cards selected by the game master to play with.
          * The size of the vector must be 10. Otherwise, an assertion will fail.
@@ -106,7 +106,7 @@ namespace shared
     class ActionDecisionMessage final : public ClientToServerMessage
     {
     public:
-        ~ActionDecisionMessage() = default;
+        ~ActionDecisionMessage() override = default;
         ActionDecisionMessage(std::string game_id, PlayerBase::id_t player_id, std::unique_ptr<ActionDecision> decision,
                               std::optional<std::string> in_response_to = std::nullopt,
                               std::string message_id = uuid_generator::generate_uuid_v4()) :
@@ -125,13 +125,13 @@ namespace shared
     class ServerToClientMessage : public Message
     {
     public:
-        ~ServerToClientMessage() = default;
+        ~ServerToClientMessage() override = default;
         /**
          * Parse a JSON string representing the message.
          *
          * Returns nullptr if the JSON is invalid.
          */
-        virtual std::string to_json() = 0;
+        std::string to_json() override = 0;
         static std::unique_ptr<ServerToClientMessage> from_json(const std::string &json);
 
     protected:
@@ -144,7 +144,7 @@ namespace shared
     class GameStateMessage final : public ServerToClientMessage
     {
     public:
-        ~GameStateMessage() = default;
+        ~GameStateMessage() override = default;
         GameStateMessage(std::string game_id, std::unique_ptr<reduced::GameState> game_state,
                          std::optional<std::string> in_response_to = std::nullopt,
                          std::string message_id = uuid_generator::generate_uuid_v4()) :
@@ -162,7 +162,7 @@ namespace shared
     class CreateLobbyResponseMessage final : public ServerToClientMessage
     {
     public:
-        ~CreateLobbyResponseMessage() = default;
+        ~CreateLobbyResponseMessage() override = default;
         CreateLobbyResponseMessage(std::string game_id, std::vector<CardBase::id_t> available_cards,
                                    std::optional<std::string> in_response_to = std::nullopt,
                                    std::string message_id = uuid_generator::generate_uuid_v4()) :
@@ -179,7 +179,7 @@ namespace shared
     class JoinLobbyBroadcastMessage final : public ServerToClientMessage
     {
     public:
-        ~JoinLobbyBroadcastMessage() = default;
+        ~JoinLobbyBroadcastMessage() override = default;
         JoinLobbyBroadcastMessage(std::string game_id, std::vector<shared::PlayerBase::id_t> players,
                                   std::string message_id = uuid_generator::generate_uuid_v4()) :
             ServerToClientMessage(game_id, message_id),
@@ -193,7 +193,7 @@ namespace shared
     class StartGameBroadcastMessage final : public ServerToClientMessage
     {
     public:
-        ~StartGameBroadcastMessage() = default;
+        ~StartGameBroadcastMessage() override = default;
         StartGameBroadcastMessage(std::string game_id, std::string message_id = uuid_generator::generate_uuid_v4()) :
             ServerToClientMessage(game_id, message_id)
         {}
@@ -204,7 +204,7 @@ namespace shared
     class EndGameBroadcastMessage final : public ServerToClientMessage
     {
     public:
-        ~EndGameBroadcastMessage() = default;
+        ~EndGameBroadcastMessage() override = default;
         EndGameBroadcastMessage(std::string game_id, std::string message_id = uuid_generator::generate_uuid_v4()) :
             ServerToClientMessage(game_id, message_id)
         {}
@@ -216,7 +216,7 @@ namespace shared
     class ResultResponseMessage final : public ServerToClientMessage
     {
     public:
-        ~ResultResponseMessage() = default;
+        ~ResultResponseMessage() override = default;
         ResultResponseMessage(std::string game_id, bool success,
                               std::optional<std::string> in_response_to = std::nullopt,
                               std::optional<std::string> additional_information = std::nullopt,
@@ -235,7 +235,7 @@ namespace shared
     class ActionOrderMessage final : public ServerToClientMessage
     {
     public:
-        ~ActionOrderMessage() = default;
+        ~ActionOrderMessage() override = default;
         ActionOrderMessage(std::string game_id, std::unique_ptr<ActionOrder> order,
                            std::optional<std::string> description = std::nullopt,
                            std::string message_id = uuid_generator::generate_uuid_v4()) :

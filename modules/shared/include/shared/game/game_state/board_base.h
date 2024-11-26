@@ -11,7 +11,7 @@
 
 namespace shared
 {
-    namespace BoardConfig
+    namespace board_config
     {
         static constexpr size_t KINGDOM_CARD_COUNT = 10;
 

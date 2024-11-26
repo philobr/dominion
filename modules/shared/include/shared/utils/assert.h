@@ -32,8 +32,9 @@ namespace utils
             os << "[";
             bool first = true;
             for ( const auto &elem : container ) {
-                if ( !first )
+                if ( !first ) {
                     os << ", ";
+}
                 os << elem;
                 first = false;
             }

@@ -36,7 +36,7 @@ namespace exception
         /**
          * @brief Virtual destructor for proper cleanup in derived classes
          */
-        virtual ~BaseExceptionType() noexcept = default;
+        ~BaseExceptionType() noexcept override = default;
     };
 
 } // namespace exception

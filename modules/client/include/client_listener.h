@@ -9,10 +9,10 @@ class ClientListener : public wxThread
 
 public:
     ClientListener(sockpp::tcp_connector *connection);
-    ~ClientListener();
+    ~ClientListener() override;
 
 protected:
-    virtual ExitCode Entry();
+    ExitCode Entry() override;
 
 private:
     void outputError(const std::string &title, const std::string &message);

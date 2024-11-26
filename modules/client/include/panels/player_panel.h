@@ -1,6 +1,6 @@
 #pragma once
 
-#include <shared/game/game_state/player_base.h>
+#include <shared/game/reduced/player.h>
 
 #include <wx/wx.h>
 
@@ -23,7 +23,7 @@ namespace client
          *
          * @param Player
          */
-        void DrawPlayer(const std::unique_ptr<shared::ReducedPlayer> &Player, bool is_active);
+        void DrawPlayer(const std::unique_ptr<reduced::Player> &Player, bool is_active);
 
     private:
         void makePlayable(ImagePanel *Image, std::string card_id);

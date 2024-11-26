@@ -15,15 +15,15 @@ TEST(SharedLibraryTest, GameStateMessageTwoWayConversion)
     const unsigned int num_players = 2;
     Board::ptr_t board = Board::make(kingdom_cards, num_players);
 
-    ReducedPlayer::ptr_t player =
-            ReducedPlayer::make(PlayerBase("Felix"), {"Copper", "Copper", "Estate", "Chapel", "Silver"});
-    std::vector<ReducedEnemy::ptr_t> enemies;
-    enemies.push_back(ReducedEnemy::make(PlayerBase("Marius"), 5));
+    reduced::Player::ptr_t player =
+            reduced::Player::make(PlayerBase("Felix"), {"Copper", "Copper", "Estate", "Chapel", "Silver"});
+    std::vector<reduced::Enemy::ptr_t> enemies;
+    enemies.push_back(reduced::Enemy::make(PlayerBase("Marius"), 5));
 
     const std::string active_player = "Felix";
 
-    std::unique_ptr<ReducedGameState> game_state =
-            std::make_unique<ReducedGameState>(std::move(board), std::move(player), std::move(enemies), active_player);
+    std::unique_ptr<reduced::GameState> game_state = std::make_unique<reduced::GameState>(
+            std::move(board), std::move(player), std::move(enemies), active_player);
     GameStateMessage original_message("123", std::move(game_state), "789", "456");
 
     std::string json = original_message.to_json();

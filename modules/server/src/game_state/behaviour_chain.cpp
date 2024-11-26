@@ -28,8 +28,9 @@ void server::BehaviourChain::resetBehaviours()
 }
 
 std::optional<std::unique_ptr<shared::ActionOrder>>
-server::BehaviourChain::receiveAction(server::GameState &game_state,
-                                      std::optional<std::unique_ptr<shared::ActionDecision>> action_decision)
+server::BehaviourChain::receiveAction(server::GameState &game_state, Player::id_t player_id,
+                                      std::optional<std::unique_ptr<shared::ActionDecision>> action_decision,
+                                      std::optional<std::string> in_response_to)
 {
     if ( empty() ) {
         LOG(ERROR) << "Tried to use an empty BehaviourChain, crashing now";
@@ -40,9 +41,14 @@ server::BehaviourChain::receiveAction(server::GameState &game_state,
         auto action_order = getBehaviour().apply(game_state, std::move(action_decision));
 
         if ( action_order != std::nullopt ) {
+            // TODO implement
             return action_order;
+        } else {
+            // TODO check if we are currently playing an action card and waiting for a response
+            // TODO check if the response is valid and for the current card (using in_response_to)
+            // TODO where are the expected responses stored? How can we check wether a response of this player is
+            // expected
         }
-
         advance();
     }
 

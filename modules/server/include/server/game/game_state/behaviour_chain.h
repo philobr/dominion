@@ -21,6 +21,8 @@ namespace server
 
         std::vector<std::unique_ptr<BehaviourBase>> behaviours_list;
 
+        // To dicuss: Should we have a list of tuples (in_response_to, player_id) of expected responses?
+
     public:
         BehaviourChain() :
             current_card(INVALID_CARD), behaviour_idx(INVALID_IDX),
@@ -40,8 +42,9 @@ namespace server
          * @return std::optional<std::unique_ptr<shared::ActionOrder>>
          */
         std::optional<std::unique_ptr<shared::ActionOrder>>
-        receiveAction(server::GameState &game_state,
-                      std::optional<std::unique_ptr<shared::ActionDecision>> action_decision);
+        receiveAction(server::GameState &game_state, Player::id_t player_id,
+                      std::optional<std::unique_ptr<shared::ActionDecision>> action_decision,
+                      std::optional<std::string> in_response_to);
 
         bool empty() const { return behaviour_idx == INVALID_IDX && current_card == INVALID_CARD; }
 

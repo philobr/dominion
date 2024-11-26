@@ -116,44 +116,42 @@ namespace server
         const auto &card_id = player.get<shared::CardAccess::HAND>()[hand_index];
         const auto &card = shared::CardFactory::getCard(card_id);
 
-        if ( card.isAction() ) {
-            if ( getPhase() != GamePhase::ACTION_PHASE ) {
-                LOG(WARN) << "player(" << affected_player << ") is currently not in the action phase, retrying";
-                return false;
-            }
-            if ( player.is_currently_playing_card() ) {
-                LOG(ERROR) << "player(" << affected_player
-                           << ") is already playing a different card, landed in the wrong handler";
-                throw std::runtime_error("message landed up in the wrong handler");
-            }
-            if ( player.getActions() == 0 ) {
-                force_switch_phase();
-                LOG(WARN) << "tried to play an action card, but has no actions left";
-                return false;
-            }
-            if ( !player.has_card_playable(card_id) ) {
-                LOG(ERROR) << "tried to play a card that is not in the hand or staged cards";
-                throw exception::InvalidCardAccess("");
-            }
-
-            player.set_currently_playing_card(card_id);
-            player.decActions();
-            phase = GamePhase::PLAYING_ACTION_CARD;
-
-            if ( from == shared::CardAccess::HAND ) {
-                player.play_card_from_hand(hand_index);
-            } else if ( from == shared::CardAccess::STAGED_CARDS ) {
-                player.play_card_from_staged(hand_index);
-            } else {
-                LOG(ERROR) << "tried to play a card from an invalid pile";
-                throw exception::InvalidCardAccess("");
-            }
-            return true;
+        if ( !card.isAction() ) {
+            LOG(ERROR) << "tried to play a card that isn't an action card";
+            throw exception::InvalidCardType("");
+        }
+        if ( getPhase() != GamePhase::ACTION_PHASE ) {
+            LOG(ERROR) << "player(" << affected_player << ") is currently not in the action phase, throwing";
+            throw exception::OutOfPhase("");
+        }
+        if ( player.is_currently_playing_card() ) {
+            LOG(ERROR) << "player(" << affected_player
+                       << ") is already playing a different card, landed in the wrong handler";
+            throw std::runtime_error("message landed up in the wrong handler");
+        }
+        if ( player.getActions() == 0 ) {
+            force_switch_phase();
+            LOG(ERROR) << "tried to play an action card, but has no actions left";
+            throw exception::OutOfActions("");
+        }
+        if ( !(player.hasCardInHand(card_id) || player.hasCardStaged(card_id)) ) {
+            LOG(ERROR) << "tried to play a card that is not in the hand or staged cards";
+            throw exception::InvalidCardAccess("");
         }
 
-        LOG(WARN) << "tried to play a card that isn't an action card";
+        player.set_currently_playing_card(card_id);
+        player.decActions();
+        phase = GamePhase::PLAYING_ACTION_CARD;
 
-        return false;
+        if ( from == shared::CardAccess::HAND ) {
+            player.play_card_from_hand(hand_index);
+        } else if ( from == shared::CardAccess::STAGED_CARDS ) {
+            player.play_card_from_staged(hand_index);
+        } else {
+            LOG(ERROR) << "tried to play a card from an invalid pile";
+            throw exception::InvalidCardAccess("");
+        }
+        return true;
     }
 
     void GameState::end_turn()

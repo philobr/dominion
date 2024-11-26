@@ -104,16 +104,16 @@ namespace shared
 
 #define GET_PILE_CONTAINER(pile_container, json, member_name)                                                          \
     pile_container_t pile_container;                                                                                   \
-    if ( json.HasMember(member_name) && json[member_name].IsArray() ) {                                                \
-        const auto container = pileContainerFromJson(json[member_name]);                                               \
+    if ( (json).HasMember(member_name) && (json)[member_name].IsArray() ) {                                            \
+        const auto container = pileContainerFromJson((json)[member_name]);                                             \
         if ( container.has_value() ) {                                                                                 \
-            pile_container = container.value();                                                                        \
+            (pile_container) = container.value();                                                                      \
         } else {                                                                                                       \
-            LOG(WARN) << "Failed to parse " << member_name << " from JSON";                                            \
+            LOG(WARN) << "Failed to parse " << (member_name) << " from JSON";                                          \
             return nullptr;                                                                                            \
         }                                                                                                              \
     } else {                                                                                                           \
-        LOG(WARN) << member_name << " not found in JSON";                                                              \
+        LOG(WARN) << (member_name) << " not found in JSON";                                                            \
         return nullptr;                                                                                                \
     }
 
@@ -141,7 +141,7 @@ namespace shared
 
 #define ADD_PILE_CONTAINER(pile_container, member_name)                                                                \
     rapidjson::Value member_name##_json(rapidjson::kArrayType);                                                        \
-    for ( const auto &pile : pile_container ) {                                                                        \
+    for ( const auto &pile : (pile_container) ) {                                                                      \
         rapidjson::Document pile_doc = pile.toJson();                                                                  \
         rapidjson::Value pile_value;                                                                                   \
         pile_value.CopyFrom(pile_doc, doc.GetAllocator());                                                             \

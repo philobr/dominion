@@ -90,7 +90,7 @@ namespace server
         void force_switch_phase();
 
         void reset_phase() { phase = GamePhase::ACTION_PHASE; }
-        void switch_player() { current_player_idx = ++current_player_idx % player_map.size(); }
+        void switch_player() { current_player_idx = (current_player_idx + 1) % player_map.size(); }
 
         /**
          * @brief Checks if all ids exist and if the CardType is one of:

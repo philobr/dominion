@@ -1,7 +1,15 @@
 ---
 # misc-const-correctness: Unfortunately, this check is not available in clang-tidy 14.0.0
+# TODO: enable
+# - bugprone-narrowing-conversions
+# - bugprone-easily-swappable-parameters
+# - bugprone-use-after-move
 Checks: |
   -*,
+  bugprone-*,
+  -bugprone-narrowing-conversions,
+  -bugprone-easily-swappable-parameters,
+  -bugprone-use-after-move,
   cppcoreguidelines-prefer-member-initializer,
   misc-definitions-in-headers,
   misc-redundant-expression,

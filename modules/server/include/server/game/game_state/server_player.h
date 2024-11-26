@@ -50,9 +50,12 @@ namespace server
             hand_cards(other.hand_cards), played_cards(other.played_cards),
             currently_playing_card(other.currently_playing_card), current_behaviour_idx(other.current_behaviour_idx)
         {}
-
+        bool is_currently_playing_card() const { return !currently_playing_card.empty(); }
+        void set_currently_playing_card(const shared::CardBase::id_t &card_id) { currently_playing_card = card_id; }
         shared::ReducedPlayer::ptr_t get_reduced_player();
         shared::ReducedEnemy::ptr_t get_reduced_enemy();
+
+        bool has_card_playable(const shared::CardBase::id_t &card_id) const;
 
         bool canBlock() const
         {

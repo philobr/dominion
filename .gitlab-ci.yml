@@ -66,5 +66,5 @@ deploy:
   environment:
     name: production
   rules:
-    - if: $CI_COMMIT_BRANCH == 'main' && $CI_PIPELINE_SOURCE == 'push'
+    - if: $CI_COMMIT_BRANCH == 'main'
     - when: manual

@@ -7,6 +7,12 @@
 
 namespace server
 {
+    bool Player::has_card_playable(const shared::CardBase::id_t &card_id) const
+    {
+        return (std::find(hand_cards.begin(), hand_cards.end(), card_id) != hand_cards.end()) ||
+                std::find(staged_cards.begin(), staged_cards.end(), card_id) != staged_cards.end();
+    }
+
     shared::ReducedPlayer::ptr_t Player::get_reduced_player()
     {
         return shared::ReducedPlayer::make(static_cast<shared::PlayerBase>(*this), hand_cards);

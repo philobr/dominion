@@ -21,8 +21,6 @@ namespace server
 
         std::vector<std::unique_ptr<BehaviourBase>> behaviours_list;
 
-        // To dicuss: Should we have a list of tuples (in_response_to, player_id) of expected responses?
-
     public:
         BehaviourChain() :
             current_card(INVALID_CARD), behaviour_idx(INVALID_IDX),

@@ -41,14 +41,9 @@ server::BehaviourChain::receiveAction(server::GameState &game_state, Player::id_
         auto action_order = getBehaviour().apply(game_state, std::move(action_decision));
 
         if ( action_order != std::nullopt ) {
-            // TODO implement
             return action_order;
-        } else {
-            // TODO check if we are currently playing an action card and waiting for a response
-            // TODO check if the response is valid and for the current card (using in_response_to)
-            // TODO where are the expected responses stored? How can we check wether a response of this player is
-            // expected
         }
+
         advance();
     }
 

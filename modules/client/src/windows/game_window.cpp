@@ -40,7 +40,7 @@ namespace client
         this->CallAfter(
                 [=, this]()
                 {
-                    if ( this->_currentPanel ) {
+                    if ( this->_currentPanel != nullptr ) {
                         this->_mainLayout->Detach(this->_currentPanel);
 
                         this->_mainLayout->Layout();
@@ -51,7 +51,8 @@ namespace client
                         this->_currentPanel = nullptr;
                     }
 
-                    if ( panel ) {
+                    != nullptr if ( panel != nullptr )
+                    {
                         this->_mainLayout->Add(panel, 1, wxALIGN_CENTER, 20); // 20-pixel spacing
                         panel->Show(true);
                         this->_currentPanel = panel;

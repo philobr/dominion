@@ -268,7 +268,7 @@ TEST(PileCreationTest, MakeKingdomCard)
     shared::Pile pile = shared::Pile::makeKingdomCard(card_id);
 
     EXPECT_EQ(pile.card_id, card_id);
-    EXPECT_EQ(pile.count, shared::BoardConfig::KINGDOM_CARD_COUNT);
+    EXPECT_EQ(pile.count, shared::board_config::KINGDOM_CARD_COUNT);
 }
 
 TEST_P(PileCreationTest, MakePile)

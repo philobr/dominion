@@ -237,7 +237,7 @@ TEST(ServerBoardTest, BuyAllCopiesOfCard)
 
     // Buy all copies of a kingdom card
     shared::CardBase::id_t card_to_buy = "Village";
-    const size_t total_copies = shared::BoardConfig::KINGDOM_CARD_COUNT;
+    const size_t total_copies = shared::board_config::KINGDOM_CARD_COUNT;
 
     for ( size_t i = 0; i < total_copies; ++i ) {
         bool success = board.buy(card_to_buy);

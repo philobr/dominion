@@ -197,6 +197,7 @@ add_custom_target(check
         -quiet
         -fix
         modules
+        unit_tests
 )
 
 # copy assets (images) to binary directory

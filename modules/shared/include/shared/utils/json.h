@@ -113,4 +113,4 @@
     doc.AddMember(#key, key##_array, doc.GetAllocator());
 
 
-std::string document_to_string(const rapidjson::Document &doc);
+std::string documentToString(const rapidjson::Document &doc);

@@ -51,7 +51,7 @@ namespace shared
         doc.AddMember("game_state", game_state_value, doc.GetAllocator());
 
         ADD_OPTIONAL_STRING_MEMBER(this->in_response_to, in_response_to);
-        return document_to_string(doc);
+        return documentToString(doc);
     }
 
     std::string CreateLobbyResponseMessage::to_json()
@@ -59,26 +59,26 @@ namespace shared
         Document doc = documentFromServerToClientMsg("initiate_game_response", *this);
         ADD_OPTIONAL_STRING_MEMBER(this->in_response_to, in_response_to);
         ADD_ARRAY_OF_STRINGS_MEMBER(this->available_cards, available_cards);
-        return document_to_string(doc);
+        return documentToString(doc);
     }
 
     std::string JoinLobbyBroadcastMessage::to_json()
     {
         Document doc = documentFromServerToClientMsg("join_game_broadcast", *this);
         ADD_ARRAY_OF_STRINGS_MEMBER(this->players, players);
-        return document_to_string(doc);
+        return documentToString(doc);
     }
 
     std::string StartGameBroadcastMessage::to_json()
     {
         Document doc = documentFromServerToClientMsg("start_game_broadcast", *this);
-        return document_to_string(doc);
+        return documentToString(doc);
     }
 
     std::string EndGameBroadcastMessage::to_json()
     {
         Document doc = documentFromServerToClientMsg("end_game_broadcast", *this);
-        return document_to_string(doc);
+        return documentToString(doc);
     }
 
     std::string ResultResponseMessage::to_json()
@@ -87,7 +87,7 @@ namespace shared
         ADD_OPTIONAL_STRING_MEMBER(this->in_response_to, in_response_to);
         ADD_BOOL_MEMBER(this->success, success);
         ADD_OPTIONAL_STRING_MEMBER(this->additional_information, additional_information);
-        return document_to_string(doc);
+        return documentToString(doc);
     }
 
     std::string ActionOrderMessage::to_json()
@@ -96,7 +96,7 @@ namespace shared
         Document order_json = this->order->to_json();
         doc.AddMember("order", order_json, doc.GetAllocator());
         ADD_OPTIONAL_STRING_MEMBER(this->description, description);
-        return document_to_string(doc);
+        return documentToString(doc);
     }
 
     // ======= CLIENT TO SERVER MESSAGES ======= //
@@ -104,26 +104,26 @@ namespace shared
     std::string GameStateRequestMessage::to_json()
     {
         Document doc = documentFromClientToServerMsg("game_state_request", *this);
-        return document_to_string(doc);
+        return documentToString(doc);
     }
 
     std::string CreateLobbyRequestMessage::to_json()
     {
         Document doc = documentFromClientToServerMsg("initiate_game_request", *this);
-        return document_to_string(doc);
+        return documentToString(doc);
     }
 
     std::string JoinLobbyRequestMessage::to_json()
     {
         Document doc = documentFromClientToServerMsg("join_game_request", *this);
-        return document_to_string(doc);
+        return documentToString(doc);
     }
 
     std::string StartGameRequestMessage::to_json()
     {
         Document doc = documentFromClientToServerMsg("start_game_request", *this);
         ADD_ARRAY_OF_STRINGS_MEMBER(this->selected_cards, selected_cards);
-        return document_to_string(doc);
+        return documentToString(doc);
     }
 
     std::string ActionDecisionMessage::to_json()
@@ -150,7 +150,7 @@ namespace shared
             _ASSERT_TRUE(false, "Unknown decision type");
         }
 
-        return document_to_string(doc);
+        return documentToString(doc);
     }
 
 } // namespace shared

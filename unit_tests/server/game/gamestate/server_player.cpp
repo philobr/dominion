@@ -218,7 +218,7 @@ TEST(PlayerTest, AddCardsToPile)
     player.gain("Card3");
 
     // Verify the discard pile
-    auto &discard_pile = player.get<CardAccess::DISCARD_PILE>();
+    const auto &discard_pile = player.get<CardAccess::DISCARD_PILE>();
     ASSERT_EQ(discard_pile.size(), 3);
     EXPECT_EQ(discard_pile[0], "Card1");
     EXPECT_EQ(discard_pile[1], "Card2");

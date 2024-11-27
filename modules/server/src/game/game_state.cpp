@@ -12,7 +12,8 @@ namespace server
 {
     GameState::GameState(const std::vector<shared::CardBase::id_t> &play_cards,
                          const std::vector<Player::id_t> &player_ids) :
-        current_player_idx(0), phase(GamePhase::ACTION_PHASE)
+        current_player_idx(0),
+        phase(GamePhase::ACTION_PHASE)
     {
         if ( player_ids.size() < 2 && player_ids.size() > 4 ) {
             LOG(ERROR) << "Should have 2-4 players, but got: " << player_ids.size();

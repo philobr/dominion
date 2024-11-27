@@ -138,12 +138,18 @@ namespace client
 
     void GameController::buyCard(const std::string &card_id)
     {
-        // send request to buy card
+        LOG(INFO) << "Buying card " << card_id << std::endl;
 
+        std::unique_ptr<shared::ActionDecision> decision(new shared::BuyCardDecision(card_id));
 
-        // For testing delete later
-        LOG(DEBUG) << "Tried to buy card " << card_id << std::endl;
-        showStatus("Tried to buy card " + card_id);
+        // TODO(#120) Implement in_response_to
+        std::optional<std::string> in_response_to = std::nullopt;
+
+        std::unique_ptr<shared::ActionDecisionMessage> action_decision_message =
+                std::make_unique<shared::ActionDecisionMessage>(GameController::_gameName, GameController::_playerName,
+                                                                std::move(decision), in_response_to);
+
+        GameController::_clientNetworkManager->sendRequest(action_decision_message->toJson());
     }
 
     void GameController::playCard(unsigned int cardIndex)
@@ -164,13 +170,19 @@ namespace client
 
     void GameController::endTurn()
     {
-        // send request to end turn
+        LOG(INFO) << "Ending turn" << std::endl;
 
-        // For testing delete later
-        LOG(DEBUG) << "Tried to end turn" << std::endl;
-        showStatus("Tried to end turn");
+        std::unique_ptr<shared::ActionDecision> decision(new shared::EndTurnDecision());
+
+        // TODO(#120) Implement in_response_to
+        std::optional<std::string> in_response_to = std::nullopt;
+
+        std::unique_ptr<shared::ActionDecisionMessage> action_decision_message =
+                std::make_unique<shared::ActionDecisionMessage>(GameController::_gameName, GameController::_playerName,
+                                                                std::move(decision), in_response_to);
+
+        GameController::_clientNetworkManager->sendRequest(action_decision_message->toJson());
     }
-
 
     void GameController::showError(const std::string &title, const std::string &message)
     {

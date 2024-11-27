@@ -38,5 +38,5 @@ namespace server
         return buy_card(treasure_cards) || buy_card(victory_cards) || buy_card(kingdom_cards);
     }
 
-    void ServerBoard::trash_card(const shared::CardBase::id_t &card) { this->trash.push_back(card); }
+    void ServerBoard::trashCard(const shared::CardBase::id_t &card) { this->trash.push_back(card); }
 } // namespace server

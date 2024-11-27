@@ -1,5 +1,5 @@
 #include <gmock/gmock.h>
-#include "gtest/gtest.h"
+#include <gtest/gtest.h>
 
 #include <server/game/game_state/server_player.h>
 
@@ -191,7 +191,7 @@ TEST(PlayerTest, EndTurn)
     player.getMutable<CardAccess::DISCARD_PILE>() = {"Card4"};
 
     // Call end_turn()
-    player.end_turn();
+    player.endTurn();
 
     // Check that values are reset
     EXPECT_EQ(player.getActions(), 1);
@@ -218,7 +218,7 @@ TEST(PlayerTest, AddCardsToPile)
     player.gain("Card3");
 
     // Verify the discard pile
-    auto &discard_pile = player.get<CardAccess::DISCARD_PILE>();
+    const auto &discard_pile = player.get<CardAccess::DISCARD_PILE>();
     ASSERT_EQ(discard_pile.size(), 3);
     EXPECT_EQ(discard_pile[0], "Card1");
     EXPECT_EQ(discard_pile[1], "Card2");

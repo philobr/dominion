@@ -7,12 +7,12 @@
 #include <random>
 #include <sstream>
 
-class uuid_generator
+class UuidGenerator
 {
 
 private:
 public:
-    static std::string generate_uuid_v4()
+    static std::string generateUuidV4()
     {
         // made those static to not seed a new engine for every call
         static std::random_device rd;

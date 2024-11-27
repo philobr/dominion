@@ -7,17 +7,17 @@
 
 namespace server
 {
-    reduced::Player::ptr_t Player::get_reduced_player()
+    reduced::Player::ptr_t Player::getReducedPlayer()
     {
         return reduced::Player::make(static_cast<shared::PlayerBase>(*this), hand_cards);
     }
 
-    reduced::Enemy::ptr_t Player::get_reduced_enemy()
+    reduced::Enemy::ptr_t Player::getReducedEnemy()
     {
         return reduced::Enemy::make(static_cast<shared::PlayerBase>(*this), hand_cards.size());
     }
 
-    void Player::reset_values()
+    void Player::resetValues()
     {
         actions = 1;
         buys = 1;
@@ -25,9 +25,9 @@ namespace server
         victory_points = 0;
     }
 
-    void Player::end_turn()
+    void Player::endTurn()
     {
-        reset_values();
+        resetValues();
 
         move<HAND, DISCARD_PILE>();
         move<PLAYED_CARDS, DISCARD_PILE>();

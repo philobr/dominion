@@ -27,7 +27,7 @@ namespace server
          *
          * This function will call the appropriate functions in the LobbyManager.
          */
-        void HandleMessage(std::unique_ptr<shared::ClientToServerMessage> message);
+        void handleMessage(std::unique_ptr<shared::ClientToServerMessage> message);
 
     private:
         LobbyManager lobby_manager_;

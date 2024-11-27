@@ -4,7 +4,7 @@
 namespace server
 {
 
-    ssize_t BasicNetwork::send_message(const std::string &message, const std::string &address)
+    ssize_t BasicNetwork::sendMessage(const std::string &message, const std::string &address)
     {
 
         _rw_lock.lock();
@@ -18,10 +18,10 @@ namespace server
         return ret;
     }
 
-    void BasicNetwork::add_player_to_address(const player_id_t &player_id, const std::string &address)
+    void BasicNetwork::addPlayerToAddress(const player_id_t &player_id, const std::string &address)
     {
         _rw_lock.lock_shared();
-        if ( is_new_player(player_id) ) {
+        if ( isNewPlayer(player_id) ) {
             // save connection to this client
             _rw_lock.unlock_shared();
             LOG(INFO) << "New client with id " << player_id;
@@ -31,19 +31,19 @@ namespace server
         }
     }
 
-    void BasicNetwork::add_address_to_socket(const std::string &address, const sockpp::tcp_socket socket)
+    void BasicNetwork::addAddressToSocket(const std::string &address, const sockpp::tcp_socket socket)
     {
         _rw_lock.lock();
         _address_to_socket.emplace(address, socket.clone());
         _rw_lock.unlock();
     }
 
-    bool BasicNetwork::is_new_player(const player_id_t &player_id)
+    bool BasicNetwork::isNewPlayer(const player_id_t &player_id)
     {
         return _player_id_to_address.find(player_id) == _player_id_to_address.end();
     }
 
-    std::string BasicNetwork::get_address(const player_id_t &player_id)
+    std::string BasicNetwork::getAddress(const player_id_t &player_id)
     {
         if ( _player_id_to_address.find(player_id) != _player_id_to_address.end() ) {
             return _player_id_to_address[player_id];
@@ -51,7 +51,7 @@ namespace server
         return "";
     }
 
-    void BasicNetwork::player_disconnect(const std::string player_id)
+    void BasicNetwork::playerDisconnect(const std::string player_id)
     {
         _rw_lock.lock();
         std::string address = _player_id_to_address[player_id];

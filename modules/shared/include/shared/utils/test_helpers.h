@@ -14,7 +14,7 @@
  *
  * @return std::vector<shared::CardBase::id_t>
  */
-std::vector<shared::CardBase::id_t> get_valid_kingdom_cards();
+std::vector<shared::CardBase::id_t> getValidKingdomCards();
 
 /**
  * @brief Set the count of min(n, pile_container.size()) piles to empty.
@@ -22,4 +22,4 @@ std::vector<shared::CardBase::id_t> get_valid_kingdom_cards();
  * @param pile_container
  * @param n
  */
-void set_n_piles_to_empty(shared::Board::pile_container_t &pile_container, size_t n);
+void setNPilesToEmpty(shared::Board::pile_container_t &pile_container, size_t n);

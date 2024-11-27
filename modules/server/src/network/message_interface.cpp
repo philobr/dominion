@@ -14,4 +14,5 @@ namespace server
         LOG(INFO) << "Message Interface sending: " << msg;
         BasicNetwork::sendToPlayer(msg, player_id);
     }
+
 } // namespace server

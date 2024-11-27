@@ -56,7 +56,9 @@ namespace server
         static void addAddressToSocket(const std::string &address, sockpp::tcp_socket socket);
 
     private:
-               static std::string getAddress(const player_id_t &player_id);
+        // DISCLAIMER: we assume the caller holds the neccessary locks here!
+
+        static const std::string &getAddress(const player_id_t &player_id);
         static sockpp::tcp_socket *getSocket(const std::string &address);
         static bool isNewPlayer(const player_id_t &player_id);
     };

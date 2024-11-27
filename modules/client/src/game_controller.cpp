@@ -257,6 +257,7 @@ namespace client
     shared::PlayerBase::id_t GameController::getPlayerName()
     {
         if ( GameController::_gameState == nullptr ) {
+            LOG(ERROR) << "GameController::getPlayerName called without a game state";
             throw exception::UnreachableCode(
                     "GameController::getPlayerName should never be called without a game state");
         }

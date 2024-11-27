@@ -94,4 +94,15 @@ namespace shared
     protected:
         bool equals(const ActionOrder &other) const override;
     };
+
+    class EndTurnOrder : public ActionOrder
+    {
+    public:
+        EndTurnOrder() = default;
+        bool operator==(const EndTurnOrder &other) const;
+        bool operator!=(const EndTurnOrder &other) const;
+
+    protected:
+        bool equals(const ActionOrder &other) const override;
+    };
 } // namespace shared

@@ -14,27 +14,52 @@ namespace server
 {
     class BasicNetwork
     {
+        inline static std::unordered_map<player_id_t, std::string> _player_id_to_address;
+        inline static std::unordered_map<std::string, sockpp::tcp_socket> _address_to_socket;
+
+        inline static std::shared_mutex _rw_lock;
+
     public:
-        ssize_t sendMessage(const std::string &message, const std::string &address);
+        // TODO:
+        static void playerDisconnect(const player_id_t &player_id);
 
-        void addPlayerToAddress(const player_id_t &player_id, const std::string &address);
+        /**
+         * @brief Sends a message to the specified address.
+         *
+         * @param address
+         * @param socket
+         */
+        static ssize_t sendToAddress(const std::string &message, const std::string &address);
 
-        void addAddressToSocket(const std::string &address, sockpp::tcp_socket socket);
+        /**
+         * @brief Sends a message to the specified player_id.
+         *
+         * @param address
+         * @param socket
+         */
+        static ssize_t sendToPlayer(const std::string &message, const player_id_t &player_id);
 
-        bool isNewPlayer(const player_id_t &player_id);
+        /**
+         * @brief Maps a player ID to a network address.
+         *
+         * @param address
+         * @param socket
+         */
+        static void addPlayerToAddress(const player_id_t &player_id, const std::string &address);
 
-        std::string getAddress(const player_id_t &player_id);
-
-        void playerDisconnect(const player_id_t player_id);
-
-        static BasicNetwork *getInstance();
+        /**
+         * @brief Maps a network address to a socket.
+         *
+         * @param address
+         * @param socket
+         */
+        static void addAddressToSocket(const std::string &address, sockpp::tcp_socket socket);
 
     private:
-        std::unordered_map<std::string, std::string> _player_id_to_address;
-        std::unordered_map<std::string, sockpp::tcp_socket> _address_to_socket;
+        // DISCLAIMER: we assume the caller holds the neccessary locks here!
 
-        std::shared_mutex _rw_lock;
-
-        static BasicNetwork *_instance;
+        static const std::string &getAddress(const player_id_t &player_id);
+        static sockpp::tcp_socket *getSocket(const std::string &address);
+        static bool isNewPlayer(const player_id_t &player_id);
     };
 } // namespace server

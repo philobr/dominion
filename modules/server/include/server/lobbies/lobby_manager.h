@@ -7,6 +7,7 @@
 
 #include <server/lobbies/lobby.h>
 #include <server/network/message_interface.h>
+
 #include <shared/game/game_state/reduced_game_state.h>
 #include <shared/message_types.h>
 

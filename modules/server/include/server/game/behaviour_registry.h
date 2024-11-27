@@ -8,7 +8,7 @@
 #include <unordered_map>
 #include <vector>
 
-#include <server/game/game_state/behaviour_base.h>
+#include <server/game/behaviour_base.h>
 #include <shared/utils/utils.h>
 
 namespace server

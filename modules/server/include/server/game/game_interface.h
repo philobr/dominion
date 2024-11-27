@@ -1,7 +1,7 @@
 #pragma once
 
-#include <server/game/game.h>
-#include <server/game/game_state/behaviour_chain.h>
+#include <server/game/behaviour_chain.h>
+#include <server/game/game_state.h>
 
 namespace server
 {

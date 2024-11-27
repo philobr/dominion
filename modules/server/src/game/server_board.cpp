@@ -1,4 +1,4 @@
-#include <server/game/game_state/server_board.h>
+#include <server/game/server_board.h>
 #include <shared/utils/assert.h>
 
 namespace server

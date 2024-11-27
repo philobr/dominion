@@ -1,5 +1,6 @@
-#include <server/game/game_state/behaviour_base.h>
+#include <server/game/behaviour_base.h>
 #include <shared/utils/utils.h>
+
 namespace server
 {
     namespace behaviour
@@ -68,7 +69,7 @@ namespace server
     [](std::optional<std::unique_ptr<shared::ActionDecision>> &action_decision) -> type *                              \
     {                                                                                                                  \
         ASSERT_DECISION                                                                                                \
-        auto *casted_decision = dynamic_cast<(type) *>(action_decision->get());                                          \
+        auto *casted_decision = dynamic_cast<(type) *>(action_decision->get());                                        \
         if ( !casted_decision ) {                                                                                      \
             LOG(ERROR) << "Decision has wrong type! Expected: " << utils::demangle(typeid(type).name())                \
                        << ", but got: " << utils::demangle(typeid(*action_decision->get()).name());                    \

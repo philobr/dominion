@@ -2,6 +2,8 @@
 #include <server/args.h>
 #include <server/network/server_network_manager.h>
 
+#include <shared/utils/logger.h>
+
 int main(int argc, char *argv[])
 {
     server::ServerArgs args(argc, argv);
@@ -10,8 +12,18 @@ int main(int argc, char *argv[])
     shared::Logger::setLevel(args.getLogLevel());
     shared::Logger::writeTo(args.getLogFile());
 
-    // create a message interface, which creates a server network manager, which listens endlessly for connections
-    server::ServerNetworkManager server(args.getPort()); // TODO: make this a function, not constructor
+    // In case the server crashes, we simply restart it
+    // The server is completely reset, so all clients will be disconnected
+    // This is not a problem, since the server is not supposed to crash in the first place
+    while ( true ) {
+        try {
+            server::ServerNetworkManager server;
+            server.run(args.getPort());
+        } catch ( const std::exception &e ) {
+            LOG(ERROR) << "Unhandled exception: " << e.what();
+            LOG(DEBUG) << "Restarting server...";
+        }
+    }
 
     return 0;
 }

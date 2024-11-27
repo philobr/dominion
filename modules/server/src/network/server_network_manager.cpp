@@ -151,7 +151,8 @@ namespace server
             LOG(INFO) << "Handling request from player(" << player_id << "): " << msg;
             // execute client request
             // TODO Change to message handler
-            _messageHandler->handleMessage(req);
+            //_messageHandler->handleMessage(req);
+            _lobby_manager.receiveMessage(req);
 
         } catch ( const std::exception &e ) {
             LOG(ERROR) << "Failed to execute client request. Content was :\n"

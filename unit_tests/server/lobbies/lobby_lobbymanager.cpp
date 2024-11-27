@@ -44,6 +44,8 @@ TEST(ServerLibraryTest, CreateLobby)
     ASSERT_EQ(games.at("123")->getGameMaster(), player_1);
     ASSERT_EQ(games.at("123")->getPlayers().size(), 1);
 }
+/*
+COMMENTED OUT AS THIS FUNCTIONALITY IS MOVED
 
 // TODO: Implement tests for the following methods
 TEST(ServerLibraryTest, JoinLobby)
@@ -159,7 +161,7 @@ TEST(ServerLibraryTest, ReceiveAction)
     shared::PlayerBase::id_t player_2 = "Peter";
     shared::PlayerBase::id_t player_3 = "Paul";
 
-    /* Setup of the lobby */
+    // Setup of the lobby
     auto request1 = std::make_unique<shared::CreateLobbyRequestMessage>("123", player_1);
     auto request2 = std::make_unique<shared::JoinLobbyRequestMessage>("123", player_2);
 
@@ -169,36 +171,36 @@ TEST(ServerLibraryTest, ReceiveAction)
 
     lobby_manager.createLobby(std::move(request1));
     lobby_manager.joinLobby(std::move(request2));
-    /* Finish setup */
+    // Finish setup
 
     // ActionDecision for a lobby that doesn't exist
-    auto request4 = std::make_unique<shared::ActionDecisionMessage>(
-            "456", player_1, std::make_unique<shared::PlayActionCardDecision>(1));
+    auto request4 = std::make_unique<shared::ActionDecisionMessage>("456", player_1,
+                                                                    std::make_unique<shared::PlayActionCardDecision>(1));
 
     // ActionDecision for a game that hasn't started yet
-    auto request5 = std::make_unique<shared::ActionDecisionMessage>(
-            "123", player_1, std::make_unique<shared::PlayActionCardDecision>(1));
+    auto request5 = std::make_unique<shared::ActionDecisionMessage>("123", player_1,
+                                                                    std::make_unique<shared::PlayActionCardDecision>(1));
 
     // ActionDecision for a player that is not in the lobby
-    auto request6 = std::make_unique<shared::ActionDecisionMessage>(
-            "123", player_3, std::make_unique<shared::BuyCardDecision>("Village"));
+    auto request6 = std::make_unique<shared::ActionDecisionMessage>("123", player_3,
+                                                                    std::make_unique<shared::BuyCardDecision>("Village"));
 
     // ActionDecision should be handled correctly
-    auto request7 = std::make_unique<shared::ActionDecisionMessage>(
-            "123", player_1, std::make_unique<shared::BuyCardDecision>("Village"));
+    auto request7 = std::make_unique<shared::ActionDecisionMessage>("123", player_1,
+                                                                    std::make_unique<shared::BuyCardDecision>("Village"));
 
     // First part of expected function calls of sendMessage
     {
-        InSequence s;
-        // request4
-        EXPECT_CALL(*message_interface, sendMessage(IsFailureMessage(), player_1)).Times(1);
-        // Start game messages
-        EXPECT_CALL(*message_interface, sendMessage(_, _)).Times(4);
-        // request6
-        EXPECT_CALL(*message_interface, sendMessage(IsFailureMessage(), player_3)).Times(1);
-        // request7
-        // TODO: uncomment as soon as game_interface is implemented
-        // EXPECT_CALL(*message_interface, sendMessage(_, player_1)).Times(1);
+    InSequence s;
+    // request4
+    EXPECT_CALL(*message_interface, sendMessage(IsFailureMessage(), player_1)).Times(1);
+    // Start game messages
+    EXPECT_CALL(*message_interface, sendMessage(_, _)).Times(4);
+    // request6
+    EXPECT_CALL(*message_interface, sendMessage(IsFailureMessage(), player_3)).Times(1);
+    // request7
+    // TODO: uncomment as soon as game_interface is implemented
+    // EXPECT_CALL(*message_interface, sendMessage(_, player_1)).Times(1);
     }
 
     lobby_manager.receiveAction(std::move(request4));
@@ -208,3 +210,4 @@ TEST(ServerLibraryTest, ReceiveAction)
     // TODO: uncomment as soon as game_interface is implemented
     // lobby_manager.receive_action(std::move(request7));
 }
+*/

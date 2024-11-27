@@ -17,7 +17,7 @@ namespace server
         std::lock_guard<std::mutex> lock(mutex_);
 
         auto &msg_ref = *message;
-
+#undef HANDLE
 // NOLINTBEGIN(bugprone-macro-parentheses)
 #define HANDLE(message_type, handler_func)                                                                             \
     if ( typeid(msg_ref) == typeid(message_type) ) {                                                                   \

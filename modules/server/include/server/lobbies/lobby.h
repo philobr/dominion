@@ -29,6 +29,39 @@ namespace server
         Lobby(const Player::id_t &game_master, const std::string &lobby_id);
 
         /**
+         * @brief The lobby receives a generic message. It handles what it is responsible for and the rest gets passed
+         * on to the game_interface
+         *
+         * @param message_interface
+         * @param message
+         */
+        void handleMessage(MessageInterface &message_interface, std::unique_ptr<shared::ClientToServerMessage> &message)
+        {
+            auto &msg_ref = *message;
+
+            // NOLINTBEGIN(bugprone-macro-parentheses)
+#define HANDLE(message_type, handler_func)                                                                             \
+    if ( typeid(msg_ref) == typeid(shared::message_type) ) {                                                           \
+        LOG(INFO) << "Trying to handle: " << #message_type;                                                            \
+        std::unique_ptr<shared::message_type> casted_message(static_cast<shared::message_type *>(message.release()));  \
+        handler_func(message_interface, std::move(casted_message));                                                    \
+        return;                                                                                                        \
+    }
+            // NOLINTEND(bugprone-macro-parentheses)
+
+            // handle messages the lobby is responsible for
+            HANDLE(JoinLobbyRequestMessage, join);
+            HANDLE(StartGameRequestMessage, startGame);
+            // HANDLE(GameStateRequestMessage, /*gamestatereq msg*/);
+
+            // this will get handled by the game_interface
+            HANDLE(ActionDecisionMessage, receiveAction);
+
+            LOG(ERROR) << "Lobby received unknown message type";
+            throw std::runtime_error("unreachable code");
+        }
+
+        /**
          * @brief Add a player to the lobby.
          *
          * @param message_interface The message interface to send messages to the players.

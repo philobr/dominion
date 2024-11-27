@@ -86,6 +86,7 @@ namespace server
             message_interface->sendMessage(std::make_unique<shared::ResultResponseMessage>(failure_message), player_id);
             return;
         }
+
         games.at(lobby_id)->receiveAction(*message_interface, std::move(msg));
     }
 } // namespace server

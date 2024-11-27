@@ -34,6 +34,45 @@ namespace server
         /*message_interface(std::make_unique<MessageInterface>(message_interface))*/
 
         /**
+         * @brief The manager will now receive a message and only handle the lobby creation.
+         * All other messages get passed on to the lobby
+         *
+         * @param message
+         */
+        void receiveMessage(std::unique_ptr<shared::ClientToServerMessage> &message)
+        {
+            if ( message == nullptr ) {
+                LOG(ERROR) << "Received message is null";
+                throw std::runtime_error("unreachable code");
+            }
+
+            // handle create lobby
+            if ( typeid(message.get()) == typeid(shared::CreateLobbyRequestMessage) ) {
+                LOG(INFO) << "Trying to handle: " << "CreateLobbyRequestMessage";
+                std::unique_ptr<shared::CreateLobbyRequestMessage> unique_CreateLobbyRequestMessage(
+                        static_cast<shared::CreateLobbyRequestMessage *>(message.release()));
+
+                createLobby(std::move(unique_CreateLobbyRequestMessage));
+                return;
+            }
+
+            // other messages get forwarded to the lobby
+            const auto &lobby_id = message->game_id;
+            if ( !lobbyExists(message->game_id) ) {
+                const auto &player_id = message->player_id;
+                LOG(WARN) << "Tried starting game in lobby that does not exist. Game ID: " << lobby_id
+                          << " , Player ID: " << player_id;
+
+                message_interface->sendMessage(std::make_unique<shared::ResultResponseMessage>(
+                                                       lobby_id, false, message->message_id, "Lobby does not exist"),
+                                               player_id);
+                return;
+            }
+
+            games.at(lobby_id)->handleMessage(*(message_interface.get()), message);
+        }
+
+        /**
          * @brief Create a new lobby.
          * This will create a new lobby and add it to the list of games. The game master will be added to the lobby.
          *

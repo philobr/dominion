@@ -39,8 +39,6 @@ namespace client
         outersizer->Add(DiscardPilePanel, 0, wxTOP, 5);
 
         this->SetSizer(outersizer);
-
-
     }
 
     void PlayerPanel::makePlayable(ImagePanel *Image, unsigned int cardIndex)
@@ -53,7 +51,7 @@ namespace client
         Image->Bind(wxEVT_LEFT_UP, [cardIndex](wxMouseEvent & /*event*/) { GameController::playCard(cardIndex); });
     }
 
-    wxPanel* PlayerPanel::createDrawPilePanel(const unsigned int draw_pile_size)
+    wxPanel *PlayerPanel::createDrawPilePanel(const unsigned int draw_pile_size)
     {
         // Create the draw pile panel
         wxPanel *DrawPilePanel = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDefaultSize);
@@ -70,17 +68,18 @@ namespace client
         return DrawPilePanel;
     }
 
-    wxPanel* PlayerPanel::createHandPanel(const std::unique_ptr<reduced::Player>& Player, const size_t card_width_borders, const bool is_active)
+    wxPanel *PlayerPanel::createHandPanel(const std::unique_ptr<reduced::Player> &Player,
+                                          const size_t card_width_borders, const bool is_active)
     {
         // Get the hand cards
-        const auto& cards = Player->getHandCards();
+        const auto &cards = Player->getHandCards();
         size_t hand_size = cards.size();
 
         // Create the hand panel
-        wxPanel* hand = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDefaultSize);
+        wxPanel *hand = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDefaultSize);
 
         // Create the sizer for the hand
-        wxGridSizer* sizer = new wxGridSizer(1, hand_size, 0, 0);
+        wxGridSizer *sizer = new wxGridSizer(1, hand_size, 0, 0);
         sizer->SetMinSize(wxSize(5 * card_width_borders, 150));
 
         // Set the sizer for the hand panel
@@ -89,16 +88,16 @@ namespace client
         LOG(DEBUG) << "card width " << card_width_borders << "\n";
 
         // Set the size of the cards
-        if (card_width_borders * hand_size > 724) {
+        if ( card_width_borders * hand_size > 724 ) {
             // scale bigger hands
             hand_card_size.SetWidth(724 / hand_size - 8);
             hand_card_size.SetHeight(hand_card_size.GetWidth() / 4 * 5);
         }
 
         // Add the cards to the hand
-        for (size_t i = 0; i < hand_size; i++) {
-            ImagePanel* card = new ImagePanel(hand, "assets/" + cards[i] + ".png", wxBITMAP_TYPE_PNG, wxDefaultPosition,
-                hand_card_size, 0);
+        for ( size_t i = 0; i < hand_size; i++ ) {
+            ImagePanel *card = new ImagePanel(hand, "assets/" + cards[i] + ".png", wxBITMAP_TYPE_PNG, wxDefaultPosition,
+                                              hand_card_size, 0);
 
             bool is_action = shared::CardFactory::getCard(cards[i]).isAction();
 
@@ -115,24 +114,24 @@ namespace client
         return hand;
     }
 
-    wxPanel* PlayerPanel::createDiscardPilePanel(const unsigned int discard_pile_size, const std::string& top_discard_card)
+    wxPanel *PlayerPanel::createDiscardPilePanel(const unsigned int discard_pile_size,
+                                                 const std::string &top_discard_card)
     {
         // Create the discard pile panel
-        wxPanel* DiscardPilePanel = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDefaultSize);
+        wxPanel *DiscardPilePanel = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDefaultSize);
 
         // Declare DiscardPile outside the if/else blocks
-        PilePanel* DiscardPile;
+        PilePanel *DiscardPile;
 
         // Create the discard pile
-        if (discard_pile_size == 0) {
+        if ( discard_pile_size == 0 ) {
             DiscardPile = new PilePanel(DiscardPilePanel, shared::Pile("logo", 0));
-        }
-        else {
+        } else {
             DiscardPile = new PilePanel(DiscardPilePanel, shared::Pile(top_discard_card, discard_pile_size));
         }
 
         // Create the sizer for the discard pile
-        wxBoxSizer* DiscardPileSizer = new wxBoxSizer(wxVERTICAL);
+        wxBoxSizer *DiscardPileSizer = new wxBoxSizer(wxVERTICAL);
         DiscardPileSizer->SetMinSize(wxSize(1 * hand_card_size.GetWidth(), 150));
 
         // Add the discard pile to the sizer

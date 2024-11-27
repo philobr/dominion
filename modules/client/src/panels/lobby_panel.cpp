@@ -8,6 +8,7 @@
 #include <wx/sizer.h>
 #include <wx/wx.h>
 #include "shared/utils/logger.h"
+#include "uiElements/text_panel.h"
 
 // NOLINTBEGIN(bugprone-suspicious-enum-usage)
 namespace client
@@ -16,9 +17,7 @@ namespace client
         wxPanel(parent, wxID_ANY, wxDefaultPosition, wxSize(1024, 1024)), NamesSizer(new wxGridSizer(2, 2, 0, 0)),
         playerCount(0)
     {
-        wxStaticText *Title = new wxStaticText(this, wxID_ANY, "Lobby");
-        Title->SetFont(wxFont(24, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD));
-        Title->SetForegroundColour(wxColor(0, 0, 0));
+        TextPanel *Title = new TextPanel(this, wxID_ANY, "Lobby", TextFormat::Title);
         wxBoxSizer *VerticalSizer = new wxBoxSizer(wxVERTICAL);
         VerticalSizer->Add(Title, 0, wxALIGN_CENTER | wxALL, 5);
         wxPanel *Panel = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxSize(512, 512));
@@ -71,8 +70,7 @@ namespace client
                                                0.0 // rotation
         );
         Player->GetSizer()->Add(LogoPanel, 0, wxALL | wxALIGN_CENTER, 5);
-        wxStaticText *Player_name = new wxStaticText(Player, wxID_ANY, name);
-        Player_name->SetForegroundColour(wxColor(0, 0, 0));
+        TextPanel *Player_name = new TextPanel(Player, wxID_ANY, name, TextFormat::Plain);
         Player->GetSizer()->Add(Player_name, 0, wxALL | wxALIGN_CENTER, 5);
         NamesSizer->Add(Player, 1, wxALL | wxALIGN_CENTER);
         NamesSizer->Layout();

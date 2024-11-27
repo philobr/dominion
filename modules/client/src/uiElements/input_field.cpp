@@ -1,4 +1,5 @@
 #include <uiElements/input_field.h>
+#include "uiElements/text_panel.h"
 
 namespace client
 {
@@ -10,12 +11,12 @@ namespace client
 
         wxBoxSizer *horizontalLayout = new wxBoxSizer(wxHORIZONTAL);
 
-        this->_label = new wxStaticText(this, // parent element
-                                        wxID_ANY, // element id
-                                        labelText, // text that's displayed as label
-                                        wxDefaultPosition, // position
-                                        wxSize(labelWidth, -1) // size (-1 means default size)
+        this->_label = new TextPanel(this, // parent element
+                                     wxID_ANY, // element id
+                                     labelText, // text that's displayed as label
+                                     TextFormat::Plain // text format
         );
+        this->_label->SetMinSize(wxSize(labelWidth, -1));
         horizontalLayout->Add(this->_label, 0, wxALIGN_CENTER);
 
         this->_field = new wxTextCtrl(this, // parent element

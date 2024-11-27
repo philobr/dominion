@@ -1,4 +1,5 @@
 #include <uiElements/pile_panel.h>
+#include "uiElements/text_panel.h"
 
 
 namespace client
@@ -14,10 +15,7 @@ namespace client
 
         sizer->Add(Image, 0, wxALIGN_CENTER_HORIZONTAL);
 
-        wxStaticText *PileSize = new wxStaticText(this, wxID_ANY, std::to_string(pile.count), wxDefaultPosition,
-                                                  wxDefaultSize, wxALIGN_CENTER);
-
-        PileSize->SetForegroundColour(wxColor(0, 0, 0));
+        TextPanel *PileSize = new TextPanel(this, wxID_ANY, std::to_string(pile.count), TextFormat::Plain);
 
         sizer->Add(PileSize, 0, wxALIGN_CENTER_HORIZONTAL);
 

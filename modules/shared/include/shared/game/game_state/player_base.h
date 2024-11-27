@@ -35,6 +35,8 @@ namespace shared
         unsigned int getActions() const { return actions; }
         unsigned int getBuys() const { return buys; }
         unsigned int getTreasure() const { return treasure; }
+        unsigned int getDrawPileSize() const { return draw_pile_size; }
+        unsigned int getDiscardPileSize() const { return discard_pile.size(); }
 
         /**
          * @brief Decrements actions by one, or keeps it at 0.

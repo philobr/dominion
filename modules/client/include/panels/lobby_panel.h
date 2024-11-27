@@ -26,6 +26,11 @@ namespace client
          */
         void refreshPlayers(std::vector<std::string> &players);
 
+        /**
+         * @brief Makes the player a game master. This will allow the player to start the game.
+         */
+        void makeGameMaster();
+
         /// @brief Adds a player visually to the lobby
         /// This is specifically not doing any logic
         /// @pre playerCount < 4

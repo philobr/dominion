@@ -23,15 +23,6 @@ namespace client
         VerticalSizer->Add(Title, 0, wxALIGN_CENTER | wxALL, 5);
         wxPanel *Panel = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxSize(512, 512));
         VerticalSizer->Add(Panel, 1, wxALIGN_CENTER | wxALL, 5);
-        wxButton *StartButton = new wxButton(this, wxID_ANY, "Start Game");
-        StartButton->Bind(wxEVT_BUTTON, [](const wxCommandEvent &) { GameController::startGame(); });
-        VerticalSizer->Add(StartButton, 0, wxALIGN_CENTER | wxALL, 5);
-
-        wxButton *AddPlayerButton = new wxButton(this, wxID_ANY, "Add Player");
-        wxString name = "dummy name";
-        AddPlayerButton->Bind(wxEVT_BUTTON, [this, name](const wxCommandEvent &) { this->addPlayer(name); });
-        VerticalSizer->Add(AddPlayerButton, 0, wxALIGN_CENTER | wxALL, 5);
-
 
         Panel->SetSizer(NamesSizer);
 
@@ -47,6 +38,15 @@ namespace client
             LOG(DEBUG) << "Adding player " << player;
             this->addPlayer(player);
         }
+    }
+
+    void LobbyPanel::makeGameMaster()
+    {
+        wxButton *StartButton = new wxButton(this, wxID_ANY, "Start Game");
+
+        StartButton->Bind(wxEVT_BUTTON, [](const wxCommandEvent &) { GameController::startGame(); });
+
+        this->GetSizer()->Add(StartButton, 0, wxALIGN_CENTER | wxALL, 5);
     }
 
 

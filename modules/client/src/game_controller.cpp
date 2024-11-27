@@ -219,6 +219,7 @@ namespace client
     {
         GameController::_gameWindow->showPanel(GameController::_lobbyPanel);
         // TODO maybe add player_id to the ServerToClientMessage ?
+        GameController::_lobbyPanel->makeGameMaster();
         GameController::_lobbyPanel->addPlayer(GameController::_connectionPanel->getPlayerName().Trim().ToStdString());
     }
 
@@ -226,6 +227,7 @@ namespace client
     {
         std::unique_ptr<shared::JoinLobbyBroadcastMessage> jlbm(
                 static_cast<shared::JoinLobbyBroadcastMessage *>(msg.release()));
+
         GameController::refreshPlayers(*jlbm);
     }
 
@@ -266,10 +268,6 @@ namespace client
     {
         LOG(INFO) << "Refreshing Players";
         GameController::_lobbyPanel->refreshPlayers(msg.players);
-        /*
-        for ( auto player : msg->players ) {
-            GameController::_lobbyPanel->AddPlayer(player);
-        }*/
         LOG(INFO) << "Added new players";
     }
 

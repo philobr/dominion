@@ -43,7 +43,7 @@ namespace exception
 
 // False positive of clang-tidy
 // NOLINTBEGIN(bugprone-macro-parentheses)
-#define NEW_BASE_EXCPETION(class_name)                                                                                 \
+#define NEW_BASE_EXCEPTION(class_name)                                                                                 \
     namespace exception                                                                                                \
     {                                                                                                                  \
         class class_name : public BaseExceptionType                                                                    \
@@ -75,23 +75,29 @@ namespace exception
 /*
 THIS IS AN EXAMPLE USAGE.
 
-NEW_BASE_EXCPETION(GameState);
+NEW_BASE_EXCEPTION(GameState);
 NEW_INHERITED_EXCEPTION(GameStateConstructor, GameState);
 NEW_INHERITED_EXCEPTION(DuplicateCards, GameStateConstructor);
 NEW_INHERITED_EXCEPTION(CardCountMismatch, GameStateConstructor);
  */
 
-NEW_BASE_EXCPETION(Logger);
+NEW_BASE_EXCEPTION(Logger);
 
 // for gamestate
-NEW_BASE_EXCPETION(GameState);
+NEW_BASE_EXCEPTION(GameState);
 NEW_INHERITED_EXCEPTION(InsufficientFunds, GameState);
 NEW_INHERITED_EXCEPTION(CardNotAvailable, GameState);
 NEW_INHERITED_EXCEPTION(PlayerCountMismatch, GameState);
 NEW_INHERITED_EXCEPTION(DuplicatePlayer, GameState);
 NEW_INHERITED_EXCEPTION(WrongCardCount, GameState);
 NEW_INHERITED_EXCEPTION(OutOfPhase, GameState);
+NEW_INHERITED_EXCEPTION(OutOfActions, GameState);
+NEW_INHERITED_EXCEPTION(InvalidCardAccess, GameState);
+NEW_INHERITED_EXCEPTION(InvalidCardType, GameState);
 
 // CLI parsing
-NEW_BASE_EXCPETION(Cli);
+NEW_BASE_EXCEPTION(Cli);
 NEW_INHERITED_EXCEPTION(InvalidArgument, Cli);
+
+NEW_BASE_EXCEPTION(Client);
+NEW_INHERITED_EXCEPTION(UnreachableCode, Client);

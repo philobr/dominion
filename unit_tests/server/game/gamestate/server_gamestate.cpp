@@ -107,5 +107,5 @@ TEST(GameStateTest, StartTurn)
     // Check that the player has drawn their initial hand (usually 5 cards)
     // This depends on how the draw method is implemented
     // For testing purposes, we can check if hand_cards is not empty
-    EXPECT_EQ(current_player.get<server::CardAccess::HAND>().size(), 5);
+    EXPECT_EQ(current_player.get<shared::CardAccess::HAND>().size(), 5);
 }

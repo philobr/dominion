@@ -12,6 +12,18 @@
 
 namespace shared
 {
+    enum CardAccess
+    {
+        DISCARD_PILE = 1,
+        HAND = 2,
+        DRAW_PILE_TOP = 4,
+        DRAW_PILE_BOTTOM = 8,
+
+        PLAYED_CARDS = 16,
+        TRASH = 32,
+        STAGED_CARDS = 64 // ex: sentry could move here
+    };
+
     class PlayerBase
     {
     public:

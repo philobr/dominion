@@ -26,7 +26,7 @@ namespace client
         void drawPlayer(const std::unique_ptr<reduced::Player> &Player, bool is_active);
 
     private:
-        void makePlayable(ImagePanel *Image, std::string card_id);
+        void makePlayable(ImagePanel *Image, unsigned int cardIndex);
 
         wxSize hand_card_size = wxSize(100, 125);
 

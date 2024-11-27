@@ -61,7 +61,7 @@ namespace server
                 LOG(ERROR) << "Error accepting incoming connection: " << _acc.last_error_str();
             } else {
                 std::string address = sock.peer_address().to_string();
-                BasicNetwork::getInstance()->addAddressToSocket(address, sock.clone());
+                BasicNetwork::addAddressToSocket(address, sock.clone());
 
                 // Create a listener thread and transfer the new stream to it.
                 // Incoming messages will be passed to handle_message().
@@ -147,7 +147,7 @@ namespace server
             // check if this is a connection to a new player
             shared::PlayerBase::id_t player_id = req->player_id;
             std::string address = peer_address.to_string();
-            BasicNetwork::getInstance()->addPlayerToAddress(player_id, address);
+            BasicNetwork::addPlayerToAddress(player_id, address);
             LOG(INFO) << "Handling request from player(" << player_id << "): " << msg;
             // execute client request
             // TODO Change to message handler
@@ -163,10 +163,8 @@ namespace server
     ssize_t ServerNetworkManager::sendMessage(std::unique_ptr<shared::ServerToClientMessage> message,
                                               const shared::PlayerBase::id_t &player_id)
     {
-        std::string address = BasicNetwork::getInstance()->getAddress(player_id);
         std::string msg = message->toJson();
-
-        return BasicNetwork::getInstance()->sendMessage(msg, address);
+        return BasicNetwork::sendToPlayer(msg, player_id);
     }
 
 } // namespace server

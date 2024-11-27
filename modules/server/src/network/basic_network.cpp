@@ -3,7 +3,7 @@
 
 namespace server
 {
-    ssize_t BasicNetwork::sendMessage(const std::string &message, const std::string &address)
+    ssize_t BasicNetwork::sendToAddress(const std::string &message, const std::string &address)
     {
         LOG(INFO) << "Sending Message: " << message << " to Address: " << address;
         try {
@@ -20,6 +20,12 @@ namespace server
             LOG(ERROR) << "Error in sendMessage: " << e.what();
             return -1; // indicate failure
         }
+    }
+
+    ssize_t BasicNetwork::sendToPlayer(const std::string &message, const player_id_t &player_id)
+    {
+        const auto &address = getAddress(player_id);
+        return sendToAddress(message, address);
     }
 
     void BasicNetwork::addPlayerToAddress(const player_id_t &player_id, const std::string &address)
@@ -92,11 +98,5 @@ namespace server
         } else {
             LOG(WARN) << "Attempted to disconnect player with ID " << player_id << ", but it was not found.";
         }
-    }
-
-    BasicNetwork *BasicNetwork::getInstance()
-    {
-        static BasicNetwork _instance;
-        return &_instance;
     }
 } // namespace server

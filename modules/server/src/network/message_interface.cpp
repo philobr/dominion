@@ -9,10 +9,9 @@ namespace server
     void ImplementedMessageInterface::sendMessage(std::unique_ptr<shared::ServerToClientMessage> message,
                                                   const shared::PlayerBase::id_t &player_id)
     {
-        std::string address = BasicNetwork::getInstance()->getAddress(player_id);
         std::string msg = message->toJson();
 
         LOG(INFO) << "Message Interface sending: " << msg;
-        BasicNetwork::getInstance()->sendMessage(msg, address);
+        BasicNetwork::sendToPlayer(msg, player_id);
     }
 } // namespace server

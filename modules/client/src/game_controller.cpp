@@ -1,5 +1,9 @@
 #include "game_controller.h"
 #include <shared/utils/logger.h>
+#include <vector>
+#include "shared/game/cards/card_base.h"
+#include "shared/game/game_state/player_base.h"
+#include "shared/message_types.h"
 
 using namespace shared;
 
@@ -13,6 +17,7 @@ namespace client
 
     std::unique_ptr<reduced::GameState> GameController::_gameState = nullptr;
     std::string GameController::_gameName = "";
+    shared::PlayerBase::id_t GameController::_playerName = "";
 
     void GameController::init(GameWindow *gameWindow)
     {
@@ -101,6 +106,7 @@ namespace client
             GameController::sendRequest(request.toJson());
 
             GameController::_gameName = inputGameName.ToStdString();
+            GameController::_playerName = inputPlayerName.ToStdString();
         }
         LOG(INFO) << "Done with GameController::CreateLobby()";
     }
@@ -131,7 +137,12 @@ namespace client
     {
         // send request to start game
         LOG(INFO) << "GameController called in function startGame()";
-        GameController::_gameWindow->showPanel(GameController::_mainGamePanel);
+        std::vector<shared::CardBase::id_t> selectedCards{"Estate",       "Smithy",      "Village",      "Laboratory",
+                                                          "Festival",     "Market",      "Placeholder1", "Placeholder2",
+                                                          "Placeholder3", "Placeholder4"};
+        shared::StartGameRequestMessage msg =
+                shared::StartGameRequestMessage(GameController::_gameName, GameController::_playerName, selectedCards);
+        GameController::sendRequest(msg.toJson());
         LOG(INFO) << "Done with GameController::startGame()";
     }
 

@@ -4,6 +4,7 @@
 #include "panels/connection_panel.h"
 #include "panels/lobby_panel.h"
 #include "panels/main_game_panel.h"
+#include "shared/game/game_state/player_base.h"
 #include "windows/game_window.h"
 
 #include <shared/message_types.h>
@@ -84,6 +85,7 @@ namespace client
         static ClientNetworkManager *_clientNetworkManager;
 
         static std::unique_ptr<reduced::GameState> _gameState;
+        static shared::PlayerBase::id_t _playerName;
         static std::string _gameName;
     };
 

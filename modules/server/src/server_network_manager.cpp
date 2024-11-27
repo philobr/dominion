@@ -9,12 +9,11 @@ using handler = std::function<void(const std::string &, const sockpp::tcp_socket
 
 namespace server
 {
-    BasicNetwork *BasicNetwork::_instance = nullptr;
     std::shared_ptr<MessageInterface> ServerNetworkManager::_messageInterface;
     LobbyManager ServerNetworkManager::_lobby_manager(ServerNetworkManager::_messageInterface);
     std::unique_ptr<MessageHandler> ServerNetworkManager::_messageHandler;
 
-    ServerNetworkManager::ServerNetworkManager(uint16_t port)
+    ServerNetworkManager::ServerNetworkManager()
     {
         if ( _instance == nullptr ) {
             _instance = this;
@@ -22,6 +21,11 @@ namespace server
         _messageInterface = std::make_shared<ImplementedMessageInterface>();
         _lobby_manager = LobbyManager(_messageInterface);
         _messageHandler = std::make_unique<MessageHandler>(MessageHandler(_lobby_manager));
+    }
+
+    void ServerNetworkManager::run(uint16_t port)
+    {
+        LOG(INFO) << "Running the server on port(" << port << ")";
         sockpp::socket_initializer socket_initializer; // Required to initialise sockpp
         this->connect(DEFAULT_SERVER_HOST, port);
     }
@@ -38,30 +42,30 @@ namespace server
             return;
         }
 
-        std::cout << "Awaiting connections on port " << port << "..." << std::endl;
+        LOG(INFO) << "Awaiting connections on port " << port;
         listenerLoop();
-        // start endless loop
     }
 
     void ServerNetworkManager::listenerLoop()
     {
+        LOG(INFO) << "Starting a new listener loop";
         // intentional endless loop
         while ( true ) {
             sockpp::inet_address peer;
 
             // Accept a new client connection
             sockpp::tcp_socket sock = _acc.accept(&peer);
-            std::cout << "Received a connection request from " << peer << std::endl;
+            LOG(DEBUG) << "Received a connection request from peer(" << peer << ")";
 
             if ( !sock ) {
                 LOG(ERROR) << "Error accepting incoming connection: " << _acc.last_error_str();
             } else {
                 std::string address = sock.peer_address().to_string();
                 BasicNetwork::getInstance()->addAddressToSocket(address, sock.clone());
+
                 // Create a listener thread and transfer the new stream to it.
                 // Incoming messages will be passed to handle_message().
                 std::thread listener(readLoop, std::move(sock), handleMessage);
-
                 listener.detach();
             }
         }
@@ -71,57 +75,62 @@ namespace server
     // Once a message is fully received, the string is passed on to the 'handle_message()' function
     void ServerNetworkManager::readLoop(sockpp::tcp_socket socket, const handler &message_handler)
     {
-        sockpp::socket_initializer sockInit; // initializes socket framework underneath
+        sockpp::socket_initializer sockInit; // initializes socket framework
 
-        char buffer[512]; // 512 bytes
+        constexpr size_t BUFFER_SIZE = 512;
+        std::string buffer(BUFFER_SIZE, '\0');
         ssize_t count = 0;
-        ssize_t msg_bytes_read = 0;
-        ssize_t msg_length = 0;
 
-        while ( (count = socket.read(buffer, sizeof(buffer))) > 0 ) {
+        while ( (count = socket.read(buffer.data(), buffer.size())) > 0 ) {
             try {
-                int i = 0;
-                std::stringstream ss_msg_length;
-                while ( i < count && buffer[i] != ':' ) {
-                    ss_msg_length << buffer[i];
-                    i++;
-                }
-                msg_length = std::stoi(ss_msg_length.str());
-                std::cout << "Expecting message of length " << msg_length << std::endl;
+                std::string_view read_data(buffer.data(), count);
+                size_t separator_pos = read_data.find(':');
 
-                // put everything after the message length declaration into a stringstream
-                std::stringstream ss_msg;
-                ss_msg.write(&buffer[i + 1], count - (i + 1));
-                msg_bytes_read = count - (i + 1);
+                if ( separator_pos == std::string_view::npos ) {
+                    LOG(ERROR) << "Malformed message: Missing length separator ':'";
+                    continue;
+                }
+
+                size_t msg_length = std::stoul(std::string(read_data.substr(0, separator_pos)));
+                LOG(INFO) << "Expecting message of length " << msg_length;
+
+                // accumulate the message payload
+                std::string message;
+                message.reserve(msg_length);
+                message.append(read_data.substr(separator_pos + 1));
+                size_t msg_bytes_read = message.size();
 
                 // read the remaining packages
-                while ( msg_bytes_read < msg_length && count > 0 ) {
-                    count = socket.read(buffer, sizeof(buffer));
+                while ( msg_bytes_read < msg_length ) {
+                    count = socket.read(buffer.data(), buffer.size());
+                    if ( count <= 0 ) {
+                        break; // end of stream or error
+                    }
+
+                    message.append(buffer.data(), count);
                     msg_bytes_read += count;
-                    ss_msg.write(buffer, count);
                 }
 
                 if ( msg_bytes_read == msg_length ) {
-                    // sanity check that really all bytes got read (possibility that count was <= 0, indicating a read
-                    // error)
-                    std::string msg = ss_msg.str();
-                    LOG(INFO) << "Received Message: " << msg;
-                    message_handler(msg, socket.peer_address()); // attempt to parse client_request from 'msg'
+                    LOG(INFO) << "Received Message: " << message;
+                    message_handler(message, socket.peer_address());
                 } else {
-                    LOG(ERROR) << "Could not read entire message. TCP stream ended before. Difference is "
-                               << msg_length - msg_bytes_read;
+                    LOG(ERROR) << "Incomplete message. Expected " << msg_length << " bytes, but received "
+                               << msg_bytes_read;
                 }
-            } catch ( std::exception &e ) { // Make sure the connection isn't torn down only because of a read error
-                LOG(ERROR) << "Error while reading message from " << socket.peer_address() << std::endl << e.what();
+            } catch ( const std::exception &e ) {
+                LOG(ERROR) << "Error while reading message from " << socket.peer_address() << ": " << e.what();
             }
         }
 
-        LOG(INFO) << "Read error [" << socket.last_error() << "]: " << socket.last_error_str();
+        if ( count < 0 ) {
+            // negative count indicates error
+            LOG(ERROR) << "Read error [" << socket.last_error() << "]: " << socket.last_error_str();
+        }
 
-        LOG(INFO) << "Closing connection to " << socket.peer_address();
+        LOG(DEBUG) << "Closing connection to " << socket.peer_address();
         socket.shutdown();
     }
-
 
     void ServerNetworkManager::handleMessage(const std::string &msg, const sockpp::tcp_socket::addr_t &peer_address)
     {
@@ -131,6 +140,7 @@ namespace server
 
             if ( req == nullptr ) {
                 // TODO: handle invalid message
+                LOG(ERROR) << "RECEIVED AN INVALID MESSAGE\n";
                 throw std::runtime_error("Not implemented yet");
             }
 
@@ -138,11 +148,10 @@ namespace server
             shared::PlayerBase::id_t player_id = req->player_id;
             std::string address = peer_address.to_string();
             BasicNetwork::getInstance()->addPlayerToAddress(player_id, address);
-            LOG(INFO) << "Received valid request : " << msg;
+            LOG(INFO) << "Handling request from player(" << player_id << "): " << msg;
             // execute client request
             // TODO Change to message handler
-            _messageHandler->handleMessage(std::move(req));
-            LOG(INFO) << "Handled Message from player: " << player_id;
+            _messageHandler->handleMessage(req);
 
         } catch ( const std::exception &e ) {
             LOG(ERROR) << "Failed to execute client request. Content was :\n"

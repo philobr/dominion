@@ -9,39 +9,31 @@ using namespace shared;
 
 namespace server
 {
-    void MessageHandler::handleMessage(std::unique_ptr<shared::ClientToServerMessage> message)
+    void MessageHandler::handleMessage(std::unique_ptr<shared::ClientToServerMessage> &message)
     {
         // Make sure that only one thread can access the message handler at a time
         // This is not very efficient, but it is the simplest way to make sure that
         // the message handler is thread-safe.
         std::lock_guard<std::mutex> lock(mutex_);
 
-        LOG(INFO) << "Message Handler called";
+        auto &msg_ref = *message;
 
-        shared::ClientToServerMessage &msgRef = *message;
-        if ( typeid(msgRef) == typeid(GameStateRequestMessage) ) {
-            LOG(INFO) << "Handler: Processed GameStateRequest";
-        } else if ( typeid(msgRef) == typeid(CreateLobbyRequestMessage) ) {
-            std::unique_ptr<CreateLobbyRequestMessage> clrm(
-                    static_cast<CreateLobbyRequestMessage *>(message.release()));
-            this->lobby_manager_.createLobby(std::move(clrm));
-            LOG(INFO) << "Handler: Processed CreateLobbyRequest";
-        } else if ( typeid(msgRef) == typeid(JoinLobbyRequestMessage) ) {
-            std::unique_ptr<JoinLobbyRequestMessage> jlrm(static_cast<JoinLobbyRequestMessage *>(message.release()));
-            this->lobby_manager_.joinLobby(std::move(jlrm));
-            LOG(INFO) << "Handler: Processed JoinLobbyRequest";
-        } else if ( typeid(msgRef) == typeid(StartGameRequestMessage) ) {
-            std::unique_ptr<StartGameRequestMessage> sgrm(static_cast<StartGameRequestMessage *>(message.release()));
-            this->lobby_manager_.startGame(std::move(sgrm));
-            LOG(INFO) << "Handler: Processed StartGameRequest";
-        } else if ( typeid(msgRef) == typeid(ActionDecisionMessage) ) {
-            std::unique_ptr<ActionDecisionMessage> adm(static_cast<ActionDecisionMessage *>(message.release()));
-            this->lobby_manager_.receiveAction(std::move(adm));
-            LOG(INFO) << "Handler: Processed ActionDecisionMessage";
-        } else {
-            // This code should never be reached
-            LOG(ERROR) << "Message Handler got unknown message";
-            _ASSERT_FALSE(true, "Unknown message type");
-        }
+#define HANDLE(message_type, handler_func)                                                                             \
+    if ( typeid(msg_ref) == typeid(message_type) ) {                                                                   \
+        LOG(INFO) << "Trying to handle: " << #message_type;                                                            \
+        std::unique_ptr<message_type> unique_##message_type(static_cast<message_type *>(message.release()));           \
+        handler_func(std::move(unique_##message_type));                                                                \
+        return;                                                                                                        \
+    }
+
+        // HANDLE(GameStateRequestMessage, this->lobby_manager_.createLobby);  TODO: not implemented yet
+        HANDLE(CreateLobbyRequestMessage, this->lobby_manager_.createLobby);
+        HANDLE(JoinLobbyRequestMessage, this->lobby_manager_.joinLobby);
+        HANDLE(StartGameRequestMessage, this->lobby_manager_.startGame);
+
+#undef HANDLE
+
+        LOG(ERROR) << "Message Handler got unknown message";
+        throw std::runtime_error("Unreachable code");
     }
 } // namespace server

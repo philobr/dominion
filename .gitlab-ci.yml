@@ -65,5 +65,5 @@ deploy:
     name: production
   allow_failure: true
   rules:
-    - if: $CI_PIPELINE_SOURCE == 'push' && $CI_COMMIT_REF_NAME == 'main'
+    - if: $CI_PIPELINE_SOURCE == 'push' && $CI_COMMIT_REF_NAME == 'main' && $CI_MERGE_REQUEST_ID == null
     - when: manual

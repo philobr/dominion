@@ -38,6 +38,7 @@ server::BehaviourChain::receiveAction(server::GameState &game_state,
 
     while ( hasNext() ) {
         auto action_order = getBehaviour().apply(game_state, std::move(action_decision));
+        action_decision = std::nullopt; // consume the action_decision, its only used once
 
         if ( action_order != std::nullopt ) {
             return action_order;

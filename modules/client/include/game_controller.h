@@ -71,6 +71,7 @@ namespace client
         static LobbyPanel *_lobbyPanel;
         static ClientNetworkManager *_clientNetworkManager;
 
+        // TODO: Remove this once we store the game state (which includes the player id)
         static shared::PlayerBase::id_t _playerName;
         static std::string _gameName;
     };

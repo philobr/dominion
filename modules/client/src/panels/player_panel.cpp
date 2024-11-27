@@ -56,8 +56,6 @@ namespace client
         sizer->SetMinSize(wxSize(5 * card_width_borders, 150));
 
         hand->SetSizer(sizer);
-        LOG(DEBUG) << "Hand panel width " << hand->GetSize().GetWidth() << "\n";
-        LOG(DEBUG) << "card width " << card_width_borders << "\n";
 
         if ( card_width_borders * hand_size > 724 ) {
             // scale bigger hands

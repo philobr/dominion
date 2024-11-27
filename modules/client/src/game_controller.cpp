@@ -1,4 +1,5 @@
 #include "game_controller.h"
+#include <memory>
 #include <shared/utils/logger.h>
 #include <vector>
 #include "shared/game/cards/card_base.h"
@@ -236,10 +237,12 @@ namespace client
 
     void GameController::receiveCreateLobbyResponseMessage(std::unique_ptr<shared::CreateLobbyResponseMessage> /*msg*/)
     {
+        LOG(INFO) << "GameController called in function receiveCreateLobbyResponseMessage()";
         GameController::_gameWindow->showPanel(GameController::_lobbyPanel);
         // TODO maybe add player_id to the ServerToClientMessage ?
         GameController::_lobbyPanel->makeGameMaster();
         GameController::_lobbyPanel->addPlayer(GameController::_connectionPanel->getPlayerName().Trim().ToStdString());
+        LOG(INFO) << "Done with receiveCreateLobbyResponseMessage()";
     }
 
     void GameController::receiveJoinLobbyBroadcastMessage(std::unique_ptr<shared::JoinLobbyBroadcastMessage> msg)
@@ -249,6 +252,7 @@ namespace client
                 static_cast<shared::JoinLobbyBroadcastMessage *>(msg.release()));
 
         GameController::refreshPlayers(*jlbm);
+        LOG(INFO) << "Done with receiveJoinLobbyBroadcastMessage()";
     }
 
     void GameController::receiveResultResponseMessage(std::unique_ptr<shared::ResultResponseMessage> msg)
@@ -303,8 +307,18 @@ namespace client
 
     void GameController::receiveGameStateMessage(std::unique_ptr<shared::GameStateMessage> msg)
     {
+        LOG(INFO) << "GameController called in function receiveGameStateMessage()";
         GameController::_gameState = std::move(msg->game_state);
+        LOG(INFO) << "Updated GameState";
         GameController::_mainGamePanel->drawGameState(*GameController::_gameState);
+        LOG(INFO) << "Done with receiveGameStateMessage()";
+    }
+
+    void GameController::receiveStartGameBroadcastMessage(std::unique_ptr<shared::StartGameBroadcastMessage> /*msg*/)
+    {
+        LOG(INFO) << "GameController called in function receiveStartGameBroadcastMessage()";
+        GameController::_gameWindow->showPanel(GameController::_mainGamePanel);
+        LOG(INFO) << "Done with receiveStartGameBroadcastMessage()";
     }
 
     void GameController::receiveMessage(std::unique_ptr<shared::ServerToClientMessage> msg)
@@ -324,6 +338,7 @@ namespace client
         HANDLE_MESSAGE(JoinLobbyBroadcastMessage);
         HANDLE_MESSAGE(ResultResponseMessage);
         HANDLE_MESSAGE(GameStateMessage);
+        HANDLE_MESSAGE(StartGameBroadcastMessage);
 #undef HANDLE_MESSAGE
 
         LOG(ERROR) << "Unknown message type";
@@ -346,4 +361,6 @@ namespace client
         }
         return GameController::_gameState->reduced_player->getId();
     }
+
+    void GameController::skipToGamePanel() { GameController::_gameWindow->showPanel(GameController::_mainGamePanel); }
 } // namespace client

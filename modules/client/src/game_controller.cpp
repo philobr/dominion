@@ -163,6 +163,12 @@ namespace client
         LOG(INFO) << "Done with GameController::startGame()";
     }
 
+    void GameController::skipToGameScreen()
+    {
+        GameController::_gameWindow->showPanel(GameController::_mainGamePanel);
+        GameController::_clientState = ClientState::IN_GAME;
+    }
+
 
     void GameController::buyCard(const std::string &card_id)
     {

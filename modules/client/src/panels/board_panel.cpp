@@ -37,7 +37,7 @@ namespace client
         auto *sizer = new wxGridBagSizer(10, 10);
         unsigned int counter = 0;
         for ( const auto &VictoryPile : VictoryCards ) {
-            PilePanel *Pile = new PilePanel(this, VictoryPile);
+            PilePanel *Pile = new PilePanel(this, VictoryPile, wxSize(100, 150));
             wxGBPosition position = wxGBPosition(counter, 0);
             wxGBSpan span = wxGBSpan(1, 1);
 
@@ -57,7 +57,7 @@ namespace client
 
         counter = 0;
         for ( const auto &TreasurePile : TreasureCards ) {
-            PilePanel *Pile = new PilePanel(this, TreasurePile);
+            PilePanel *Pile = new PilePanel(this, TreasurePile, wxSize(100, 150));
             wxGBPosition position = wxGBPosition(counter, 1);
             wxGBSpan span = wxGBSpan(1, 1);
 
@@ -74,7 +74,7 @@ namespace client
 
         counter = 0;
         for ( const auto &KingdomPile : KingdomCards ) {
-            PilePanel *Pile = new PilePanel(this, KingdomPile);
+            PilePanel *Pile = new PilePanel(this, KingdomPile, wxSize(100, 150));
             wxGBPosition position = wxGBPosition(counter % 2, 2 + counter / 2);
             wxGBSpan span = wxGBSpan(1, 1);
 

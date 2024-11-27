@@ -1,4 +1,4 @@
-#include <server/game/game_state/game_interface.h>
+#include <server/game/game_interface.h>
 #include <shared/utils/logger.h>
 namespace server
 {

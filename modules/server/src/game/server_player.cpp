@@ -2,7 +2,7 @@
 #include <random>
 #include <ranges>
 
-#include <server/game/game_state/server_player.h>
+#include <server/game/server_player.h>
 #include <shared/utils/assert.h>
 
 namespace server

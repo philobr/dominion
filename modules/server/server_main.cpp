@@ -2,6 +2,8 @@
 #include <server/args.h>
 #include <server/network/server_network_manager.h>
 
+#include <shared/utils/logger.h>
+
 int main(int argc, char *argv[])
 {
     server::ServerArgs args(argc, argv);

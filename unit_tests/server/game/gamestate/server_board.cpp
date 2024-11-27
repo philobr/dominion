@@ -6,7 +6,7 @@
 #include <string>
 #include <vector>
 
-#include <server/game/game_state/server_board.h>
+#include <server/game/server_board.h>
 
 #include <shared/game/cards/card_base.h>
 #include <shared/game/game_state/board_base.h>

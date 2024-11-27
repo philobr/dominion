@@ -1,5 +1,5 @@
 #pragma once
-#include <server/game/game_state/game_state.h>
+#include <server/game/game_state.h>
 #include <shared/message_types.h>
 #include <shared/utils/logger.h>
 
@@ -38,4 +38,4 @@ namespace server
 
 } // namespace server
 
-#include <server/game/game_state/behaviours_impl.hpp>
+#include <server/game/behaviours_impl.hpp>

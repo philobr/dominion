@@ -1,7 +1,7 @@
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
-#include <server/game/game_state/server_player.h>
+#include <server/game/server_player.h>
 
 using namespace server;
 

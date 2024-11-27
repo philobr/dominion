@@ -64,6 +64,8 @@ deploy:
   environment:
     name: production
   allow_failure: true
+  only:
+    - main
   rules:
-    - if: $CI_PIPELINE_SOURCE == 'push' && $CI_COMMIT_REF_NAME == 'main' && $CI_MERGE_REQUEST_ID == null
+    - if: '$CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_REF_NAME == "main"'
     - when: manual

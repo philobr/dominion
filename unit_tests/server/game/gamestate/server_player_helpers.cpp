@@ -1,5 +1,5 @@
 #include <gmock/gmock.h>
-#include "gtest/gtest.h"
+#include <gtest/gtest.h>
 
 #include <algorithm>
 #include <server/game/game_state/server_player.h>

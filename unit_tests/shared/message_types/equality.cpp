@@ -1,6 +1,6 @@
 
+#include <gtest/gtest.h>
 #include <shared/message_types.h>
-#include "gtest/gtest.h"
 
 using namespace shared;
 

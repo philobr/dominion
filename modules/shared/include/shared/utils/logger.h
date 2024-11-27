@@ -87,7 +87,6 @@ namespace shared
         };
 
     public:
-
         /**
          * @brief Initializes the logger. If not called, logging will default to std::cerr.
          */

@@ -25,7 +25,7 @@ namespace server
             ArgsImpl impl{{argc, argv}};
             _logFile = impl.logFile;
             std::optional<LogLevel> logLevel = shared::parseLogLevel(impl.logLevel);
-            if (logLevel.has_value()) {
+            if ( logLevel.has_value() ) {
                 _logLevel = logLevel.value();
             } else {
                 die("Invalid log level");

@@ -13,6 +13,8 @@ namespace client
     {
         // initialize logger
         shared::Logger::initialize();
+        shared::Logger::writeTo("logs/client.log");
+        shared::Logger::setLevel(INFO);
         LOG(INFO) << "Called Dominion::OnInit()";
         shared::Logger::setLevel(INFO);
         // Allow loading of JPEG  and PNG image files

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <server/game/game_state/behaviour_registry.h>
+#include <server/game/behaviour_registry.h>
 #include <shared/utils/logger.h>
 #include <vector>
 

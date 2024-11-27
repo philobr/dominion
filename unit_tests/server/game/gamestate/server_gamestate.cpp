@@ -5,7 +5,7 @@
 #include <string>
 #include <vector>
 
-#include <server/game/game_state/game_state.h>
+#include <server/game/game_state.h>
 
 
 TEST(GameStateTest, DefaultConstructor)

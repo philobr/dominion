@@ -1,4 +1,4 @@
-#include <server/game/game_state/behaviour_registry.h>
+#include <server/game/behaviour_registry.h>
 
 std::vector<std::unique_ptr<server::BehaviourBase>> server::BehaviourRegistry::getBehaviours(const std::string &card_id)
 {
@@ -32,6 +32,12 @@ void server::BehaviourRegistry::initialiseBehaviours()
      * behaviours are registered to card names here.
      * insert can take multiple types as template param
      */
+
+    // placeholder cards
+    insert<GainCoins<1>>("Placeholder1");
+    insert<GainCoins<1>>("Placeholder2");
+    insert<GainCoins<1>>("Placeholder3");
+    insert<GainCoins<1>>("Placeholder4");
 
     /*
     DONE

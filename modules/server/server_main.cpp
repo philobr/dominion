@@ -2,6 +2,8 @@
 #include <server/args.h>
 #include <server/network/server_network_manager.h>
 
+#include <shared/utils/logger.h>
+
 int main(int argc, char *argv[])
 {
     server::ServerArgs args(argc, argv);
@@ -11,7 +13,8 @@ int main(int argc, char *argv[])
     shared::Logger::writeTo(args.getLogFile());
 
     // create a message interface, which creates a server network manager, which listens endlessly for connections
-    server::ServerNetworkManager server(args.getPort()); // TODO: make this a function, not constructor
+    server::ServerNetworkManager server;
+    server.run(args.getPort());
 
     return 0;
 }

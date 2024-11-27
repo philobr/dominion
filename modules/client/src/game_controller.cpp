@@ -1,7 +1,12 @@
 #include "game_controller.h"
 #include <memory>
 #include <shared/utils/logger.h>
+#include <vector>
+#include "shared/game/cards/card_base.h"
+#include "shared/game/game_state/player_base.h"
+#include "shared/message_types.h"
 
+using namespace shared;
 
 namespace client
 {
@@ -13,6 +18,7 @@ namespace client
 
     std::unique_ptr<reduced::GameState> GameController::_gameState = nullptr;
     std::string GameController::_gameName = "";
+    shared::PlayerBase::id_t GameController::_playerName = "";
 
     void GameController::init(GameWindow *gameWindow)
     {
@@ -101,6 +107,7 @@ namespace client
             GameController::sendRequest(request.toJson());
 
             GameController::_gameName = inputGameName.ToStdString();
+            GameController::_playerName = inputPlayerName.ToStdString();
         }
         LOG(INFO) << "Done with GameController::CreateLobby()";
     }
@@ -131,7 +138,12 @@ namespace client
     {
         // send request to start game
         LOG(INFO) << "GameController called in function startGame()";
-        GameController::_gameWindow->showPanel(GameController::_mainGamePanel);
+        std::vector<shared::CardBase::id_t> selectedCards{"Estate",       "Smithy",      "Village",      "Laboratory",
+                                                          "Festival",     "Market",      "Placeholder1", "Placeholder2",
+                                                          "Placeholder3", "Placeholder4"};
+        shared::StartGameRequestMessage msg =
+                shared::StartGameRequestMessage(GameController::_gameName, GameController::_playerName, selectedCards);
+        GameController::sendRequest(msg.toJson());
         LOG(INFO) << "Done with GameController::startGame()";
     }
 
@@ -204,49 +216,57 @@ namespace client
         LOG(INFO) << "Done with GameController::send_request()";
     }
 
+    void GameController::receiveCreateLobbyResponseMessage(std::unique_ptr<shared::CreateLobbyResponseMessage> /*msg*/)
+    {
+        GameController::_gameWindow->showPanel(GameController::_lobbyPanel);
+        // TODO maybe add player_id to the ServerToClientMessage ?
+        GameController::_lobbyPanel->addPlayer(GameController::_connectionPanel->getPlayerName().Trim().ToStdString());
+    }
+
+    void GameController::receiveJoinLobbyBroadcastMessage(std::unique_ptr<shared::JoinLobbyBroadcastMessage> msg)
+    {
+        std::unique_ptr<shared::JoinLobbyBroadcastMessage> jlbm(
+                static_cast<shared::JoinLobbyBroadcastMessage *>(msg.release()));
+        GameController::refreshPlayers(*jlbm);
+    }
+
+    void GameController::receiveResultResponseMessage(std::unique_ptr<shared::ResultResponseMessage> /*msg*/)
+    {
+        GameController::_gameWindow->showPanel(GameController::_lobbyPanel);
+    }
+
     void GameController::receiveGameStateMessage(std::unique_ptr<shared::GameStateMessage> msg)
     {
         GameController::_gameState = std::move(msg->game_state);
         GameController::_mainGamePanel->drawGameState(*GameController::_gameState);
     }
 
+    void GameController::receiveStartGameBroadcastMessage(std::unique_ptr<shared::StartGameBroadcastMessage> msg)
+    {
+        GameController::_gameWindow->showPanel(GameController::_mainGamePanel);
+    }
+
     void GameController::receiveMessage(std::unique_ptr<shared::ServerToClientMessage> msg)
     {
-        LOG(INFO) << "Gamecontroller called in function receive_message()";
+// NOLINTBEGIN(bugprone-macro-parentheses)
+#define HANDLE_MESSAGE(type)                                                                                           \
+    if ( typeid(msgRef) == typeid(type) ) {                                                                            \
+        LOG(INFO) << "Received message of type " << #type;                                                             \
+        std::unique_ptr<type> casted(static_cast<type *>(msg.release()));                                              \
+        GameController::receive##type(std::move(casted));                                                              \
+        return;                                                                                                        \
+    }
+        // NOLINTEND(bugprone-macro-parentheses)
+        ServerToClientMessage &msgRef = *msg;
+        HANDLE_MESSAGE(CreateLobbyResponseMessage);
+        HANDLE_MESSAGE(JoinLobbyBroadcastMessage);
+        HANDLE_MESSAGE(ResultResponseMessage);
+        HANDLE_MESSAGE(GameStateMessage);
+        HANDLE_MESSAGE(StartGameBroadcastMessage);
+#undef HANDLE_MESSAGE
 
-        shared::ServerToClientMessage &msgRef = *msg;
-        if ( typeid(msgRef) == typeid(shared::CreateLobbyResponseMessage) ) {
-            // Show the lobby screen
-            LOG(INFO) << "Message is CreateLobbyResponse";
-            GameController::_gameWindow->showPanel(GameController::_lobbyPanel);
-            LOG(INFO) << "Switched panel";
-            // TODO maybe add player_id to the ServerToClientMessage ?
-            GameController::_lobbyPanel->addPlayer(
-                    GameController::_connectionPanel->getPlayerName().Trim().ToStdString());
-            LOG(INFO) << "Added Player";
-        } else if ( typeid(msgRef) == typeid(shared::ResultResponseMessage) ) {
-            LOG(INFO) << "Message is ResultResponseMessage";
-            // Show the lobby screen
-            GameController::_gameWindow->showPanel(GameController::_lobbyPanel);
-        } else if ( typeid(msgRef) == typeid(shared::JoinLobbyBroadcastMessage) ) {
-            std::unique_ptr<shared::JoinLobbyBroadcastMessage> jlbm(
-                    static_cast<shared::JoinLobbyBroadcastMessage *>(msg.release()));
-            LOG(INFO) << "Message is JoinLobbyBroadcastMessage";
-            GameController::refreshPlayers(*jlbm);
-        } else if ( typeid(msgRef) == typeid(shared::GameStateMessage) ) {
-            std::unique_ptr<shared::GameStateMessage> gsm(static_cast<shared::GameStateMessage *>(msg.release()));
-            LOG(INFO) << "Message is GameStateMessage";
-            GameController::receiveGameStateMessage(std::move(gsm));
-        } else if ( typeid(msgRef) == typeid(shared::StartGameBroadcastMessage) ) {
-            std::unique_ptr<shared::StartGameBroadcastMessage> sgbm(
-                    static_cast<shared::StartGameBroadcastMessage *>(msg.release()));
-            LOG(INFO) << "Message is StartGameBroadcastMessage";
-            GameController::_gameWindow->showPanel(GameController::_mainGamePanel);
-        } else {
-            // This code should never be reached
-            LOG(ERROR) << "Unknown message";
-            _ASSERT_FALSE(true, "Unknown message type");
-        }
+        LOG(ERROR) << "Unknown message type";
+        throw exception::UnreachableCode("Unknown message type");
     }
 
     void GameController::refreshPlayers(shared::JoinLobbyBroadcastMessage &msg)

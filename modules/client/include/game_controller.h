@@ -4,6 +4,7 @@
 #include "panels/connection_panel.h"
 #include "panels/lobby_panel.h"
 #include "panels/main_game_panel.h"
+#include "shared/game/game_state/player_base.h"
 #include "windows/game_window.h"
 
 #include <shared/message_types.h>
@@ -78,10 +79,9 @@ namespace client
         static void skipToGamePanel();
 
     private:
-        /**
-         * @brief Receive a game state message from the server
-         * @param msg The game state message received
-         */
+        static void receiveCreateLobbyResponseMessage(std::unique_ptr<shared::CreateLobbyResponseMessage> msg);
+        static void receiveJoinLobbyBroadcastMessage(std::unique_ptr<shared::JoinLobbyBroadcastMessage> msg);
+        static void receiveResultResponseMessage(std::unique_ptr<shared::ResultResponseMessage> msg);
         static void receiveGameStateMessage(std::unique_ptr<shared::GameStateMessage> msg);
 
         static shared::PlayerBase::id_t getPlayerName();
@@ -93,6 +93,7 @@ namespace client
         static ClientNetworkManager *_clientNetworkManager;
 
         static std::unique_ptr<reduced::GameState> _gameState;
+        static shared::PlayerBase::id_t _playerName;
         static std::string _gameName;
     };
 

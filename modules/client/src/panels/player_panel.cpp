@@ -72,7 +72,7 @@ namespace client
             bool is_action = shared::CardFactory::getCard(cards[i]).isAction();
 
             if ( is_action && is_active && Player->getActions() > 0 ) {
-                makePlayable(card, cards[i]);
+                makePlayable(card, i);
             }
 
             sizer->Add(card, 0, wxALIGN_CENTER, 4);
@@ -81,13 +81,13 @@ namespace client
         sizer->Layout();
     }
 
-    void PlayerPanel::makePlayable(ImagePanel *Image, std::string card_id)
+    void PlayerPanel::makePlayable(ImagePanel *Image, unsigned int cardIndex)
     {
         Image->SetToolTip("Play card");
 
         Image->SetCursor(wxCursor(wxCURSOR_HAND));
 
         // Bind left click on the panel to the buyCard function
-        Image->Bind(wxEVT_LEFT_UP, [card_id](wxMouseEvent & /*event*/) { GameController::playCard(card_id); });
+        Image->Bind(wxEVT_LEFT_UP, [cardIndex](wxMouseEvent & /*event*/) { GameController::playCard(cardIndex); });
     }
 } // namespace client

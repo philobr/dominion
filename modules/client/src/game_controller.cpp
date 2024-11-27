@@ -10,6 +10,8 @@ namespace client
     MainGamePanel *GameController::_mainGamePanel = nullptr;
     LobbyPanel *GameController::_lobbyPanel = nullptr;
 
+    shared::PlayerBase::id_t GameController::_playerName = "";
+    std::string GameController::_gameName = "";
 
     void GameController::init(GameWindow *gameWindow)
     {
@@ -85,6 +87,7 @@ namespace client
         wxString inputServerPort = GameController::_connectionPanel->getServerPort().Trim();
         wxString inputPlayerName = GameController::_connectionPanel->getPlayerName().Trim();
         wxString inputGameName = GameController::_connectionPanel->getGameName().Trim();
+
         if ( GameController::validInput(inputServerAddress, inputServerPort, inputPlayerName, inputGameName) ) {
             unsigned long portAsLong;
             inputServerPort.ToULong(&portAsLong);
@@ -95,6 +98,9 @@ namespace client
             // send request to join game
             shared::CreateLobbyRequestMessage request(inputGameName.ToStdString(), inputPlayerName.ToStdString());
             GameController::sendRequest(request.toJson());
+
+            GameController::_playerName = inputPlayerName.ToStdString();
+            GameController::_gameName = inputGameName.ToStdString();
         }
         LOG(INFO) << "Done with GameController::CreateLobby()";
     }
@@ -140,13 +146,20 @@ namespace client
         showStatus("Tried to buy card " + card_id);
     }
 
-    void GameController::playCard(const std::string &card_id)
+    void GameController::playCard(unsigned int cardIndex)
     {
-        // send request to play card
+        LOG(INFO) << "Playing card at position" << cardIndex << std::endl;
 
-        // For testing delete later
-        LOG(DEBUG) << "Tried to play card " << card_id << std::endl;
-        showStatus("Tried to play card " + card_id);
+        std::unique_ptr<shared::ActionDecision> decision(new shared::PlayActionCardDecision(cardIndex));
+
+        // TODO(#120) Implement in_response_to
+        std::optional<std::string> in_response_to = std::nullopt;
+
+        std::unique_ptr<shared::ActionDecisionMessage> action_decision_message =
+                std::make_unique<shared::ActionDecisionMessage>(GameController::_gameName, GameController::_playerName,
+                                                                std::move(decision), in_response_to);
+
+        GameController::_clientNetworkManager->sendRequest(action_decision_message->toJson());
     }
 
     void GameController::endTurn()

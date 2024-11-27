@@ -45,7 +45,7 @@ namespace client
         static void startGame();
 
         static void buyCard(const std::string &card_id);
-        static void playCard(const std::string &card_id);
+        static void playCard(unsigned int cardIndex);
         static void endTurn();
         static void sendRequest(const std::string &req);
         static void receiveMessage(std::unique_ptr<shared::ServerToClientMessage> msg);
@@ -70,6 +70,10 @@ namespace client
         static MainGamePanel *_mainGamePanel;
         static LobbyPanel *_lobbyPanel;
         static ClientNetworkManager *_clientNetworkManager;
+
+        // TODO: Remove this once we store the game state (which includes the player id)
+        static shared::PlayerBase::id_t _playerName;
+        static std::string _gameName;
     };
 
 } // namespace client

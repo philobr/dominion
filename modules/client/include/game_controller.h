@@ -70,10 +70,9 @@ namespace client
         static void refreshPlayers(shared::JoinLobbyBroadcastMessage &msg);
 
     private:
-        /**
-         * @brief Receive a game state message from the server
-         * @param msg The game state message received
-         */
+        static void receiveCreateLobbyResponseMessage(std::unique_ptr<shared::CreateLobbyResponseMessage> msg);
+        static void receiveJoinLobbyBroadcastMessage(std::unique_ptr<shared::JoinLobbyBroadcastMessage> msg);
+        static void receiveResultResponseMessage(std::unique_ptr<shared::ResultResponseMessage> msg);
         static void receiveGameStateMessage(std::unique_ptr<shared::GameStateMessage> msg);
 
         static shared::PlayerBase::id_t getPlayerName();

@@ -1,4 +1,4 @@
-#include <server/game/game_state/behaviour_chain.h>
+#include <server/game/behaviour_chain.h>
 
 void server::BehaviourChain::loadBehaviours(const std::string &card_id)
 {

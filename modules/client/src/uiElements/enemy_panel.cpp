@@ -1,18 +1,39 @@
 #include <uiElements/enemy_panel.h>
+#include <uiElements/pile_panel.h>
 
 #include <wx/dcbuffer.h>
-
+#include <wx/gbsizer.h>
 
 namespace client
 {
     EnemyPanel::EnemyPanel(wxWindow *parent, reduced::Enemy &enemy) :
-        wxPanel(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize)
+        wxPanel(parent, wxID_ANY, wxDefaultPosition, wxSize(-1, 80))
     {
         // Set a light red background color
         this->SetBackgroundStyle(wxBG_STYLE_PAINT);
         this->Bind(wxEVT_PAINT, &EnemyPanel::onPaint, this);
 
-        wxBoxSizer *sizer = new wxBoxSizer(wxHORIZONTAL);
+        // Outer sizer to add horizontal padding
+        wxBoxSizer *outerSizer = new wxBoxSizer(wxHORIZONTAL);
+
+        // Inner sizer for content
+        wxBoxSizer *innerSizer = new wxBoxSizer(wxHORIZONTAL);
+
+        // display draw pile
+        wxBoxSizer *drawPileSizer = new wxBoxSizer(wxVERTICAL);
+        wxStaticText *DrawPileText = new wxStaticText(this, wxID_ANY, "Draw Pile", wxDefaultPosition, wxDefaultSize, wxALIGN_CENTER);
+        drawPileSizer->Add(DrawPileText, 0, wxALIGN_CENTER_HORIZONTAL | wxLeft | wxRight);
+        shared::Pile Draw_Pile("Card_back", enemy.getDrawPileSize());
+        //auto height = parent->GetSize().GetHeight() * 0.8;
+        auto height = 40;
+        PilePanel *Draw_Pile_panel = new PilePanel(this, Draw_Pile, 
+                               wxSize(height / 3 * 2, height));
+        // wxStaticText *DrawPileSize = new wxStaticText(this, wxID_ANY, cards_in_draw, wxDefaultPosition,
+        // wxDefaultSize, wxALIGN_CENTER);
+
+        // DrawPileSize->SetForegroundColour(wxColor(0, 0, 0));
+        drawPileSizer->Add(Draw_Pile_panel, 0, wxALIGN_CENTER_HORIZONTAL | wxLeft | wxRight);
+        innerSizer->Add(drawPileSizer, 0, wxALIGN_CENTER_VERTICAL | wxLeft | wxRight, 5);
 
         // display player id
         std::string player = "Player: " + enemy.getId();
@@ -20,33 +41,42 @@ namespace client
                 new wxStaticText(this, wxID_ANY, player, wxDefaultPosition, wxDefaultSize, wxALIGN_CENTER);
 
         PlayerId->SetForegroundColour(wxColor(0, 0, 0));
-        sizer->Add(PlayerId, 0, wxLeft | wxRight);
+        innerSizer->Add(PlayerId, 0, wxALIGN_CENTER_VERTICAL | wxLeft | wxRight, 5);
 
         // display hand size
-        std::string cards_in_hand = "Cards in Hand: " + std::to_string(enemy.getHandSize());
+        std::string cards_in_hand = "Hand: " + std::to_string(enemy.getHandSize());
         wxStaticText *HandSize =
                 new wxStaticText(this, wxID_ANY, cards_in_hand, wxDefaultPosition, wxDefaultSize, wxALIGN_CENTER);
 
         HandSize->SetForegroundColour(wxColor(0, 0, 0));
-        sizer->Add(HandSize, 0, wxLeft | wxRight);
+        innerSizer->Add(HandSize, 0, wxALIGN_CENTER_VERTICAL | wxLeft | wxRight, 5);
 
-        // display draw pile size
-        std::string cards_in_draw = "Cards in Draw Pile: " + std::to_string(enemy.getDrawPileSize());
-        wxStaticText *DrawPileSize =
-                new wxStaticText(this, wxID_ANY, cards_in_draw, wxDefaultPosition, wxDefaultSize, wxALIGN_CENTER);
+        // display discard pile
+        wxBoxSizer *discardPileSizer = new wxBoxSizer(wxVERTICAL);
+        wxStaticText *discardPileText = new wxStaticText(this, wxID_ANY, "Discard Pile", wxDefaultPosition, wxDefaultSize, wxALIGN_CENTER);
+        discardPileSizer->Add(discardPileText, 0, wxALIGN_CENTER_HORIZONTAL | wxLeft | wxRight);
+        shared::Pile Discard_Pile("Card_back", enemy.getDiscardPileSize());
+        //auto height = parent->GetSize().GetHeight() * 0.8;
+        PilePanel *Discard_Pile_panel = new PilePanel(this, Discard_Pile, 
+                               wxSize(height / 3 * 2, height));
+        // wxStaticText *DrawPileSize = new wxStaticText(this, wxID_ANY, cards_in_draw, wxDefaultPosition,
+        // wxDefaultSize, wxALIGN_CENTER);
 
-        DrawPileSize->SetForegroundColour(wxColor(0, 0, 0));
-        sizer->Add(DrawPileSize, 0, wxLeft | wxRight);
+        // DrawPileSize->SetForegroundColour(wxColor(0, 0, 0));
+        discardPileSizer->Add(Discard_Pile_panel, 0, wxALIGN_CENTER_HORIZONTAL | wxLeft | wxRight);
+        innerSizer->Add(discardPileSizer, 0, wxALIGN_CENTER_VERTICAL | wxLeft | wxRight, 5);
 
-        // display discard pile size
-        std::string cards_in_discard = "Cards in Discard Pile: " + std::to_string(enemy.getDiscardPileSize());
+        /*// display discard pile size
+        std::string cards_in_discard = "Discard Pile: " + std::to_string(enemy.getDiscardPileSize());
         wxStaticText *DiscardPileSize =
                 new wxStaticText(this, wxID_ANY, cards_in_discard, wxDefaultPosition, wxDefaultSize, wxALIGN_CENTER);
 
         DiscardPileSize->SetForegroundColour(wxColor(0, 0, 0));
-        sizer->Add(DiscardPileSize, 0, wxLeft | wxRight);
+        innerSizer->Add(DiscardPileSize, 0, wxALIGN_CENTER_VERTICAL | wxLeft | wxRight, 5);*/
 
-        this->SetSizer(sizer);
+        outerSizer->Add(innerSizer, 1, wxEXPAND | wxLeft | wxRight, 15);
+
+        this->SetSizer(outerSizer);
     }
 
     // generated by AI

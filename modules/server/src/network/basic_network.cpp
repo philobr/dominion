@@ -14,14 +14,14 @@ namespace server
                 socket = getSocket(address);
             }
 
-            if ( !socket ) {
+            if ( socket == nullptr ) {
                 LOG(ERROR) << "Failed to get socket for address: " << address;
                 return ssize_t(-1);
             }
 
             std::stringstream ss_msg;
             ss_msg << std::to_string(message.size()) << ':' << message; // prepend message length
-            ssize_t ret = socket->write(ss_msg.str()); // TODO: make this thread safe
+            ssize_t ret = socket->write(ss_msg.str()); // TODO: make this thread safe (wrapper class)
             if ( ret < 0 ) {
                 LOG(ERROR) << "Failed to send message to address: " << address
                            << ". Socket error: " << socket->last_error_str();

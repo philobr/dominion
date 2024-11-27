@@ -12,6 +12,9 @@ int main(int argc, char *argv[])
     shared::Logger::setLevel(args.getLogLevel());
     shared::Logger::writeTo(args.getLogFile());
 
+    // In case the server crashes, we simply restart it
+    // The server is completely reset, so all clients will be disconnected
+    // This is not a problem, since the server is not supposed to crash in the first place
     while ( true ) {
         try {
             server::ServerNetworkManager server;

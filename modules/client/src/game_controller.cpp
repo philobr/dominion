@@ -134,8 +134,11 @@ namespace client
     {
         // send request to start game
         LOG(INFO) << "GameController called in function startGame()";
-        std::vector<shared::CardBase::id_t> selectedCards {"Estate", "Smithy", "Village", "Laboratory", "Festival", "Market", "Placeholder1", "Placeholder2", "Placeholder3", "Placeholder4"};
-        shared::StartGameRequestMessage msg = shared::StartGameRequestMessage(GameController::_gameName, GameController::_playerName, selectedCards);
+        std::vector<shared::CardBase::id_t> selectedCards{"Estate",       "Smithy",      "Village",      "Laboratory",
+                                                          "Festival",     "Market",      "Placeholder1", "Placeholder2",
+                                                          "Placeholder3", "Placeholder4"};
+        shared::StartGameRequestMessage msg =
+                shared::StartGameRequestMessage(GameController::_gameName, GameController::_playerName, selectedCards);
         GameController::sendRequest(msg.toJson());
         LOG(INFO) << "Done with GameController::startGame()";
     }

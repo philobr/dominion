@@ -72,12 +72,12 @@ namespace server
                                                   const Player::id_t &player_id)
     {
         if ( action_decision->cardIndex >=
-             game_state->get_player(player_id).get<shared::CardAccess::PLAYED_CARDS>().size() ) {
+             game_state->getPlayer(player_id).get<shared::CardAccess::PLAYED_CARDS>().size() ) {
             LOG(ERROR) << "player(" << player_id << ") tried to play a card that is not in his played cards";
             throw exception::InvalidCardAccess("");
         }
         const auto &card_id =
-                game_state->get_player(player_id).get<shared::CardAccess::HAND>()[action_decision->cardIndex];
+                game_state->getPlayer(player_id).get<shared::CardAccess::HAND>()[action_decision->cardIndex];
         // checks if the card is currently playable (multiple checks done)
         if ( game_state->tryPlay(player_id, action_decision->cardIndex, action_decision->from) ) {
 

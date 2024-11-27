@@ -426,9 +426,9 @@ namespace server
     inline void Player::moveIndices(const std::vector<unsigned int> &indices)
     {
         if constexpr ( TO == shared::TRASH ) {
-            take_indices<FROM>(indices);
+            takeIndices<FROM>(indices);
         } else {
-            add<TO>(take_indices<FROM>(indices));
+            add<TO>(takeIndices<FROM>(indices));
         }
     }
 

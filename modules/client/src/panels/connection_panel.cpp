@@ -71,7 +71,7 @@ namespace client
         wxButton *skipToGameScreenButton =
                 new wxButton(this, wxID_ANY, "Game Screen", wxDefaultPosition, wxSize(100, 40));
         skipToGameScreenButton->Bind(wxEVT_BUTTON,
-                                     [](const wxCommandEvent & /*event*/) { GameController::startGame(); });
+                                     [](const wxCommandEvent & /*event*/) { GameController::skipToGamePanel(); });
         VerticalLayout->Add(skipToGameScreenButton, 0, wxALIGN_RIGHT | wxALL, 10);
 
         this->SetSizerAndFit(VerticalLayout);

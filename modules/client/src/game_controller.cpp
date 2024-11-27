@@ -237,8 +237,9 @@ namespace client
             std::unique_ptr<shared::GameStateMessage> gsm(static_cast<shared::GameStateMessage *>(msg.release()));
             LOG(INFO) << "Message is GameStateMessage";
             GameController::receiveGameStateMessage(std::move(gsm));
-        } else if (typeid(msgRef) == typeid(shared::StartGameBroadcastMessage) ){
-            std::unique_ptr<shared::StartGameBroadcastMessage> sgbm(static_cast<shared::StartGameBroadcastMessage *>(msg.release()));
+        } else if ( typeid(msgRef) == typeid(shared::StartGameBroadcastMessage) ) {
+            std::unique_ptr<shared::StartGameBroadcastMessage> sgbm(
+                    static_cast<shared::StartGameBroadcastMessage *>(msg.release()));
             LOG(INFO) << "Message is StartGameBroadcastMessage";
             GameController::_gameWindow->showPanel(GameController::_mainGamePanel);
         } else {
@@ -268,4 +269,6 @@ namespace client
         }
         return GameController::_gameState->reduced_player->getId();
     }
+
+    void GameController::skipToGamePanel() { GameController::_gameWindow->showPanel(GameController::_mainGamePanel); }
 } // namespace client

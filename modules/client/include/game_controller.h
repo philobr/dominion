@@ -67,7 +67,15 @@ namespace client
          */
         static void showStatus(const std::string &message);
 
+        /**
+         * @brief refreshes Players when a new player joins the lobby
+         */
         static void refreshPlayers(shared::JoinLobbyBroadcastMessage &msg);
+
+        /**
+         * @brief skips from the connection panel to the game panel for gui testing
+         */
+        static void skipToGamePanel();
 
     private:
         /**

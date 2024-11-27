@@ -2,9 +2,9 @@
  * @note We only test buy() and trash() here. The other functions are tested in unit_tests/shared/game/board_base.cpp
  */
 #include <algorithm>
+#include <gtest/gtest.h>
 #include <string>
 #include <vector>
-#include "gtest/gtest.h"
 
 #include <server/game/game_state/server_board.h>
 

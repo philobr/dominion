@@ -1,5 +1,5 @@
+#include <gtest/gtest.h>
 #include <shared/utils/logger.h>
-#include "gtest/gtest.h"
 
 #include <shared/message_types.h>
 

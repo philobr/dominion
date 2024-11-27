@@ -45,8 +45,6 @@ test:
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event' || ($CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_REF_NAME == 'main')
 
 deploy:
-  only:
-    - main
   stage: deploy
   image: ubuntu:22.04
   script:
@@ -67,5 +65,4 @@ deploy:
     name: production
   allow_failure: true
   rules:
-    - if: '$CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH == "main"'
     - when: manual

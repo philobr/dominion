@@ -45,9 +45,14 @@ namespace client
         static void startGame();
 
         static void buyCard(const std::string &card_id);
-        static void playCard(const std::string &card_id);
+        static void playCard(unsigned int cardIndex);
         static void endTurn();
         static void sendRequest(const std::string &req);
+
+        /**
+         * @brief Receive a message from the server
+         * @param msg The message received
+         */
         static void receiveMessage(std::unique_ptr<shared::ServerToClientMessage> msg);
 
         /**
@@ -65,11 +70,22 @@ namespace client
         static void refreshPlayers(shared::JoinLobbyBroadcastMessage &msg);
 
     private:
+        /**
+         * @brief Receive a game state message from the server
+         * @param msg The game state message received
+         */
+        static void receiveGameStateMessage(std::unique_ptr<shared::GameStateMessage> msg);
+
+        static shared::PlayerBase::id_t getPlayerName();
+
         static GameWindow *_gameWindow;
         static ConnectionPanel *_connectionPanel;
         static MainGamePanel *_mainGamePanel;
         static LobbyPanel *_lobbyPanel;
         static ClientNetworkManager *_clientNetworkManager;
+
+        static std::unique_ptr<reduced::GameState> _gameState;
+        static std::string _gameName;
     };
 
 } // namespace client

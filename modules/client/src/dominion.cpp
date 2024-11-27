@@ -13,7 +13,6 @@ namespace client
     {
         // initialize logger
         shared::Logger::initialize();
-        shared::Logger::setLevel(INFO);
         LOG(INFO) << "Called Dominion::OnInit()";
         // Allow loading of JPEG  and PNG image files
         wxImage::AddHandler(new wxJPEGHandler());

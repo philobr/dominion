@@ -12,6 +12,15 @@
 namespace client
 {
 
+    enum ClientState
+    {
+        LOGIN_SCREEN,
+        CREATING_LOBBY,
+        JOINING_LOBBY,
+        IN_LOBBY,
+        IN_GAME
+    };
+
     class GameController
     {
 
@@ -84,6 +93,7 @@ namespace client
         static LobbyPanel *_lobbyPanel;
         static ClientNetworkManager *_clientNetworkManager;
 
+        static ClientState _clientState;
         static std::unique_ptr<reduced::GameState> _gameState;
         static shared::PlayerBase::id_t _playerName;
         static std::string _gameName;

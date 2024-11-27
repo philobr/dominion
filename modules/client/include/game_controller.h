@@ -70,6 +70,7 @@ namespace client
         static void refreshPlayers(shared::JoinLobbyBroadcastMessage &msg);
 
     private:
+        static void receiveActionOrderMessage(std::unique_ptr<shared::ActionOrderMessage> msg);
         static void receiveCreateLobbyResponseMessage(std::unique_ptr<shared::CreateLobbyResponseMessage> msg);
         static void receiveJoinLobbyBroadcastMessage(std::unique_ptr<shared::JoinLobbyBroadcastMessage> msg);
         static void receiveResultResponseMessage(std::unique_ptr<shared::ResultResponseMessage> msg);

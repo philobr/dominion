@@ -204,6 +204,12 @@ namespace client
         LOG(INFO) << "Done with GameController::send_request()";
     }
 
+    void GameController::receiveActionOrderMessage(std::unique_ptr<shared::ActionOrderMessage> msg)
+    {
+        // TODO(#125) This is not implemented, and will probably be removed with #125
+        LOG(WARN) << "Received ActionOrderMessage, but this does not do anything yet";
+    }
+
     void GameController::receiveCreateLobbyResponseMessage(std::unique_ptr<shared::CreateLobbyResponseMessage> /*msg*/)
     {
         GameController::_gameWindow->showPanel(GameController::_lobbyPanel);
@@ -241,6 +247,7 @@ namespace client
     }
         // NOLINTEND(bugprone-macro-parentheses)
         ServerToClientMessage &msgRef = *msg;
+        HANDLE_MESSAGE(ActionOrderMessage);
         HANDLE_MESSAGE(CreateLobbyResponseMessage);
         HANDLE_MESSAGE(JoinLobbyBroadcastMessage);
         HANDLE_MESSAGE(ResultResponseMessage);

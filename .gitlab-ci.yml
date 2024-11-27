@@ -67,4 +67,3 @@ deploy:
     - if: $CI_PIPELINE_SOURCE == 'push' && $CI_COMMIT_REF_NAME == 'main'  # only run on the main branch
       when: on_success                                                    # run automatically if condition above is true
     - when: never                                                         # else: dont run it
-

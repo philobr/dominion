@@ -21,7 +21,7 @@ namespace client
     {
         this->DestroyChildren();
 
-        auto *sizer = new wxGridSizer(Enemies.size(), 1, 10, 10);
+        auto *sizer = new wxGridSizer(1, Enemies.size(), 10, 10);
 
         for ( const auto &Enemy : Enemies ) {
             EnemyPanel *enemy_panel = new EnemyPanel(this, *Enemy);

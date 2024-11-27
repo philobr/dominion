@@ -29,6 +29,31 @@ namespace client
         void makePlayable(ImagePanel *Image, std::string card_id);
 
         wxSize hand_card_size = wxSize(100, 125);
+
+        /**
+         * @brief Create the draw pile panel
+         * @param draw_pile_size
+         * 
+         * @return wxPanel*
+         */
+        wxPanel* createDrawPilePanel(const unsigned int draw_pile_size);
+
+        /**
+         * @brief Create the hand panel
+         * 
+         * @param std::unique_ptr<reduced::Player>& Player
+         * @param size_t card_width_borders
+         * @param bool is_active
+         * 
+         * @return wxPanel*
+         */
+        wxPanel* createHandPanel(const std::unique_ptr<reduced::Player>& Player, const size_t card_width_borders, const bool is_active);
+
+        /**
+         * @brief Create the discard pile panel
+         * @param  discard_pile_size
+         */
+        wxPanel* createDiscardPilePanel(const unsigned int discard_pile_size, const std::string &top_discard_card);
     };
 
 } // namespace client

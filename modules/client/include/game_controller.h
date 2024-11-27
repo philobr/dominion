@@ -54,7 +54,7 @@ namespace client
          * @brief Receive a game state message from the server
          * @param msg The game state message received
          */
-        static void receiveGameStateMessage(const shared::GameStateMessage &msg);
+        static void receiveGameStateMessage(std::unique_ptr<shared::GameStateMessage> msg);
 
         /**
          * @brief Receive a message from the server
@@ -83,7 +83,7 @@ namespace client
         static LobbyPanel *_lobbyPanel;
         static ClientNetworkManager *_clientNetworkManager;
 
-        static reduced::GameState _gameState;
+        static std::unique_ptr<reduced::GameState> _gameState;
         static shared::PlayerBase::id_t _playerName;
         static std::string _gameName;
     };

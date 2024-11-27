@@ -10,6 +10,7 @@ namespace client
     MainGamePanel *GameController::_mainGamePanel = nullptr;
     LobbyPanel *GameController::_lobbyPanel = nullptr;
 
+    std::unique_ptr<reduced::GameState> GameController::_gameState = nullptr;
     shared::PlayerBase::id_t GameController::_playerName = "";
     std::string GameController::_gameName = "";
 
@@ -201,10 +202,10 @@ namespace client
         LOG(INFO) << "Done with GameController::send_request()";
     }
 
-    void GameController::receiveGameStateMessage(const shared::GameStateMessage &msg)
+    void GameController::receiveGameStateMessage(std::unique_ptr<shared::GameStateMessage> msg)
     {
-        reduced::GameState &gameState = *msg.game_state;
-        GameController::_mainGamePanel->drawGameState(gameState);
+        GameController::_gameState = std::move(msg->game_state);
+        GameController::_mainGamePanel->drawGameState(*GameController::_gameState);
     }
 
     void GameController::receiveMessage(std::unique_ptr<shared::ServerToClientMessage> msg)
@@ -233,7 +234,7 @@ namespace client
         } else if ( typeid(msgRef) == typeid(shared::GameStateMessage) ) {
             std::unique_ptr<shared::GameStateMessage> gsm(static_cast<shared::GameStateMessage *>(msg.release()));
             LOG(INFO) << "Message is GameStateMessage";
-            GameController::receiveGameStateMessage(*gsm);
+            GameController::receiveGameStateMessage(std::move(gsm));
         } else {
             // This code should never be reached
             LOG(ERROR) << "Unknown message";

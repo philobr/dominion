@@ -110,9 +110,9 @@ namespace server
         return true;
     }
 
-    bool GameState::try_play(const Player::id_t &affected_player, size_t hand_index, shared::CardAccess from)
+    bool GameState::tryPlay(const Player::id_t &affected_player, size_t hand_index, shared::CardAccess from)
     {
-        auto &player = get_player(affected_player);
+        auto &player = getPlayer(affected_player);
         const auto &card_id = player.get<shared::CardAccess::HAND>()[hand_index];
         const auto &card = shared::CardFactory::getCard(card_id);
 
@@ -124,13 +124,13 @@ namespace server
             LOG(ERROR) << "player(" << affected_player << ") is currently not in the action phase, throwing";
             throw exception::OutOfPhase("");
         }
-        if ( player.is_currently_playing_card() ) {
+        if ( player.isCurrentlyPlayingCard() ) {
             LOG(ERROR) << "player(" << affected_player
                        << ") is already playing a different card, landed in the wrong handler";
             throw std::runtime_error("message landed up in the wrong handler");
         }
         if ( player.getActions() == 0 ) {
-            force_switch_phase();
+            forceSwitchPhase();
             LOG(ERROR) << "tried to play an action card, but has no actions left";
             throw exception::OutOfActions("");
         }
@@ -139,14 +139,14 @@ namespace server
             throw exception::InvalidCardAccess("");
         }
 
-        player.set_currently_playing_card(card_id);
+        player.setCurrentlyPlayingCard(card_id);
         player.decActions();
         phase = GamePhase::PLAYING_ACTION_CARD;
 
         if ( from == shared::CardAccess::HAND ) {
-            player.play_card_from_hand(hand_index);
+            player.playCardFromHand(hand_index);
         } else if ( from == shared::CardAccess::STAGED_CARDS ) {
-            player.play_card_from_staged(hand_index);
+            player.playCardFromStaged(hand_index);
         } else {
             LOG(ERROR) << "tried to play a card from an invalid pile";
             throw exception::InvalidCardAccess("");

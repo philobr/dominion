@@ -79,14 +79,14 @@ namespace server
         const auto &card_id =
                 game_state->get_player(player_id).get<shared::CardAccess::HAND>()[action_decision->cardIndex];
         // checks if the card is currently playable (multiple checks done)
-        if ( game_state->try_play(player_id, action_decision->cardIndex, action_decision->from) ) {
+        if ( game_state->tryPlay(player_id, action_decision->cardIndex, action_decision->from) ) {
 
             cur_behaviours->loadBehaviours(card_id);
             auto response = cur_behaviours->receiveAction(*game_state, player_id, std::nullopt, std::nullopt).value();
             if ( response == nullptr ) {
-                if ( game_state->get_player(player_id).getActions() != 0 ) {
+                if ( game_state->getPlayer(player_id).getActions() != 0 ) {
                     return std::make_unique<shared::ActionPhaseOrder>();
-                } else if ( game_state->get_player(player_id).getBuys() != 0 ) {
+                } else if ( game_state->getPlayer(player_id).getBuys() != 0 ) {
                     return std::make_unique<shared::BuyPhaseOrder>();
                 } else {
                     return std::make_unique<shared::EndTurnOrder>();

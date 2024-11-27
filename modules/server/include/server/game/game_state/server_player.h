@@ -51,8 +51,8 @@ namespace server
             currently_playing_card(other.currently_playing_card), current_behaviour_idx(other.current_behaviour_idx)
         {}
 
-        bool is_currently_playing_card() const { return !currently_playing_card.empty(); }
-        void set_currently_playing_card(const shared::CardBase::id_t &card_id) { currently_playing_card = card_id; }
+        bool isCurrentlyPlayingCard() const { return !currently_playing_card.empty(); }
+        void setCurrentlyPlayingCard(const shared::CardBase::id_t &card_id) { currently_playing_card = card_id; }
 
         reduced::Player::ptr_t getReducedPlayer();
         reduced::Enemy::ptr_t getReducedEnemy();
@@ -74,12 +74,12 @@ namespace server
          */
         inline void draw(size_t n) { move<shared::DRAW_PILE_TOP, shared::HAND>(n); }
 
-        inline void play_card_from_hand(const size_t &card_index)
+        inline void playCardFromHand(const size_t &card_index)
         {
             moveIndices<shared::HAND, shared::PLAYED_CARDS>(card_index);
         }
 
-        inline void play_card_from_staged(const size_t &card_index)
+        inline void playCardFromStaged(const size_t &card_index)
         {
             moveIndices<shared::STAGED_CARDS, shared::PLAYED_CARDS>(card_index);
         }

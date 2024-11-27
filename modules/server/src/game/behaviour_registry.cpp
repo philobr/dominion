@@ -1,4 +1,4 @@
-#include <server/game/game_state/behaviour_registry.h>
+#include <server/game/behaviour_registry.h>
 
 std::vector<std::unique_ptr<server::BehaviourBase>> server::BehaviourRegistry::getBehaviours(const std::string &card_id)
 {

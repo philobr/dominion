@@ -1,7 +1,7 @@
 #include <algorithm>
 #include <random>
 
-#include <server/game/game_state/game_state.h>
+#include <server/game/game_state.h>
 
 #include <shared/game/cards/card_factory.h>
 #include <shared/utils/assert.h>

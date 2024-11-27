@@ -22,9 +22,7 @@ namespace client
 
     void MainGamePanel::drawGameState(const reduced::GameState &gameState)
     {
-
         bool is_active = (gameState.active_player == gameState.reduced_player->getId());
-
 
         Board->drawBoard(gameState.board, is_active, gameState.reduced_player->getTreasure());
         Player->drawPlayer(gameState.reduced_player, is_active);

@@ -15,7 +15,7 @@ namespace client
     class PilePanel : public wxPanel
     {
     public:
-        PilePanel(wxWindow *parent, shared::Pile pile);
+        PilePanel(wxWindow *parent, shared::Pile pile, wxSize size = wxDefaultSize, int padding = 0);
 
         shared::Pile getPile() const;
 

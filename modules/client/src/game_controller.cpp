@@ -265,10 +265,11 @@ namespace client
                 } else {
                     LOG(DEBUG) << "Failed to join lobby";
                     if ( msg->additional_information.has_value() ) {
-                        GameController::showError("Failed to join lobby", "");
-                    } else {
                         GameController::showError("Failed to join lobby", msg->additional_information.value());
+                    } else {
+                        GameController::showError("Failed to join lobby", "");
                     }
+                    LOG(INFO) << "Returning to login screen";
                     GameController::_clientState = ClientState::LOGIN_SCREEN;
                 }
                 break;
@@ -280,10 +281,11 @@ namespace client
                 } else {
                     LOG(DEBUG) << "Failed to create lobby";
                     if ( msg->additional_information.has_value() ) {
-                        GameController::showError("Failed to create lobby", "");
-                    } else {
                         GameController::showError("Failed to create lobby", msg->additional_information.value());
+                    } else {
+                        GameController::showError("Failed to create lobby", "");
                     }
+                    LOG(INFO) << "Returning to login screen";
                     GameController::_clientState = ClientState::LOGIN_SCREEN;
                 }
                 break;

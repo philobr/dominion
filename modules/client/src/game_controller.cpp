@@ -1,5 +1,8 @@
 #include "game_controller.h"
 #include <shared/utils/logger.h>
+#include <vector>
+#include "shared/game/cards/card_base.h"
+#include "shared/message_types.h"
 
 
 namespace client
@@ -131,7 +134,9 @@ namespace client
     {
         // send request to start game
         LOG(INFO) << "GameController called in function startGame()";
-        GameController::_gameWindow->showPanel(GameController::_mainGamePanel);
+        std::vector<shared::CardBase::id_t> selectedCards {"Estate", "Smithy", "Village", "Laboratory", "Festival", "Market", "Placeholder1", "Placeholder2", "Placeholder3", "Placeholder4"};
+        shared::StartGameRequestMessage msg = shared::StartGameRequestMessage(GameController::_gameName, GameController::_playerName, selectedCards);
+        GameController::sendRequest(msg.toJson());
         LOG(INFO) << "Done with GameController::startGame()";
     }
 

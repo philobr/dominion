@@ -33,6 +33,12 @@ void server::BehaviourRegistry::initialiseBehaviours()
      * insert can take multiple types as template param
      */
 
+    // placeholder cards
+    insert<GainCoins<1>>("Placeholder1");
+    insert<GainCoins<1>>("Placeholder2");
+    insert<GainCoins<1>>("Placeholder3");
+    insert<GainCoins<1>>("Placeholder4");
+
     /*
     DONE
     */

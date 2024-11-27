@@ -48,6 +48,18 @@ namespace client
         static void playCard(unsigned int cardIndex);
         static void endTurn();
         static void sendRequest(const std::string &req);
+
+
+        /**
+         * @brief Receive a game state message from the server
+         * @param msg The game state message received
+         */
+        static void receiveGameStateMessage(const shared::GameStateMessage &msg);
+
+        /**
+         * @brief Receive a message from the server
+         * @param msg The message received
+         */
         static void receiveMessage(std::unique_ptr<shared::ServerToClientMessage> msg);
 
         /**
@@ -71,6 +83,7 @@ namespace client
         static LobbyPanel *_lobbyPanel;
         static ClientNetworkManager *_clientNetworkManager;
 
+        static reduced::GameState _gameState;
         static shared::PlayerBase::id_t _playerName;
         static std::string _gameName;
     };

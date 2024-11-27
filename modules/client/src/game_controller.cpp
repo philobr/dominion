@@ -201,10 +201,14 @@ namespace client
         LOG(INFO) << "Done with GameController::send_request()";
     }
 
+    void GameController::receiveGameStateMessage(const shared::GameStateMessage &msg)
+    {
+        reduced::GameState &gameState = *msg.game_state;
+        GameController::_mainGamePanel->drawGameState(gameState);
+    }
 
     void GameController::receiveMessage(std::unique_ptr<shared::ServerToClientMessage> msg)
     {
-
         LOG(INFO) << "Gamecontroller called in function receive_message()";
 
         shared::ServerToClientMessage &msgRef = *msg;
@@ -226,6 +230,10 @@ namespace client
                     static_cast<shared::JoinLobbyBroadcastMessage *>(msg.release()));
             LOG(INFO) << "Message is JoinLobbyBroadcastMessage";
             GameController::refreshPlayers(*jlbm);
+        } else if ( typeid(msgRef) == typeid(shared::GameStateMessage) ) {
+            std::unique_ptr<shared::GameStateMessage> gsm(static_cast<shared::GameStateMessage *>(msg.release()));
+            LOG(INFO) << "Message is GameStateMessage";
+            GameController::receiveGameStateMessage(*gsm);
         } else {
             // This code should never be reached
             LOG(ERROR) << "Unknown message";

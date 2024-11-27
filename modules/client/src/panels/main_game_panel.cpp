@@ -20,15 +20,15 @@ namespace client
     }
 
 
-    void MainGamePanel::drawGameState(const std::unique_ptr<reduced::GameState> &GameState)
+    void MainGamePanel::drawGameState(const reduced::GameState &gameState)
     {
 
-        bool is_active = (GameState->active_player == GameState->reduced_player->getId());
+        bool is_active = (gameState.active_player == gameState.reduced_player->getId());
 
 
-        Board->drawBoard(GameState->board, is_active, GameState->reduced_player->getTreasure());
-        Player->drawPlayer(GameState->reduced_player, is_active);
-        EnemyInfo->drawEnemies(GameState->reduced_enemies);
+        Board->drawBoard(gameState.board, is_active, gameState.reduced_player->getTreasure());
+        Player->drawPlayer(gameState.reduced_player, is_active);
+        EnemyInfo->drawEnemies(gameState.reduced_enemies);
     }
 
 

@@ -13,7 +13,7 @@ namespace shared
 
     bool ActionOrder::operator!=(const ActionOrder &other) const { return !ActionOrder::operator==(other); }
 
-    std::unique_ptr<ActionOrder> ActionOrder::from_json(const rapidjson::Value &json)
+    std::unique_ptr<ActionOrder> ActionOrder::fromJson(const rapidjson::Value &json)
     {
         std::string type;
         GET_STRING_MEMBER(type, json, "type");
@@ -30,7 +30,7 @@ namespace shared
         }
     }
 
-    rapidjson::Document ActionOrder::to_json() const
+    rapidjson::Document ActionOrder::toJson() const
     {
         rapidjson::Document doc;
         doc.SetObject();

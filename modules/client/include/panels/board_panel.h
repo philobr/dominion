@@ -29,7 +29,7 @@ namespace client
          *
          * @param Board
          */
-        void DrawBoard(std::shared_ptr<shared::Board> Board, bool is_active, unsigned int treasure);
+        void drawBoard(std::shared_ptr<shared::Board> Board, bool is_active, unsigned int treasure);
 
     private:
         /**

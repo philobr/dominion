@@ -13,8 +13,8 @@ using namespace rapidjson;
 
 /* ======= SERVER TO CLIENT MESSAGES ======= */
 
-static std::unique_ptr<GameStateMessage> parse_game_state_message(const Document &json, const std::string &game_id,
-                                                                  const std::string &message_id)
+static std::unique_ptr<GameStateMessage> parseGameStateMessage(const Document &json, const std::string &game_id,
+                                                               const std::string &message_id)
 {
     std::optional<std::string> in_response_to;
 
@@ -34,7 +34,7 @@ static std::unique_ptr<GameStateMessage> parse_game_state_message(const Document
 }
 
 static std::unique_ptr<CreateLobbyResponseMessage>
-parse_create_lobby_response(const Document &json, const std::string &game_id, const std::string &message_id)
+parseCreateLobbyResponse(const Document &json, const std::string &game_id, const std::string &message_id)
 {
     std::vector<CardBase::id_t> available_cards;
     GET_STRING_ARRAY_MEMBER(available_cards, json, "available_cards");
@@ -46,7 +46,7 @@ parse_create_lobby_response(const Document &json, const std::string &game_id, co
 }
 
 static std::unique_ptr<JoinLobbyBroadcastMessage>
-parse_join_game_broadcast(const Document &json, const std::string &game_id, const std::string &message_id)
+parseJoinGameBroadcast(const Document &json, const std::string &game_id, const std::string &message_id)
 {
     std::vector<shared::PlayerBase::id_t> players;
     GET_STRING_ARRAY_MEMBER(players, json, "players");
@@ -55,19 +55,19 @@ parse_join_game_broadcast(const Document &json, const std::string &game_id, cons
 }
 
 static std::unique_ptr<StartGameBroadcastMessage>
-parse_start_game_message(const Document & /*json*/, const std::string &game_id, const std::string &message_id)
+parseStartGameMessage(const Document & /*json*/, const std::string &game_id, const std::string &message_id)
 {
     return std::make_unique<StartGameBroadcastMessage>(game_id, message_id);
 }
 
 static std::unique_ptr<EndGameBroadcastMessage>
-parse_end_game_broadcast(const Document & /*json*/, const std::string &game_id, const std::string &message_id)
+parseEndGameBroadcast(const Document & /*json*/, const std::string &game_id, const std::string &message_id)
 {
     return std::make_unique<EndGameBroadcastMessage>(game_id, message_id);
 }
 
-static std::unique_ptr<ResultResponseMessage> parse_result_response(const Document &json, const std::string &game_id,
-                                                                    const std::string &message_id)
+static std::unique_ptr<ResultResponseMessage> parseResultResponse(const Document &json, const std::string &game_id,
+                                                                  const std::string &message_id)
 {
     std::optional<std::string> in_response_to;
     GET_OPTIONAL_STRING_MEMBER(in_response_to, json, "in_response_to");
@@ -80,15 +80,15 @@ static std::unique_ptr<ResultResponseMessage> parse_result_response(const Docume
                                                    message_id);
 }
 
-static std::unique_ptr<ActionOrderMessage> parse_action_order(const Document &json, const std::string &game_id,
-                                                              const std::string &message_id)
+static std::unique_ptr<ActionOrderMessage> parseActionOrder(const Document &json, const std::string &game_id,
+                                                            const std::string &message_id)
 {
     std::optional<std::string> description;
 
     if ( !json.HasMember("order") && !json["order"].IsObject() ) {
         return nullptr;
     }
-    std::unique_ptr<ActionOrder> order = ActionOrder::from_json(json["order"]);
+    std::unique_ptr<ActionOrder> order = ActionOrder::fromJson(json["order"]);
 
     GET_OPTIONAL_STRING_MEMBER(description, json, "description");
 
@@ -97,7 +97,7 @@ static std::unique_ptr<ActionOrderMessage> parse_action_order(const Document &js
 
 namespace shared
 {
-    std::unique_ptr<ServerToClientMessage> ServerToClientMessage::from_json(const std::string &json)
+    std::unique_ptr<ServerToClientMessage> ServerToClientMessage::fromJson(const std::string &json)
     {
         Document doc;
         doc.Parse(json.c_str());
@@ -114,53 +114,52 @@ namespace shared
         std::string type;
         GET_STRING_MEMBER(type, doc, "type");
         if ( type == "game_state" ) {
-            return parse_game_state_message(doc, game_id, message_id);
+            return parseGameStateMessage(doc, game_id, message_id);
         } else if ( type == "initiate_game_response" ) {
-            return parse_create_lobby_response(doc, game_id, message_id);
+            return parseCreateLobbyResponse(doc, game_id, message_id);
         } else if ( type == "join_game_broadcast" ) {
-            return parse_join_game_broadcast(doc, game_id, message_id);
+            return parseJoinGameBroadcast(doc, game_id, message_id);
         } else if ( type == "start_game_broadcast" ) {
-            return parse_start_game_message(doc, game_id, message_id);
+            return parseStartGameMessage(doc, game_id, message_id);
         } else if ( type == "end_game_broadcast" ) {
-            return parse_end_game_broadcast(doc, game_id, message_id);
+            return parseEndGameBroadcast(doc, game_id, message_id);
         } else if ( type == "result_response" ) {
-            return parse_result_response(doc, game_id, message_id);
+            return parseResultResponse(doc, game_id, message_id);
         } else if ( type == "action_order" ) {
-            return parse_action_order(doc, game_id, message_id);
+            return parseActionOrder(doc, game_id, message_id);
         } else {
             return nullptr;
         }
     }
 } // namespace shared
 
-static std::unique_ptr<GameStateRequestMessage> parse_game_state_request(const Document & /*json*/,
-                                                                         const std::string &game_id,
-                                                                         const PlayerBase::id_t &player_id,
-                                                                         const std::string &message_id)
+static std::unique_ptr<GameStateRequestMessage> parseGameStateRequest(const Document & /*json*/,
+                                                                      const std::string &game_id,
+                                                                      const PlayerBase::id_t &player_id,
+                                                                      const std::string &message_id)
 {
     return std::make_unique<GameStateRequestMessage>(game_id, player_id, message_id);
 }
 
-static std::unique_ptr<CreateLobbyRequestMessage> parse_create_lobby_request(const Document & /*json*/,
-                                                                             const std::string &game_id,
-                                                                             const PlayerBase::id_t &player_id,
-                                                                             const std::string &message_id)
+static std::unique_ptr<CreateLobbyRequestMessage> parseCreateLobbyRequest(const Document & /*json*/,
+                                                                          const std::string &game_id,
+                                                                          const PlayerBase::id_t &player_id,
+                                                                          const std::string &message_id)
 {
     return std::make_unique<CreateLobbyRequestMessage>(game_id, player_id, message_id);
 }
 
-static std::unique_ptr<JoinLobbyRequestMessage> parse_join_game_request(const Document & /*json*/,
-                                                                        const std::string &game_id,
-                                                                        const PlayerBase::id_t &player_id,
-                                                                        const std::string &message_id)
+static std::unique_ptr<JoinLobbyRequestMessage> parseJoinGameRequest(const Document & /*json*/,
+                                                                     const std::string &game_id,
+                                                                     const PlayerBase::id_t &player_id,
+                                                                     const std::string &message_id)
 {
     return std::make_unique<JoinLobbyRequestMessage>(game_id, player_id, message_id);
 }
 
-static std::unique_ptr<StartGameRequestMessage> parse_start_game_request(const Document &json,
-                                                                         const std::string &game_id,
-                                                                         const PlayerBase::id_t &player_id,
-                                                                         const std::string &message_id)
+static std::unique_ptr<StartGameRequestMessage> parseStartGameRequest(const Document &json, const std::string &game_id,
+                                                                      const PlayerBase::id_t &player_id,
+                                                                      const std::string &message_id)
 {
     std::vector<CardBase::id_t> selected_cards;
     GET_STRING_ARRAY_MEMBER(selected_cards, json, "selected_cards");
@@ -171,9 +170,9 @@ static std::unique_ptr<StartGameRequestMessage> parse_start_game_request(const D
     return std::make_unique<StartGameRequestMessage>(game_id, player_id, selected_cards, message_id);
 }
 
-static std::unique_ptr<ActionDecisionMessage> parse_action_decision(const Document &json, const std::string &game_id,
-                                                                    const PlayerBase::id_t &player_id,
-                                                                    const std::string &message_id)
+static std::unique_ptr<ActionDecisionMessage> parseActionDecision(const Document &json, const std::string &game_id,
+                                                                  const PlayerBase::id_t &player_id,
+                                                                  const std::string &message_id)
 {
     std::optional<std::string> in_response_to;
     GET_OPTIONAL_STRING_MEMBER(in_response_to, json, "in_response_to");
@@ -207,7 +206,7 @@ static std::unique_ptr<ActionDecisionMessage> parse_action_decision(const Docume
 
 namespace shared
 {
-    std::unique_ptr<ClientToServerMessage> ClientToServerMessage::from_json(const std::string &json)
+    std::unique_ptr<ClientToServerMessage> ClientToServerMessage::fromJson(const std::string &json)
     {
         Document doc;
         doc.Parse(json.c_str());
@@ -226,15 +225,15 @@ namespace shared
         std::string type;
         GET_STRING_MEMBER(type, doc, "type");
         if ( type == "game_state_request" ) {
-            return parse_game_state_request(doc, game_id, player_id, message_id);
+            return parseGameStateRequest(doc, game_id, player_id, message_id);
         } else if ( type == "initiate_game_request" ) {
-            return parse_create_lobby_request(doc, game_id, player_id, message_id);
+            return parseCreateLobbyRequest(doc, game_id, player_id, message_id);
         } else if ( type == "join_game_request" ) {
-            return parse_join_game_request(doc, game_id, player_id, message_id);
+            return parseJoinGameRequest(doc, game_id, player_id, message_id);
         } else if ( type == "start_game_request" ) {
-            return parse_start_game_request(doc, game_id, player_id, message_id);
+            return parseStartGameRequest(doc, game_id, player_id, message_id);
         } else if ( type == "action_decision" ) {
-            return parse_action_decision(doc, game_id, player_id, message_id);
+            return parseActionDecision(doc, game_id, player_id, message_id);
         } else {
             return nullptr;
         }

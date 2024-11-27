@@ -14,13 +14,13 @@ namespace client
     BoardPanel::BoardPanel(wxWindow *parent, wxSize size) : wxPanel(parent, wxID_ANY, wxDefaultPosition, size)
     {
 
-        auto board = shared::Board::make(get_valid_kingdom_cards(), 3);
+        auto board = shared::Board::make(getValidKingdomCards(), 3);
 
-        this->DrawBoard(board, true, 3);
+        this->drawBoard(board, true, 3);
     }
 
 
-    void BoardPanel::DrawBoard(std::shared_ptr<shared::Board> Board, bool is_active, unsigned int treasure)
+    void BoardPanel::drawBoard(std::shared_ptr<shared::Board> Board, bool is_active, unsigned int treasure)
     {
         this->DestroyChildren();
 

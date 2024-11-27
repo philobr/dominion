@@ -3,7 +3,7 @@
 #include <rapidjson/writer.h>
 #include <string>
 
-std::string document_to_string(const rapidjson::Document &doc)
+std::string documentToString(const rapidjson::Document &doc)
 {
     rapidjson::StringBuffer buffer;
     rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);

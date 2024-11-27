@@ -1,5 +1,5 @@
+#include <gtest/gtest.h>
 #include <shared/game/cards/card_base.h>
-#include "gtest/gtest.h"
 
 TEST(CardBaseTest, ConstructorAndGetters)
 {

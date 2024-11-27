@@ -2,7 +2,7 @@
 #include <server/network/message_interface.h>
 
 #include <gmock/gmock.h>
-#include "gtest/gtest.h"
+#include <gtest/gtest.h>
 
 using ::testing::_;
 using ::testing::InSequence;
@@ -16,8 +16,8 @@ using ::testing::Truly;
 class MockMessageInterface : public server::MessageInterface
 {
 public:
-    // Mock the send_message method, assuming it takes these parameters
-    MOCK_METHOD(void, send_message,
+    // Mock the sendMessage method, assuming it takes these parameters
+    MOCK_METHOD(void, sendMessage,
                 (std::unique_ptr<shared::ServerToClientMessage> message, const shared::PlayerBase::id_t &player_id),
                 (override));
 };

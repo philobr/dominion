@@ -4,9 +4,9 @@ namespace client
 {
     enum class TextFormat
     {
-        Plain,
-        Bold,
-        Italic,
-        Title
+        PLAIN,
+        BOLD,
+        ITALIC,
+        TITLE
     };
 } // namespace client

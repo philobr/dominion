@@ -10,6 +10,6 @@ namespace client
     class TextPanel : public wxStaticText
     {
     public:
-        TextPanel(wxWindow *parent, wxWindowID id, wxString text = "", TextFormat format = TextFormat::Plain);
+        TextPanel(wxWindow *parent, wxWindowID id, wxString text = "", TextFormat format = TextFormat::PLAIN);
     };
 } // namespace client

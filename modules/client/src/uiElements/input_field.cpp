@@ -14,7 +14,7 @@ namespace client
         this->_label = new TextPanel(this, // parent element
                                      wxID_ANY, // element id
                                      labelText, // text that's displayed as label
-                                     TextFormat::Plain // text format
+                                     TextFormat::PLAIN // text format
         );
         this->_label->SetMinSize(wxSize(labelWidth, -1));
         horizontalLayout->Add(this->_label, 0, wxALIGN_CENTER);

@@ -15,7 +15,7 @@ namespace client
 
         sizer->Add(Image, 0, wxALIGN_CENTER_HORIZONTAL);
 
-        TextPanel *PileSize = new TextPanel(this, wxID_ANY, std::to_string(pile.count), TextFormat::Plain);
+        TextPanel *PileSize = new TextPanel(this, wxID_ANY, std::to_string(pile.count), TextFormat::PLAIN);
 
         sizer->Add(PileSize, 0, wxALIGN_CENTER_HORIZONTAL);
 

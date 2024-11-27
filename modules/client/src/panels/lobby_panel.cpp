@@ -17,7 +17,7 @@ namespace client
         wxPanel(parent, wxID_ANY, wxDefaultPosition, wxSize(1024, 1024)), NamesSizer(new wxGridSizer(2, 2, 0, 0)),
         playerCount(0)
     {
-        TextPanel *Title = new TextPanel(this, wxID_ANY, "Lobby", TextFormat::Title);
+        TextPanel *Title = new TextPanel(this, wxID_ANY, "Lobby", TextFormat::TITLE);
         wxBoxSizer *VerticalSizer = new wxBoxSizer(wxVERTICAL);
         VerticalSizer->Add(Title, 0, wxALIGN_CENTER | wxALL, 5);
         wxPanel *Panel = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxSize(512, 512));
@@ -70,7 +70,7 @@ namespace client
                                                0.0 // rotation
         );
         Player->GetSizer()->Add(LogoPanel, 0, wxALL | wxALIGN_CENTER, 5);
-        TextPanel *Player_name = new TextPanel(Player, wxID_ANY, name, TextFormat::Plain);
+        TextPanel *Player_name = new TextPanel(Player, wxID_ANY, name, TextFormat::PLAIN);
         Player->GetSizer()->Add(Player_name, 0, wxALL | wxALIGN_CENTER, 5);
         NamesSizer->Add(Player, 1, wxALL | wxALIGN_CENTER);
         NamesSizer->Layout();

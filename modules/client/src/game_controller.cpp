@@ -1,4 +1,5 @@
 #include "game_controller.h"
+#include <memory>
 #include <shared/utils/logger.h>
 
 
@@ -236,6 +237,10 @@ namespace client
             std::unique_ptr<shared::GameStateMessage> gsm(static_cast<shared::GameStateMessage *>(msg.release()));
             LOG(INFO) << "Message is GameStateMessage";
             GameController::receiveGameStateMessage(std::move(gsm));
+        } else if (typeid(msgRef) == typeid(shared::StartGameBroadcastMessage) ){
+            std::unique_ptr<shared::StartGameBroadcastMessage> sgbm(static_cast<shared::StartGameBroadcastMessage *>(msg.release()));
+            LOG(INFO) << "Message is StartGameBroadcastMessage";
+            GameController::_gameWindow->showPanel(GameController::_mainGamePanel);
         } else {
             // This code should never be reached
             LOG(ERROR) << "Unknown message";

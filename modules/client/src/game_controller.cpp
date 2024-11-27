@@ -1,6 +1,11 @@
 #include "game_controller.h"
 #include <shared/utils/logger.h>
+#include <vector>
+#include "shared/game/cards/card_base.h"
+#include "shared/game/game_state/player_base.h"
+#include "shared/message_types.h"
 
+using namespace shared;
 
 namespace client
 {
@@ -10,8 +15,10 @@ namespace client
     MainGamePanel *GameController::_mainGamePanel = nullptr;
     LobbyPanel *GameController::_lobbyPanel = nullptr;
 
+    ClientState GameController::_clientState = ClientState::LOGIN_SCREEN;
     std::unique_ptr<reduced::GameState> GameController::_gameState = nullptr;
     std::string GameController::_gameName = "";
+    shared::PlayerBase::id_t GameController::_playerName = "";
 
     void GameController::init(GameWindow *gameWindow)
     {
@@ -81,12 +88,18 @@ namespace client
 
     void GameController::createLobby()
     {
-        LOG(INFO) << "GameController called in function CreateLobby()";
+        if ( GameController::_clientState != ClientState::LOGIN_SCREEN ) {
+            GameController::showError("Error", "Tried to create lobby while not in login screen");
+            return;
+        }
+
         // get values form UI input fields
         wxString inputServerAddress = GameController::_connectionPanel->getServerAddress().Trim();
         wxString inputServerPort = GameController::_connectionPanel->getServerPort().Trim();
         wxString inputPlayerName = GameController::_connectionPanel->getPlayerName().Trim();
         wxString inputGameName = GameController::_connectionPanel->getGameName().Trim();
+
+        LOG(DEBUG) << "Creating lobby " << inputGameName;
 
         if ( GameController::validInput(inputServerAddress, inputServerPort, inputPlayerName, inputGameName) ) {
             unsigned long portAsLong;
@@ -100,18 +113,26 @@ namespace client
             GameController::sendRequest(request.toJson());
 
             GameController::_gameName = inputGameName.ToStdString();
+            GameController::_playerName = inputPlayerName.ToStdString();
+            GameController::_clientState = ClientState::CREATING_LOBBY;
         }
-        LOG(INFO) << "Done with GameController::CreateLobby()";
     }
 
     void GameController::joinLobby()
     {
-        LOG(INFO) << "GameController called in function JoinLobby()";
+        if ( GameController::_clientState != ClientState::LOGIN_SCREEN ) {
+            GameController::showError("Error", "Tried to join lobby while not in login screen");
+            return;
+        }
+
         // get values form UI input fields
         wxString inputServerAddress = GameController::_connectionPanel->getServerAddress().Trim();
         wxString inputServerPort = GameController::_connectionPanel->getServerPort().Trim();
         wxString inputPlayerName = GameController::_connectionPanel->getPlayerName().Trim();
         wxString inputGameName = GameController::_connectionPanel->getGameName().Trim();
+
+        LOG(DEBUG) << "Joining lobby " << inputGameName;
+
         if ( GameController::validInput(inputServerAddress, inputServerPort, inputPlayerName, inputGameName) ) {
             unsigned long portAsLong;
             inputServerPort.ToULong(&portAsLong);
@@ -122,15 +143,23 @@ namespace client
             // send request to join game
             shared::JoinLobbyRequestMessage request(inputGameName.ToStdString(), inputPlayerName.ToStdString());
             GameController::sendRequest(request.toJson());
+
+            GameController::_gameName = inputGameName.ToStdString();
+            GameController::_playerName = inputPlayerName.ToStdString();
+            GameController::_clientState = ClientState::JOINING_LOBBY;
         }
-        LOG(INFO) << "Done with GameController::JoinLobby()";
     }
 
     void GameController::startGame()
     {
         // send request to start game
         LOG(INFO) << "GameController called in function startGame()";
-        GameController::_gameWindow->showPanel(GameController::_mainGamePanel);
+        std::vector<shared::CardBase::id_t> selectedCards{"Estate",       "Smithy",      "Village",      "Laboratory",
+                                                          "Festival",     "Market",      "Placeholder1", "Placeholder2",
+                                                          "Placeholder3", "Placeholder4"};
+        shared::StartGameRequestMessage msg =
+                shared::StartGameRequestMessage(GameController::_gameName, GameController::_playerName, selectedCards);
+        GameController::sendRequest(msg.toJson());
         LOG(INFO) << "Done with GameController::startGame()";
     }
 
@@ -190,17 +219,82 @@ namespace client
     {
         LOG(WARN) << title << ": " << message << std::endl;
         wxMessageBox(message, title, wxICON_ERROR);
-        LOG(INFO) << "Done with GameController::showError()";
     }
-
 
     void GameController::showStatus(const std::string &message) { GameController::_gameWindow->setStatus(message); }
 
     void GameController::sendRequest(const std::string &req)
     {
-        LOG(INFO) << "GameController called in function send_request()";
         GameController::_clientNetworkManager->sendRequest(req);
-        LOG(INFO) << "Done with GameController::send_request()";
+    }
+
+    void GameController::receiveActionOrderMessage(std::unique_ptr<shared::ActionOrderMessage> /*msg*/)
+    {
+        // TODO(#125) This is not implemented, and will probably be removed with #125
+        LOG(WARN) << "Received ActionOrderMessage, but this does not do anything yet";
+    }
+
+    void GameController::receiveCreateLobbyResponseMessage(std::unique_ptr<shared::CreateLobbyResponseMessage> /*msg*/)
+    {
+        GameController::_gameWindow->showPanel(GameController::_lobbyPanel);
+        // TODO maybe add player_id to the ServerToClientMessage ?
+        GameController::_lobbyPanel->addPlayer(GameController::_connectionPanel->getPlayerName().Trim().ToStdString());
+    }
+
+    void GameController::receiveJoinLobbyBroadcastMessage(std::unique_ptr<shared::JoinLobbyBroadcastMessage> msg)
+    {
+        LOG(DEBUG) << "Player joined lobby: " << msg->players.back();
+        std::unique_ptr<shared::JoinLobbyBroadcastMessage> jlbm(
+                static_cast<shared::JoinLobbyBroadcastMessage *>(msg.release()));
+        GameController::refreshPlayers(*jlbm);
+    }
+
+    void GameController::receiveResultResponseMessage(std::unique_ptr<shared::ResultResponseMessage> msg)
+    {
+        switch ( GameController::_clientState ) {
+            case ClientState::LOGIN_SCREEN:
+                LOG(WARN) << "Received unexpected ResultResponseMessage while in login screen";
+                break;
+            case ClientState::JOINING_LOBBY:
+                if ( msg->success ) {
+                    LOG(DEBUG) << "Successfully joined lobby";
+                    GameController::_gameWindow->showPanel(GameController::_lobbyPanel);
+                    GameController::_clientState = ClientState::IN_LOBBY;
+                } else {
+                    LOG(DEBUG) << "Failed to join lobby";
+                    if ( msg->additional_information.has_value() ) {
+                        GameController::showError("Failed to join lobby", "");
+                    } else {
+                        GameController::showError("Failed to join lobby", msg->additional_information.value());
+                    }
+                    GameController::_clientState = ClientState::LOGIN_SCREEN;
+                }
+                break;
+            case ClientState::CREATING_LOBBY:
+                if ( msg->success ) {
+                    LOG(DEBUG) << "Successfully created lobby";
+                    GameController::_gameWindow->showPanel(GameController::_lobbyPanel);
+                    GameController::_clientState = ClientState::IN_LOBBY;
+                } else {
+                    LOG(DEBUG) << "Failed to create lobby";
+                    if ( msg->additional_information.has_value() ) {
+                        GameController::showError("Failed to create lobby", "");
+                    } else {
+                        GameController::showError("Failed to create lobby", msg->additional_information.value());
+                    }
+                    GameController::_clientState = ClientState::LOGIN_SCREEN;
+                }
+                break;
+            case ClientState::IN_LOBBY:
+                LOG(WARN) << "Received unexpected ResultResponseMessage while in lobby";
+                break;
+            case ClientState::IN_GAME:
+                LOG(WARN) << "Received unexpected ResultResponseMessage while in running game";
+                break;
+            default:
+                LOG(WARN) << "Received ResultResponseMessage, but client is in unknown state";
+                break;
+        }
     }
 
     void GameController::receiveGameStateMessage(std::unique_ptr<shared::GameStateMessage> msg)
@@ -211,36 +305,25 @@ namespace client
 
     void GameController::receiveMessage(std::unique_ptr<shared::ServerToClientMessage> msg)
     {
-        LOG(INFO) << "Gamecontroller called in function receive_message()";
+// NOLINTBEGIN(bugprone-macro-parentheses)
+#define HANDLE_MESSAGE(type)                                                                                           \
+    if ( typeid(msgRef) == typeid(type) ) {                                                                            \
+        LOG(INFO) << "Received message of type " << #type;                                                             \
+        std::unique_ptr<type> casted(static_cast<type *>(msg.release()));                                              \
+        GameController::receive##type(std::move(casted));                                                              \
+        return;                                                                                                        \
+    }
+        // NOLINTEND(bugprone-macro-parentheses)
+        ServerToClientMessage &msgRef = *msg;
+        HANDLE_MESSAGE(ActionOrderMessage);
+        HANDLE_MESSAGE(CreateLobbyResponseMessage);
+        HANDLE_MESSAGE(JoinLobbyBroadcastMessage);
+        HANDLE_MESSAGE(ResultResponseMessage);
+        HANDLE_MESSAGE(GameStateMessage);
+#undef HANDLE_MESSAGE
 
-        shared::ServerToClientMessage &msgRef = *msg;
-        if ( typeid(msgRef) == typeid(shared::CreateLobbyResponseMessage) ) {
-            // Show the lobby screen
-            LOG(INFO) << "Message is CreateLobbyResponse";
-            GameController::_gameWindow->showPanel(GameController::_lobbyPanel);
-            LOG(INFO) << "Switched panel";
-            // TODO maybe add player_id to the ServerToClientMessage ?
-            GameController::_lobbyPanel->addPlayer(
-                    GameController::_connectionPanel->getPlayerName().Trim().ToStdString());
-            LOG(INFO) << "Added Player";
-        } else if ( typeid(msgRef) == typeid(shared::ResultResponseMessage) ) {
-            LOG(INFO) << "Message is ResultResponseMessage";
-            // Show the lobby screen
-            GameController::_gameWindow->showPanel(GameController::_lobbyPanel);
-        } else if ( typeid(msgRef) == typeid(shared::JoinLobbyBroadcastMessage) ) {
-            std::unique_ptr<shared::JoinLobbyBroadcastMessage> jlbm(
-                    static_cast<shared::JoinLobbyBroadcastMessage *>(msg.release()));
-            LOG(INFO) << "Message is JoinLobbyBroadcastMessage";
-            GameController::refreshPlayers(*jlbm);
-        } else if ( typeid(msgRef) == typeid(shared::GameStateMessage) ) {
-            std::unique_ptr<shared::GameStateMessage> gsm(static_cast<shared::GameStateMessage *>(msg.release()));
-            LOG(INFO) << "Message is GameStateMessage";
-            GameController::receiveGameStateMessage(std::move(gsm));
-        } else {
-            // This code should never be reached
-            LOG(ERROR) << "Unknown message";
-            _ASSERT_FALSE(true, "Unknown message type");
-        }
+        LOG(ERROR) << "Unknown message type";
+        throw exception::UnreachableCode("Unknown message type");
     }
 
     void GameController::refreshPlayers(shared::JoinLobbyBroadcastMessage &msg)

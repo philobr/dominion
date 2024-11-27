@@ -3,6 +3,7 @@
 #include <fstream>
 #include <memory>
 #include <mutex>
+#include <optional>
 #include <sstream>
 #include <string>
 
@@ -64,6 +65,11 @@ namespace shared
 
 namespace shared
 {
+    /**
+     * @brief Parses a string to a LogLevel.
+     */
+    std::optional<LogLevel> parseLogLevel(const std::string &level);
+
     class Logger
     {
         class LogStream

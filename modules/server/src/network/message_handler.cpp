@@ -18,6 +18,7 @@ namespace server
 
         auto &msg_ref = *message;
 
+// NOLINTBEGIN(bugprone-macro-parentheses)
 #define HANDLE(message_type, handler_func)                                                                             \
     if ( typeid(msg_ref) == typeid(message_type) ) {                                                                   \
         LOG(INFO) << "Trying to handle: " << #message_type;                                                            \
@@ -25,6 +26,8 @@ namespace server
         handler_func(std::move(unique_##message_type));                                                                \
         return;                                                                                                        \
     }
+        // NOLINTEND(bugprone-macro-parentheses)
+
 
         // HANDLE(GameStateRequestMessage, this->lobby_manager_.createLobby);  TODO: not implemented yet
         HANDLE(CreateLobbyRequestMessage, this->lobby_manager_.createLobby);

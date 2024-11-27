@@ -103,6 +103,7 @@ namespace client
             GameController::sendRequest(request.toJson());
 
             GameController::_gameName = inputGameName.ToStdString();
+            GameController::_playerName = inputPlayerName.ToStdString();
         }
         LOG(INFO) << "Done with GameController::CreateLobby()";
     }

@@ -241,7 +241,7 @@ namespace client
         GameController::_mainGamePanel->drawGameState(*GameController::_gameState);
     }
 
-    void GameController::receiveStartGameBroadcastMessage(std::unique_ptr<shared::StartGameBroadcastMessage> msg)
+    void GameController::receiveStartGameBroadcastMessage(std::unique_ptr<shared::StartGameBroadcastMessage> /*msg*/)
     {
         GameController::_gameWindow->showPanel(GameController::_mainGamePanel);
     }

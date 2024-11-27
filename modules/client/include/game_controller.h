@@ -83,6 +83,7 @@ namespace client
         static void receiveJoinLobbyBroadcastMessage(std::unique_ptr<shared::JoinLobbyBroadcastMessage> msg);
         static void receiveResultResponseMessage(std::unique_ptr<shared::ResultResponseMessage> msg);
         static void receiveGameStateMessage(std::unique_ptr<shared::GameStateMessage> msg);
+        static void receiveStartGameBroadcastMessage(std::unique_ptr<shared::StartGameBroadcastMessage> msg);
 
         static shared::PlayerBase::id_t getPlayerName();
 

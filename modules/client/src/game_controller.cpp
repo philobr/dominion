@@ -237,6 +237,7 @@ namespace client
         LOG(INFO) << "Received message of type " << #type;                                                             \
         std::unique_ptr<type> casted(static_cast<type *>(msg.release()));                                              \
         GameController::receive##type(std::move(casted));                                                              \
+        return;                                                                                                        \
     }
         // NOLINTEND(bugprone-macro-parentheses)
         ServerToClientMessage &msgRef = *msg;

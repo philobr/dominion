@@ -2,6 +2,7 @@
 #include <shared/utils/logger.h>
 #include <vector>
 #include "shared/game/cards/card_base.h"
+#include "shared/game/game_state/player_base.h"
 #include "shared/message_types.h"
 
 
@@ -15,6 +16,7 @@ namespace client
 
     std::unique_ptr<reduced::GameState> GameController::_gameState = nullptr;
     std::string GameController::_gameName = "";
+    shared::PlayerBase::id_t GameController::_playerName = "";
 
     void GameController::init(GameWindow *gameWindow)
     {

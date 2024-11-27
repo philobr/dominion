@@ -86,7 +86,7 @@ namespace client
         static ClientNetworkManager *_clientNetworkManager;
 
         static std::unique_ptr<reduced::GameState> _gameState;
-        static std::string _playerName;
+        static shared::PlayerBase::id_t _playerName;
         static std::string _gameName;
     };
 

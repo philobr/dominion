@@ -47,7 +47,7 @@ wxThread::ExitCode ClientListener::Entry()
                 if ( bytesReadSoFar == messageLength ) {
                     std::string message = messageStream.str();
                     // GameController::getMainThreadEventHandler()->CallAfter([message]{
-                    ClientNetworkManager::receive_message(message);
+                    ClientNetworkManager::receiveMessage(message);
                     //});
 
                 } else {

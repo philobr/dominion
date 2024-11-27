@@ -38,7 +38,7 @@ namespace server
          *
          * @param request The CreateLobbyRequestMessage to create the lobby with.
          */
-        void create_lobby(std::unique_ptr<shared::CreateLobbyRequestMessage> request);
+        void createLobby(std::unique_ptr<shared::CreateLobbyRequestMessage> request);
 
         /**
          * @brief Join a lobby.
@@ -46,7 +46,7 @@ namespace server
          *
          * @param request The JoinLobbyRequestMessage to join the lobby with.
          */
-        void join_lobby(std::unique_ptr<shared::JoinLobbyRequestMessage> request);
+        void joinLobby(std::unique_ptr<shared::JoinLobbyRequestMessage> request);
 
         /**
          * @brief Start a game.
@@ -56,7 +56,7 @@ namespace server
          *
          * @pre The request contains 10 cards.
          */
-        void start_game(std::unique_ptr<shared::StartGameRequestMessage> request);
+        void startGame(std::unique_ptr<shared::StartGameRequestMessage> request);
 
         /**
          * @brief Receive an action from a player and handle it correctly.
@@ -66,14 +66,14 @@ namespace server
          *
          * @pre Valid ActionDecisionMessage.
          */
-        void receive_action(std::unique_ptr<shared::ActionDecisionMessage> action);
+        void receiveAction(std::unique_ptr<shared::ActionDecisionMessage> action);
 
         /**
          * @brief Get the games that are currently running.
          *
          * @return A const reference to the map of lobby ids.
          */
-        const std::map<std::string, std::shared_ptr<Lobby>> &get_games() const { return games; };
+        const std::map<std::string, std::shared_ptr<Lobby>> &getGames() const { return games; };
 
     private:
         std::map<std::string, std::shared_ptr<Lobby>> games;
@@ -86,6 +86,6 @@ namespace server
          *
          * @return True if the lobby exists, false otherwise.
          */
-        bool lobby_exists(std::string lobby_id);
+        bool lobbyExists(std::string lobby_id);
     };
 } // namespace server

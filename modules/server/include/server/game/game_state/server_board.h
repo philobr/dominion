@@ -49,7 +49,7 @@ namespace server
          * @brief Adds the card_id to the trash
          * @param card
          */
-        void trash_card(const shared::CardBase::id_t &card_id);
+        void trashCard(const shared::CardBase::id_t &card_id);
 
     protected:
         /**

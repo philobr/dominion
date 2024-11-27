@@ -129,14 +129,14 @@ void ClientNetworkManager::sendRequest(const std::string message)
 }
 
 
-void ClientNetworkManager::receive_message(const std::string &message)
+void ClientNetworkManager::receiveMessage(const std::string &message)
 {
     LOG(INFO) << "Called ClientNetworkManager::receive_message()";
     try {
-        std::unique_ptr<shared::ServerToClientMessage> res = shared::ServerToClientMessage::from_json(message);
+        std::unique_ptr<shared::ServerToClientMessage> res = shared::ServerToClientMessage::fromJson(message);
         // TODO Process the server message
         LOG(INFO) << "Received Message: " << message;
-        client::GameController::receive_message(std::move(res));
+        client::GameController::receiveMessage(std::move(res));
         LOG(INFO) << "Done with ClientNetworkManager::receive_message()";
 
     } catch ( std::exception &e ) {

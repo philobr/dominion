@@ -11,7 +11,7 @@
 
 namespace shared
 {
-    namespace BoardConfig
+    namespace board_config
     {
         static constexpr size_t KINGDOM_CARD_COUNT = 10;
 
@@ -40,7 +40,7 @@ namespace shared
             return MIN_PLAYER_COUNT <= num_players && num_players <= MAX_PLAYER_COUNT;
         }
 
-    } // namespace BoardConfig
+    } // namespace board_config
 
     struct Pile
     {
@@ -62,7 +62,7 @@ namespace shared
         static std::unique_ptr<Pile> fromJson(const rapidjson::Value &json);
 
         /**
-         * @brief Creates a new kingdom card pile with size 10; defined by shared::BoardConfig::KINGDOM_CARD_COUNT
+         * @brief Creates a new kingdom card pile with size 10; defined by board_config::KINGDOM_CARD_COUNT
          *
          * @param kingdom_card_id The ID of the kingdom card.
          * @return Pile
@@ -142,11 +142,11 @@ namespace shared
         /**
          * @brief Initialises the treasure cards as follows:
          *
-         * - copper_count = shared::BoardConfig::TREASURE_COPPER_COUNT - (7 * player_count)
+         * - copper_count = board_config::TREASURE_COPPER_COUNT - (7 * player_count)
          *
-         * - silver_count = shared::BoardConfig::TREASURE_SILVER_COUNT
+         * - silver_count = board_config::TREASURE_SILVER_COUNT
          *
-         * - gold_count   = shared::BoardConfig::TREASURE_GOLD_COUNT
+         * - gold_count   = board_config::TREASURE_GOLD_COUNT
          *
          * @param player_count
          */
@@ -155,9 +155,9 @@ namespace shared
         /**
          * @brief Initialised the victory cards as follows:
          *
-         * - if player_count < 3:    shared::BoardConfig::VICTORY_CARDS_SMALL_GAME
+         * - if player_count < 3:    board_config::VICTORY_CARDS_SMALL_GAME
          *
-         * - if player_count >= 3:   shared::BoardConfig::VICTORY_CARDS_LARGE_GAME
+         * - if player_count >= 3:   board_config::VICTORY_CARDS_LARGE_GAME
          *
          * @param player_count
          */
@@ -166,7 +166,7 @@ namespace shared
         /**
          * @brief Initialises the curse pile as:
          *
-         * - curse_count = shared::BoardConfig::CURSE_MULTIPLIER * (player_count - 1)
+         * - curse_count = board_config::CURSE_MULTIPLIER * (player_count - 1)
          *
          * @param player_count
          */

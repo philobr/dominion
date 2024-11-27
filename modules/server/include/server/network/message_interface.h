@@ -19,9 +19,8 @@ namespace server
         /**
          * @brief gets a response that has to be sent to a client and passes it to the network manager as json string
          */
-        // TODO: I think this also needs to take in a player ID
-        virtual void send_message(std::unique_ptr<shared::ServerToClientMessage> message,
-                                  const shared::PlayerBase::id_t &player_id) = 0;
+        virtual void sendMessage(std::unique_ptr<shared::ServerToClientMessage> message,
+                                 const shared::PlayerBase::id_t &player_id) = 0;
     };
 
     class ImplementedMessageInterface : public MessageInterface
@@ -29,8 +28,8 @@ namespace server
     public:
         ImplementedMessageInterface() = default;
         ~ImplementedMessageInterface() override = default;
-        void send_message(std::unique_ptr<shared::ServerToClientMessage> message,
-                          const shared::PlayerBase::id_t &player_id) override;
+        void sendMessage(std::unique_ptr<shared::ServerToClientMessage> message,
+                         const shared::PlayerBase::id_t &player_id) override;
     };
 
 } // namespace server

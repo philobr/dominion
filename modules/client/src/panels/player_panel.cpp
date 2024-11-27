@@ -15,10 +15,10 @@ namespace client
     {
         auto player = shared::PlayerBase("gigu");
         auto reduced = reduced::Player::make(player, {"Village", "Copper", "Copper", "Copper", "Estate"});
-        this->DrawPlayer(reduced, true);
+        this->drawPlayer(reduced, true);
     }
 
-    void PlayerPanel::DrawPlayer(const std::unique_ptr<reduced::Player> &Player, bool is_active)
+    void PlayerPanel::drawPlayer(const std::unique_ptr<reduced::Player> &Player, bool is_active)
     {
 
         const auto &cards = Player->getHandCards();
@@ -29,7 +29,6 @@ namespace client
         size_t card_width_borders = hand_card_size.GetWidth() + 8;
         outersizer->SetMinSize(wxSize(7 * card_width_borders, 150));
 
-        wxSize info_size = wxSize(150, 150);
         wxPanel *DrawPilePanel = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDefaultSize);
 
         DrawPilePanel->SetBackgroundColour(wxColour(255, 0, 0));

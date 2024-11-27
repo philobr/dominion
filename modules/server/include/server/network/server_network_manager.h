@@ -31,8 +31,8 @@ namespace server
         ~ServerNetworkManager();
 
         // function to send via the BasicNetwork class
-        static ssize_t send_message(std::unique_ptr<shared::ServerToClientMessage> message,
-                                    const shared::PlayerBase::id_t &player_id);
+        static ssize_t sendMessage(std::unique_ptr<shared::ServerToClientMessage> message,
+                                   const shared::PlayerBase::id_t &player_id);
 
     private:
         // Lobby object to pass received messages to
@@ -52,10 +52,10 @@ namespace server
         void connect(const std::string &url, const uint16_t port);
 
         // function that listens to new clients
-        static void listener_loop();
-        static void read_loop(sockpp::tcp_socket socket, const handler &message_handler);
+        static void listenerLoop();
+        static void readLoop(sockpp::tcp_socket socket, const handler &message_handler);
 
         // might get removed later
-        static void handle_message(const std::string &, const sockpp::tcp_socket::addr_t &);
+        static void handleMessage(const std::string & /*msg*/, const sockpp::tcp_socket::addr_t & /*peer_address*/);
     };
 } // namespace server

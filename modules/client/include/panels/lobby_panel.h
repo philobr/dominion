@@ -30,7 +30,7 @@ namespace client
         /// This is specifically not doing any logic
         /// @pre playerCount < 4
         /// @post playerCount = playerCount + 1
-        void AddPlayer(wxString name);
+        void addPlayer(wxString name);
 
     private:
         wxGridSizer *NamesSizer;

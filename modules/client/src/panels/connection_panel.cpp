@@ -5,6 +5,7 @@
 #include <game_controller.h>
 #include <uiElements/image_panel.h>
 
+// NOLINTBEGIN(bugprone-suspicious-enum-usage)
 namespace client
 {
 
@@ -60,10 +61,10 @@ namespace client
         VerticalLayout->Add(this->_gameName, 0, wxALIGN_CENTER | wxTOP | wxLEFT | wxRIGHT, 10);
 
         wxButton *createLobbyButton = new wxButton(this, wxID_ANY, "create Lobby", wxDefaultPosition, wxSize(100, 40));
-        createLobbyButton->Bind(wxEVT_BUTTON, [](const wxCommandEvent & /*event*/) { GameController::CreateLobby(); });
+        createLobbyButton->Bind(wxEVT_BUTTON, [](const wxCommandEvent & /*event*/) { GameController::createLobby(); });
         VerticalLayout->Add(createLobbyButton, 0, wxALIGN_RIGHT | wxALL, 10);
         wxButton *joinLobbyButton = new wxButton(this, wxID_ANY, "join Lobby", wxDefaultPosition, wxSize(100, 40));
-        joinLobbyButton->Bind(wxEVT_BUTTON, [](const wxCommandEvent & /*event*/) { GameController::JoinLobby(); });
+        joinLobbyButton->Bind(wxEVT_BUTTON, [](const wxCommandEvent & /*event*/) { GameController::joinLobby(); });
         VerticalLayout->Add(joinLobbyButton, 0, wxALIGN_RIGHT | wxALL, 10);
 
         // TODO Remove this button before release
@@ -88,3 +89,4 @@ namespace client
     wxString ConnectionPanel::getGameName() { return this->_gameName->getValue(); }
 
 } // namespace client
+// NOLINTEND(bugprone-suspicious-enum-usage)

@@ -39,11 +39,11 @@ namespace shared
         /**
          * @brief Create an `ActionOrder` from a JSON object.
          */
-        static std::unique_ptr<ActionOrder> from_json(const rapidjson::Value &json);
+        static std::unique_ptr<ActionOrder> fromJson(const rapidjson::Value &json);
         /**
          * @brief Convert this order to a JSON object.
          */
-        rapidjson::Document to_json() const;
+        rapidjson::Document toJson() const;
 
     protected:
         /**

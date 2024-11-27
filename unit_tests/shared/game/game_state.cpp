@@ -21,7 +21,7 @@ TEST(ReducedGameStateTest, Json2WayConversion)
     reduced::Player::ptr_t reduced_player = reduced::Player::make(player, {});
 
     // Create the board
-    auto kingdom_cards = get_valid_kingdom_cards();
+    auto kingdom_cards = getValidKingdomCards();
     shared::Board::ptr_t board = shared::Board::make(kingdom_cards, 3);
 
     // Create the ReducedGameState
@@ -51,7 +51,7 @@ TEST(ReducedGameStateTest, ParameterizedConstructor)
     reduced::Player::ptr_t reduced_player = reduced::Player::make(player, {});
 
     // Create a Board object
-    auto kingdom_cards = get_valid_kingdom_cards();
+    auto kingdom_cards = getValidKingdomCards();
     shared::Board::ptr_t board = shared::Board::make(kingdom_cards, 2);
 
     // Create the ReducedGameState

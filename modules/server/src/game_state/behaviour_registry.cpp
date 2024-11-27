@@ -18,12 +18,12 @@ server::BehaviourRegistry::BehaviourRegistry()
 
     LOG(INFO) << "Initialising BehaviourRegistry";
 
-    initialise_behaviours();
+    initialiseBehaviours();
 
     is_initialised = true;
 }
 
-void server::BehaviourRegistry::initialise_behaviours()
+void server::BehaviourRegistry::initialiseBehaviours()
 {
     using namespace server;
     using namespace behaviour;

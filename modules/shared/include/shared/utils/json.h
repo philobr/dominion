@@ -9,18 +9,18 @@
 
 
 #define GET_STRING_MEMBER(var, document, member)                                                                       \
-    if ( !document.HasMember(member) || !document[member].IsString() ) {                                               \
-        LOG(WARN) << "Missing or invalid member: " << member;                                                          \
+    if ( !(document).HasMember(member) || !(document)[member].IsString() ) {                                           \
+        LOG(WARN) << "Missing or invalid member: " << (member);                                                        \
         return nullptr;                                                                                                \
     }                                                                                                                  \
-    var = document[member].GetString();
+    (var) = (document)[member].GetString();
 
 #define GET_UINT_MEMBER(var, document, member)                                                                         \
-    if ( !document.HasMember(member) || !document[member].IsUint() ) {                                                 \
-        LOG(WARN) << "Missing or invalid member: " << member;                                                          \
+    if ( !(document).HasMember(member) || !(document)[member].IsUint() ) {                                             \
+        LOG(WARN) << "Missing or invalid member: " << (member);                                                        \
         return nullptr;                                                                                                \
     }                                                                                                                  \
-    var = document[member].GetUint();
+    (var) = (document)[member].GetUint();
 
 #define GET_ENUM_MEMBER(var, document, member, enum_type)                                                              \
     if ( !document.HasMember(member) || !document[member].IsUint() ) {                                                 \
@@ -30,49 +30,49 @@
     var = static_cast<enum_type>(document[member].GetUint());
 
 #define GET_BOOL_MEMBER(var, document, member)                                                                         \
-    if ( !document.HasMember(member) || !document[member].IsBool() ) {                                                 \
-        LOG(WARN) << "Missing or invalid member: " << member;                                                          \
+    if ( !(document).HasMember(member) || !(document)[member].IsBool() ) {                                             \
+        LOG(WARN) << "Missing or invalid member: " << (member);                                                        \
         return nullptr;                                                                                                \
     }                                                                                                                  \
-    var = document[member].GetBool();
+    (var) = (document)[member].GetBool();
 
 #define GET_STRING_ARRAY_MEMBER(var, document, member)                                                                 \
     var = std::vector<std::string>();                                                                                  \
-    if ( !document.HasMember(member) || !document[member].IsArray() ) {                                                \
-        LOG(WARN) << "Missing or invalid member: " << member;                                                          \
+    if ( !(document).HasMember(member) || !(document)[member].IsArray() ) {                                            \
+        LOG(WARN) << "Missing or invalid member: " << (member);                                                        \
         return nullptr;                                                                                                \
     }                                                                                                                  \
-    for ( const auto &elem : document[member].GetArray() ) {                                                           \
+    for ( const auto &elem : (document)[member].GetArray() ) {                                                         \
         if ( !elem.IsString() ) {                                                                                      \
-            LOG(WARN) << "Missing or invalid member: " << member;                                                      \
+            LOG(WARN) << "Missing or invalid member: " << (member);                                                    \
             return nullptr;                                                                                            \
         }                                                                                                              \
-        var.push_back(elem.GetString());                                                                               \
+        (var).push_back(elem.GetString());                                                                             \
     }
 
 #define GET_UINT_ARRAY_MEMBER(var, document, member)                                                                   \
     var = std::vector<unsigned int>();                                                                                 \
-    if ( !document.HasMember(member) || !document[member].IsArray() ) {                                                \
-        LOG(WARN) << "Missing or invalid member: " << member;                                                          \
+    if ( !(document).HasMember(member) || !(document)[member].IsArray() ) {                                            \
+        LOG(WARN) << "Missing or invalid member: " << (member);                                                        \
         return nullptr;                                                                                                \
     }                                                                                                                  \
-    for ( const auto &elem : document[member].GetArray() ) {                                                           \
+    for ( const auto &elem : (document)[member].GetArray() ) {                                                         \
         if ( !elem.IsUint() ) {                                                                                        \
-            LOG(WARN) << "Missing or invalid member: " << member;                                                      \
+            LOG(WARN) << "Missing or invalid member: " << (member);                                                    \
             return nullptr;                                                                                            \
         }                                                                                                              \
-        var.push_back(elem.GetUint());                                                                                 \
+        (var).push_back(elem.GetUint());                                                                               \
     }
 
 #define GET_OPTIONAL_STRING_MEMBER(var, document, member)                                                              \
-    if ( document.HasMember(member) ) {                                                                                \
-        if ( !document[member].IsString() ) {                                                                          \
-            LOG(WARN) << "Invalid member: " << member;                                                                 \
+    if ( (document).HasMember(member) ) {                                                                              \
+        if ( !(document)[member].IsString() ) {                                                                        \
+            LOG(WARN) << "Invalid member: " << (member);                                                               \
             return nullptr;                                                                                            \
         }                                                                                                              \
-        var = document[member].GetString();                                                                            \
+        (var) = (document)[member].GetString();                                                                        \
     } else {                                                                                                           \
-        var = std::nullopt;                                                                                            \
+        (var) = std::nullopt;                                                                                          \
     }
 
 
@@ -97,7 +97,7 @@
 #define ADD_OPTIONAL_STRING_MEMBER(var, key)                                                                           \
     if ( var ) {                                                                                                       \
         rapidjson::Value key##_value;                                                                                  \
-        key##_value.SetString(var.value().c_str(), doc.GetAllocator());                                                \
+        key##_value.SetString((var).value().c_str(), doc.GetAllocator());                                              \
         doc.AddMember(#key, key##_value, doc.GetAllocator());                                                          \
     }
 
@@ -108,7 +108,7 @@
 
 #define ADD_ARRAY_OF_STRINGS_MEMBER(var, key)                                                                          \
     rapidjson::Value key##_array(rapidjson::kArrayType);                                                               \
-    for ( const auto &item : var ) {                                                                                   \
+    for ( const auto &item : (var) ) {                                                                                 \
         rapidjson::Value item_value;                                                                                   \
         item_value.SetString(item.c_str(), doc.GetAllocator());                                                        \
         key##_array.PushBack(item_value, doc.GetAllocator());                                                          \
@@ -117,7 +117,7 @@
 
 #define ADD_ARRAY_OF_UINTS_MEMBER(var, key)                                                                            \
     rapidjson::Value key##_array(rapidjson::kArrayType);                                                               \
-    for ( const auto &item : var ) {                                                                                   \
+    for ( const auto &item : (var) ) {                                                                                 \
         rapidjson::Value item_value;                                                                                   \
         item_value.SetUint(item);                                                                                      \
         key##_array.PushBack(item_value, doc.GetAllocator());                                                          \
@@ -125,4 +125,4 @@
     doc.AddMember(#key, key##_array, doc.GetAllocator());
 
 
-std::string document_to_string(const rapidjson::Document &doc);
+std::string documentToString(const rapidjson::Document &doc);

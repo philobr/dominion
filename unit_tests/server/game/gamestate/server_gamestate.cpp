@@ -30,7 +30,7 @@ TEST(GameStateTest, ParameterizedConstructor)
 
     // Test that players are initialized
     for ( const auto &id : player_ids ) {
-        EXPECT_NO_THROW(game_state.get_player(id));
+        EXPECT_NO_THROW(game_state.getPlayer(id));
     }
 
     // Test that the board is initialized
@@ -60,7 +60,7 @@ TEST(GameStateTest, GetCurrentPlayer)
     server::GameState game_state(selected_cards, player_ids);
 
     // Get the current player
-    server::Player current_player = game_state.get_current_player();
+    server::Player current_player = game_state.getCurrentPlayer();
 
     // Check that the current player's ID matches
     EXPECT_EQ(current_player.getId(), "player1");
@@ -76,12 +76,12 @@ TEST(GameStateTest, GetPlayerById)
 
     // Test getting each player by ID
     for ( const auto &id : player_ids ) {
-        server::Player &player = game_state.get_player(id);
+        server::Player &player = game_state.getPlayer(id);
         EXPECT_EQ(player.getId(), id);
     }
 
     // Test that requesting a non-existent player throws an exception
-    EXPECT_THROW(game_state.get_player("nonexistent_player"), std::out_of_range);
+    EXPECT_THROW(game_state.getPlayer("nonexistent_player"), std::out_of_range);
 }
 
 TEST(GameStateTest, StartTurn)
@@ -99,7 +99,7 @@ TEST(GameStateTest, StartTurn)
     // Assume that start_game is public or called in the constructor (adjust as necessary)
 
     // Check that the current player has the correct initial state
-    server::Player &current_player = game_state.get_current_player();
+    server::Player &current_player = game_state.getCurrentPlayer();
     EXPECT_EQ(current_player.getActions(), 1);
     EXPECT_EQ(current_player.getBuys(), 1);
     EXPECT_EQ(current_player.getTreasure(), 0);

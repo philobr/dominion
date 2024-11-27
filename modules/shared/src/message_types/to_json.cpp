@@ -11,7 +11,7 @@
 
 using namespace rapidjson;
 
-Document document_from_msg(const std::string &type, const shared::Message &msg)
+Document documentFromMsg(const std::string &type, const shared::Message &msg)
 {
     Document doc;
     doc.SetObject();
@@ -23,14 +23,14 @@ Document document_from_msg(const std::string &type, const shared::Message &msg)
     return doc;
 }
 
-Document document_from_server_to_client_msg(const std::string &type, const shared::ServerToClientMessage &msg)
+Document documentFromServerToClientMsg(const std::string &type, const shared::ServerToClientMessage &msg)
 {
-    return document_from_msg(type, msg);
+    return documentFromMsg(type, msg);
 }
 
-Document document_from_client_to_server_msg(const std::string &type, const shared::ClientToServerMessage &msg)
+Document documentFromClientToServerMsg(const std::string &type, const shared::ClientToServerMessage &msg)
 {
-    Document doc = document_from_msg(type, msg);
+    Document doc = documentFromMsg(type, msg);
     ADD_STRING_MEMBER(msg.player_id.c_str(), player_id);
     return doc;
 }
@@ -41,9 +41,9 @@ namespace shared
 
     // ======= SERVER TO CLIENT MESSAGES ======= //
 
-    std::string GameStateMessage::to_json()
+    std::string GameStateMessage::toJson()
     {
-        Document doc = document_from_server_to_client_msg("game_state", *this);
+        Document doc = documentFromServerToClientMsg("game_state", *this);
 
         Document game_state_doc = this->game_state->toJson();
         Value game_state_value;
@@ -51,84 +51,84 @@ namespace shared
         doc.AddMember("game_state", game_state_value, doc.GetAllocator());
 
         ADD_OPTIONAL_STRING_MEMBER(this->in_response_to, in_response_to);
-        return document_to_string(doc);
+        return documentToString(doc);
     }
 
-    std::string CreateLobbyResponseMessage::to_json()
+    std::string CreateLobbyResponseMessage::toJson()
     {
-        Document doc = document_from_server_to_client_msg("initiate_game_response", *this);
+        Document doc = documentFromServerToClientMsg("initiate_game_response", *this);
         ADD_OPTIONAL_STRING_MEMBER(this->in_response_to, in_response_to);
         ADD_ARRAY_OF_STRINGS_MEMBER(this->available_cards, available_cards);
-        return document_to_string(doc);
+        return documentToString(doc);
     }
 
-    std::string JoinLobbyBroadcastMessage::to_json()
+    std::string JoinLobbyBroadcastMessage::toJson()
     {
-        Document doc = document_from_server_to_client_msg("join_game_broadcast", *this);
+        Document doc = documentFromServerToClientMsg("join_game_broadcast", *this);
         ADD_ARRAY_OF_STRINGS_MEMBER(this->players, players);
-        return document_to_string(doc);
+        return documentToString(doc);
     }
 
-    std::string StartGameBroadcastMessage::to_json()
+    std::string StartGameBroadcastMessage::toJson()
     {
-        Document doc = document_from_server_to_client_msg("start_game_broadcast", *this);
-        return document_to_string(doc);
+        Document doc = documentFromServerToClientMsg("start_game_broadcast", *this);
+        return documentToString(doc);
     }
 
-    std::string EndGameBroadcastMessage::to_json()
+    std::string EndGameBroadcastMessage::toJson()
     {
-        Document doc = document_from_server_to_client_msg("end_game_broadcast", *this);
-        return document_to_string(doc);
+        Document doc = documentFromServerToClientMsg("end_game_broadcast", *this);
+        return documentToString(doc);
     }
 
-    std::string ResultResponseMessage::to_json()
+    std::string ResultResponseMessage::toJson()
     {
-        Document doc = document_from_server_to_client_msg("result_response", *this);
+        Document doc = documentFromServerToClientMsg("result_response", *this);
         ADD_OPTIONAL_STRING_MEMBER(this->in_response_to, in_response_to);
         ADD_BOOL_MEMBER(this->success, success);
         ADD_OPTIONAL_STRING_MEMBER(this->additional_information, additional_information);
-        return document_to_string(doc);
+        return documentToString(doc);
     }
 
-    std::string ActionOrderMessage::to_json()
+    std::string ActionOrderMessage::toJson()
     {
-        Document doc = document_from_server_to_client_msg("action_order", *this);
-        Document order_json = this->order->to_json();
+        Document doc = documentFromServerToClientMsg("action_order", *this);
+        Document order_json = this->order->toJson();
         doc.AddMember("order", order_json, doc.GetAllocator());
         ADD_OPTIONAL_STRING_MEMBER(this->description, description);
-        return document_to_string(doc);
+        return documentToString(doc);
     }
 
     // ======= CLIENT TO SERVER MESSAGES ======= //
 
-    std::string GameStateRequestMessage::to_json()
+    std::string GameStateRequestMessage::toJson()
     {
-        Document doc = document_from_client_to_server_msg("game_state_request", *this);
-        return document_to_string(doc);
+        Document doc = documentFromClientToServerMsg("game_state_request", *this);
+        return documentToString(doc);
     }
 
-    std::string CreateLobbyRequestMessage::to_json()
+    std::string CreateLobbyRequestMessage::toJson()
     {
-        Document doc = document_from_client_to_server_msg("initiate_game_request", *this);
-        return document_to_string(doc);
+        Document doc = documentFromClientToServerMsg("initiate_game_request", *this);
+        return documentToString(doc);
     }
 
-    std::string JoinLobbyRequestMessage::to_json()
+    std::string JoinLobbyRequestMessage::toJson()
     {
-        Document doc = document_from_client_to_server_msg("join_game_request", *this);
-        return document_to_string(doc);
+        Document doc = documentFromClientToServerMsg("join_game_request", *this);
+        return documentToString(doc);
     }
 
-    std::string StartGameRequestMessage::to_json()
+    std::string StartGameRequestMessage::toJson()
     {
-        Document doc = document_from_client_to_server_msg("start_game_request", *this);
+        Document doc = documentFromClientToServerMsg("start_game_request", *this);
         ADD_ARRAY_OF_STRINGS_MEMBER(this->selected_cards, selected_cards);
-        return document_to_string(doc);
+        return documentToString(doc);
     }
 
-    std::string ActionDecisionMessage::to_json()
+    std::string ActionDecisionMessage::toJson()
     {
-        Document doc = document_from_client_to_server_msg("action_decision", *this);
+        Document doc = documentFromClientToServerMsg("action_decision", *this);
 
         ADD_OPTIONAL_STRING_MEMBER(this->in_response_to, in_response_to);
 
@@ -151,7 +151,7 @@ namespace shared
             _ASSERT_TRUE(false, "Unknown decision type");
         }
 
-        return document_to_string(doc);
+        return documentToString(doc);
     }
 
 } // namespace shared

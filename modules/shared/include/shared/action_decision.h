@@ -50,7 +50,7 @@ namespace shared
     public:
         bool operator==(const EndTurnDecision &other) const;
         bool operator!=(const EndTurnDecision &other) const;
-        EndTurnDecision() {}
+        EndTurnDecision() = default;
 
     protected:
         bool equals(const ActionDecision &other) const override;

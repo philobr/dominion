@@ -23,7 +23,7 @@ namespace client
          *
          * @param Player
          */
-        void DrawPlayer(const std::unique_ptr<reduced::Player> &Player, bool is_active);
+        void drawPlayer(const std::unique_ptr<reduced::Player> &Player, bool is_active);
 
     private:
         void makePlayable(ImagePanel *Image, std::string card_id);

@@ -20,7 +20,7 @@ TEST(PileTest, Pile2WayJsonConversion)
 
 TEST(BoardJsonTest, Board2WayJsonConversion)
 {
-    std::vector<shared::CardBase::id_t> kingdom_cards = get_valid_kingdom_cards();
+    std::vector<shared::CardBase::id_t> kingdom_cards = getValidKingdomCards();
     shared::Board::ptr_t expected = shared::Board::make(kingdom_cards, 2);
     auto json = expected->toJson();
     shared::Board::ptr_t actual = shared::Board::fromJson(json);
@@ -89,7 +89,7 @@ class BoardInitializationTest : public ::testing::TestWithParam<size_t>
 protected:
     void SetUp() override
     {
-        kingdom_cards = get_valid_kingdom_cards();
+        kingdom_cards = getValidKingdomCards();
         player_count = GetParam();
         board = new TestableSharedBoard(kingdom_cards, player_count);
     }
@@ -153,7 +153,7 @@ class BoardGameOverTest : public ::testing::TestWithParam<GameOverTestParam>
 protected:
     void SetUp() override
     {
-        kingdom_cards = get_valid_kingdom_cards();
+        kingdom_cards = getValidKingdomCards();
         const auto &param = GetParam();
         player_count = param.player_count;
         board = new TestableSharedBoard(kingdom_cards, player_count);
@@ -161,7 +161,7 @@ protected:
         // Empty specified number of kingdom piles
         if ( param.empty_kingdom_piles > 0 ) {
             auto &kingdom_piles = board->getKingdomCards();
-            set_n_piles_to_empty(kingdom_piles, param.empty_kingdom_piles);
+            setNPilesToEmpty(kingdom_piles, param.empty_kingdom_piles);
         }
 
         // Empty the Province pile if required
@@ -213,7 +213,7 @@ class BoardEmptyPilesTest : public ::testing::TestWithParam<EmptyPilesTestParam>
 protected:
     void SetUp() override
     {
-        kingdom_cards = get_valid_kingdom_cards();
+        kingdom_cards = getValidKingdomCards();
         const auto &param = GetParam();
         player_count = param.player_count;
         board = new TestableSharedBoard(kingdom_cards, player_count);
@@ -221,19 +221,19 @@ protected:
         // Empty specified number of kingdom piles
         if ( param.empty_kingdom_piles > 0 ) {
             auto &kingdom_piles = board->getKingdomCards();
-            set_n_piles_to_empty(kingdom_piles, param.empty_kingdom_piles);
+            setNPilesToEmpty(kingdom_piles, param.empty_kingdom_piles);
         }
 
         // Empty specified number of victory piles
         if ( param.empty_victory_piles > 0 ) {
             auto &victory_piles = board->getVictoryCards();
-            set_n_piles_to_empty(victory_piles, param.empty_victory_piles);
+            setNPilesToEmpty(victory_piles, param.empty_victory_piles);
         }
 
         // Empty specified number of treasure piles
         if ( param.empty_treasure_piles > 0 ) {
             auto &treasure_piles = board->getTreasureCards();
-            set_n_piles_to_empty(treasure_piles, param.empty_treasure_piles);
+            setNPilesToEmpty(treasure_piles, param.empty_treasure_piles);
         }
     }
 
@@ -268,7 +268,7 @@ TEST(PileCreationTest, MakeKingdomCard)
     shared::Pile pile = shared::Pile::makeKingdomCard(card_id);
 
     EXPECT_EQ(pile.card_id, card_id);
-    EXPECT_EQ(pile.count, shared::BoardConfig::KINGDOM_CARD_COUNT);
+    EXPECT_EQ(pile.count, shared::board_config::KINGDOM_CARD_COUNT);
 }
 
 TEST_P(PileCreationTest, MakePile)
@@ -305,11 +305,11 @@ TEST_P(BoardDuplicateKingdomCardsTest, DuplicateKingdomCards)
 }
 
 INSTANTIATE_TEST_SUITE_P(DuplicateKingdomCardsTests, BoardDuplicateKingdomCardsTest,
-                         ::testing::Values(DuplicateKingdomCardsTestParam{2, get_valid_kingdom_cards(), false},
+                         ::testing::Values(DuplicateKingdomCardsTestParam{2, getValidKingdomCards(), false},
                                            DuplicateKingdomCardsTestParam{2,
                                                                           []
                                                                           {
-                                                                              auto cards = get_valid_kingdom_cards();
+                                                                              auto cards = getValidKingdomCards();
                                                                               cards[1] =
                                                                                       cards[0]; // Introduce a duplicate
                                                                               return cards;
@@ -332,7 +332,7 @@ class BoardInvalidPlayerCountTest : public ::testing::TestWithParam<InvalidPlaye
 TEST_P(BoardInvalidPlayerCountTest, InvalidPlayerCount)
 {
     const auto &param = GetParam();
-    auto kingdom_cards = get_valid_kingdom_cards();
+    auto kingdom_cards = getValidKingdomCards();
 
     if ( param.expect_exception ) {
         EXPECT_DEATH({ TestableSharedBoard(kingdom_cards, param.player_count); }, "");
@@ -359,7 +359,7 @@ class BoardInvalidVictoryCardCountTest : public ::testing::TestWithParam<Invalid
 protected:
     void SetUp() override
     {
-        kingdom_cards = get_valid_kingdom_cards();
+        kingdom_cards = getValidKingdomCards();
         const auto &param = GetParam();
         player_count = param.player_count;
         board = new TestableSharedBoard(kingdom_cards, player_count);

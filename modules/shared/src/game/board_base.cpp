@@ -11,7 +11,7 @@ namespace shared
 {
     Pile Pile::makeKingdomCard(const shared::CardBase::id_t &kingdom_card_id)
     {
-        return Pile(kingdom_card_id, BoardConfig::KINGDOM_CARD_COUNT);
+        return Pile(kingdom_card_id, board_config::KINGDOM_CARD_COUNT);
     }
 
     bool Pile::operator==(const Pile &other) const { return card_id == other.card_id && count == other.count; }
@@ -40,12 +40,12 @@ namespace shared
         victory_cards(initialiseVictoryCards(player_count)), treasure_cards(initialiseTreasureCards(player_count)),
         curse_card_pile(initialiseCursePile(player_count))
     {
-        _ASSERT_TRUE(BoardConfig::validatePlayerCount(player_count),
-                     std::string_view{"player_count must be in [" + std::to_string(BoardConfig::MIN_PLAYER_COUNT) +
-                                      ", " + std::to_string(BoardConfig::MAX_PLAYER_COUNT) + "], but is " +
+        _ASSERT_TRUE(board_config::validatePlayerCount(player_count),
+                     std::string_view{"player_count must be in [" + std::to_string(board_config::MIN_PLAYER_COUNT) +
+                                      ", " + std::to_string(board_config::MAX_PLAYER_COUNT) + "], but is " +
                                       std::to_string(player_count)});
 
-        _ASSERT_EQ(kingdom_cards.size(), BoardConfig::KINGDOM_CARD_COUNT,
+        _ASSERT_EQ(kingdom_cards.size(), board_config::KINGDOM_CARD_COUNT,
                    std::string_view{"Board must be initialised with 10 kingdom cards, but was initialised with " +
                                     std::to_string(kingdom_cards.size()) + " cards"});
 
@@ -53,7 +53,7 @@ namespace shared
                        std::inserter(this->kingdom_cards, this->kingdom_cards.end()),
                        [](const shared::CardBase::id_t &card_id) { return Pile::makeKingdomCard(card_id); });
 
-        _ASSERT_EQ(this->kingdom_cards.size(), BoardConfig::KINGDOM_CARD_COUNT,
+        _ASSERT_EQ(this->kingdom_cards.size(), board_config::KINGDOM_CARD_COUNT,
                    std::string_view{"Board received duplicate kingdom card"});
     }
 
@@ -104,16 +104,16 @@ namespace shared
 
 #define GET_PILE_CONTAINER(pile_container, json, member_name)                                                          \
     pile_container_t pile_container;                                                                                   \
-    if ( json.HasMember(member_name) && json[member_name].IsArray() ) {                                                \
-        const auto container = pileContainerFromJson(json[member_name]);                                               \
+    if ( (json).HasMember(member_name) && (json)[member_name].IsArray() ) {                                            \
+        const auto container = pileContainerFromJson((json)[member_name]);                                             \
         if ( container.has_value() ) {                                                                                 \
-            pile_container = container.value();                                                                        \
+            (pile_container) = container.value();                                                                      \
         } else {                                                                                                       \
-            LOG(WARN) << "Failed to parse " << member_name << " from JSON";                                            \
+            LOG(WARN) << "Failed to parse " << (member_name) << " from JSON";                                          \
             return nullptr;                                                                                            \
         }                                                                                                              \
     } else {                                                                                                           \
-        LOG(WARN) << member_name << " not found in JSON";                                                              \
+        LOG(WARN) << (member_name) << " not found in JSON";                                                            \
         return nullptr;                                                                                                \
     }
 
@@ -141,7 +141,7 @@ namespace shared
 
 #define ADD_PILE_CONTAINER(pile_container, member_name)                                                                \
     rapidjson::Value member_name##_json(rapidjson::kArrayType);                                                        \
-    for ( const auto &pile : pile_container ) {                                                                        \
+    for ( const auto &pile : (pile_container) ) {                                                                      \
         rapidjson::Document pile_doc = pile.toJson();                                                                  \
         rapidjson::Value pile_value;                                                                                   \
         pile_value.CopyFrom(pile_doc, doc.GetAllocator());                                                             \
@@ -179,24 +179,24 @@ namespace shared
             return false;
         }();
 
-        return is_province_pile_empty || (getEmptyPilesCount() >= BoardConfig::MAX_NUM_EMPTY_PILES);
+        return is_province_pile_empty || (getEmptyPilesCount() >= board_config::MAX_NUM_EMPTY_PILES);
     }
 
     Board::pile_container_t Board::initialiseTreasureCards(size_t player_count)
     {
-        return {Pile("Copper", BoardConfig::getCopperCount(player_count)),
-                Pile("Silver", BoardConfig::TREASURE_SILVER_COUNT), Pile("Gold", BoardConfig::TREASURE_GOLD_COUNT)};
+        return {Pile("Copper", board_config::getCopperCount(player_count)),
+                Pile("Silver", board_config::TREASURE_SILVER_COUNT), Pile("Gold", board_config::TREASURE_GOLD_COUNT)};
     }
 
     Board::pile_container_t Board::initialiseVictoryCards(size_t player_count)
     {
-        const size_t card_count = BoardConfig::getVictoryCardCount(player_count);
+        const size_t card_count = board_config::getVictoryCardCount(player_count);
         return {Pile("Estate", card_count), Pile("Duchy", card_count), Pile("Province", card_count)};
     }
 
     Pile Board::initialiseCursePile(size_t player_count)
     {
-        const size_t curse_count = BoardConfig::getCurseCardCount(player_count);
+        const size_t curse_count = board_config::getCurseCardCount(player_count);
         return Pile("Curse", curse_count);
     }
 

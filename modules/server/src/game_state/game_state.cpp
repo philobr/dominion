@@ -20,8 +20,8 @@ namespace server
             throw exception::PlayerCountMismatch("wrong player count!");
         }
 
-        initialise_players(player_ids);
-        initialise_board(play_cards);
+        initialisePlayers(player_ids);
+        initialiseBoard(play_cards);
     }
 
     GameState::GameState() = default;
@@ -39,7 +39,7 @@ namespace server
         }
     }
 
-    void GameState::initialise_players(const std::vector<Player::id_t> &player_ids)
+    void GameState::initialisePlayers(const std::vector<Player::id_t> &player_ids)
     {
         player_order = player_ids; // for now the player order will be the same as the list of player ids
         for ( const auto &id : player_ids ) {
@@ -61,7 +61,7 @@ namespace server
         }
     }
 
-    void GameState::initialise_board(const std::vector<shared::CardBase::id_t> &selected_cards)
+    void GameState::initialiseBoard(const std::vector<shared::CardBase::id_t> &selected_cards)
     {
         if ( selected_cards.size() != size_t(10) ) {
             LOG(ERROR) << "Excepcted 10 cards but got " << selected_cards.size();
@@ -70,18 +70,18 @@ namespace server
         board = server::ServerBoard::make(selected_cards, player_map.size());
     }
 
-    std::unique_ptr<reduced::GameState> GameState::get_reduced_state(const Player::id_t &target_player)
+    std::unique_ptr<reduced::GameState> GameState::getReducedState(const Player::id_t &target_player)
     {
         std::vector<reduced::Enemy::ptr_t> reduced_enemies;
         std::for_each(player_map.begin(), player_map.end(),
                       [&](auto &entry)
                       {
                           if ( auto &[player_id, player_ptr] = entry; player_id != target_player ) {
-                              reduced_enemies.emplace_back(player_ptr->get_reduced_enemy());
+                              reduced_enemies.emplace_back(player_ptr->getReducedEnemy());
                           }
                       });
 
-        auto reduced_player = get_player(target_player).get_reduced_player();
+        auto reduced_player = getPlayer(target_player).getReducedPlayer();
         Player::id_t active_player_id = getCurrentPlayerId();
         shared::Board::ptr_t reduced_board = board->getReduced();
 
@@ -89,9 +89,9 @@ namespace server
                                                     std::move(reduced_enemies), active_player_id);
     }
 
-    bool GameState::try_buy(const Player::id_t &player_id, const shared::CardBase::id_t &card_id)
+    bool GameState::tryBuy(const Player::id_t &player_id, const shared::CardBase::id_t &card_id)
     {
-        auto &player = get_player(player_id);
+        auto &player = getPlayer(player_id);
         const auto card_cost = shared::CardFactory::getCard(card_id).getCost();
 
         if ( player.getTreasure() < card_cost ) {
@@ -154,18 +154,18 @@ namespace server
         return true;
     }
 
-    void GameState::end_turn()
+    void GameState::endTurn()
     {
-        get_current_player().end_turn();
-        switch_player();
-        reset_phase();
+        getCurrentPlayer().endTurn();
+        switchPlayer();
+        resetPhase();
 
-        if ( is_game_over() ) {
-            end_game();
+        if ( isGameOver() ) {
+            endGame();
         }
     }
 
-    bool GameState::is_game_over() const { return board->isGameOver(); }
+    bool GameState::isGameOver() const { return board->isGameOver(); }
 
     bool GameState::validateKingdomCardTypes(const std::vector<shared::CardBase::id_t> &kingdom_cards)
     {
@@ -177,7 +177,7 @@ namespace server
                            });
     }
 
-    void GameState::force_switch_phase()
+    void GameState::forceSwitchPhase()
     {
         switch ( phase ) {
             case GamePhase::ACTION_PHASE:
@@ -205,9 +205,9 @@ namespace server
         }
     }
 
-    void GameState::maybe_switch_phase()
+    void GameState::maybeSwitchPhase()
     {
-        auto &player = get_current_player();
+        auto &player = getCurrentPlayer();
         switch ( phase ) {
             case GamePhase::ACTION_PHASE:
                 {
@@ -219,7 +219,7 @@ namespace server
             case GamePhase::BUY_PHASE:
                 {
                     if ( player.getBuys() == 0 ) {
-                        end_turn();
+                        endTurn();
                     }
                 }
                 break;

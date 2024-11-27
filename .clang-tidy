@@ -1,7 +1,19 @@
 ---
 # misc-const-correctness: Unfortunately, this check is not available in clang-tidy 14.0.0
+# TODO: enable
+# - bugprone-narrowing-conversions
+# - bugprone-easily-swappable-parameters
+# - bugprone-use-after-move
+# - bugprone-reserved-identifier
+# - bugprone-branch-clone
 Checks: |
   -*,
+  bugprone-*,
+  -bugprone-narrowing-conversions,
+  -bugprone-easily-swappable-parameters,
+  -bugprone-use-after-move,
+  -bugprone-reserved-identifier,
+  -bugprone-branch-clone,
   cppcoreguidelines-prefer-member-initializer,
   misc-definitions-in-headers,
   misc-redundant-expression,
@@ -23,11 +35,11 @@ CheckOptions:
     value: CamelCase
   - key: readability-identifier-naming.MacroCase
     value: UPPER_CASE
-  - key: readability-identifier-naming.EnumCase
-    value: UPPER_CASE
-    # TODO: enforce
-    #  - key: readability-identifier-naming.FunctionCase
-    # value: CamelCase
+    #   - key: readability-identifier-naming.EnumCase
+    #     value: UPPER_CASE
+  - key: readability-identifier-naming.FunctionCase
+    value: camelBack
+HeaderFilterRegex: '.*/dominion/modules/.*'
 WarningsAsErrors: '*'
 ...
 

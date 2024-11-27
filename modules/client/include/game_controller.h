@@ -31,12 +31,12 @@ namespace client
         /**
          * @brief Show the connection panel and send create lobby request
          */
-        static void CreateLobby();
+        static void createLobby();
 
         /**
          * @brief Join a Lobby
          */
-        static void JoinLobby();
+        static void joinLobby();
 
         /**
          * @brief Show the main game panel
@@ -47,8 +47,8 @@ namespace client
         static void buyCard(const std::string &card_id);
         static void playCard(const std::string &card_id);
         static void endTurn();
-        static void send_request(const std::string &req);
-        static void receive_message(std::unique_ptr<shared::ServerToClientMessage> msg);
+        static void sendRequest(const std::string &req);
+        static void receiveMessage(std::unique_ptr<shared::ServerToClientMessage> msg);
 
         /**
          * @brief display an error message
@@ -62,7 +62,7 @@ namespace client
          */
         static void showStatus(const std::string &message);
 
-        static void RefreshPlayers(shared::JoinLobbyBroadcastMessage *msg);
+        static void refreshPlayers(shared::JoinLobbyBroadcastMessage &msg);
 
     private:
         static GameWindow *_gameWindow;

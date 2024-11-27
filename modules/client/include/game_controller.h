@@ -49,13 +49,6 @@ namespace client
         static void endTurn();
         static void sendRequest(const std::string &req);
 
-
-        /**
-         * @brief Receive a game state message from the server
-         * @param msg The game state message received
-         */
-        static void receiveGameStateMessage(std::unique_ptr<shared::GameStateMessage> msg);
-
         /**
          * @brief Receive a message from the server
          * @param msg The message received
@@ -77,6 +70,14 @@ namespace client
         static void refreshPlayers(shared::JoinLobbyBroadcastMessage &msg);
 
     private:
+        /**
+         * @brief Receive a game state message from the server
+         * @param msg The game state message received
+         */
+        static void receiveGameStateMessage(std::unique_ptr<shared::GameStateMessage> msg);
+
+        static shared::PlayerBase::id_t getPlayerName();
+
         static GameWindow *_gameWindow;
         static ConnectionPanel *_connectionPanel;
         static MainGamePanel *_mainGamePanel;
@@ -84,7 +85,6 @@ namespace client
         static ClientNetworkManager *_clientNetworkManager;
 
         static std::unique_ptr<reduced::GameState> _gameState;
-        static shared::PlayerBase::id_t _playerName;
         static std::string _gameName;
     };
 

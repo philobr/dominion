@@ -11,7 +11,6 @@ namespace client
     LobbyPanel *GameController::_lobbyPanel = nullptr;
 
     std::unique_ptr<reduced::GameState> GameController::_gameState = nullptr;
-    shared::PlayerBase::id_t GameController::_playerName = "";
     std::string GameController::_gameName = "";
 
     void GameController::init(GameWindow *gameWindow)
@@ -100,7 +99,6 @@ namespace client
             shared::CreateLobbyRequestMessage request(inputGameName.ToStdString(), inputPlayerName.ToStdString());
             GameController::sendRequest(request.toJson());
 
-            GameController::_playerName = inputPlayerName.ToStdString();
             GameController::_gameName = inputGameName.ToStdString();
         }
         LOG(INFO) << "Done with GameController::CreateLobby()";
@@ -147,7 +145,7 @@ namespace client
         std::optional<std::string> in_response_to = std::nullopt;
 
         std::unique_ptr<shared::ActionDecisionMessage> action_decision_message =
-                std::make_unique<shared::ActionDecisionMessage>(GameController::_gameName, GameController::_playerName,
+                std::make_unique<shared::ActionDecisionMessage>(GameController::_gameName, GameController::getPlayerName(),
                                                                 std::move(decision), in_response_to);
 
         GameController::_clientNetworkManager->sendRequest(action_decision_message->toJson());
@@ -163,7 +161,7 @@ namespace client
         std::optional<std::string> in_response_to = std::nullopt;
 
         std::unique_ptr<shared::ActionDecisionMessage> action_decision_message =
-                std::make_unique<shared::ActionDecisionMessage>(GameController::_gameName, GameController::_playerName,
+                std::make_unique<shared::ActionDecisionMessage>(GameController::_gameName, GameController::getPlayerName(),
                                                                 std::move(decision), in_response_to);
 
         GameController::_clientNetworkManager->sendRequest(action_decision_message->toJson());
@@ -179,7 +177,7 @@ namespace client
         std::optional<std::string> in_response_to = std::nullopt;
 
         std::unique_ptr<shared::ActionDecisionMessage> action_decision_message =
-                std::make_unique<shared::ActionDecisionMessage>(GameController::_gameName, GameController::_playerName,
+                std::make_unique<shared::ActionDecisionMessage>(GameController::_gameName, GameController::getPlayerName(),
                                                                 std::move(decision), in_response_to);
 
         GameController::_clientNetworkManager->sendRequest(action_decision_message->toJson());
@@ -251,5 +249,13 @@ namespace client
             GameController::_lobbyPanel->AddPlayer(player);
         }*/
         LOG(INFO) << "Added new players";
+    }
+
+    shared::PlayerBase::id_t GameController::getPlayerName()
+    {
+        if ( GameController::_gameState == nullptr ) {
+            throw exception::UnreachableCode("GameController::getPlayerName should never be called without a game state");
+        }
+        return GameController::_gameState->reduced_player->getId();
     }
 } // namespace client

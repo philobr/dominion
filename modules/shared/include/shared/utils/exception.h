@@ -95,3 +95,6 @@ NEW_INHERITED_EXCEPTION(OutOfPhase, GameState);
 // CLI parsing
 NEW_BASE_EXCPETION(Cli);
 NEW_INHERITED_EXCEPTION(InvalidArgument, Cli);
+
+NEW_BASE_EXCPETION(Client);
+NEW_INHERITED_EXCEPTION(UnreachableCode, Client);

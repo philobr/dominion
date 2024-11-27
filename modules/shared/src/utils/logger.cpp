@@ -8,6 +8,21 @@
 
 namespace shared
 {
+    std::optional<LogLevel> parseLogLevel(const std::string &logLevel)
+    {
+        if ( logLevel == "debug" ) {
+            return LogLevel::DEBUG;
+        } else if ( logLevel == "info" ) {
+            return LogLevel::INFO;
+        } else if ( logLevel == "warn" ) {
+            return LogLevel::WARN;
+        } else if ( logLevel == "error" ) {
+            return LogLevel::ERROR;
+        } else {
+            return std::nullopt;
+        }
+    }
+
     // ================================
     // IMPLEMENTATION LogStream
     // ================================

@@ -12,9 +12,15 @@ int main(int argc, char *argv[])
     shared::Logger::setLevel(args.getLogLevel());
     shared::Logger::writeTo(args.getLogFile());
 
-    // create a message interface, which creates a server network manager, which listens endlessly for connections
-    server::ServerNetworkManager server;
-    server.run(args.getPort());
+    while ( true ) {
+        try {
+            server::ServerNetworkManager server;
+            server.run(args.getPort());
+        } catch ( const std::exception &e ) {
+            LOG(ERROR) << "Unhandled exception: " << e.what();
+            LOG(DEBUG) << "Restarting server...";
+        }
+    }
 
     return 0;
 }

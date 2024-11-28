@@ -6,11 +6,6 @@
 
 namespace server
 {
-    bool Lobby::playerInLobby(const Player::id_t &player_id)
-    {
-        return std::any_of(players.begin(), players.end(), [&](const auto &player) { return player == player_id; });
-    }
-
     Lobby::Lobby(const Player::id_t &game_master, const std::string &lobby_id) :
         game_interface(nullptr), game_master(game_master), lobby_id(lobby_id)
     {
@@ -18,121 +13,148 @@ namespace server
         players.push_back(game_master);
     };
 
-    void Lobby::join(MessageInterface &message_interface, std::unique_ptr<shared::JoinLobbyRequestMessage> request)
+    void Lobby::handleMessage(MessageInterface &message_interface,
+                              std::unique_ptr<shared::ClientToServerMessage> &message)
     {
-        const Player::id_t player_id = request->player_id;
-        LOG(INFO) << "Lobby::join called with Lobby ID: " << lobby_id << " and Player ID: " << player_id;
-        // Check if player is already in the lobby
-        if ( playerInLobby(player_id) ) {
-            LOG(DEBUG) << "Player is already in the lobby. Lobby ID: " << lobby_id << " , Player ID: " << player_id;
-            shared::ResultResponseMessage failure_message = shared::ResultResponseMessage(
-                    lobby_id, false, request->message_id, "Player is already in the lobby");
+        // NOLINTBEGIN(bugprone-macro-parentheses)
+#define HANDLE(message_type, handler_func)                                                                             \
+    if ( auto req = dynamic_cast<shared::message_type *>(message.get()) ) {                                            \
+        LOG(INFO) << "Trying to handle: " << #message_type;                                                            \
+        std::unique_ptr<shared::message_type> casted_message(static_cast<shared::message_type *>(message.release()));  \
+        handler_func(message_interface, casted_message);                                                               \
+        return;                                                                                                        \
+    }
+        // NOLINTEND(bugprone-macro-parentheses)
 
-            message_interface.sendMessage(std::make_unique<shared::ResultResponseMessage>(failure_message), player_id);
+        // handle messages the lobby is responsible for
+        HANDLE(JoinLobbyRequestMessage, addPlayer);
+        HANDLE(StartGameRequestMessage, startGame);
+        HANDLE(GameStateRequestMessage, getGameState);
+
+        const auto &requestor_id = message->player_id;
+
+        if ( !playerInLobby(requestor_id) ) {
+            LOG(DEBUG) << "Received Action and Player is not in the requested lobby. Lobby ID: " << lobby_id
+                       << " , Player ID: " << requestor_id << " , Message ID: " << message->message_id;
+            message_interface.send<shared::ResultResponseMessage>(requestor_id, lobby_id, false, message->message_id,
+                                                                  "Player is not in the lobby");
+            return;
+        }
+
+        if ( !gameRunning() ) {
+            LOG(ERROR) << "Tried to perform an action, but the game has not started yet";
+            message_interface.send<shared::ResultResponseMessage>(requestor_id, lobby_id, false, message->message_id,
+                                                                  "Game has not started yet!");
+            throw std::runtime_error("unreachable code");
+        }
+
+        auto order_msg = std::make_unique<shared::ActionOrderMessage>(lobby_id, game_interface->handleMessage(message));
+        message_interface.sendMessage(std::move(order_msg), requestor_id);
+    }
+
+    void Lobby::getGameState(MessageInterface &message_interface,
+                             std::unique_ptr<shared::GameStateRequestMessage> &request)
+    {
+        LOG(ERROR) << "Not implemented yet";
+        throw std::runtime_error("not implemented yet");
+
+        const auto &player_id = request->player_id;
+        if ( !gameRunning() ) {
+            LOG(WARN) << "Tried to get the gamestate, but the game has not started yet";
+            message_interface.send<shared::ResultResponseMessage>(player_id, lobby_id, false, request->message_id,
+                                                                  "Game has already started");
+            return; // we do nothing in this case
+        }
+
+        LOG(WARN) << "TODO: we always broadcast the gamestate if requested!";
+        broadcastGameState(message_interface);
+    }
+
+    void Lobby::addPlayer(MessageInterface &message_interface,
+                          std::unique_ptr<shared::JoinLobbyRequestMessage> &request)
+    {
+        const auto &requestor_id = request->player_id;
+        LOG(INFO) << "Lobby::join called with Lobby ID: " << lobby_id << " and Player ID: " << requestor_id;
+
+        if ( gameRunning() ) {
+            LOG(WARN) << "Tried to join a game that has already started!";
+            message_interface.send<shared::ResultResponseMessage>(requestor_id, lobby_id, false, request->message_id,
+                                                                  "Game has already started");
+            return; // we do nothing in this case
+        }
+
+        // Check if player is already in the lobby
+        if ( playerInLobby(requestor_id) ) {
+            LOG(DEBUG) << "Player is already in the lobby. Lobby ID: " << lobby_id << " , Player ID: " << requestor_id;
+            message_interface.send<shared::ResultResponseMessage>(requestor_id, lobby_id, false, request->message_id,
+                                                                  "Player is already in the lobby");
             return;
         }
 
         if ( players.size() >= shared::board_config::MAX_PLAYER_COUNT ) {
-            LOG(DEBUG) << "Lobby is full. Lobby ID: " << lobby_id << " , Player ID: " << player_id
+            LOG(DEBUG) << "Lobby is full. Lobby ID: " << lobby_id << " , Player ID: " << requestor_id
                        << " , Max players: " << shared::board_config::MAX_PLAYER_COUNT;
-            shared::ResultResponseMessage failure_message =
-                    shared::ResultResponseMessage(lobby_id, false, request->message_id, "Lobby is full");
-            message_interface.sendMessage(std::make_unique<shared::ResultResponseMessage>(failure_message), player_id);
+            message_interface.send<shared::ResultResponseMessage>(requestor_id, lobby_id, false, request->message_id,
+                                                                  "Lobby is full");
             return;
         }
 
         // Add player to the lobby
-        players.push_back(player_id);
+        players.push_back(requestor_id);
 
         // Send JoinLobbyBroadcast to all players
-        for ( const auto &player_id : players ) {
-            shared::JoinLobbyBroadcastMessage join_message = shared::JoinLobbyBroadcastMessage(lobby_id, players);
-            message_interface.sendMessage(std::make_unique<shared::JoinLobbyBroadcastMessage>(join_message), player_id);
-        }
+        message_interface.broadcast<shared::JoinLobbyBroadcastMessage>(players, lobby_id, players);
 
-        shared::ResultResponseMessage success_message =
-                shared::ResultResponseMessage(lobby_id, true, request->message_id);
-
-        message_interface.sendMessage(std::make_unique<shared::ResultResponseMessage>(success_message), player_id);
-        return;
+        // TODO: do we need this? isnt receiving a joinlobbybroadcast message enough?
+        message_interface.send<shared::ResultResponseMessage>(requestor_id, lobby_id, true, request->message_id);
     };
 
     // PRE: selected_cards are validated in message parsing
-    void Lobby::startGame(MessageInterface &message_interface, std::unique_ptr<shared::StartGameRequestMessage> request)
+    void Lobby::startGame(MessageInterface &message_interface,
+                          std::unique_ptr<shared::StartGameRequestMessage> &request)
     {
+        const auto &requestor_id = request->player_id;
+        LOG(INFO) << "Lobby::start_game called with Lobby ID: " << lobby_id << " and Player ID: " << requestor_id;
+
+        if ( gameRunning() ) {
+            LOG(WARN) << "Tried to start a game that has already started!";
+            message_interface.send<shared::ResultResponseMessage>(requestor_id, lobby_id, false, request->message_id,
+                                                                  "Game has already started");
+            return; // we do nothing in this case
+        }
+
         // Check if gamemaster is starting the game
-        Player::id_t player_id = request->player_id;
-        LOG(INFO) << "Lobby::start_game called with Lobby ID: " << lobby_id << " and Player ID: " << player_id;
-        if ( player_id != game_master ) {
+        if ( requestor_id != game_master ) {
             LOG(DEBUG) << "Lobby::start_game is called by someone differnt than game master. Lobby ID: " << lobby_id
-                       << " , Player ID: " << player_id << " , Game Master ID: " << game_master;
-            shared::ResultResponseMessage failure_message = shared::ResultResponseMessage(
-                    lobby_id, false, request->message_id, "Only the game master can start the game");
-            message_interface.sendMessage(std::make_unique<shared::ResultResponseMessage>(failure_message), player_id);
+                       << " , Player ID: " << requestor_id << " , Game Master ID: " << game_master;
+            message_interface.send<shared::ResultResponseMessage>(requestor_id, lobby_id, false, request->message_id,
+                                                                  "Only the game master can start the game");
             return;
         }
 
+        // check if the game has an allowed number of players
         if ( players.size() < shared::board_config::MIN_PLAYER_COUNT ||
              players.size() > shared::board_config::MAX_PLAYER_COUNT ) {
             LOG(DEBUG) << "Lobby::start_game is called with not enough or to many players. Lobby ID: " << lobby_id
-                       << " , Player ID: " << player_id << " , Number of players: " << players.size();
-            shared::ResultResponseMessage failure_message = shared::ResultResponseMessage(
-                    lobby_id, false, request->message_id, "Invalid player count to start game");
-            message_interface.sendMessage(std::make_unique<shared::ResultResponseMessage>(failure_message), player_id);
+                       << " , Player ID: " << requestor_id << " , Number of players: " << players.size();
+            message_interface.send<shared::ResultResponseMessage>(requestor_id, lobby_id, false, request->message_id,
+                                                                  "Invalid player count to start game");
+
+            if ( players.size() > shared::board_config::MAX_PLAYER_COUNT ) {
+                LOG(ERROR) << "we somehow have too many players in the lobby. (" << players.size() << " > "
+                           << shared::board_config::MAX_PLAYER_COUNT << ")";
+                throw std::runtime_error("invalid state, unreachable code");
+            }
             return;
         }
 
         // Create new game interface
         game_interface = GameInterface::make(lobby_id, request->selected_cards, players);
 
-        // get game state for game_state_message
-        std::shared_ptr<GameState> game_state = game_interface->getGameState();
-        if ( !game_state ) {
-            LOG(ERROR) << "Game state in Lobby::start_game is nullptr";
-            throw std::runtime_error("Game state is nullptr");
-        }
-
         // send messages
-        for ( const auto &p_id : players ) {
-            // send start game broadcast to all players
-            LOG(INFO) << "Sending StartGameBroadcastMessage in Lobby ID: " << lobby_id << " to Player ID: " << p_id;
-            shared::StartGameBroadcastMessage start_message = shared::StartGameBroadcastMessage(lobby_id);
-            message_interface.sendMessage(std::make_unique<shared::StartGameBroadcastMessage>(start_message), p_id);
+        LOG(INFO) << "Sending StartGameBroadcastMessage in Lobby ID: " << lobby_id;
+        message_interface.broadcast<shared::StartGameBroadcastMessage>(players, lobby_id);
 
-            // send game state to all players
-            LOG(INFO) << "Sending GameStateMessage in Lobby ID: " << lobby_id << " to Player ID: " << p_id;
-            std::unique_ptr<reduced::GameState> reduced_game_state = game_state->getReducedState(p_id);
-            std::unique_ptr<shared::GameStateMessage> game_state_message =
-                    std::make_unique<shared::GameStateMessage>(lobby_id, std::move(reduced_game_state));
-            message_interface.sendMessage(std::move(game_state_message), p_id);
-        }
-    }
-
-    void Lobby::receiveAction(MessageInterface &message_interface,
-                              std::unique_ptr<shared::ActionDecisionMessage> action)
-    {
-        LOG(INFO) << "Lobby::receive_action called with Lobby ID: " << lobby_id
-                  << " and Player ID: " << action->player_id;
-        // Check if game has started
-        if ( !game_interface ) {
-            LOG(ERROR) << "Game interface in Lobby::receive_action is nullptr. The game hasn't started yet.";
-            throw std::runtime_error("Game interface is nullptr");
-        }
-
-        // Check if player is in the lobby
-        Player::id_t player_id = action->player_id;
-        if ( !playerInLobby(player_id) ) {
-            LOG(DEBUG) << "Received Action and Player is not in the requested lobby. Lobby ID: " << lobby_id
-                       << " , Player ID: " << player_id << " , Message ID: " << action->message_id;
-            shared::ResultResponseMessage failure_message =
-                    shared::ResultResponseMessage(lobby_id, false, action->message_id, "Player is not in the lobby");
-            message_interface.sendMessage(std::make_unique<shared::ResultResponseMessage>(failure_message), player_id);
-            return;
-        }
-        GameInterface::response_t response_order =
-                game_interface->receiveAction(std::move(action->decision), action->message_id, player_id);
-        std::unique_ptr<shared::ActionOrderMessage> response_msg =
-                std::make_unique<shared::ActionOrderMessage>(lobby_id, std::move(response_order));
-        message_interface.sendMessage(std::move(response_msg), player_id);
+        broadcastGameState(message_interface);
     }
 } // namespace server

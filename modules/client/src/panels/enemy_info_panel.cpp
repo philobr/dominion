@@ -8,12 +8,14 @@ namespace client
 
     EnemyInfoPanel::EnemyInfoPanel(wxWindow *parent, wxSize size) : wxPanel(parent, wxID_ANY, wxDefaultPosition, size)
     {
+        // TODO: remove
         // just for temporary testing
         std::vector<std::unique_ptr<reduced::Enemy>> enemies;
         for ( int i = 0; i < 3; i++ ) {
-            auto enemy = reduced::Enemy::make(shared::PlayerBase("enemy" + std::to_string(i)), 5);
+            auto enemy = reduced::Enemy::make(shared::PlayerBase("enemy" + std::to_string(i)), i+4);
             enemies.push_back(std::move(enemy));
         }
+
         drawEnemies(enemies);
     }
 

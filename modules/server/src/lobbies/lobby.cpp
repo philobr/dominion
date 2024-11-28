@@ -31,21 +31,21 @@ namespace server
         HANDLE(StartGameRequestMessage, startGame);
         HANDLE(GameStateRequestMessage, getGameState);
 
-        const auto &requestor_id = message->player_id; // TODO: is message::player_id always same as action::player_id ?
-        if ( !gameRunning() ) {
-            LOG(ERROR) << "Tried to join a game that has already started!";
-            message_interface.send<shared::ResultResponseMessage>(requestor_id, lobby_id, false, message->message_id,
-                                                                  "Game has not started yet!");
-            throw std::runtime_error("unreachable code");
-        }
+        const auto &requestor_id = message->player_id;
 
-        // Check if player is in the lobby
         if ( !playerInLobby(requestor_id) ) {
             LOG(DEBUG) << "Received Action and Player is not in the requested lobby. Lobby ID: " << lobby_id
                        << " , Player ID: " << requestor_id << " , Message ID: " << message->message_id;
             message_interface.send<shared::ResultResponseMessage>(requestor_id, lobby_id, false, message->message_id,
-                                                                  "Player is notin the lobby");
+                                                                  "Player is not in the lobby");
             return;
+        }
+
+        if ( !gameRunning() ) {
+            LOG(ERROR) << "Tried to perform an action, but the game has not started yet";
+            message_interface.send<shared::ResultResponseMessage>(requestor_id, lobby_id, false, message->message_id,
+                                                                  "Game has not started yet!");
+            throw std::runtime_error("unreachable code");
         }
 
         auto order_msg = std::make_unique<shared::ActionOrderMessage>(lobby_id, game_interface->handleMessage(message));
@@ -60,12 +60,13 @@ namespace server
 
         const auto &player_id = request->player_id;
         if ( !gameRunning() ) {
-            LOG(WARN) << "Tried to join a game that has already started!";
+            LOG(WARN) << "Tried to get the gamestate, but the game has not started yet";
             message_interface.send<shared::ResultResponseMessage>(player_id, lobby_id, false, request->message_id,
                                                                   "Game has already started");
             return; // we do nothing in this case
         }
 
+        LOG(WARN) << "TODO: we always broadcast the gamestate if requested!";
         broadcastGameState(message_interface);
     }
 
@@ -116,7 +117,7 @@ namespace server
         LOG(INFO) << "Lobby::start_game called with Lobby ID: " << lobby_id << " and Player ID: " << requestor_id;
 
         if ( gameRunning() ) {
-            LOG(WARN) << "Tried to join a game that has already started!";
+            LOG(WARN) << "Tried to start a game that has already started!";
             message_interface.send<shared::ResultResponseMessage>(requestor_id, lobby_id, false, request->message_id,
                                                                   "Game has already started");
             return; // we do nothing in this case

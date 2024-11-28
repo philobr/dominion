@@ -1,5 +1,6 @@
 #include <uiElements/enemy_panel.h>
 #include <uiElements/pile_panel.h>
+#include <uiElements/single_card_panel.h>
 
 #include <wx/dcbuffer.h>
 #include <wx/gbsizer.h>
@@ -39,22 +40,26 @@ namespace client
 
 
         /* ===========display player id=========== */
-        std::string player = "Player: " + enemy.getId();
+        // new sizer for displaying the name and the hand cards vertically
+        auto *centerSizer = new wxGridSizer(2, 1, 2, 5);
+
+        // TODO: display name in a bigger and bold font
         wxStaticText *PlayerId =
-                new wxStaticText(this, wxID_ANY, player, wxDefaultPosition, wxDefaultSize, wxALIGN_CENTER);
+                new wxStaticText(this, wxID_ANY, enemy.getId(), wxDefaultPosition, wxDefaultSize, wxALIGN_CENTER);
+        
+        // new sizer for the hand cards
+        auto *handCardSizer = new wxGridSizer(1, enemy.getHandSize(), 5, 5);
+        auto hand_card_heigth = 30;
+        auto hand_card_width = hand_card_heigth / 3 * 2;
+        for ( unsigned int i = 0; i < enemy.getHandSize(); i++ ) {
+            SingleCardPanel *Card = new SingleCardPanel(this, "Card_back", wxSize(hand_card_width, hand_card_heigth));
+            handCardSizer->Add(Card, 0, wxLeft | wxRight, 5);
+        }
 
-        PlayerId->SetForegroundColour(wxColor(0, 0, 0));
-        innerSizer->Add(PlayerId, 0, wxALIGN_CENTER_VERTICAL | wxLeft | wxRight, 5);
-
-
-        /* ===========display hand size=========== */
-        std::string cards_in_hand = "Hand: " + std::to_string(enemy.getHandSize());
-        wxStaticText *HandSize =
-                new wxStaticText(this, wxID_ANY, cards_in_hand, wxDefaultPosition, wxDefaultSize, wxALIGN_CENTER);
-
-        HandSize->SetForegroundColour(wxColor(0, 0, 0));
-        innerSizer->Add(HandSize, 0, wxALIGN_CENTER_VERTICAL | wxLeft | wxRight, 5);
-
+        // add new items to the sizer
+        centerSizer->Add(PlayerId, 0, wxALIGN_CENTER_HORIZONTAL | wxLeft | wxRight);
+        centerSizer->Add(handCardSizer, 0, wxALIGN_CENTER_HORIZONTAL | wxLeft | wxRight);
+        innerSizer->Add(centerSizer, 0, wxALIGN_CENTER_VERTICAL | wxLeft | wxRight, 5);
 
         /* ===========display discard pile=========== */
         wxBoxSizer *discardPileSizer = new wxBoxSizer(wxVERTICAL);
@@ -72,6 +77,7 @@ namespace client
         discardPileSizer->Add(discardPileText, 0, wxALIGN_CENTER_HORIZONTAL | wxLeft | wxRight);
         discardPileSizer->Add(Discard_Pile_panel, 0, wxALIGN_CENTER_HORIZONTAL | wxLeft | wxRight);
         innerSizer->Add(discardPileSizer, 0, wxALIGN_CENTER_VERTICAL | wxLeft | wxRight, 5);
+
 
         // finally add the inner sizer to the outer sizer
         outerSizer->Add(innerSizer, 1, wxEXPAND | wxLeft | wxRight, 15);

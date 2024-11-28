@@ -20,8 +20,8 @@ TEST(ServerLibraryTest, CreateLobby)
     shared::PlayerBase::id_t player_1 = "Max";
     shared::PlayerBase::id_t player_2 = "Peter";
 
-    auto request1 = std::make_unique<shared::CreateLobbyRequestMessage>("123", player_1);
-    auto request2 = std::make_unique<shared::CreateLobbyRequestMessage>("123", player_2);
+    auto create_lobby = std::make_unique<shared::CreateLobbyRequestMessage>("123", player_1);
+    auto create_lobby_again = std::make_unique<shared::CreateLobbyRequestMessage>("123", player_2);
 
     // All expected function calls of sendMessage
     {
@@ -35,7 +35,7 @@ TEST(ServerLibraryTest, CreateLobby)
     const std::map<std::string, std::shared_ptr<server::Lobby>> &games = lobby_manager.getGames();
     ASSERT_EQ(games.empty(), true) << "LobbyManager should be empty at the beginning";
 
-    LOBBY_MANAGER_CALL(request1);
+    LOBBY_MANAGER_CALL(create_lobby);
 
     ASSERT_EQ(games.size(), 1) << "LobbyManager should contain one lobby after creating one";
     ASSERT_EQ(games.find("123") != games.end(), true) << "Lobby with id 123 should exist";
@@ -43,7 +43,7 @@ TEST(ServerLibraryTest, CreateLobby)
     ASSERT_EQ(games.at("123")->getPlayers().size(), 1) << "There should be one player in the lobby";
 
     // No new lobby should be created, because game with id 123 already exists
-    LOBBY_MANAGER_CALL(request2);
+    LOBBY_MANAGER_CALL(create_lobby_again);
     ASSERT_EQ(games.size(), 1);
     // Check if the lobby with id really 123 exists
     ASSERT_EQ(games.find("123") != games.end(), true);
@@ -62,17 +62,17 @@ TEST(ServerLibraryTest, JoinLobby)
     shared::PlayerBase::id_t player_4 = "John";
     shared::PlayerBase::id_t player_5 = "George";
 
-    auto request1 = std::make_unique<shared::CreateLobbyRequestMessage>("123", player_1);
-    auto request2 = std::make_unique<shared::JoinLobbyRequestMessage>("123", player_2);
-    auto request2_again = std::make_unique<shared::JoinLobbyRequestMessage>("123", player_2);
-    auto false_request3 = std::make_unique<shared::JoinLobbyRequestMessage>("222", player_3);
-    auto corrected_request3 = std::make_unique<shared::JoinLobbyRequestMessage>("123", player_3);
-    auto request4 = std::make_unique<shared::JoinLobbyRequestMessage>("123", player_4);
-    auto request5 = std::make_unique<shared::JoinLobbyRequestMessage>("123", player_5);
+    auto create_lobby = std::make_unique<shared::CreateLobbyRequestMessage>("123", player_1);
+    auto join_lobby_1 = std::make_unique<shared::JoinLobbyRequestMessage>("123", player_2);
+    auto join_lobby_1_invalid = std::make_unique<shared::JoinLobbyRequestMessage>("123", player_2);
+    auto join_nonexistent_lobby = std::make_unique<shared::JoinLobbyRequestMessage>("222", player_3);
+    auto join_lobby_2 = std::make_unique<shared::JoinLobbyRequestMessage>("123", player_3);
+    auto join_lobby_3 = std::make_unique<shared::JoinLobbyRequestMessage>("123", player_4);
+    auto join_lobby_4 = std::make_unique<shared::JoinLobbyRequestMessage>("123", player_5);
 
     const std::map<std::string, std::shared_ptr<server::Lobby>> &games = lobby_manager.getGames();
 
-    LOBBY_MANAGER_CALL(request1);
+    LOBBY_MANAGER_CALL(create_lobby);
 
     // All expected function calls of sendMessage
     {
@@ -91,26 +91,26 @@ TEST(ServerLibraryTest, JoinLobby)
         EXPECT_CALL(*message_interface, sendMessage(IsFailureMessage(), player_5)).Times(1);
     }
 
-    LOBBY_MANAGER_CALL(request2);
+    LOBBY_MANAGER_CALL(join_lobby_1);
     ASSERT_EQ(games.at("123")->getPlayers().size(), 2) << "There should be two players in the lobby";
     ASSERT_EQ(games.at("123")->getPlayers().at(1), player_2) << "Player 2 should be in the lobby";
 
     // Player 2 should not be added again
-    LOBBY_MANAGER_CALL(request2_again);
+    LOBBY_MANAGER_CALL(join_lobby_1_invalid);
     ASSERT_EQ(games.at("123")->getPlayers().size(), 2) << "There should still be two players in the lobby";
 
     // Player 3 should not be able to join the lobby with id 123
-    LOBBY_MANAGER_CALL(false_request3);
+    LOBBY_MANAGER_CALL(join_nonexistent_lobby);
     ASSERT_EQ(games.at("123")->getPlayers().size(), 2) << "There should still be two players in the lobby";
 
     // Player 3 should be able to join the lobby with id 123
-    LOBBY_MANAGER_CALL(corrected_request3);
+    LOBBY_MANAGER_CALL(join_lobby_2);
 
     // Player 4 should be able to join the lobby
-    LOBBY_MANAGER_CALL(request4);
+    LOBBY_MANAGER_CALL(join_lobby_3);
 
     // Player 5 should not be able to join because the lobby is full
-    LOBBY_MANAGER_CALL(request5);
+    LOBBY_MANAGER_CALL(join_lobby_4);
     ASSERT_EQ(games.at("123")->getPlayers().size(), 4) << "There should still be four players in the lobby";
 }
 

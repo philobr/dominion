@@ -49,6 +49,9 @@ namespace server
         void join(MessageInterface &message_interface, std::unique_ptr<shared::JoinLobbyRequestMessage> request);
         void startGame(MessageInterface &message_interface, std::unique_ptr<shared::StartGameRequestMessage> request);
 
+        void getGameState(MessageInterface &message_interface,
+                          std::unique_ptr<shared::GameStateRequestMessage> request);
+
         /**
          * @brief Receive an action from a player and handle it correctly.
          * This will be passed on to the game interface.
@@ -76,7 +79,7 @@ namespace server
         const Player::id_t &getGameMaster() const { return game_master; };
 
     private:
-        GameInterface::ptr_t game_interface;
+        std::unique_ptr<server::GameInterface> game_interface;
         Player::id_t game_master;
 
         std::vector<Player::id_t> players;

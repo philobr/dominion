@@ -15,6 +15,7 @@ namespace server
 
     ServerNetworkManager::ServerNetworkManager()
     {
+        // @matthieu, should this be singleton?
         if ( _instance == nullptr ) {
             _instance = this;
         }
@@ -23,11 +24,11 @@ namespace server
         _messageHandler = std::make_unique<MessageHandler>(MessageHandler(_lobby_manager));
     }
 
-    void ServerNetworkManager::run(uint16_t port)
+    void ServerNetworkManager::run(const std::string &host, uint16_t port)
     {
-        LOG(INFO) << "Running the server on port(" << port << ")";
+        LOG(INFO) << "Running the server on " << host << ":" << port;
         sockpp::socket_initializer socket_initializer; // Required to initialise sockpp
-        this->connect(DEFAULT_SERVER_HOST, port);
+        this->connect(host, port);
     }
 
     ServerNetworkManager::~ServerNetworkManager() = default;
@@ -59,15 +60,16 @@ namespace server
 
             if ( !sock ) {
                 LOG(ERROR) << "Error accepting incoming connection: " << _acc.last_error_str();
-            } else {
-                std::string address = sock.peer_address().to_string();
-                BasicNetwork::addAddressToSocket(address, sock.clone());
-
-                // Create a listener thread and transfer the new stream to it.
-                // Incoming messages will be passed to handle_message().
-                std::thread listener(readLoop, std::move(sock), handleMessage);
-                listener.detach();
+                return;
             }
+
+            const std::string address = sock.peer_address().to_string();
+            BasicNetwork::addAddressToSocket(address, sock.clone());
+
+            // Create a listener thread and transfer the new stream to it.
+            // Incoming messages will be passed to handle_message().
+            std::thread listener(readLoop, std::move(sock), handleMessage);
+            listener.detach();
         }
     }
 
@@ -140,15 +142,14 @@ namespace server
 
             if ( req == nullptr ) {
                 // TODO: handle invalid message
-                LOG(ERROR) << "RECEIVED AN INVALID MESSAGE\n";
-                throw std::runtime_error("Not implemented yet");
+                LOG(ERROR) << "Failed to parse message";
+                throw std::runtime_error("Received an unparsable message");
             }
 
             // check if this is a connection to a new player
-            shared::PlayerBase::id_t player_id = req->player_id;
-            std::string address = peer_address.to_string();
-            BasicNetwork::addPlayerToAddress(player_id, address);
-            LOG(INFO) << "Handling request from player(" << player_id << "): " << msg;
+            BasicNetwork::addPlayerToAddress(req->player_id, peer_address.to_string());
+            LOG(INFO) << "Handling request from player(" << req->player_id << "): " << msg;
+
             // execute client request
             // TODO Change to message handler
             //_messageHandler->handleMessage(req);
@@ -164,8 +165,7 @@ namespace server
     ssize_t ServerNetworkManager::sendMessage(std::unique_ptr<shared::ServerToClientMessage> message,
                                               const shared::PlayerBase::id_t &player_id)
     {
-        std::string msg = message->toJson();
-        return BasicNetwork::sendToPlayer(msg, player_id);
+        return BasicNetwork::sendToPlayer(message->toJson(), player_id);
     }
 
 } // namespace server

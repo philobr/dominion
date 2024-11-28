@@ -30,7 +30,7 @@ namespace server
         ServerNetworkManager();
         ~ServerNetworkManager();
 
-        void run(uint16_t port = DEFAULT_PORT);
+        void run(const std::string &host = DEFAULT_SERVER_HOST, uint16_t port = DEFAULT_PORT);
 
         // function to send via the BasicNetwork class
         static ssize_t sendMessage(std::unique_ptr<shared::ServerToClientMessage> message,

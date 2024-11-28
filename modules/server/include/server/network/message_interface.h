@@ -54,7 +54,7 @@ namespace server
                           "T must derive from shared::ServerToClientMessage");
 
             std::for_each(players.begin(), players.end(), [&](const auto &player_id)
-                          { sendMessage(std::make_unique<T>(std::forward<Args>(args)...), player_id); })
+                          { sendMessage(std::make_unique<T>(std::forward<Args>(args)...), player_id); });
         }
     };
 

@@ -42,11 +42,7 @@ namespace server
                       const std::vector<Player::id_t> &player_ids) :
             game_state(std::make_shared<GameState>(play_cards, player_ids)),
             cur_behaviours(std::make_unique<BehaviourChain>()), game_id(game_id)
-        {
-            // TODO: just for testing, remove later
-            cur_behaviours->loadBehaviours("Laboratory");
-            cur_behaviours->receiveAction(*game_state, player_ids.at(0), std::nullopt, std::nullopt);
-        }
+        {}
 
         response_t handleAction(std::unique_ptr<shared::ActionDecision> action_decision,
                                 const Player::id_t &affected_player_id);

@@ -32,36 +32,36 @@ namespace client
 
         // The pile itself
         shared::Pile Draw_Pile("Card_back", enemy.getDrawPileSize());
-        auto height = 40;
+        auto height = 30;
         PilePanel *Draw_Pile_panel = new PilePanel(this, Draw_Pile, wxSize(height / 3 * 2, height));
 
         // add new items to the sizer
         drawPileSizer->Add(DrawPileText, wxSizerFlags().Align(wxALIGN_CENTER_HORIZONTAL).Border(wxALL));
         drawPileSizer->Add(Draw_Pile_panel, wxSizerFlags().Align(wxALIGN_CENTER_HORIZONTAL).Border(wxALL));
-        innerSizer->Add(drawPileSizer, wxSizerFlags().Align(wxALIGN_CENTER_VERTICAL).Border(wxALL, 5));
+        innerSizer->Add(drawPileSizer, wxSizerFlags().Align(wxALIGN_CENTER_VERTICAL));
 
 
         /* ===========display player id=========== */
         // new sizer for displaying the name and the hand cards vertically
-        auto *centerSizer = new wxGridSizer(2, 1, 2, 5);
+        auto *centerSizer = new wxGridSizer(2, 1, 1, 2);
 
         // TODO: display name in a bigger and bold font
         wxStaticText *PlayerId =
                 new wxStaticText(this, wxID_ANY, enemy.getId(), wxDefaultPosition, wxDefaultSize, wxALIGN_CENTER);
 
         // new sizer for the hand cards
-        auto *handCardSizer = new wxGridSizer(1, enemy.getHandSize(), 5, 5);
+        auto *handCardSizer = new wxGridSizer(1, enemy.getHandSize(), 1, 1);
         auto hand_card_heigth = 30;
         auto hand_card_width = hand_card_heigth / 3 * 2;
         for ( unsigned int i = 0; i < enemy.getHandSize(); i++ ) {
             SingleCardPanel *Card = new SingleCardPanel(this, "Card_back", wxSize(hand_card_width, hand_card_heigth));
-            handCardSizer->Add(Card, 0, wxALL, 5);
+            handCardSizer->Add(Card, 0, wxALL, 2);
         }
 
         // add new items to the sizer
         centerSizer->Add(PlayerId, wxSizerFlags().Align(wxALIGN_CENTER_HORIZONTAL).Border(wxALL));
         centerSizer->Add(handCardSizer, wxSizerFlags().Align(wxALIGN_CENTER_HORIZONTAL).Border(wxALL));
-        innerSizer->Add(centerSizer, wxSizerFlags().Align(wxALIGN_CENTER_VERTICAL).Border(wxALL, 5));
+        innerSizer->Add(centerSizer, wxSizerFlags().Align(wxALIGN_CENTER_VERTICAL));
 
         /* ===========display discard pile=========== */
         wxBoxSizer *discardPileSizer = new wxBoxSizer(wxVERTICAL);
@@ -72,17 +72,16 @@ namespace client
 
         // The pile itself
         shared::Pile Discard_Pile("Card_back", enemy.getDiscardPileSize());
-        // auto height = parent->GetSize().GetHeight() * 0.8;
         PilePanel *Discard_Pile_panel = new PilePanel(this, Discard_Pile, wxSize(height / 3 * 2, height));
 
         // add new items to the sizer
         discardPileSizer->Add(discardPileText, wxSizerFlags().Align(wxALIGN_CENTER_HORIZONTAL).Border(wxALL));
         discardPileSizer->Add(Discard_Pile_panel, wxSizerFlags().Align(wxALIGN_CENTER_HORIZONTAL).Border(wxALL));
-        innerSizer->Add(discardPileSizer, wxSizerFlags().Align(wxALIGN_CENTER_VERTICAL).Border(wxALL, 5));
+        innerSizer->Add(discardPileSizer, wxSizerFlags().Align(wxALIGN_CENTER_VERTICAL));
 
 
         // finally add the inner sizer to the outer sizer
-        outerSizer->Add(innerSizer, wxSizerFlags(1).Expand().Border(wxALL, 15));
+        outerSizer->Add(innerSizer, wxSizerFlags(1).Expand().Border(wxALL, 1));
 
         this->SetSizer(outerSizer);
     }

@@ -41,24 +41,25 @@ namespace server
         void handleMessage(std::unique_ptr<shared::ClientToServerMessage> &message);
 
         /**
+         * @brief Get the games that are currently running.
+         *
+         * THIS IS ONLY FOR TESTING. WOULD BE NICE TO REMOVE THIS
+         *
+         * @return A const reference to the map of lobby ids.
+         */
+        const std::map<std::string, std::shared_ptr<Lobby>> &getGames() const { return games; };
+
+    private:
+        std::map<std::string, std::shared_ptr<Lobby>> games;
+        std::shared_ptr<MessageInterface> message_interface;
+
+        /**
          * @brief Create a new lobby.
          * This will create a new lobby and add it to the list of games. The game master will be added to the lobby.
          *
          * @param request The CreateLobbyRequestMessage to create the lobby with.
          */
         void createLobby(std::unique_ptr<shared::CreateLobbyRequestMessage> &request);
-
-        /**
-         * @brief Get the games that are currently running.
-         *
-         * @return A const reference to the map of lobby ids.
-         */
-        // TODO: WHERE/WHY DO WE NEED THIS?
-        const std::map<std::string, std::shared_ptr<Lobby>> &getGames() const { return games; };
-
-    private:
-        std::map<std::string, std::shared_ptr<Lobby>> games;
-        std::shared_ptr<MessageInterface> message_interface;
 
         /**
          * @brief Check if a lobby exists.

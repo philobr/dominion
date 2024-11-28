@@ -39,21 +39,9 @@ namespace server
                            std::unique_ptr<shared::ClientToServerMessage> &message);
 
         /**
-         * @brief Add a player to the lobby.
-         *
-         * @param message_interface The message interface to send messages to the players.
-         * @param request The JoinLobbyRequestMessage to join the lobby with.
-         *
-         * @pre The lobby exists.
-         */
-        void join(MessageInterface &message_interface, std::unique_ptr<shared::JoinLobbyRequestMessage> &request);
-        void startGame(MessageInterface &message_interface, std::unique_ptr<shared::StartGameRequestMessage> &request);
-
-        void getGameState(MessageInterface &message_interface,
-                          std::unique_ptr<shared::GameStateRequestMessage> &request);
-
-        /**
          * @brief Get the players in the lobby.
+         *
+         * THIS IS ONLY FOR TESTING. WOULD BE NICE TO REMOVE THIS
          *
          * @return A const reference vector of player ids.
          */
@@ -61,6 +49,8 @@ namespace server
 
         /**
          * @brief Get the id of the game master.
+         *
+         * THIS IS ONLY FOR TESTING. WOULD BE NICE TO REMOVE THIS
          *
          * @return The id of the game master.
          */
@@ -72,6 +62,40 @@ namespace server
 
         std::vector<Player::id_t> players;
         std::string lobby_id;
+
+
+        /**
+         * @brief Adds a player to the lobby if the neccessary conditions are met.
+         * The conditions beeing:
+         * - game has not started yet
+         * - game has < 4 players in it
+         * - the player is not already in the lobby
+         *
+         * @param message_interface
+         * @param request
+         */
+        void addPlayer(MessageInterface &message_interface, std::unique_ptr<shared::JoinLobbyRequestMessage> &request);
+
+        /**
+         * @brief Starts the game if the following is met:
+         * - game has 2 <= num_players <= 4
+         * - game is not already started
+         * - player is the game_master
+         *
+         * @param message_interface
+         * @param request
+         */
+        void startGame(MessageInterface &message_interface, std::unique_ptr<shared::StartGameRequestMessage> &request);
+
+        /**
+         * @brief Broadcasts the gamestate to all players (maybe change this in the future?) i kept it in as we will
+         * change our messages and how they include the gamestate in the future.
+         *
+         * @param message_interface
+         * @param request
+         */
+        void getGameState(MessageInterface &message_interface,
+                          std::unique_ptr<shared::GameStateRequestMessage> &request);
 
         /**
          * @brief Check if a player is in the lobby.
@@ -94,7 +118,12 @@ namespace server
          */
         inline bool gameRunning() const { return game_interface != nullptr; }
 
-        void sendGameState(MessageInterface &message_interface) const
+        /**
+         * @brief Broadcasts the gamestate to all players in the lobby.
+         *
+         * @param message_interface
+         */
+        void broadcastGameState(MessageInterface &message_interface) const
         {
             std::for_each(players.begin(), players.end(),
                           [&](const auto &player_id)

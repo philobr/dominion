@@ -27,7 +27,7 @@ namespace server
         // NOLINTEND(bugprone-macro-parentheses)
 
         // handle messages the lobby is responsible for
-        HANDLE(JoinLobbyRequestMessage, join);
+        HANDLE(JoinLobbyRequestMessage, addPlayer);
         HANDLE(StartGameRequestMessage, startGame);
         HANDLE(GameStateRequestMessage, getGameState);
 
@@ -66,10 +66,10 @@ namespace server
             return; // we do nothing in this case
         }
 
-        sendGameState(message_interface);
+        broadcastGameState(message_interface);
     }
 
-    void Lobby::join(MessageInterface &message_interface, std::unique_ptr<shared::JoinLobbyRequestMessage> &request)
+    void Lobby::addPlayer(MessageInterface &message_interface, std::unique_ptr<shared::JoinLobbyRequestMessage> &request)
     {
         const auto &requestor_id = request->player_id;
         LOG(INFO) << "Lobby::join called with Lobby ID: " << lobby_id << " and Player ID: " << requestor_id;
@@ -153,6 +153,6 @@ namespace server
         LOG(INFO) << "Sending StartGameBroadcastMessage in Lobby ID: " << lobby_id;
         message_interface.broadcast<shared::StartGameBroadcastMessage>(players, lobby_id);
 
-        sendGameState(message_interface);
+        broadcastGameState(message_interface);
     }
 } // namespace server

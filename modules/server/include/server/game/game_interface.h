@@ -32,6 +32,8 @@ namespace server
          * @brief Receives an ActionDecision from the Lobby and handles it accordingly.
          * It will return some sort of ServerToClient message, which the lobby manager can pass on.
          *
+         * @warning THIS IS WORK IN PROGRESS, I WILL FIX THIS WITH A FOLLOW UP MERGE REQ
+         *
          * @param action_decision
          * @param in_response_to
          * @param game_id

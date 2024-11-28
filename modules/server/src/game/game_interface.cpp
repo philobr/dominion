@@ -13,13 +13,18 @@ namespace server
 
     GameInterface::response_t GameInterface::handleMessage(std::unique_ptr<shared::ClientToServerMessage> &message)
     {
-        // TODO: do we only get action_decisions here?
-        if ( "in_response_to.has_value()" ) {
+        // THIS IS A HACKY WORK IN PROGRESS, WILL FIX LATER
+        auto casted_msg = dynamic_cast<shared::ActionDecisionMessage *>(message.get());
+        auto action_decision = std::move(casted_msg->decision);
+
+        if ( casted_msg->in_response_to.has_value() ) {
             LOG(ERROR) << "this is not implemented yet!";
             throw std::runtime_error("not implemented");
         }
 
-        //        return handleAction(std::move(action_decision), affected_player_id);
+        auto affected_player_id = casted_msg->player_id;
+        return handleAction(std::move(action_decision), affected_player_id);
+
         /* This might become useful later on
          * TODO: use this or delete it
         return in_response_to.has_value()

@@ -1,3 +1,4 @@
+#include <shared/utils/logger.h>
 #include <uiElements/image_panel.h>
 
 namespace client

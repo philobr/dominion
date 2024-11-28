@@ -159,7 +159,7 @@ TEST(ServerLibraryTest, StartGame)
 }
 
 
-//TODO: those tests fail and i dont quite understand what they are supposed to do
+// TODO: those tests fail and i dont quite understand what they are supposed to do
 TEST(ServerLibraryTest, ReceiveAction)
 {
     std::shared_ptr<MockMessageInterface> message_interface = std::make_shared<MockMessageInterface>();
@@ -180,34 +180,34 @@ TEST(ServerLibraryTest, ReceiveAction)
     // Finish setup
 
     // ActionDecision for a lobby that doesn't exist
-    auto request4 = std::make_unique<shared::ActionDecisionMessage>("456", player_1,
-                                                                    std::make_unique<shared::PlayActionCardDecision>(1));
+    auto request4 = std::make_unique<shared::ActionDecisionMessage>(
+            "456", player_1, std::make_unique<shared::PlayActionCardDecision>(1));
 
     // ActionDecision for a game that hasn't started yet
-    auto request5 = std::make_unique<shared::ActionDecisionMessage>("123", player_1,
-                                                                    std::make_unique<shared::PlayActionCardDecision>(1));
+    auto request5 = std::make_unique<shared::ActionDecisionMessage>(
+            "123", player_1, std::make_unique<shared::PlayActionCardDecision>(1));
 
     // ActionDecision for a player that is not in the lobby
-    auto request6 = std::make_unique<shared::ActionDecisionMessage>("123", player_3,
-                                                                    std::make_unique<shared::BuyCardDecision>("Village"));
+    auto request6 = std::make_unique<shared::ActionDecisionMessage>(
+            "123", player_3, std::make_unique<shared::BuyCardDecision>("Village"));
 
     // ActionDecision should be handled correctly
-    auto request7 = std::make_unique<shared::ActionDecisionMessage>("123", player_1,
-                                                                    std::make_unique<shared::BuyCardDecision>("Village"));
+    auto request7 = std::make_unique<shared::ActionDecisionMessage>(
+            "123", player_1, std::make_unique<shared::BuyCardDecision>("Village"));
 
     // First part of expected function calls of sendMessage
     {
-    InSequence s;
-    // request4
-    EXPECT_CALL(*message_interface, sendMessage(IsFailureMessage(), player_1)).Times(1);
-    // request5
-    EXPECT_CALL(*message_interface, sendMessage(IsFailureMessage(), player_1)).Times(1);
-    // Start game messages
-    EXPECT_CALL(*message_interface, sendMessage(_, _)).Times(4);
-    // request6
-    EXPECT_CALL(*message_interface, sendMessage(IsFailureMessage(), player_3)).Times(1);
-    // request7
-    EXPECT_CALL(*message_interface, sendMessage(_, player_1)).Times(1);
+        InSequence s;
+        // request4
+        EXPECT_CALL(*message_interface, sendMessage(IsFailureMessage(), player_1)).Times(1);
+        // request5
+        EXPECT_CALL(*message_interface, sendMessage(IsFailureMessage(), player_1)).Times(1);
+        // Start game messages
+        EXPECT_CALL(*message_interface, sendMessage(_, _)).Times(4);
+        // request6
+        EXPECT_CALL(*message_interface, sendMessage(IsFailureMessage(), player_3)).Times(1);
+        // request7
+        EXPECT_CALL(*message_interface, sendMessage(_, player_1)).Times(1);
     }
 
     LOBBY_MANAGER_CALL(request4);

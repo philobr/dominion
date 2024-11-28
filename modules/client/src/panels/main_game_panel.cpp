@@ -1,7 +1,9 @@
+#include <condition_variable>
+#include <mutex>
 #include <panels/main_game_panel.h>
 #include <shared/utils/logger.h>
 
-#include <wx/wx.h>
+#include <wx/app.h>
 
 namespace client
 {
@@ -25,6 +27,9 @@ namespace client
         LOG(WARN) << "MainLayout set";
     }
 
+    std::mutex syncMutex;
+    std::condition_variable syncCv;
+    bool taskCompleted = false;
 
     void MainGamePanel::drawGameState(const reduced::GameState &gameState)
     {
@@ -32,11 +37,43 @@ namespace client
         bool is_active = (gameState.active_player == gameState.reduced_player->getId());
 
         LOG(INFO) << "Set bool is_active for active player";
-        Board->drawBoard(gameState.board, is_active, gameState.reduced_player->getTreasure());
+
+        // Synchronize Board->drawBoard
+        {
+            std::unique_lock<std::mutex> lock(syncMutex);
+            taskCompleted = false; // Reset task status
+            CallAfter(
+                    [this, &gameState, is_active]()
+                    {
+                        Board->drawBoard(gameState.board, is_active, gameState.reduced_player->getTreasure());
+                        {
+                            std::lock_guard<std::mutex> lock(syncMutex);
+                            taskCompleted = true; // Mark task as complete
+                        }
+                        syncCv.notify_one(); // Notify waiting thread
+                    });
+            syncCv.wait(lock, [] { return taskCompleted; }); // Wait until task is complete
+        }
         LOG(INFO) << "Board drawn";
         Player->drawPlayer(gameState.reduced_player, is_active);
-        LOG(INFO) << "Player drawn";
-        EnemyInfo->drawEnemies(gameState.reduced_enemies);
+        LOG(WARN) << "Player drawn";
+
+        // Synchronize EnemyInfo->drawEnemies
+        {
+            std::unique_lock<std::mutex> lock(syncMutex);
+            taskCompleted = false; // Reset task status
+            CallAfter(
+                    [this, &gameState]()
+                    {
+                        EnemyInfo->drawEnemies(gameState.reduced_enemies);
+                        {
+                            std::lock_guard<std::mutex> lock(syncMutex);
+                            taskCompleted = true; // Mark task as complete
+                        }
+                        syncCv.notify_one(); // Notify waiting thread
+                    });
+            syncCv.wait(lock, [] { return taskCompleted; }); // Wait until task is complete
+        }
         LOG(INFO) << "Enemies drawn";
     }
 

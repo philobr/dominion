@@ -69,7 +69,8 @@ namespace server
         broadcastGameState(message_interface);
     }
 
-    void Lobby::addPlayer(MessageInterface &message_interface, std::unique_ptr<shared::JoinLobbyRequestMessage> &request)
+    void Lobby::addPlayer(MessageInterface &message_interface,
+                          std::unique_ptr<shared::JoinLobbyRequestMessage> &request)
     {
         const auto &requestor_id = request->player_id;
         LOG(INFO) << "Lobby::join called with Lobby ID: " << lobby_id << " and Player ID: " << requestor_id;

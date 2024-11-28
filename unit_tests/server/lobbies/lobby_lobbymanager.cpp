@@ -10,7 +10,7 @@
  * @brief This casts the given message to a ClientToServerMessage and calls the lobby manager
  */
 #define LOBBY_MANAGER_CALL(msg)                                                                                        \
-    auto casted_##msg = std::unique_ptr<shared::ClientToServerMessage>((msg).release());                                 \
+    auto casted_##msg = std::unique_ptr<shared::ClientToServerMessage>((msg).release());                               \
     lobby_manager.handleMessage(casted_##msg)
 
 TEST(ServerLibraryTest, CreateLobby)

@@ -28,7 +28,7 @@ TEST(ServerLibraryTest, CreateLobby)
     const std::map<std::string, std::shared_ptr<server::Lobby>> &games = lobby_manager.getGames();
     ASSERT_EQ(games.empty(), true) << "LobbyManager should be empty at the beginning";
 
-    lobby_manager.createLobby(std::move(request1));
+    lobby_manager.createLobby(request1);
 
     ASSERT_EQ(games.size(), 1) << "LobbyManager should contain one lobby after creating one";
     ASSERT_EQ(games.find("123") != games.end(), true) << "Lobby with id 123 should exist";
@@ -36,7 +36,7 @@ TEST(ServerLibraryTest, CreateLobby)
     ASSERT_EQ(games.at("123")->getPlayers().size(), 1) << "There should be one player in the lobby";
 
     // No new lobby should be created, because game with id 123 already exists
-    lobby_manager.createLobby(std::move(request2));
+    lobby_manager.createLobby(request2);
     ASSERT_EQ(games.size(), 1);
     // Check if the lobby with id really 123 exists
     ASSERT_EQ(games.find("123") != games.end(), true);

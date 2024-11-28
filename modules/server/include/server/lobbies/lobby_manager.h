@@ -47,7 +47,7 @@ namespace server
          *
          * @param request The CreateLobbyRequestMessage to create the lobby with.
          */
-        void createLobby(std::unique_ptr<shared::CreateLobbyRequestMessage> request);
+        void createLobby(std::unique_ptr<shared::CreateLobbyRequestMessage> &request);
 
 
         /**

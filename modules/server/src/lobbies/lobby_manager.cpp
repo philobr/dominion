@@ -18,7 +18,7 @@ namespace server
             std::unique_ptr<shared::CreateLobbyRequestMessage> unique_CreateLobbyRequestMessage(
                     static_cast<shared::CreateLobbyRequestMessage *>(message.release()));
 
-            createLobby(std::move(unique_CreateLobbyRequestMessage));
+            createLobby(unique_CreateLobbyRequestMessage);
             return;
         }
 
@@ -38,7 +38,7 @@ namespace server
         games.at(lobby_id)->handleMessage(*(message_interface.get()), message);
     }
 
-    void LobbyManager::createLobby(std::unique_ptr<shared::CreateLobbyRequestMessage> request)
+    void LobbyManager::createLobby(std::unique_ptr<shared::CreateLobbyRequestMessage> &request)
     {
         std::string lobby_id = request->game_id;
         Player::id_t game_master_id = request->player_id;

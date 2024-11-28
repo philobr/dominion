@@ -21,7 +21,7 @@ namespace server
     if ( typeid(&(*message)) == typeid(shared::message_type) ) {                                                       \
         LOG(INFO) << "Trying to handle: " << #message_type;                                                            \
         std::unique_ptr<shared::message_type> casted_message(static_cast<shared::message_type *>(message.release()));  \
-        handler_func(message_interface, std::move(casted_message));                                                    \
+        handler_func(message_interface, casted_message);                                                               \
         return;                                                                                                        \
     }
         // NOLINTEND(bugprone-macro-parentheses)
@@ -48,14 +48,12 @@ namespace server
             return;
         }
 
-        // TODO: SEND THIS, MAYBE CHANGE TO ARRAY?
-        auto response = game_interface->handleMessage(message);
-        auto order_msg = std::make_unique<shared::ActionOrderMessage>(lobby_id, std::move(response));
+        auto order_msg = std::make_unique<shared::ActionOrderMessage>(lobby_id, game_interface->handleMessage(message));
         message_interface.sendMessage(std::move(order_msg), "add player id here");
     }
 
     void Lobby::getGameState(MessageInterface &message_interface,
-                             std::unique_ptr<shared::GameStateRequestMessage> request)
+                             std::unique_ptr<shared::GameStateRequestMessage> &request)
     {
         LOG(ERROR) << "Not implemented yet";
         throw std::runtime_error("not implemented yet");
@@ -67,9 +65,11 @@ namespace server
                                                                   "Game has already started");
             return; // we do nothing in this case
         }
+
+        sendGameState(message_interface);
     }
 
-    void Lobby::join(MessageInterface &message_interface, std::unique_ptr<shared::JoinLobbyRequestMessage> request)
+    void Lobby::join(MessageInterface &message_interface, std::unique_ptr<shared::JoinLobbyRequestMessage> &request)
     {
         const auto &requestor_id = request->player_id;
         LOG(INFO) << "Lobby::join called with Lobby ID: " << lobby_id << " and Player ID: " << requestor_id;
@@ -108,7 +108,8 @@ namespace server
     };
 
     // PRE: selected_cards are validated in message parsing
-    void Lobby::startGame(MessageInterface &message_interface, std::unique_ptr<shared::StartGameRequestMessage> request)
+    void Lobby::startGame(MessageInterface &message_interface,
+                          std::unique_ptr<shared::StartGameRequestMessage> &request)
     {
         const auto &requestor_id = request->player_id;
         LOG(INFO) << "Lobby::start_game called with Lobby ID: " << lobby_id << " and Player ID: " << requestor_id;
@@ -152,13 +153,6 @@ namespace server
         LOG(INFO) << "Sending StartGameBroadcastMessage in Lobby ID: " << lobby_id;
         message_interface.broadcast<shared::StartGameBroadcastMessage>(players, lobby_id);
 
-        std::for_each(players.begin(), players.end(),
-                      [&](const auto &player_id)
-                      {
-                          LOG(INFO) << "Sending GameStateMessage in Lobby ID: " << lobby_id
-                                    << " to Player ID: " << player_id;
-                          message_interface.send<shared::GameStateMessage>(player_id, lobby_id,
-                                                                           game_interface->getGameState(player_id));
-                      });
+        sendGameState(message_interface);
     }
 } // namespace server

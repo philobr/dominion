@@ -46,11 +46,11 @@ namespace server
          *
          * @pre The lobby exists.
          */
-        void join(MessageInterface &message_interface, std::unique_ptr<shared::JoinLobbyRequestMessage> request);
-        void startGame(MessageInterface &message_interface, std::unique_ptr<shared::StartGameRequestMessage> request);
+        void join(MessageInterface &message_interface, std::unique_ptr<shared::JoinLobbyRequestMessage> &request);
+        void startGame(MessageInterface &message_interface, std::unique_ptr<shared::StartGameRequestMessage> &request);
 
         void getGameState(MessageInterface &message_interface,
-                          std::unique_ptr<shared::GameStateRequestMessage> request);
+                          std::unique_ptr<shared::GameStateRequestMessage> &request);
 
         /**
          * @brief Get the players in the lobby.
@@ -93,5 +93,17 @@ namespace server
          * @return false
          */
         inline bool gameRunning() const { return game_interface != nullptr; }
+
+        void sendGameState(MessageInterface &message_interface) const
+        {
+            std::for_each(players.begin(), players.end(),
+                          [&](const auto &player_id)
+                          {
+                              LOG(INFO) << "Sending GameStateMessage in Lobby ID: " << lobby_id
+                                        << " to Player ID: " << player_id;
+                              message_interface.send<shared::GameStateMessage>(player_id, lobby_id,
+                                                                               game_interface->getGameState(player_id));
+                          });
+        }
     };
 } // namespace server

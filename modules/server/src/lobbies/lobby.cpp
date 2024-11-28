@@ -76,7 +76,6 @@ namespace server
                 shared::ResultResponseMessage(lobby_id, true, request->message_id);
 
         message_interface.sendMessage(std::make_unique<shared::ResultResponseMessage>(success_message), player_id);
-        return;
     };
 
     // PRE: selected_cards are validated in message parsing

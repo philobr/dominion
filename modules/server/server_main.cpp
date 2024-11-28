@@ -18,7 +18,7 @@ int main(int argc, char *argv[])
     while ( true ) {
         try {
             server::ServerNetworkManager server;
-            // server.run();
+            server.run(server::DEFAULT_SERVER_HOST, args.getPort());
         } catch ( const std::exception &e ) {
             LOG(ERROR) << "Unhandled exception: " << e.what();
             LOG(DEBUG) << "Restarting server...";

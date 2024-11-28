@@ -49,40 +49,12 @@ namespace server
          */
         void createLobby(std::unique_ptr<shared::CreateLobbyRequestMessage> &request);
 
-
-        /**
-         * @brief Join a lobby.
-         * This will add a player to the lobby with the given lobby id.
-         *
-         * @param request The JoinLobbyRequestMessage to join the lobby with.
-         */
-        void joinLobby(std::unique_ptr<shared::JoinLobbyRequestMessage> request);
-
-        /**
-         * @brief Start a game.
-         * This will start the game in the lobby with the given lobby id.
-         *
-         * @param request The StartGameRequestMessage to start the game with.
-         *
-         * @pre The request contains 10 cards.
-         */
-        void startGame(std::unique_ptr<shared::StartGameRequestMessage> request);
-
-        /**
-         * @brief Receive an action from a player and handle it correctly.
-         * This will be passed on to the correct lobby.
-         *
-         * @param action The ActionDecisionMessage to handle.
-         *
-         * @pre Valid ActionDecisionMessage.
-         */
-        void receiveAction(std::unique_ptr<shared::ActionDecisionMessage> action);
-
         /**
          * @brief Get the games that are currently running.
          *
          * @return A const reference to the map of lobby ids.
          */
+        // TODO: WHERE/WHY DO WE NEED THIS?
         const std::map<std::string, std::shared_ptr<Lobby>> &getGames() const { return games; };
 
     private:

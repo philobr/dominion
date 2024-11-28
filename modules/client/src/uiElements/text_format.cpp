@@ -1,7 +1,11 @@
 #include <uiElements/text_format.h>
 #include <uiElements/text_panel.h>
-#include <wx/gtk/stattext.h>
 
+#ifdef __APPLE__
+#include <wx/stattext.h>
+#else
+#include <wx/gtk/stattext.h>
+#endif
 
 namespace client
 {

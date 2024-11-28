@@ -6,9 +6,31 @@
 
 namespace server
 {
-    bool Lobby::playerInLobby(const Player::id_t &player_id)
+    void Lobby::handleMessage(MessageInterface &message_interface,
+                              std::unique_ptr<shared::ClientToServerMessage> &message)
     {
-        return std::any_of(players.begin(), players.end(), [&](const auto &player) { return player == player_id; });
+        auto &msg_ref = *message;
+
+        // NOLINTBEGIN(bugprone-macro-parentheses)
+#define HANDLE(message_type, handler_func)                                                                             \
+    if ( typeid(msg_ref) == typeid(shared::message_type) ) {                                                           \
+        LOG(INFO) << "Trying to handle: " << #message_type;                                                            \
+        std::unique_ptr<shared::message_type> casted_message(static_cast<shared::message_type *>(message.release()));  \
+        handler_func(message_interface, std::move(casted_message));                                                    \
+        return;                                                                                                        \
+    }
+        // NOLINTEND(bugprone-macro-parentheses)
+
+        // handle messages the lobby is responsible for
+        HANDLE(JoinLobbyRequestMessage, join);
+        HANDLE(StartGameRequestMessage, startGame);
+        // HANDLE(GameStateRequestMessage, /*gamestatereq msg*/);
+
+        // this will get handled by the game_interface
+        HANDLE(ActionDecisionMessage, receiveAction);
+
+        LOG(ERROR) << "Lobby received unknown message type";
+        throw std::runtime_error("unreachable code");
     }
 
     Lobby::Lobby(const Player::id_t &game_master, const std::string &lobby_id) :

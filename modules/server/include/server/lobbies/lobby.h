@@ -112,6 +112,10 @@ namespace server
          *
          * @return True if the player is in the lobby, false otherwise.
          */
-        bool playerInLobby(const Player::id_t &player_id);
+        inline bool playerInLobby(const Player::id_t &player_id);
+        inline bool playerInLobby(const Player::id_t &player_id)
+        {
+            return std::any_of(players.begin(), players.end(), [&](const auto &player) { return player == player_id; });
+        }
     };
 } // namespace server

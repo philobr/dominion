@@ -6,6 +6,13 @@
 #include <typeinfo>
 #include "mock_templates.h"
 
+/**
+ * @brief This casts the given message to a ClientToServerMessage and calls the lobby manager
+ */
+#define LOBBY_MANAGER_CALL(msg)                                                                                        \
+    auto casted_##msg = std::unique_ptr<shared::ClientToServerMessage>(msg.release());                                 \
+    lobby_manager.handleMessage(casted_##msg)
+
 TEST(ServerLibraryTest, CreateLobby)
 {
     std::shared_ptr<MockMessageInterface> message_interface = std::make_shared<MockMessageInterface>();
@@ -28,7 +35,7 @@ TEST(ServerLibraryTest, CreateLobby)
     const std::map<std::string, std::shared_ptr<server::Lobby>> &games = lobby_manager.getGames();
     ASSERT_EQ(games.empty(), true) << "LobbyManager should be empty at the beginning";
 
-    lobby_manager.createLobby(request1);
+    LOBBY_MANAGER_CALL(request1);
 
     ASSERT_EQ(games.size(), 1) << "LobbyManager should contain one lobby after creating one";
     ASSERT_EQ(games.find("123") != games.end(), true) << "Lobby with id 123 should exist";
@@ -36,7 +43,7 @@ TEST(ServerLibraryTest, CreateLobby)
     ASSERT_EQ(games.at("123")->getPlayers().size(), 1) << "There should be one player in the lobby";
 
     // No new lobby should be created, because game with id 123 already exists
-    lobby_manager.createLobby(request2);
+    LOBBY_MANAGER_CALL(request2);
     ASSERT_EQ(games.size(), 1);
     // Check if the lobby with id really 123 exists
     ASSERT_EQ(games.find("123") != games.end(), true);
@@ -44,10 +51,7 @@ TEST(ServerLibraryTest, CreateLobby)
     ASSERT_EQ(games.at("123")->getGameMaster(), player_1);
     ASSERT_EQ(games.at("123")->getPlayers().size(), 1);
 }
-/*
-COMMENTED OUT AS THIS FUNCTIONALITY IS MOVED
 
-// TODO: Implement tests for the following methods
 TEST(ServerLibraryTest, JoinLobby)
 {
     std::shared_ptr<MockMessageInterface> message_interface = std::make_shared<MockMessageInterface>();
@@ -68,7 +72,7 @@ TEST(ServerLibraryTest, JoinLobby)
 
     const std::map<std::string, std::shared_ptr<server::Lobby>> &games = lobby_manager.getGames();
 
-    lobby_manager.createLobby(std::move(request1));
+    LOBBY_MANAGER_CALL(request1);
 
     // All expected function calls of sendMessage
     {
@@ -86,29 +90,31 @@ TEST(ServerLibraryTest, JoinLobby)
         // request 5
         EXPECT_CALL(*message_interface, sendMessage(IsFailureMessage(), player_5)).Times(1);
     }
-    lobby_manager.joinLobby(std::move(request2));
+
+    LOBBY_MANAGER_CALL(request2);
     ASSERT_EQ(games.at("123")->getPlayers().size(), 2) << "There should be two players in the lobby";
     ASSERT_EQ(games.at("123")->getPlayers().at(1), player_2) << "Player 2 should be in the lobby";
 
     // Player 2 should not be added again
-    lobby_manager.joinLobby(std::move(request2_again));
+    LOBBY_MANAGER_CALL(request2_again);
     ASSERT_EQ(games.at("123")->getPlayers().size(), 2) << "There should still be two players in the lobby";
 
     // Player 3 should not be able to join the lobby with id 123
-    lobby_manager.joinLobby(std::move(false_request3));
+    LOBBY_MANAGER_CALL(false_request3);
     ASSERT_EQ(games.at("123")->getPlayers().size(), 2) << "There should still be two players in the lobby";
 
     // Player 3 should be able to join the lobby with id 123
-    lobby_manager.joinLobby(std::move(corrected_request3));
+    LOBBY_MANAGER_CALL(corrected_request3);
 
     // Player 4 should be able to join the lobby
-    lobby_manager.joinLobby(std::move(request4));
+    LOBBY_MANAGER_CALL(request4);
 
     // Player 5 should not be able to join because the lobby is full
-    lobby_manager.joinLobby(std::move(request5));
+    LOBBY_MANAGER_CALL(request5);
     ASSERT_EQ(games.at("123")->getPlayers().size(), 4) << "There should still be four players in the lobby";
 }
 
+/*
 TEST(ServerLibraryTest, StartGame)
 {
     std::shared_ptr<MockMessageInterface> message_interface = std::make_shared<MockMessageInterface>();
@@ -210,4 +216,7 @@ TEST(ServerLibraryTest, ReceiveAction)
     // TODO: uncomment as soon as game_interface is implemented
     // lobby_manager.receive_action(std::move(request7));
 }
+
 */
+
+#undef LOBBY_MANAGER_CALL

@@ -22,7 +22,6 @@ namespace server
         virtual void sendMessage(std::unique_ptr<shared::ServerToClientMessage> message,
                                  const shared::PlayerBase::id_t &player_id) = 0;
 
-
         /**
          * @brief Sends a message of provided type to given player.
          *

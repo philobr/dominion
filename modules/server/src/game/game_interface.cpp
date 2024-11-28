@@ -14,7 +14,7 @@ namespace server
     GameInterface::response_t GameInterface::handleMessage(std::unique_ptr<shared::ClientToServerMessage> &message)
     {
         // THIS IS A HACKY WORK IN PROGRESS, WILL FIX LATER
-        auto casted_msg = dynamic_cast<shared::ActionDecisionMessage *>(message.get());
+        auto *casted_msg = dynamic_cast<shared::ActionDecisionMessage *>(message.get());
         auto action_decision = std::move(casted_msg->decision);
 
         if ( casted_msg->in_response_to.has_value() ) {

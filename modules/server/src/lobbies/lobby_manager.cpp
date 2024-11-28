@@ -11,7 +11,7 @@ namespace server
         }
 
         // handle create lobby
-        if ( auto create_lobby_request = dynamic_cast<shared::CreateLobbyRequestMessage *>(message.get()) ) {
+        if ( auto *create_lobby_request = dynamic_cast<shared::CreateLobbyRequestMessage *>(message.get()) ) {
             LOG(INFO) << "Trying to handle: CreateLobbyRequestMessage";
             std::unique_ptr<shared::CreateLobbyRequestMessage> unique_CreateLobbyRequestMessage(
                     static_cast<shared::CreateLobbyRequestMessage *>(message.release()));
@@ -31,7 +31,7 @@ namespace server
             return;
         }
 
-        games.at(lobby_id)->handleMessage(*(message_interface.get()), message);
+        games.at(lobby_id)->handleMessage(*(message_interface), message);
     }
 
     void LobbyManager::createLobby(std::unique_ptr<shared::CreateLobbyRequestMessage> &request)

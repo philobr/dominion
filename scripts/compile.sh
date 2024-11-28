@@ -6,7 +6,7 @@ RED='\033[0;31m'
 NC='\033[0m' # No Color
 
 # Get the directory where the script is located (project root)
-PROJECT_ROOT="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+PROJECT_ROOT="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && cd .. && pwd )"
 BUILD_DIR="${PROJECT_ROOT}/build"
 
 # Store current directory to return to it later
@@ -90,13 +90,28 @@ if [ ! -f "Makefile" ]; then
     fi
 fi
 
-# Build project
-cmake --build . > "$ERROR_LOG" 2>&1 &
-show_progress $! "Building project" "$ERROR_LOG"
+# First build with parallel jobs (cores - 3)
+CORES=$(nproc)
+PARALLEL_JOBS=$(($CORES - 3))
+if [ $PARALLEL_JOBS -lt 1 ]; then
+    PARALLEL_JOBS=1
+fi
+
+cmake --build . -j $PARALLEL_JOBS > "$ERROR_LOG" 2>&1 &
+show_progress $! "Building project (parallel)" "$ERROR_LOG"
 if [ $? -ne 0 ]; then
     cd "$ORIGINAL_DIR"
     exit 1
 fi
+
+# Final pass with single-threaded compilation
+cmake --build . > "$ERROR_LOG" 2>&1 &
+show_progress $! "Building project (final pass)" "$ERROR_LOG"
+if [ $? -ne 0 ]; then
+    cd "$ORIGINAL_DIR"
+    exit 1
+fi
+
 
 # Run tests
 cmake --build . --target test > "$ERROR_LOG" 2>&1 &

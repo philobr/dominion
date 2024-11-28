@@ -28,9 +28,8 @@ namespace server
             const auto &player_id = message->player_id;
             LOG(WARN) << "Tried to access a nonexistent LobbyID: " << lobby_id << ", by PlayerID: " << player_id;
 
-            message_interface->sendMessage(std::make_unique<shared::ResultResponseMessage>(
-                                                   lobby_id, false, message->message_id, "Lobby does not exist"),
-                                           player_id);
+            message_interface->send<shared::ResultResponseMessage>(player_id, lobby_id, false, message->message_id,
+                                                                   "Lobby does not exist");
             return;
         }
 
@@ -48,10 +47,9 @@ namespace server
         if ( lobbyExists(lobby_id) ) {
             LOG(DEBUG) << "Tried creating lobby that already exists. Game ID: " << lobby_id
                        << " , Player ID: " << game_master_id;
-            shared::ResultResponseMessage failure_message =
-                    shared::ResultResponseMessage(lobby_id, false, request->message_id, "Lobby already exists");
-            message_interface->sendMessage(std::make_unique<shared::ResultResponseMessage>(failure_message),
-                                           game_master_id);
+
+            message_interface->send<shared::ResultResponseMessage>(game_master_id, lobby_id, false, request->message_id,
+                                                                   "Lobby already exists");
             return;
         }
 
@@ -61,9 +59,7 @@ namespace server
         std::vector<shared::CardBase::id_t> available_cards =
                 std::vector<shared::CardBase::id_t>(); // TODO implement available cards
 
-        shared::CreateLobbyResponseMessage create_lobby_message =
-                shared::CreateLobbyResponseMessage(lobby_id, available_cards, request->message_id);
-        message_interface->sendMessage(std::make_unique<shared::CreateLobbyResponseMessage>(create_lobby_message),
-                                       game_master_id);
+        message_interface->send<shared::CreateLobbyResponseMessage>(game_master_id, lobby_id, available_cards,
+                                                                    request->message_id);
     };
 } // namespace server

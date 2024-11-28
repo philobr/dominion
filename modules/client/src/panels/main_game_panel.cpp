@@ -1,4 +1,5 @@
 #include <panels/main_game_panel.h>
+#include <shared/utils/logger.h>
 
 #include <wx/wx.h>
 
@@ -22,11 +23,16 @@ namespace client
 
     void MainGamePanel::drawGameState(const reduced::GameState &gameState)
     {
+        LOG(INFO) << "Called MainGamePanel::drawGameState()";
         bool is_active = (gameState.active_player == gameState.reduced_player->getId());
 
+        LOG(INFO) << "Set bool is_active for active player";
         Board->drawBoard(gameState.board, is_active, gameState.reduced_player->getTreasure());
+        LOG(INFO) << "Board drawn";
         Player->drawPlayer(gameState.reduced_player, is_active);
+        LOG(INFO) << "Player drawn";
         EnemyInfo->drawEnemies(gameState.reduced_enemies);
+        LOG(INFO) << "Enemies drawn";
     }
 
 

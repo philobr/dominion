@@ -77,7 +77,15 @@ namespace client
          */
         static void showStatus(const std::string &message);
 
+        /**
+         * @brief refreshes Players when a new player joins the lobby
+         */
         static void refreshPlayers(shared::JoinLobbyBroadcastMessage &msg);
+
+        /**
+         * @brief skips from the connection panel to the game panel for gui testing
+         */
+        static void skipToGamePanel();
 
     private:
         static void receiveActionOrderMessage(std::unique_ptr<shared::ActionOrderMessage> msg);
@@ -85,6 +93,7 @@ namespace client
         static void receiveJoinLobbyBroadcastMessage(std::unique_ptr<shared::JoinLobbyBroadcastMessage> msg);
         static void receiveResultResponseMessage(std::unique_ptr<shared::ResultResponseMessage> msg);
         static void receiveGameStateMessage(std::unique_ptr<shared::GameStateMessage> msg);
+        static void receiveStartGameBroadcastMessage(std::unique_ptr<shared::StartGameBroadcastMessage> msg);
 
         static shared::PlayerBase::id_t getPlayerName();
 

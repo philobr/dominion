@@ -7,7 +7,6 @@
 #include <wx/gtk/stattext.h>
 #endif
 
-
 namespace client
 {
 

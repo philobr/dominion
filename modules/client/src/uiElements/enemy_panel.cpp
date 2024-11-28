@@ -46,7 +46,7 @@ namespace client
         // TODO: display name in a bigger and bold font
         wxStaticText *PlayerId =
                 new wxStaticText(this, wxID_ANY, enemy.getId(), wxDefaultPosition, wxDefaultSize, wxALIGN_CENTER);
-        
+
         // new sizer for the hand cards
         auto *handCardSizer = new wxGridSizer(1, enemy.getHandSize(), 5, 5);
         auto hand_card_heigth = 30;

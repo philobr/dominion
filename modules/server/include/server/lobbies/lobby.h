@@ -53,18 +53,6 @@ namespace server
                           std::unique_ptr<shared::GameStateRequestMessage> request);
 
         /**
-         * @brief Receive an action from a player and handle it correctly.
-         * This will be passed on to the game interface.
-         *
-         * @param message_interface The message interface to send messages to the players.
-         * @param action The ActionDecisionMessage to handle.
-         *
-         * @pre The lobby exists.
-         * @pre Valid ActionDecisionMessage.
-         */
-        void receiveAction(MessageInterface &message_interface, std::unique_ptr<shared::ActionDecisionMessage> action);
-
-        /**
          * @brief Get the players in the lobby.
          *
          * @return A const reference vector of player ids.

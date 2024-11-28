@@ -23,7 +23,10 @@ namespace server
         static ptr_t make(const std::string &game_id, const std::vector<shared::CardBase::id_t> &play_cards,
                           const std::vector<Player::id_t> &player_ids);
 
-        std::shared_ptr<GameState> getGameState() { return game_state; }
+        inline std::unique_ptr<reduced::GameState> getGameState(const shared::PlayerBase::id_t &player_id)
+        {
+            return game_state->getReducedState(player_id);
+        }
 
         /**
          * @brief Receives an ActionDecision from the Lobby and handles it accordingly.

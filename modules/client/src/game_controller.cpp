@@ -15,6 +15,7 @@ namespace client
     ConnectionPanel *GameController::_connectionPanel = nullptr;
     MainGamePanel *GameController::_mainGamePanel = nullptr;
     LobbyPanel *GameController::_lobbyPanel = nullptr;
+    VictoryScreenPanel *GameController::_victoryScreenPanel = nullptr;
 
     ClientState GameController::_clientState = ClientState::LOGIN_SCREEN;
     std::unique_ptr<reduced::GameState> GameController::_gameState = nullptr;
@@ -32,11 +33,13 @@ namespace client
         GameController::_connectionPanel = new ConnectionPanel(gameWindow);
         GameController::_mainGamePanel = new MainGamePanel(gameWindow);
         GameController::_lobbyPanel = new LobbyPanel(gameWindow);
+        GameController::_victoryScreenPanel = new VictoryScreenPanel(gameWindow);
 
         // Hide all panels
         GameController::_connectionPanel->Show(false);
         GameController::_mainGamePanel->Show(false);
         GameController::_lobbyPanel->Show(false);
+        GameController::_victoryScreenPanel->Show(false);
 
         // Only show connection panel at the start of the game
         GameController::_gameWindow->showPanel(GameController::_connectionPanel);
@@ -363,4 +366,15 @@ namespace client
     }
 
     void GameController::skipToGamePanel() { GameController::_gameWindow->showPanel(GameController::_mainGamePanel); }
+    void GameController::skipToVictoryScreenPanel() 
+    {   
+        std::vector<CardBase::id_t> kingdom_cards{"Village", "Artisan", "Market", "Smithy", "Festival", "Laboratory", "Witch", "Chapel", "Cellar", "Moat"};
+        shared::Board::ptr_t board = std::make_shared<shared::Board>(kingdom_cards);
+        reduced::Player::ptr_t player = reduced::Player::make(shared::PlayerBase("gigu"), {"Village", "Copper", "Copper", "Copper", "Estate"});
+        std::vector<reduced::Enemy::ptr_t> enemies;
+        enemies.push_back(reduced::Enemy::make(shared::PlayerBase("enemy1"), {"Village", "Copper", "Copper", "Copper", "Estate"}));
+        reduced::GameState gameState(board, )
+        GameController::_victoryScreenPanel->drawVictoryScreen(gameState);
+        GameController::_gameWindow->showPanel(GameController::_victoryScreenPanel); 
+    }
 } // namespace client

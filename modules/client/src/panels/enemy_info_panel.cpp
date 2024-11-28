@@ -10,10 +10,12 @@ namespace client
     {
         // TODO: remove
         // just for temporary testing
+        LOG(WARN) << "Ctor EnemyInfoPanel";
         std::vector<std::unique_ptr<reduced::Enemy>> enemies;
         for ( int i = 0; i < 3; i++ ) {
             auto enemy = reduced::Enemy::make(shared::PlayerBase("enemy" + std::to_string(i)), i + 4);
             enemies.push_back(std::move(enemy));
+            LOG(INFO) << "Enemy " << i << " created";
         }
 
         drawEnemies(enemies);
@@ -28,6 +30,7 @@ namespace client
         for ( const auto &Enemy : Enemies ) {
             EnemyPanel *enemy_panel = new EnemyPanel(this, *Enemy);
             sizer->Add(enemy_panel, 0, wxALIGN_CENTER_HORIZONTAL);
+            LOG(DEBUG) << "EnemyPanel added";
         }
 
         this->SetSizer(sizer);

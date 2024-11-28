@@ -11,7 +11,6 @@ namespace server
 {
     std::shared_ptr<MessageInterface> ServerNetworkManager::_messageInterface;
     LobbyManager ServerNetworkManager::_lobby_manager(ServerNetworkManager::_messageInterface);
-    std::unique_ptr<MessageHandler> ServerNetworkManager::_messageHandler;
 
     ServerNetworkManager::ServerNetworkManager()
     {
@@ -21,7 +20,6 @@ namespace server
         }
         _messageInterface = std::make_shared<ImplementedMessageInterface>();
         _lobby_manager = LobbyManager(_messageInterface);
-        _messageHandler = std::make_unique<MessageHandler>(MessageHandler(_lobby_manager));
     }
 
     void ServerNetworkManager::run(const std::string &host, uint16_t port)
@@ -153,7 +151,7 @@ namespace server
             // execute client request
             // TODO Change to message handler
             //_messageHandler->handleMessage(req);
-            _lobby_manager.receiveMessage(req);
+            _lobby_manager.handleMessage(req);
 
         } catch ( const std::exception &e ) {
             LOG(ERROR) << "Failed to execute client request. Content was :\n"

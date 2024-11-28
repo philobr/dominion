@@ -13,7 +13,6 @@
 
 #include <server/lobbies/lobby_manager.h>
 #include <server/network/basic_network.h>
-#include <server/network/message_handler.h>
 #include <server/network/message_interface.h>
 #include <shared/message_types.h>
 
@@ -45,8 +44,7 @@ namespace server
 
         inline static std::shared_mutex _rw_lock;
         inline static sockpp::tcp_acceptor _acc;
-        // messageHandler does the logic for received messages
-        static std::unique_ptr<MessageHandler> _messageHandler;
+
         // message interface gets passes to lobby manager etc. for the to send to clients later
         static std::shared_ptr<MessageInterface> _messageInterface;
 

@@ -56,7 +56,7 @@ namespace client
         }
         LOG(INFO) << "Board drawn";
         Player->drawPlayer(gameState.reduced_player, is_active);
-        LOG(WARN) << "Player drawn";
+        LOG(INFO) << "Player drawn";
 
         // Synchronize EnemyInfo->drawEnemies
         {

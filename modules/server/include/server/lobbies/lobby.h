@@ -96,5 +96,14 @@ namespace server
         {
             return std::any_of(players.begin(), players.end(), [&](const auto &player) { return player == player_id; });
         }
+
+        /**
+         * @brief The game_interface gets initialised only when we start a game, so we can check if a game is already
+         * running this way.
+         *
+         * @return true
+         * @return false
+         */
+        inline bool gameRunning() const { return game_interface != nullptr; }
     };
 } // namespace server

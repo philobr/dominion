@@ -114,7 +114,6 @@ TEST(ServerLibraryTest, JoinLobby)
     ASSERT_EQ(games.at("123")->getPlayers().size(), 4) << "There should still be four players in the lobby";
 }
 
-/*
 TEST(ServerLibraryTest, StartGame)
 {
     std::shared_ptr<MockMessageInterface> message_interface = std::make_shared<MockMessageInterface>();
@@ -139,8 +138,8 @@ TEST(ServerLibraryTest, StartGame)
     LOG(DEBUG) << "StartGameRequestMessage(player, game, message): " << request3->player_id << " " << request3->game_id
                << " " << request3->message_id;
 
-    lobby_manager.createLobby(std::move(request1));
-    lobby_manager.joinLobby(std::move(request2));
+    LOBBY_MANAGER_CALL(request1);
+    LOBBY_MANAGER_CALL(request2);
 
     // All expected function calls of sendMessage
     {
@@ -153,12 +152,14 @@ TEST(ServerLibraryTest, StartGame)
         EXPECT_CALL(*message_interface, sendMessage(_, _)).Times(4);
     }
 
-    lobby_manager.startGame(std::move(request3));
-    lobby_manager.startGame(std::move(request4));
-    lobby_manager.startGame(std::move(request5));
+    LOBBY_MANAGER_CALL(request3);
+    LOBBY_MANAGER_CALL(request4);
+    LOBBY_MANAGER_CALL(request5);
     // TODO: Check if the game started correctly
 }
 
+/*
+TODO: those tests fail and i dont quite understand what they are supposed to do
 TEST(ServerLibraryTest, ReceiveAction)
 {
     std::shared_ptr<MockMessageInterface> message_interface = std::make_shared<MockMessageInterface>();
@@ -167,16 +168,15 @@ TEST(ServerLibraryTest, ReceiveAction)
     shared::PlayerBase::id_t player_2 = "Peter";
     shared::PlayerBase::id_t player_3 = "Paul";
 
-    // Setup of the lobby
+    // Setup
     auto request1 = std::make_unique<shared::CreateLobbyRequestMessage>("123", player_1);
     auto request2 = std::make_unique<shared::JoinLobbyRequestMessage>("123", player_2);
 
     std::vector<shared::CardBase::id_t> selected_cards = getValidKingdomCards();
-
     auto request3 = std::make_unique<shared::StartGameRequestMessage>("123", player_1, selected_cards);
 
-    lobby_manager.createLobby(std::move(request1));
-    lobby_manager.joinLobby(std::move(request2));
+    LOBBY_MANAGER_CALL(request1);
+    LOBBY_MANAGER_CALL(request2);
     // Finish setup
 
     // ActionDecision for a lobby that doesn't exist
@@ -205,18 +205,16 @@ TEST(ServerLibraryTest, ReceiveAction)
     // request6
     EXPECT_CALL(*message_interface, sendMessage(IsFailureMessage(), player_3)).Times(1);
     // request7
-    // TODO: uncomment as soon as game_interface is implemented
-    // EXPECT_CALL(*message_interface, sendMessage(_, player_1)).Times(1);
+    EXPECT_CALL(*message_interface, sendMessage(_, player_1)).Times(1);
     }
 
-    lobby_manager.receiveAction(std::move(request4));
-    EXPECT_THROW(lobby_manager.receiveAction(std::move(request5)), std::runtime_error);
-    lobby_manager.startGame(std::move(request3));
-    lobby_manager.receiveAction(std::move(request6));
-    // TODO: uncomment as soon as game_interface is implemented
-    // lobby_manager.receive_action(std::move(request7));
+    LOBBY_MANAGER_CALL(request4);
+    auto casted_request5 = std::unique_ptr<shared::ClientToServerMessage>(request5.release());
+    EXPECT_THROW(lobby_manager.handleMessage(casted_request5), std::runtime_error);
+
+    LOBBY_MANAGER_CALL(request3);
+    LOBBY_MANAGER_CALL(request6);
+    LOBBY_MANAGER_CALL(request7);
 }
-
 */
-
 #undef LOBBY_MANAGER_CALL

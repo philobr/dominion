@@ -3,9 +3,10 @@
 #include <memory>
 #include <string>
 
-#include <server/game/game_state/game_interface.h>
-#include <server/game/game_state/game_state.h>
+#include <server/game/game_interface.h>
+#include <server/game/game_state.h>
 #include <server/network/message_interface.h>
+
 #include <shared/message_types.h>
 
 namespace server

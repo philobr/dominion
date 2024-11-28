@@ -1,4 +1,4 @@
-#include <server/game/game_state/behaviour_chain.h>
+#include <server/game/behaviour_chain.h>
 
 void server::BehaviourChain::loadBehaviours(const std::string &card_id)
 {
@@ -28,8 +28,9 @@ void server::BehaviourChain::resetBehaviours()
 }
 
 std::optional<std::unique_ptr<shared::ActionOrder>>
-server::BehaviourChain::receiveAction(server::GameState &game_state,
-                                      std::optional<std::unique_ptr<shared::ActionDecision>> action_decision)
+server::BehaviourChain::receiveAction(server::GameState &game_state, Player::id_t player_id,
+                                      std::optional<std::unique_ptr<shared::ActionDecision>> action_decision,
+                                      std::optional<std::string> in_response_to)
 {
     if ( empty() ) {
         LOG(ERROR) << "Tried to use an empty BehaviourChain, crashing now";

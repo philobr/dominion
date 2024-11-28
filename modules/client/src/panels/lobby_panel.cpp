@@ -8,6 +8,7 @@
 #include <wx/sizer.h>
 #include <wx/wx.h>
 #include "shared/utils/logger.h"
+#include "uiElements/text_panel.h"
 
 // NOLINTBEGIN(bugprone-suspicious-enum-usage)
 namespace client
@@ -16,22 +17,11 @@ namespace client
         wxPanel(parent, wxID_ANY, wxDefaultPosition, wxSize(1024, 1024)), NamesSizer(new wxGridSizer(2, 2, 0, 0)),
         playerCount(0)
     {
-        wxStaticText *Title = new wxStaticText(this, wxID_ANY, "Lobby");
-        Title->SetFont(wxFont(24, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD));
-        Title->SetForegroundColour(wxColor(0, 0, 0));
+        TextPanel *Title = new TextPanel(this, wxID_ANY, "Lobby", TextFormat::TITLE);
         wxBoxSizer *VerticalSizer = new wxBoxSizer(wxVERTICAL);
         VerticalSizer->Add(Title, 0, wxALIGN_CENTER | wxALL, 5);
         wxPanel *Panel = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxSize(512, 512));
         VerticalSizer->Add(Panel, 1, wxALIGN_CENTER | wxALL, 5);
-        wxButton *StartButton = new wxButton(this, wxID_ANY, "Start Game");
-        StartButton->Bind(wxEVT_BUTTON, [](const wxCommandEvent &) { GameController::startGame(); });
-        VerticalSizer->Add(StartButton, 0, wxALIGN_CENTER | wxALL, 5);
-
-        wxButton *AddPlayerButton = new wxButton(this, wxID_ANY, "Add Player");
-        wxString name = "dummy name";
-        AddPlayerButton->Bind(wxEVT_BUTTON, [this, name](const wxCommandEvent &) { this->addPlayer(name); });
-        VerticalSizer->Add(AddPlayerButton, 0, wxALIGN_CENTER | wxALL, 5);
-
 
         Panel->SetSizer(NamesSizer);
 
@@ -47,6 +37,15 @@ namespace client
             LOG(DEBUG) << "Adding player " << player;
             this->addPlayer(player);
         }
+    }
+
+    void LobbyPanel::makeGameMaster()
+    {
+        wxButton *StartButton = new wxButton(this, wxID_ANY, "Start Game");
+
+        StartButton->Bind(wxEVT_BUTTON, [](const wxCommandEvent &) { GameController::startGame(); });
+
+        this->GetSizer()->Add(StartButton, 0, wxALIGN_CENTER | wxALL, 5);
     }
 
 
@@ -71,8 +70,7 @@ namespace client
                                                0.0 // rotation
         );
         Player->GetSizer()->Add(LogoPanel, 0, wxALL | wxALIGN_CENTER, 5);
-        wxStaticText *Player_name = new wxStaticText(Player, wxID_ANY, name);
-        Player_name->SetForegroundColour(wxColor(0, 0, 0));
+        TextPanel *Player_name = new TextPanel(Player, wxID_ANY, name, TextFormat::PLAIN);
         Player->GetSizer()->Add(Player_name, 0, wxALL | wxALIGN_CENTER, 5);
         NamesSizer->Add(Player, 1, wxALL | wxALIGN_CENTER);
         NamesSizer->Layout();

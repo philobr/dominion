@@ -1,7 +1,7 @@
 #pragma once
 
-#include <server/game/game.h>
-#include <server/game/game_state/behaviour_chain.h>
+#include <server/game/behaviour_chain.h>
+#include <server/game/game_state.h>
 
 namespace server
 {
@@ -47,7 +47,7 @@ namespace server
         {
             // TODO: just for testing, remove later
             cur_behaviours->loadBehaviours("Laboratory");
-            cur_behaviours->receiveAction(*game_state, std::nullopt);
+            cur_behaviours->receiveAction(*game_state, player_ids.at(0), std::nullopt, std::nullopt);
         }
 
         response_t handleAction(std::unique_ptr<shared::ActionDecision> action_decision,

@@ -4,6 +4,7 @@
 // from https://stackoverflow.com/questions/24365331/how-can-i-generate-uuid-in-c-without-using-boost-library
 #pragma once
 
+#include <array>
 #include <random>
 #include <sstream>
 

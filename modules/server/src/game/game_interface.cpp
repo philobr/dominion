@@ -1,4 +1,4 @@
-#include <server/game/game_state/game_interface.h>
+#include <server/game/game_interface.h>
 #include <shared/utils/logger.h>
 namespace server
 {
@@ -68,12 +68,36 @@ namespace server
     }
 
     GameInterface::response_t
-    GameInterface::PlayActionCardDecision_handler(std::unique_ptr<shared::PlayActionCardDecision> /*action_decision*/,
-                                                  const Player::id_t & /*player_id*/)
+    GameInterface::PlayActionCardDecision_handler(std::unique_ptr<shared::PlayActionCardDecision> action_decision,
+                                                  const Player::id_t &player_id)
     {
-        // TODO: Implement for MVP 3
-        LOG(ERROR) << "Not implemented yet, i will kill myself now:) much fun debugging!";
-        throw std::runtime_error("Not implemented yet");
+        if ( action_decision->cardIndex >=
+             game_state->getPlayer(player_id).get<shared::CardAccess::PLAYED_CARDS>().size() ) {
+            LOG(ERROR) << "player(" << player_id << ") tried to play a card that is not in his played cards";
+            throw exception::InvalidCardAccess("");
+        }
+        const auto &card_id =
+                game_state->getPlayer(player_id).get<shared::CardAccess::HAND>()[action_decision->cardIndex];
+        // checks if the card is currently playable (multiple checks done)
+        if ( game_state->tryPlay(player_id, action_decision->cardIndex, action_decision->from) ) {
+
+            cur_behaviours->loadBehaviours(card_id);
+            auto response = cur_behaviours->receiveAction(*game_state, player_id, std::nullopt, std::nullopt).value();
+            if ( response == nullptr ) {
+                if ( game_state->getPlayer(player_id).getActions() != 0 ) {
+                    return std::make_unique<shared::ActionPhaseOrder>();
+                } else if ( game_state->getPlayer(player_id).getBuys() != 0 ) {
+                    return std::make_unique<shared::BuyPhaseOrder>();
+                } else {
+                    return std::make_unique<shared::EndTurnOrder>();
+                }
+            } else {
+                return response;
+            }
+        }
+
+        // something went wrong, retry ActionPhase
+        return std::make_unique<shared::ActionPhaseOrder>();
     }
 
     GameInterface::response_t
@@ -117,12 +141,12 @@ namespace server
     }
 
     GameInterface::response_t GameInterface::PlayActionCardDecision_response_handler(
-            std::unique_ptr<shared::PlayActionCardDecision> /*action_decision*/, const Player::id_t & /*player_id*/,
-            const std::string & /*in_response_to*/)
+            std::unique_ptr<shared::PlayActionCardDecision> action_decision, const Player::id_t &player_id,
+            const std::string &in_response_to)
     {
-        // TODO: Implement for MVP 3
-        LOG(ERROR) << "Not implemented";
-        throw std::runtime_error("Not implemented");
+        // Checks for validity are done in the behaviour chain
+        return (cur_behaviours->receiveAction(*game_state, player_id, std::move(action_decision), in_response_to))
+                .value();
     }
 
     GameInterface::response_t

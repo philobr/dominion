@@ -12,6 +12,18 @@
 
 namespace shared
 {
+    enum CardAccess
+    {
+        DISCARD_PILE = 1,
+        HAND = 2,
+        DRAW_PILE_TOP = 4,
+        DRAW_PILE_BOTTOM = 8,
+
+        PLAYED_CARDS = 16,
+        TRASH = 32,
+        STAGED_CARDS = 64 // ex: sentry could move here
+    };
+
     class PlayerBase
     {
     public:
@@ -37,6 +49,7 @@ namespace shared
         unsigned int getTreasure() const { return treasure; }
         unsigned int getDrawPileSize() const { return draw_pile_size; }
         unsigned int getDiscardPileSize() const { return discard_pile.size(); }
+        CardBase::id_t getTopDiscardCard() const { return discard_pile.empty() ? "" : discard_pile.back(); }
 
         /**
          * @brief Decrements actions by one, or keeps it at 0.

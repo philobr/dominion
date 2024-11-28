@@ -1,7 +1,7 @@
 #include <algorithm>
 #include <random>
 
-#include <server/game/game_state/game_state.h>
+#include <server/game/game_state.h>
 
 #include <shared/game/cards/card_factory.h>
 #include <shared/utils/assert.h>
@@ -107,6 +107,50 @@ namespace server
         player.gain(card_id);
         player.decTreasure(card_cost);
 
+        return true;
+    }
+
+    bool GameState::tryPlay(const Player::id_t &affected_player, size_t hand_index, shared::CardAccess from)
+    {
+        auto &player = getPlayer(affected_player);
+        const auto &card_id = player.get<shared::CardAccess::HAND>()[hand_index];
+        const auto &card = shared::CardFactory::getCard(card_id);
+
+        if ( !card.isAction() ) {
+            LOG(ERROR) << "tried to play a card that isn't an action card";
+            throw exception::InvalidCardType("");
+        }
+        if ( getPhase() != GamePhase::ACTION_PHASE ) {
+            LOG(ERROR) << "player(" << affected_player << ") is currently not in the action phase, throwing";
+            throw exception::OutOfPhase("");
+        }
+        if ( player.isCurrentlyPlayingCard() ) {
+            LOG(ERROR) << "player(" << affected_player
+                       << ") is already playing a different card, landed in the wrong handler";
+            throw std::runtime_error("message landed up in the wrong handler");
+        }
+        if ( player.getActions() == 0 ) {
+            forceSwitchPhase();
+            LOG(ERROR) << "tried to play an action card, but has no actions left";
+            throw exception::OutOfActions("");
+        }
+        if ( !(player.hasCardInHand(card_id) || player.hasCardStaged(card_id)) ) {
+            LOG(ERROR) << "tried to play a card that is not in the hand or staged cards";
+            throw exception::InvalidCardAccess("");
+        }
+
+        player.setCurrentlyPlayingCard(card_id);
+        player.decActions();
+        phase = GamePhase::PLAYING_ACTION_CARD;
+
+        if ( from == shared::CardAccess::HAND ) {
+            player.playCardFromHand(hand_index);
+        } else if ( from == shared::CardAccess::STAGED_CARDS ) {
+            player.playCardFromStaged(hand_index);
+        } else {
+            LOG(ERROR) << "tried to play a card from an invalid pile";
+            throw exception::InvalidCardAccess("");
+        }
         return true;
     }
 

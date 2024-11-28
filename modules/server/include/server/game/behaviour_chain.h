@@ -1,6 +1,6 @@
 #pragma once
 
-#include <server/game/game_state/behaviour_registry.h>
+#include <server/game/behaviour_registry.h>
 #include <shared/utils/logger.h>
 #include <vector>
 
@@ -40,8 +40,9 @@ namespace server
          * @return std::optional<std::unique_ptr<shared::ActionOrder>>
          */
         std::optional<std::unique_ptr<shared::ActionOrder>>
-        receiveAction(server::GameState &game_state,
-                      std::optional<std::unique_ptr<shared::ActionDecision>> action_decision);
+        receiveAction(server::GameState &game_state, Player::id_t player_id,
+                      std::optional<std::unique_ptr<shared::ActionDecision>> action_decision,
+                      std::optional<std::string> in_response_to);
 
         bool empty() const { return behaviour_idx == INVALID_IDX && current_card == INVALID_CARD; }
 

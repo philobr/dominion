@@ -4,8 +4,8 @@
 #include <memory>
 #include <vector>
 
-#include <server/game/game_state/server_board.h>
-#include <server/game/game_state/server_player.h>
+#include <server/game/server_board.h>
+#include <server/game/server_player.h>
 
 #include <server/network/message_interface.h>
 #include <shared/action_decision.h>
@@ -74,8 +74,15 @@ namespace server
          * @return true
          * @return false
          */
+
+        /**
+         * @brief This function checks if the player is in Action phase, the card is an action card and if the player
+         * has actions left. If both conditions are met, the card is moved from the hand/staged cards to the played
+         * cards and the currently_playing_card (in Player) and the actions are decremented.
+         */
         bool tryBuy(const Player::id_t &player_id, const shared::CardBase::id_t &card);
-        bool tryPlay(const Player::id_t &affected_player, size_t hand_index, size_t behaviour_index);
+        bool tryPlay(const Player::id_t &affected_player, size_t hand_index, shared::CardAccess from);
+
 
         /**
          * @brief Switches phases if necessary, this means: if a player is out of buys or out of actions

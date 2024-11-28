@@ -29,7 +29,7 @@ namespace client
 
         this->_serverAddressField = new InputField(this, // parent element
                                                    "Server address:", // label
-                                                   100, // width of label
+                                                   120, // width of label
                                                    "127.0.0.1", // default value (variable from "default.conf")
                                                    240 // width of field
         );
@@ -38,7 +38,7 @@ namespace client
         this->_serverPortField =
                 new InputField(this, // parent element
                                "Server port:", // label
-                               100, // width of label
+                               120, // width of label
                                wxString::Format("%i", 50505), // default value (variable from "default.conf")
                                240 // width of field
                 );
@@ -46,7 +46,7 @@ namespace client
 
         this->_playerNameField = new InputField(this, // parent element
                                                 "Player name:", // label
-                                                100, // width of label
+                                                120, // width of label
                                                 "", // default value
                                                 240 // width of field
         );
@@ -54,7 +54,7 @@ namespace client
 
         this->_gameName = new InputField(this, // parent element
                                          "Game name:", // label
-                                         100, // width of label
+                                         120, // width of label
                                          "my dominion", // default value (variable from "default.conf")
                                          240 // width of field
         );
@@ -71,7 +71,7 @@ namespace client
         wxButton *skipToGameScreenButton =
                 new wxButton(this, wxID_ANY, "Game Screen", wxDefaultPosition, wxSize(100, 40));
         skipToGameScreenButton->Bind(wxEVT_BUTTON,
-                                     [](const wxCommandEvent & /*event*/) { GameController::startGame(); });
+                                     [](const wxCommandEvent & /*event*/) { GameController::skipToGamePanel(); });
         VerticalLayout->Add(skipToGameScreenButton, 0, wxALIGN_RIGHT | wxALL, 10);
 
         this->SetSizerAndFit(VerticalLayout);

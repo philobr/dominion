@@ -11,16 +11,15 @@ namespace server
         return ptr_t(new GameInterface(game_id, play_cards, player_ids));
     }
 
-    GameInterface::response_t GameInterface::receiveAction(std::unique_ptr<shared::ActionDecision> action_decision,
-                                                           const std::optional<std::string> &in_response_to,
-                                                           const Player::id_t &affected_player_id)
+    GameInterface::response_t GameInterface::receiveAction(std::unique_ptr<shared::ClientToServerMessage> &message)
     {
-        if ( in_response_to.has_value() ) {
+        // TODO: do we only get action_decisions here?
+        if ( "in_response_to.has_value()" ) {
             LOG(ERROR) << "this is not implemented yet!";
             throw std::runtime_error("not implemented");
         }
 
-        return handleAction(std::move(action_decision), affected_player_id);
+        //        return handleAction(std::move(action_decision), affected_player_id);
         /* This might become useful later on
          * TODO: use this or delete it
         return in_response_to.has_value()

@@ -82,7 +82,7 @@ namespace client
         counter = 0;
         for ( const auto &KingdomPile : KingdomCards ) {
             LOG(INFO) << "New loop: " << counter << " " << KingdomPile.card_id;
-            PilePanel *Pile = new PilePanel(this, KingdomPile, formatting_constants::DEFAULT_BOARD_PILE_SIZE));
+            PilePanel *Pile = new PilePanel(this, KingdomPile, formatting_constants::DEFAULT_BOARD_PILE_SIZE);
             LOG(INFO) << "Created Pile";
 
             wxGBPosition position = wxGBPosition(counter % 2, 2 + counter / 2);

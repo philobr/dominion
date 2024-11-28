@@ -1,3 +1,4 @@
+#include <shared/utils/logger.h>
 #include <uiElements/enemy_panel.h>
 #include <uiElements/pile_panel.h>
 #include <uiElements/single_card_panel.h>
@@ -10,6 +11,7 @@ namespace client
     EnemyPanel::EnemyPanel(wxWindow *parent, reduced::Enemy &enemy) :
         wxPanel(parent, wxID_ANY, wxDefaultPosition, wxSize(-1, 80))
     {
+        LOG(INFO) << "Ctor EnemyPanel";
         // Set a light red background color
         this->SetBackgroundStyle(wxBG_STYLE_PAINT);
         this->Bind(wxEVT_PAINT, &EnemyPanel::onPaint, this);
@@ -34,9 +36,9 @@ namespace client
         PilePanel *Draw_Pile_panel = new PilePanel(this, Draw_Pile, wxSize(height / 3 * 2, height));
 
         // add new items to the sizer
-        drawPileSizer->Add(DrawPileText, wxSizerFlags().Align(wxALIGN_CENTER_HORIZONTAL).Border(wxLEFT | wxRIGHT));
-        drawPileSizer->Add(Draw_Pile_panel, wxSizerFlags().Align(wxALIGN_CENTER_HORIZONTAL).Border(wxLeft | wxRight));
-        innerSizer->Add(drawPileSizer, wxSizerFlags().Align(wxALIGN_CENTER_VERTICAL).Border(wxLeft | wxRight, 5));
+        drawPileSizer->Add(DrawPileText, wxSizerFlags().Align(wxALIGN_CENTER_HORIZONTAL).Border(wxALL));
+        drawPileSizer->Add(Draw_Pile_panel, wxSizerFlags().Align(wxALIGN_CENTER_HORIZONTAL).Border(wxALL));
+        innerSizer->Add(drawPileSizer, wxSizerFlags().Align(wxALIGN_CENTER_VERTICAL).Border(wxALL, 5));
 
 
         /* ===========display player id=========== */
@@ -53,13 +55,13 @@ namespace client
         auto hand_card_width = hand_card_heigth / 3 * 2;
         for ( unsigned int i = 0; i < enemy.getHandSize(); i++ ) {
             SingleCardPanel *Card = new SingleCardPanel(this, "Card_back", wxSize(hand_card_width, hand_card_heigth));
-            handCardSizer->Add(Card, 0, wxLeft | wxRight, 5);
+            handCardSizer->Add(Card, 0, wxALL, 5);
         }
 
         // add new items to the sizer
-        centerSizer->Add(PlayerId, wxSizerFlags().Align(wxALIGN_CENTER_HORIZONTAL).Border(wxLeft | wxRight));
-        centerSizer->Add(handCardSizer, wxSizerFlags().Align(wxALIGN_CENTER_HORIZONTAL).Border(wxLeft | wxRight));
-        innerSizer->Add(centerSizer, wxSizerFlags().Align(wxALIGN_CENTER_VERTICAL).Border(wxLeft | wxRight, 5));
+        centerSizer->Add(PlayerId, wxSizerFlags().Align(wxALIGN_CENTER_HORIZONTAL).Border(wxALL));
+        centerSizer->Add(handCardSizer, wxSizerFlags().Align(wxALIGN_CENTER_HORIZONTAL).Border(wxALL));
+        innerSizer->Add(centerSizer, wxSizerFlags().Align(wxALIGN_CENTER_VERTICAL).Border(wxALL, 5));
 
         /* ===========display discard pile=========== */
         wxBoxSizer *discardPileSizer = new wxBoxSizer(wxVERTICAL);
@@ -74,15 +76,13 @@ namespace client
         PilePanel *Discard_Pile_panel = new PilePanel(this, Discard_Pile, wxSize(height / 3 * 2, height));
 
         // add new items to the sizer
-        discardPileSizer->Add(discardPileText,
-                              wxSizerFlags().Align(wxALIGN_CENTER_HORIZONTAL).Border(wxLeft | wxRight));
-        discardPileSizer->Add(Discard_Pile_panel,
-                              wxSizerFlags().Align(wxALIGN_CENTER_HORIZONTAL).Border(wxLeft | wxRight));
-        innerSizer->Add(discardPileSizer, wxSizerFlags().Align(wxALIGN_CENTER_VERTICAL).Border(wxLeft | wxRight, 5));
+        discardPileSizer->Add(discardPileText, wxSizerFlags().Align(wxALIGN_CENTER_HORIZONTAL).Border(wxALL));
+        discardPileSizer->Add(Discard_Pile_panel, wxSizerFlags().Align(wxALIGN_CENTER_HORIZONTAL).Border(wxALL));
+        innerSizer->Add(discardPileSizer, wxSizerFlags().Align(wxALIGN_CENTER_VERTICAL).Border(wxALL, 5));
 
 
         // finally add the inner sizer to the outer sizer
-        outerSizer->Add(innerSizer, wxSizerFlags(1).Expand().Border(wxLeft | wxRight, 15));
+        outerSizer->Add(innerSizer, wxSizerFlags(1).Expand().Border(wxALL, 15));
 
         this->SetSizer(outerSizer);
     }

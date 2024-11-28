@@ -8,6 +8,7 @@
 
 #include <shared/game/cards/card_factory.h>
 #include <shared/utils/test_helpers.h>
+#include <uiElements/formatting_constants.h>
 
 namespace client
 {
@@ -41,7 +42,7 @@ namespace client
         LOG(INFO) << "Set sizer";
         unsigned int counter = 0;
         for ( const auto &VictoryPile : VictoryCards ) {
-            PilePanel *Pile = new PilePanel(this, VictoryPile, wxSize(100, 150));
+            PilePanel *Pile = new PilePanel(this, VictoryPile, formatting_constants::DEFAULT_BOARD_PILE_SIZE);
             wxGBPosition position = wxGBPosition(counter, 0);
             wxGBSpan span = wxGBSpan(1, 1);
 
@@ -62,7 +63,7 @@ namespace client
 
         counter = 0;
         for ( const auto &TreasurePile : TreasureCards ) {
-            PilePanel *Pile = new PilePanel(this, TreasurePile, wxSize(100, 150));
+            PilePanel *Pile = new PilePanel(this, TreasurePile, formatting_constants::DEFAULT_BOARD_PILE_SIZE);
             wxGBPosition position = wxGBPosition(counter, 1);
             wxGBSpan span = wxGBSpan(1, 1);
 
@@ -81,7 +82,7 @@ namespace client
         counter = 0;
         for ( const auto &KingdomPile : KingdomCards ) {
             LOG(INFO) << "New loop: " << counter << " " << KingdomPile.card_id;
-            PilePanel *Pile = new PilePanel(this, KingdomPile, wxSize(100, 150));
+            PilePanel *Pile = new PilePanel(this, KingdomPile, formatting_constants::DEFAULT_BOARD_PILE_SIZE));
             LOG(INFO) << "Created Pile";
 
             wxGBPosition position = wxGBPosition(counter % 2, 2 + counter / 2);

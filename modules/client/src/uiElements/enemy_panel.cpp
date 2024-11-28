@@ -1,5 +1,6 @@
 #include <shared/utils/logger.h>
 #include <uiElements/enemy_panel.h>
+#include <uiElements/formatting_constants.h>
 #include <uiElements/pile_panel.h>
 #include <uiElements/single_card_panel.h>
 
@@ -96,7 +97,7 @@ namespace client
         wxSize size = this->GetSize();
 
         // Create a rounded rectangle
-        wxBrush brush(wxColour(255, 200, 200)); // Light red
+        wxBrush brush(formatting_constants::ENEMY_BACKGROUND);
         dc.SetBrush(brush);
         dc.SetPen(*wxTRANSPARENT_PEN); // No border
         dc.DrawRoundedRectangle(0, 0, size.GetWidth(), size.GetHeight(), 10); // Radius of 10 for rounded corners

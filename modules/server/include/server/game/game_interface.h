@@ -35,7 +35,7 @@ namespace server
          * @param affected_player_id
          * @return response_t
          */
-        response_t receiveAction(std::unique_ptr<shared::ClientToServerMessage> &action_decision);
+        response_t handleMessage(std::unique_ptr<shared::ClientToServerMessage> &action_decision);
 
     private:
         GameInterface(const std::string &game_id, const std::vector<shared::CardBase::id_t> &play_cards,

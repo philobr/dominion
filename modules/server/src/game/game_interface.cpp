@@ -11,7 +11,7 @@ namespace server
         return ptr_t(new GameInterface(game_id, play_cards, player_ids));
     }
 
-    GameInterface::response_t GameInterface::receiveAction(std::unique_ptr<shared::ClientToServerMessage> &message)
+    GameInterface::response_t GameInterface::handleMessage(std::unique_ptr<shared::ClientToServerMessage> &message)
     {
         // TODO: do we only get action_decisions here?
         if ( "in_response_to.has_value()" ) {

@@ -34,9 +34,9 @@ namespace client
         PilePanel *Draw_Pile_panel = new PilePanel(this, Draw_Pile, wxSize(height / 3 * 2, height));
 
         // add new items to the sizer
-        drawPileSizer->Add(DrawPileText, 0, wxALIGN_CENTER_HORIZONTAL | wxLeft | wxRight);
-        drawPileSizer->Add(Draw_Pile_panel, 0, wxALIGN_CENTER_HORIZONTAL | wxLeft | wxRight);
-        innerSizer->Add(drawPileSizer, 0, wxALIGN_CENTER_VERTICAL | wxLeft | wxRight, 5);
+        drawPileSizer->Add(DrawPileText, wxSizerFlags().Align(wxALIGN_CENTER_HORIZONTAL).Border(wxLEFT | wxRIGHT));
+        drawPileSizer->Add(Draw_Pile_panel, wxSizerFlags().Align(wxALIGN_CENTER_HORIZONTAL).Border(wxLeft | wxRight));
+        innerSizer->Add(drawPileSizer, wxSizerFlags().Align(wxALIGN_CENTER_VERTICAL).Border(wxLeft | wxRight, 5));
 
 
         /* ===========display player id=========== */
@@ -57,9 +57,9 @@ namespace client
         }
 
         // add new items to the sizer
-        centerSizer->Add(PlayerId, 0, wxALIGN_CENTER_HORIZONTAL | wxLeft | wxRight);
-        centerSizer->Add(handCardSizer, 0, wxALIGN_CENTER_HORIZONTAL | wxLeft | wxRight);
-        innerSizer->Add(centerSizer, 0, wxALIGN_CENTER_VERTICAL | wxLeft | wxRight, 5);
+        centerSizer->Add(PlayerId, wxSizerFlags().Align(wxALIGN_CENTER_HORIZONTAL).Border(wxLeft | wxRight));
+        centerSizer->Add(handCardSizer, wxSizerFlags().Align(wxALIGN_CENTER_HORIZONTAL).Border(wxLeft | wxRight));
+        innerSizer->Add(centerSizer, wxSizerFlags().Align(wxALIGN_CENTER_VERTICAL).Border(wxLeft | wxRight, 5));
 
         /* ===========display discard pile=========== */
         wxBoxSizer *discardPileSizer = new wxBoxSizer(wxVERTICAL);
@@ -74,13 +74,15 @@ namespace client
         PilePanel *Discard_Pile_panel = new PilePanel(this, Discard_Pile, wxSize(height / 3 * 2, height));
 
         // add new items to the sizer
-        discardPileSizer->Add(discardPileText, 0, wxALIGN_CENTER_HORIZONTAL | wxLeft | wxRight);
-        discardPileSizer->Add(Discard_Pile_panel, 0, wxALIGN_CENTER_HORIZONTAL | wxLeft | wxRight);
-        innerSizer->Add(discardPileSizer, 0, wxALIGN_CENTER_VERTICAL | wxLeft | wxRight, 5);
+        discardPileSizer->Add(discardPileText,
+                              wxSizerFlags().Align(wxALIGN_CENTER_HORIZONTAL).Border(wxLeft | wxRight));
+        discardPileSizer->Add(Discard_Pile_panel,
+                              wxSizerFlags().Align(wxALIGN_CENTER_HORIZONTAL).Border(wxLeft | wxRight));
+        innerSizer->Add(discardPileSizer, wxSizerFlags().Align(wxALIGN_CENTER_VERTICAL).Border(wxLeft | wxRight, 5));
 
 
         // finally add the inner sizer to the outer sizer
-        outerSizer->Add(innerSizer, 1, wxEXPAND | wxLeft | wxRight, 15);
+        outerSizer->Add(innerSizer, wxSizerFlags(1).Expand().Border(wxLeft | wxRight, 15));
 
         this->SetSizer(outerSizer);
     }

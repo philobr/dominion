@@ -158,8 +158,8 @@ TEST(ServerLibraryTest, StartGame)
     // TODO: Check if the game started correctly
 }
 
-/*
-TODO: those tests fail and i dont quite understand what they are supposed to do
+
+//TODO: those tests fail and i dont quite understand what they are supposed to do
 TEST(ServerLibraryTest, ReceiveAction)
 {
     std::shared_ptr<MockMessageInterface> message_interface = std::make_shared<MockMessageInterface>();
@@ -200,6 +200,8 @@ TEST(ServerLibraryTest, ReceiveAction)
     InSequence s;
     // request4
     EXPECT_CALL(*message_interface, sendMessage(IsFailureMessage(), player_1)).Times(1);
+    // request5
+    EXPECT_CALL(*message_interface, sendMessage(IsFailureMessage(), player_1)).Times(1);
     // Start game messages
     EXPECT_CALL(*message_interface, sendMessage(_, _)).Times(4);
     // request6
@@ -216,5 +218,5 @@ TEST(ServerLibraryTest, ReceiveAction)
     LOBBY_MANAGER_CALL(request6);
     LOBBY_MANAGER_CALL(request7);
 }
-*/
+
 #undef LOBBY_MANAGER_CALL

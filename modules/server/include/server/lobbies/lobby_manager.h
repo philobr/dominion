@@ -30,8 +30,7 @@ namespace server
          *
          * @param message_interface The message interface to send messages to the players.
          */
-        LobbyManager(std::shared_ptr<MessageInterface> message_interface) : message_interface(message_interface){};
-        /*message_interface(std::make_unique<MessageInterface>(message_interface))*/
+        LobbyManager(std::shared_ptr<MessageInterface> message_interface) : message_interface(message_interface) {};
 
         /**
          * @brief The manager will now receive a message and only handle the lobby creation.

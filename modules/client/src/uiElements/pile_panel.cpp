@@ -10,7 +10,8 @@ namespace client
 
         std::string CardPath = "assets/" + pile.card_id + ".png";
 
-        Image = new ImagePanel(this, CardPath, wxBITMAP_TYPE_PNG, wxDefaultPosition, wxSize(size.GetWidth(), size.GetHeight() - 2 * padding));
+        Image = new ImagePanel(this, CardPath, wxBITMAP_TYPE_PNG, wxDefaultPosition,
+                               wxSize(size.GetWidth(), size.GetHeight() - 2 * padding));
 
         sizer->Add(Image, 0, wxALIGN_CENTER_HORIZONTAL);
 

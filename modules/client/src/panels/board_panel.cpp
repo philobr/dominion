@@ -80,7 +80,7 @@ namespace client
 
         counter = 0;
         for ( const auto &KingdomPile : KingdomCards ) {
-            LOG(INFO) << "New loop";
+            LOG(INFO) << "New loop: " << counter << " " << KingdomPile.card_id;
             PilePanel *Pile = new PilePanel(this, KingdomPile, wxSize(100, 150));
             LOG(INFO) << "Created Pile";
 

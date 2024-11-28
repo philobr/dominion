@@ -67,6 +67,6 @@ namespace server
          *
          * @return True if the lobby exists, false otherwise.
          */
-        bool lobbyExists(std::string lobby_id);
+        inline bool lobbyExists(std::string lobby_id) { return games.find(lobby_id) != games.end(); }
     };
 } // namespace server

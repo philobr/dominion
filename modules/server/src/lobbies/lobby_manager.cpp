@@ -3,8 +3,6 @@
 
 namespace server
 {
-    bool LobbyManager::lobbyExists(std::string lobby_id) { return games.find(lobby_id) != games.end(); }
-
     void LobbyManager::handleMessage(std::unique_ptr<shared::ClientToServerMessage> &message)
     {
         if ( message == nullptr ) {

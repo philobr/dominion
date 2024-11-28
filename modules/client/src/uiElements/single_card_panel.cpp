@@ -3,7 +3,7 @@
 
 namespace client
 {
-    SingleCardPanel::SingleCardPanel(wxWindow *parent, std::string card_name, wxSize size, int padding) :
+    SingleCardPanel::SingleCardPanel(wxWindow *parent, const std::string &card_name, wxSize size, int padding) :
         wxPanel(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize)
     {
         wxBoxSizer *sizer = new wxBoxSizer(wxVERTICAL);

@@ -15,7 +15,7 @@ namespace client
     class SingleCardPanel : public wxPanel
     {
     public:
-        SingleCardPanel(wxWindow *parent, std::string card_name, wxSize size = wxDefaultSize, int padding = 0);
+        SingleCardPanel(wxWindow *parent, const std::string &card_name, wxSize size = wxDefaultSize, int padding = 0);
 
     private:
         ImagePanel *Image;

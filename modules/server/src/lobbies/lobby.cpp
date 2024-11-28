@@ -9,11 +9,9 @@ namespace server
     void Lobby::handleMessage(MessageInterface &message_interface,
                               std::unique_ptr<shared::ClientToServerMessage> &message)
     {
-        auto &msg_ref = *message;
-
         // NOLINTBEGIN(bugprone-macro-parentheses)
 #define HANDLE(message_type, handler_func)                                                                             \
-    if ( typeid(msg_ref) == typeid(shared::message_type) ) {                                                           \
+    if ( typeid(&(*message)) == typeid(shared::message_type) ) {                                                       \
         LOG(INFO) << "Trying to handle: " << #message_type;                                                            \
         std::unique_ptr<shared::message_type> casted_message(static_cast<shared::message_type *>(message.release()));  \
         handler_func(message_interface, std::move(casted_message));                                                    \
@@ -84,6 +82,7 @@ namespace server
         // Check if gamemaster is starting the game
         Player::id_t player_id = request->player_id;
         LOG(INFO) << "Lobby::start_game called with Lobby ID: " << lobby_id << " and Player ID: " << player_id;
+
         if ( player_id != game_master ) {
             LOG(DEBUG) << "Lobby::start_game is called by someone differnt than game master. Lobby ID: " << lobby_id
                        << " , Player ID: " << player_id << " , Game Master ID: " << game_master;

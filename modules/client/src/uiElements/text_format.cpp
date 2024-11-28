@@ -1,6 +1,6 @@
 #include <uiElements/text_format.h>
 #include <uiElements/text_panel.h>
-#include <wx/gtk/stattext.h>
+#include <wx/stattext.h>
 
 
 namespace client

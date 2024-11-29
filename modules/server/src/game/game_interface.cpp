@@ -19,16 +19,13 @@ namespace server
             throw std::runtime_error("unreachable code");
         }
 
-        // THIS IS A HACKY WORK IN PROGRESS, WILL FIX LATER
-        auto action_decision = std::move(casted_msg->decision);
-
         if ( casted_msg->in_response_to.has_value() ) {
             LOG(ERROR) << "this is not implemented yet!";
             throw std::runtime_error("not implemented");
         }
 
         auto affected_player_id = casted_msg->player_id;
-        return handleAction(std::move(action_decision), affected_player_id);
+        return handleAction(std::move(casted_msg->decision), affected_player_id);
 
         /* This might become useful later on
          * TODO: use this or delete it
@@ -121,32 +118,42 @@ namespace server
         }
 
         const auto played_card_idx = action_decision->cardIndex;
-        if ( game_state->canPlay(player_id, played_card_idx) ) {
-            LOG(ERROR) << "player(" << player_id << ") tried to play a card that is not in his hand";
+        if ( !game_state->canPlay(player_id, played_card_idx) ) {
+            LOG(ERROR) << "player(" << player_id
+                       << ") tried to play a card that is not in his hand (index:" << played_card_idx
+                       << ", handsize: " << game_state->getPlayer(player_id).get<shared::CardAccess::HAND>().size()
+                       << ")";
             throw exception::InvalidCardAccess("");
         }
 
         const auto &card_id = game_state->getCardId(player_id, played_card_idx);
         // checks if the card is currently playable (multiple checks done)
-        if ( game_state->tryPlay(player_id, action_decision->cardIndex, action_decision->from) ) {
-
-            cur_behaviours->loadBehaviours(card_id);
-            auto response = cur_behaviours->receiveAction(*game_state, player_id, std::nullopt, std::nullopt).value();
-            if ( response == nullptr ) {
-                if ( game_state->getPlayer(player_id).getActions() != 0 ) {
-                    return std::make_unique<shared::ActionPhaseOrder>();
-                } else if ( game_state->getPlayer(player_id).getBuys() != 0 ) {
-                    return std::make_unique<shared::BuyPhaseOrder>();
-                } else {
-                    return std::make_unique<shared::EndTurnOrder>();
-                }
-            } else {
-                return response;
-            }
+        if ( !game_state->tryPlay(player_id, action_decision->cardIndex, shared::CardAccess::HAND) ) {
+            LOG(ERROR) << "failed to play card after all checks";
+            throw std::runtime_error("unreachable code");
         }
 
-        // something went wrong, retry ActionPhase
-        return std::make_unique<shared::ActionPhaseOrder>();
+        cur_behaviours->loadBehaviours(card_id);
+        auto response = cur_behaviours->receiveAction(*game_state, player_id, std::nullopt, std::nullopt);
+        if ( response.has_value() ) {
+            return std::move(response.value());
+        }
+
+        game_state->maybeSwitchPhase();
+
+        switch ( game_state->getPhase() ) {
+            case server::GamePhase::ACTION_PHASE:
+                return std::make_unique<shared::ActionPhaseOrder>();
+            case server::GamePhase::BUY_PHASE:
+                return std::make_unique<shared::BuyPhaseOrder>();
+            case server::GamePhase::PLAYING_ACTION_CARD:
+            default:
+                {
+                    LOG(ERROR) << "game_state is out of phase";
+                    throw std::runtime_error("unreachable code");
+                }
+                break;
+        }
     }
 
     GameInterface::response_t

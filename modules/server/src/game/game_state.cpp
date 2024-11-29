@@ -129,7 +129,7 @@ namespace server
         const auto &card = shared::CardFactory::getCard(card_id);
 
         if ( !card.isAction() ) {
-            LOG(ERROR) << "tried to play a card that isn't an action card";
+            LOG(ERROR) << "tried to play a card that isn't an action card, card:" << card.getId();
             throw exception::InvalidCardType("");
         } else if ( getPhase() != GamePhase::ACTION_PHASE ) {
             LOG(ERROR) << "player(" << affected_player << ") is currently not in the action phase, throwing";

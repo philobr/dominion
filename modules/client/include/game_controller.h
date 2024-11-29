@@ -30,13 +30,13 @@ namespace client
          *
          * @param gameWindow The main window of the game
          */
-        static void init(GameWindow *gameWindow);
+        static void init(GameWindow *game_window);
 
         /**
          * @brief Get all the necessary information to create a request message
          */
-        static bool validInput(const wxString &inputServerAddress, const wxString &inputServerPort,
-                               const wxString &inputPlayerName, const wxString &inputGameName);
+        static bool validInput(const wxString &input_server_address, const wxString &input_server_port,
+                               const wxString &input_player_name, const wxString &input_game_name);
 
         /**
          * @brief Show the connection panel and send create lobby request
@@ -55,7 +55,7 @@ namespace client
         static void startGame();
 
         static void buyCard(const std::string &card_id);
-        static void playCard(unsigned int cardIndex);
+        static void playCard(unsigned int card_index);
         static void endTurn();
         static void sendRequest(const std::string &req);
 

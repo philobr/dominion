@@ -23,11 +23,16 @@ namespace server
         static ptr_t make(const std::string &game_id, const std::vector<shared::CardBase::id_t> &play_cards,
                           const std::vector<Player::id_t> &player_ids);
 
-        std::shared_ptr<GameState> getGameState() { return game_state; }
+        inline std::unique_ptr<reduced::GameState> getGameState(const shared::PlayerBase::id_t &player_id)
+        {
+            return game_state->getReducedState(player_id);
+        }
 
         /**
          * @brief Receives an ActionDecision from the Lobby and handles it accordingly.
          * It will return some sort of ServerToClient message, which the lobby manager can pass on.
+         *
+         * @warning THIS IS WORK IN PROGRESS, I WILL FIX THIS WITH A FOLLOW UP MERGE REQ
          *
          * @param action_decision
          * @param in_response_to
@@ -35,20 +40,14 @@ namespace server
          * @param affected_player_id
          * @return response_t
          */
-        response_t receiveAction(std::unique_ptr<shared::ActionDecision> action_decision,
-                                 const std::optional<std::string> &in_response_to,
-                                 const Player::id_t &affected_player_id);
+        response_t handleMessage(std::unique_ptr<shared::ClientToServerMessage> &action_decision);
 
     private:
         GameInterface(const std::string &game_id, const std::vector<shared::CardBase::id_t> &play_cards,
                       const std::vector<Player::id_t> &player_ids) :
             game_state(std::make_shared<GameState>(play_cards, player_ids)),
             cur_behaviours(std::make_unique<BehaviourChain>()), game_id(game_id)
-        {
-            // TODO: just for testing, remove later
-            cur_behaviours->loadBehaviours("Laboratory");
-            cur_behaviours->receiveAction(*game_state, player_ids.at(0), std::nullopt, std::nullopt);
-        }
+        {}
 
         response_t handleAction(std::unique_ptr<shared::ActionDecision> action_decision,
                                 const Player::id_t &affected_player_id);

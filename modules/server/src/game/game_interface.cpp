@@ -11,16 +11,20 @@ namespace server
         return ptr_t(new GameInterface(game_id, play_cards, player_ids));
     }
 
-    GameInterface::response_t GameInterface::receiveAction(std::unique_ptr<shared::ActionDecision> action_decision,
-                                                           const std::optional<std::string> &in_response_to,
-                                                           const Player::id_t &affected_player_id)
+    GameInterface::response_t GameInterface::handleMessage(std::unique_ptr<shared::ClientToServerMessage> &message)
     {
-        if ( in_response_to.has_value() ) {
+        // THIS IS A HACKY WORK IN PROGRESS, WILL FIX LATER
+        auto *casted_msg = dynamic_cast<shared::ActionDecisionMessage *>(message.get());
+        auto action_decision = std::move(casted_msg->decision);
+
+        if ( casted_msg->in_response_to.has_value() ) {
             LOG(ERROR) << "this is not implemented yet!";
             throw std::runtime_error("not implemented");
         }
 
+        auto affected_player_id = casted_msg->player_id;
         return handleAction(std::move(action_decision), affected_player_id);
+
         /* This might become useful later on
          * TODO: use this or delete it
         return in_response_to.has_value()

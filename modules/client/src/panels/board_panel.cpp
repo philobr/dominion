@@ -89,6 +89,7 @@ namespace client
             }
 
             sizer->Add(Pile, position, span, wxALIGN_CENTER_HORIZONTAL);
+            counter++;
         }
 
         wxButton *EndTurnButton = new wxButton(this, wxID_ANY, "End Turn");

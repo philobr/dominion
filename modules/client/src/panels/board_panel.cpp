@@ -25,21 +25,18 @@ namespace client
     void BoardPanel::drawBoard(std::shared_ptr<shared::Board> board, bool is_active, unsigned int treasure)
     {
         // this->DestroyChildren();
-        LOG(INFO) << "Destroyed Children";
 
         // board_ = Board;
 
         const auto &VictoryCards = board->getVictoryCards();
         const auto &TreasureCards = board->getTreasureCards();
         const auto &KingdomCards = board->getKingdomCards();
-        LOG(INFO) << "Got Cards";
 
         // use a grid bag sizer that allow us to place the cards in a grid
         // and not fill all spaces
         // In the future this even allows for uneven sizes where some panels can
         // take up multiple grid spaces
         auto *sizer = new wxGridBagSizer(10, 10);
-        LOG(INFO) << "Set sizer";
         unsigned int counter = 0;
         for ( const auto &VictoryPile : VictoryCards ) {
             PilePanel *Pile = new PilePanel(this, VictoryPile, formatting_constants::DEFAULT_BOARD_PILE_SIZE);
@@ -59,7 +56,6 @@ namespace client
             sizer->Add(Pile, position, span, wxALIGN_CENTER_HORIZONTAL);
             counter++;
         }
-        LOG(INFO) << "Drew VictoryCards";
 
         counter = 0;
         for ( const auto &TreasurePile : TreasureCards ) {
@@ -77,52 +73,36 @@ namespace client
             sizer->Add(Pile, position, span, wxALIGN_CENTER_HORIZONTAL);
             counter++;
         }
-        LOG(INFO) << "Drew TreasureCards";
 
         counter = 0;
         for ( const auto &KingdomPile : KingdomCards ) {
-            LOG(INFO) << "New loop: " << counter << " " << KingdomPile.card_id;
             PilePanel *Pile = new PilePanel(this, KingdomPile, formatting_constants::DEFAULT_BOARD_PILE_SIZE);
-            LOG(INFO) << "Created Pile";
 
             wxGBPosition position = wxGBPosition(counter % 2, 2 + counter / 2);
-            LOG(INFO) << "Got Position";
             wxGBSpan span = wxGBSpan(1, 1);
-            LOG(INFO) << "Set span";
 
             // TODO get this logic out of GUI maybe create some utils functions?
             unsigned int price = shared::CardFactory::getCard(KingdomPile.card_id).getCost();
-            LOG(INFO) << "Got price";
             // check buyability
             if ( is_active && price <= treasure ) {
-                LOG(INFO) << "Is buyable";
                 makeBuyable(Pile);
-                LOG(INFO) << "Made buyable";
             }
-            LOG(INFO) << "Checked if buyable";
 
             sizer->Add(Pile, position, span, wxALIGN_CENTER_HORIZONTAL);
-            LOG(INFO) << "Added to sizer";
             counter++;
-            LOG(INFO) << "Incremented counter";
         }
-        LOG(INFO) << "Drew KingdomCards";
 
         wxButton *EndTurnButton = new wxButton(this, wxID_ANY, "End Turn");
         EndTurnButton->Bind(wxEVT_BUTTON, [](const wxCommandEvent &) { GameController::endTurn(); });
-        LOG(INFO) << "Bound EndTurnButton";
 
         wxGBPosition position = wxGBPosition(3, 9);
         wxGBSpan span = wxGBSpan(1, 1);
         sizer->Add(EndTurnButton, position, span, wxALIGN_CENTER_HORIZONTAL);
-        LOG(INFO) << "Added EndTurnButton";
 
         // necessary command for the grid bag sizer to do it's thing and arrange
         // the panels
         sizer->Layout();
-        LOG(INFO) << "Done with sizer->Layout()";
         this->SetSizer(sizer, true);
-        LOG(INFO) << "Done with this->SetSizer()";
     }
 
     void BoardPanel::makeBuyable(PilePanel *pile)

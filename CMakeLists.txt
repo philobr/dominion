@@ -7,6 +7,8 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_BUILD_TYPE Debug)
+# Necessary to output stack traces
+set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -rdynamic")
 set(EXTERNAL_LIBS ${CMAKE_SOURCE_DIR}/external)
 
 enable_testing()
@@ -18,11 +20,6 @@ list(APPEND CMAKE_CTEST_ARGUMENTS "--output-on-failure" "--timeout" "10")
 add_compile_definitions(PROJECT_ROOT="${CMAKE_SOURCE_DIR}") 
 
 add_compile_options(
-    -g
-    # Necessary to output stack traces
-    -rdynamic
-
-    # ======= Warnings ======= #
     -Wall
     -Werror
     -Wextra

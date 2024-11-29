@@ -20,7 +20,7 @@ namespace client
         CREATING_LOBBY,
         JOINING_LOBBY,
         IN_LOBBY,
-        IN_GAME
+        IN_GAME 
     };
 
     class GameController

@@ -181,11 +181,11 @@ static std::unique_ptr<ActionDecisionMessage> parseActionDecision(const Document
     std::string action;
     GET_STRING_MEMBER(action, json, "action");
     if ( action == "play_action_card" ) {
-        unsigned int cardIndex;
+        shared::CardBase::id_t card_id;
         shared::CardAccess from;
-        GET_UINT_MEMBER(cardIndex, json, "card_index");
+        GET_STRING_MEMBER(card_id, json, "card_id");
         GET_ENUM_MEMBER(from, json, "from", shared::CardAccess);
-        decision = new PlayActionCardDecision(cardIndex, from);
+        decision = new PlayActionCardDecision(card_id, from);
     } else if ( action == "buy_card" ) {
         CardBase::id_t card;
         GET_STRING_MEMBER(card, json, "card");

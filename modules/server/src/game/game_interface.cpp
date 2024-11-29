@@ -78,82 +78,34 @@ namespace server
                                                   const Player::id_t &player_id)
     {
         /*
-        this should probably be hand_cards in the first call?
-
         if ( action_decision->cardIndex >=
              game_state->getPlayer(player_id).get<shared::CardAccess::PLAYED_CARDS>().size() ) {
             LOG(ERROR) << "player(" << player_id << ") tried to play a card that is not in his played cards";
             throw exception::InvalidCardAccess("");
         }
-        */
-
-        /*
-        flow is:
-
-        - is phase correct?
-
-        - CAN this card be played? (exists?)
-        - get idx
-
-        try {
-            play(player, card_type, from_where); -> only moves the card from the given pile to the played cards
-        } catch (play_exception){
-            return error_msg; (no throw)
-        }
-
-        load behaviours
-        run them until return
-            if nullopt:
-                play_card_done(); // cleanup stuff, try phaseswitch etc etc
-            else return order.
-
-        // we also need a function that can keep running behaviours
-        -> can it be that all decision_responses go back into behaviours?
-        */
-
-
-        if ( game_state->getPhase() != GamePhase::ACTION_PHASE ) {
-            LOG(ERROR) << "player tried to play an action card out of phase";
-            throw std::runtime_error("what should happen here?");
-        }
-
-        const auto played_card_idx = action_decision->cardIndex;
-        if ( !game_state->canPlay(player_id, played_card_idx) ) {
-            LOG(ERROR) << "player(" << player_id
-                       << ") tried to play a card that is not in his hand (index:" << played_card_idx
-                       << ", handsize: " << game_state->getPlayer(player_id).get<shared::CardAccess::HAND>().size()
-                       << ")";
-            throw exception::InvalidCardAccess("");
-        }
-
-        const auto &card_id = game_state->getCardId(player_id, played_card_idx);
+        const auto &card_id =
+                game_state->getPlayer(player_id).get<shared::CardAccess::HAND>()[action_decision->cardIndex];
         // checks if the card is currently playable (multiple checks done)
-        if ( !game_state->tryPlay(player_id, action_decision->cardIndex, shared::CardAccess::HAND) ) {
-            LOG(ERROR) << "failed to play card after all checks";
-            throw std::runtime_error("unreachable code");
-        }
+        if ( game_state->tryPlay(player_id, action_decision->cardIndex, action_decision->from) ) {
 
-        cur_behaviours->loadBehaviours(card_id);
-        auto response = cur_behaviours->receiveAction(*game_state, player_id, std::nullopt, std::nullopt);
-        if ( response.has_value() ) {
-            return std::move(response.value());
-        }
-
-        game_state->maybeSwitchPhase();
-
-        switch ( game_state->getPhase() ) {
-            case server::GamePhase::ACTION_PHASE:
-                return std::make_unique<shared::ActionPhaseOrder>();
-            case server::GamePhase::BUY_PHASE:
-                return std::make_unique<shared::BuyPhaseOrder>();
-            case server::GamePhase::PLAYING_ACTION_CARD:
-            default:
-                {
-                    LOG(ERROR) << "game_state is out of phase";
-                    throw std::runtime_error("unreachable code");
+            cur_behaviours->loadBehaviours(card_id);
+            auto response = cur_behaviours->receiveAction(*game_state, player_id, std::nullopt, std::nullopt).value();
+            if ( response == nullptr ) {
+                if ( game_state->getPlayer(player_id).getActions() != 0 ) {
+                    return std::make_unique<shared::ActionPhaseOrder>();
+                } else if ( game_state->getPlayer(player_id).getBuys() != 0 ) {
+                    return std::make_unique<shared::BuyPhaseOrder>();
+                } else {
+                    return std::make_unique<shared::EndTurnOrder>();
                 }
-                break;
+            } else {
+                return response;
+            }
         }
+
+        // something went wrong, retry ActionPhase
+        */
+        return std::make_unique<shared::ActionPhaseOrder>();
     }
 
     GameInterface::response_t

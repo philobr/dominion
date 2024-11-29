@@ -135,7 +135,7 @@ namespace shared
         ActionDecision *action_decision = this->decision.get();
         if ( PlayActionCardDecision *play_action_card = dynamic_cast<PlayActionCardDecision *>(action_decision) ) {
             ADD_STRING_MEMBER("play_action_card", action);
-            ADD_UINT_MEMBER(play_action_card->cardIndex, card_index);
+            ADD_STRING_MEMBER(play_action_card->card_id.c_str(), card_id);
             ADD_ENUM_MEMBER(play_action_card->from, from);
         } else if ( BuyCardDecision *buy_card = dynamic_cast<BuyCardDecision *>(action_decision) ) {
             ADD_STRING_MEMBER("buy_card", action);

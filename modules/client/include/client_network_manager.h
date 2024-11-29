@@ -16,6 +16,8 @@ public:
 
     static void shutdown();
 
+    static bool failedToConnect();
+
 private:
     static bool connect(const std::string &host, const uint16_t port);
 

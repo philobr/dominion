@@ -209,7 +209,7 @@ TEST(SharedLibraryTest, StartGameRequestMessageTwoWayConversion)
 
 TEST(SharedLibraryTest, ActionDecisionMessageTwoWayConversionPlayActionCard)
 {
-    std::unique_ptr<ActionDecision> decision = std::make_unique<PlayActionCardDecision>(1);
+    std::unique_ptr<ActionDecision> decision = std::make_unique<PlayActionCardDecision>("Village");
     ActionDecisionMessage original_message("123", "player1", std::move(decision), "789");
 
     std::string json = original_message.toJson();

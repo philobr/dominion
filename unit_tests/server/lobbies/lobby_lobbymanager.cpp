@@ -191,11 +191,11 @@ TEST(ServerLibraryTest, ReceiveAction)
 
     // ActionDecision for a lobby that doesn't exist
     auto nonexistent_lobby_action = std::make_unique<shared::ActionDecisionMessage>(
-            "456", player_1, std::make_unique<shared::PlayActionCardDecision>(1));
+            "456", player_1, std::make_unique<shared::PlayActionCardDecision>("Village"));
 
     // ActionDecision for a game that hasn't started yet
     auto unstarted_game_action = std::make_unique<shared::ActionDecisionMessage>(
-            "123", player_1, std::make_unique<shared::PlayActionCardDecision>(1));
+            "123", player_1, std::make_unique<shared::PlayActionCardDecision>("Village"));
 
     // ActionDecision for a player that is not in the lobby
     auto player_not_in_lobby = std::make_unique<shared::ActionDecisionMessage>(

@@ -41,6 +41,8 @@ CheckOptions:
     value: UPPER_CASE
   - key: readability-identifier-naming.FunctionCase
     value: camelBack
+  - key: readability-identifier-naming.ParameterCase
+    value: lower_case
 HeaderFilterRegex: '.*/dominion/modules/.*'
 WarningsAsErrors: '*'
 ...

@@ -11,6 +11,7 @@ namespace client
 
     PlayerPanel::PlayerPanel(wxWindow *parent, wxSize size) : wxPanel(parent, wxID_ANY, wxDefaultPosition, size)
     {
+        LOG(WARN) << "using hard coded player";
         auto player = shared::PlayerBase("gigu");
         auto reduced = reduced::Player::make(player, {"Village", "Copper", "Copper", "Copper", "Estate"});
         this->drawPlayer(reduced, true);

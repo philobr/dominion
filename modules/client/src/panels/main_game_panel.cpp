@@ -19,10 +19,14 @@ namespace client
         LOG(INFO) << "EnemyInfoPanel created";
         Player = new PlayerPanel(this, VerticalBaseSize);
         LOG(INFO) << "PlayerPanel created";
+        PhaseInfo = new PhaseInfoPanel(this, VerticalBaseSize);
+        LOG(INFO) << "PhaseInfoPanel created";
 
         mainLayout->Add(EnemyInfo, 1, wxEXPAND, 10);
         mainLayout->Add(Board, 5, wxEXPAND, 10);
+        mainLayout->Add(PhaseInfo, 1, wxEXPAND, 10);
         mainLayout->Add(Player, 3, wxEXPAND, 10);
+
         this->SetSizerAndFit(mainLayout);
         LOG(INFO) << "MainLayout set";
     }
@@ -55,6 +59,8 @@ namespace client
             syncCv.wait(lock, [] { return taskCompleted; }); // Wait until task is complete
         }
         LOG(INFO) << "Board drawn";
+        PhaseInfo->drawInfoPanel(game_state.reduced_player);
+        LOG(INFO) << "PhaseInfo drawn";
         Player->drawPlayer(game_state.reduced_player, is_active);
         LOG(INFO) << "Player drawn";
 

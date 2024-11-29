@@ -13,7 +13,7 @@ namespace server
 
     GameInterface::response_t GameInterface::handleMessage(std::unique_ptr<shared::ClientToServerMessage> &message)
     {
-        auto casted_msg = dynamic_cast<shared::ActionDecisionMessage *>(message.get());
+        auto *casted_msg = dynamic_cast<shared::ActionDecisionMessage *>(message.get());
         if ( casted_msg == nullptr ) {
             LOG(ERROR) << "Received a non shared::ActionDecisionMessage in " << FUNC_NAME;
             throw std::runtime_error("unreachable code");
@@ -61,7 +61,7 @@ namespace server
         }
 
         // the code below can probably be extracted into a seperate function
-        return finished_playing_card();
+        return finishedPlayingCard();
     }
 
     GameInterface::response_t
@@ -110,7 +110,7 @@ namespace server
             std::unique_ptr<shared::ChooseNCardsFromHandDecision> action_decision, const Player::id_t &player_id)
     {
         auto order_msg =
-                cur_behaviours->receiveAction(*game_state.get(), player_id, std::move(action_decision), std::nullopt);
+                cur_behaviours->receiveAction(*game_state, player_id, std::move(action_decision), std::nullopt);
 
         if ( order_msg.has_value() ) {
             return std::move(order_msg.value());
@@ -122,7 +122,7 @@ namespace server
         // this can be fixed by adding a isDone() function to the behaviours
 
         // finished playing the card
-        return finished_playing_card();
+        return finishedPlayingCard();
     }
 
 } // namespace server

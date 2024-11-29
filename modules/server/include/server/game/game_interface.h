@@ -63,7 +63,7 @@ namespace server
         HANDLER(EndTurnDecision);
         HANDLER(ChooseNCardsFromHandDecision);
 
-        response_t finished_playing_card()
+        response_t finishedPlayingCard()
         {
             if ( game_state->getPhase() != server::GamePhase::PLAYING_ACTION_CARD ) {
                 LOG(ERROR) << "tried to finish playing a card while not even playing a card!";

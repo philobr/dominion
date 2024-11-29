@@ -8,84 +8,121 @@ namespace client
 
     void VictoryScreenPanel::drawVictoryScreen(reduced::GameState &game_state)
     {
-        // Clear the sizer
-        this->victory_screen_sizer->Clear(true);
+        DestroyChildren();
+        if ( victory_screen_sizer != nullptr ) {
+            delete victory_screen_sizer;
+        }
 
-        // Add the title
-        wxStaticText *title =
-                new wxStaticText(this, wxID_ANY, "Score", wxDefaultPosition, wxDefaultSize, wxALIGN_CENTER_HORIZONTAL);
-        title->SetFont(wxFont(24, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD));
-        // Use wxCENTER instead of wxALIGN_CENTER
-        this->victory_screen_sizer->Add(title, 0, wxCENTER | wxALL, 10);
+        victory_screen_sizer = new wxBoxSizer(wxVERTICAL);
 
-        // Create a vector of pairs with the name of each player and his points
+        wxPanel *container = new wxPanel(this, wxID_ANY);
+        container->SetMinSize(wxSize(600, -1));
+
+        wxBoxSizer *container_sizer = new wxBoxSizer(wxVERTICAL);
+
+        wxBoxSizer *title_sizer = new wxBoxSizer(wxHORIZONTAL);
+
+        wxStaticText *title = new wxStaticText(container, wxID_ANY, "Score", wxDefaultPosition, wxDefaultSize,
+                                               wxALIGN_CENTER_HORIZONTAL);
+        wxFont title_font = title->GetFont();
+        title_font.SetPointSize(24);
+        title_font.SetWeight(wxFONTWEIGHT_BOLD);
+        title->SetFont(title_font);
+
+        title_sizer->Add(title, 1, wxALL, 20);
+        container_sizer->Add(0, 20);
+        container_sizer->Add(title_sizer, 0, wxCENTER);
+
         std::vector<std::pair<std::string, unsigned int>> players;
-        players.push_back(
-                std::make_pair(game_state.reduced_player->getId(), game_state.reduced_player->getVictoryPoints()));
-        for ( auto &enemy : game_state.reduced_enemies ) {
-            players.push_back(std::make_pair(enemy->getId(), enemy->getVictoryPoints()));
+        if ( game_state.reduced_player != nullptr ) {
+            players.push_back({game_state.reduced_player->getId(), game_state.reduced_player->getVictoryPoints()});
         }
 
-        // Sort the players by their points
-        std::sort(players.begin(), players.end(),
-                  [](const std::pair<std::string, unsigned int> &a, const std::pair<std::string, unsigned int> &b)
-                  { return a.second > b.second; });
-
-        // Add the players
-        for ( auto &player : players ) {
-            wxStaticText *player_text =
-                    new wxStaticText(this, wxID_ANY, player.first + ": " + std::to_string(player.second),
-                                     wxDefaultPosition, wxDefaultSize, wxALIGN_CENTER_HORIZONTAL);
-            // Use wxCENTER instead of wxALIGN_CENTER
-            this->victory_screen_sizer->Add(player_text, 0, wxCENTER | wxALL, 5);
+        for ( const auto &enemy : game_state.reduced_enemies ) {
+            if ( enemy != nullptr ) {
+                players.push_back({enemy->getId(), enemy->getVictoryPoints()});
+            }
         }
 
-        // Set minimum size for the panel
-        SetMinSize(wxSize(200, -1));
+        std::sort(players.begin(), players.end(), [](const auto &a, const auto &b) { return a.second > b.second; });
 
-        this->SetSizer(this->victory_screen_sizer);
-        this->Layout();
+        wxFlexGridSizer *grid_sizer = new wxFlexGridSizer(0, 2, 10, 20);
+        grid_sizer->AddGrowableCol(1);
+
+        for ( const auto &player : players ) {
+            wxStaticText *name_text = new wxStaticText(container, wxID_ANY, player.first + ":");
+
+            wxStaticText *score_text = new wxStaticText(container, wxID_ANY, std::to_string(player.second));
+
+            grid_sizer->Add(name_text, wxSizerFlags().Right());
+            grid_sizer->Add(score_text, wxSizerFlags().Left());
+        }
+
+        container_sizer->Add(grid_sizer, 0, wxCENTER | wxALL, 20);
+        container_sizer->Add(0, 20);
+
+        container->SetSizer(container_sizer);
+        victory_screen_sizer->Add(container, 1, wxCENTER | wxALL, 10);
+        SetSizer(victory_screen_sizer);
+
+        container_sizer->Fit(container);
+        victory_screen_sizer->Fit(this);
+        Layout();
     }
 
     void VictoryScreenPanel::drawTestVictoryScreen()
     {
-        // Clear the sizer
-        this->victory_screen_sizer->Clear(true);
-
-        wxStaticText *title = new wxStaticText(this, wxID_ANY, "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
-                                               wxDefaultPosition, wxDefaultSize, wxALIGN_CENTER_HORIZONTAL);
-        title->SetFont(wxFont(24, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD));
-        // Remove wxEXPAND, keep only alignment and border
-        this->victory_screen_sizer->Add(title, 0, wxCENTER | wxALL, 10);
-
-        // Create a vector of pairs with the name of each player and his points
-        std::vector<std::pair<std::string, unsigned int>> players;
-
-        // Create some players and points
-        players.push_back(std::make_pair("E löl", 69));
-        players.push_back(std::make_pair("E blöde siech", 42));
-        players.push_back(std::make_pair("E glünggi", 9));
-        players.push_back(std::make_pair("E sürmel", 6));
-
-
-        // Sort the players by their points
-        std::sort(players.begin(), players.end(),
-                  [](const std::pair<std::string, unsigned int> &a, const std::pair<std::string, unsigned int> &b)
-                  { return a.second > b.second; });
-
-        // Add the players
-        for ( auto &player : players ) {
-            wxStaticText *player_text =
-                    new wxStaticText(this, wxID_ANY, player.first + ": " + std::to_string(player.second),
-                                     wxDefaultPosition, wxDefaultSize, wxALIGN_CENTER_HORIZONTAL);
-            // Use wxCENTER instead of wxALIGN_CENTER
-            this->victory_screen_sizer->Add(player_text, 0, wxCENTER | wxALL, 5);
+        DestroyChildren();
+        if ( victory_screen_sizer != nullptr ) {
+            delete victory_screen_sizer;
         }
 
-        // Set minimum size for the panel
-        SetMinSize(wxSize(200, -1));
+        victory_screen_sizer = new wxBoxSizer(wxVERTICAL);
 
-        this->SetSizer(this->victory_screen_sizer);
-        this->Layout();
+        wxPanel *container = new wxPanel(this, wxID_ANY);
+        container->SetMinSize(wxSize(600, -1));
+
+        wxBoxSizer *container_sizer = new wxBoxSizer(wxVERTICAL);
+
+        wxBoxSizer *title_sizer = new wxBoxSizer(wxHORIZONTAL);
+
+        wxStaticText *title = new wxStaticText(container, wxID_ANY, "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+                                               wxDefaultPosition, wxDefaultSize, wxALIGN_CENTER_HORIZONTAL);
+        wxFont title_font = title->GetFont();
+        title_font.SetPointSize(24);
+        title_font.SetWeight(wxFONTWEIGHT_BOLD);
+        title->SetFont(title_font);
+
+        title_sizer->Add(title, 1, wxALL, 20);
+        container_sizer->Add(0, 20);
+        container_sizer->Add(title_sizer, 0, wxCENTER);
+
+        std::vector<std::pair<std::string, unsigned int>> players = {
+                {"E löl", 69}, {"E blöde siech", 42}, {"E glünggi", 9}, {"E sürmel", 6}};
+
+        std::sort(players.begin(), players.end(), [](const auto &a, const auto &b) { return a.second > b.second; });
+
+        wxFlexGridSizer *grid_sizer = new wxFlexGridSizer(0, 2, 10, 20);
+        grid_sizer->AddGrowableCol(1);
+
+        for ( const auto &player : players ) {
+            wxStaticText *name_text = new wxStaticText(container, wxID_ANY, player.first + ":");
+
+            wxStaticText *score_text = new wxStaticText(container, wxID_ANY, std::to_string(player.second));
+
+            grid_sizer->Add(name_text, wxSizerFlags().Right());
+            grid_sizer->Add(score_text, wxSizerFlags().Left());
+        }
+
+        container_sizer->Add(grid_sizer, 0, wxCENTER | wxALL, 20);
+        container_sizer->Add(0, 20);
+
+        container->SetSizer(container_sizer);
+        victory_screen_sizer->Add(container, 1, wxCENTER | wxALL, 10);
+        SetSizer(victory_screen_sizer);
+
+        container_sizer->Fit(container);
+        victory_screen_sizer->Fit(this);
+        Layout();
     }
 } // namespace client

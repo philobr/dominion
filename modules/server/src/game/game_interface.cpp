@@ -75,6 +75,7 @@ namespace server
     GameInterface::PlayActionCardDecision_handler(std::unique_ptr<shared::PlayActionCardDecision> action_decision,
                                                   const Player::id_t &player_id)
     {
+        /*
         if ( action_decision->cardIndex >=
              game_state->getPlayer(player_id).get<shared::CardAccess::PLAYED_CARDS>().size() ) {
             LOG(ERROR) << "player(" << player_id << ") tried to play a card that is not in his played cards";
@@ -101,6 +102,7 @@ namespace server
         }
 
         // something went wrong, retry ActionPhase
+        */
         return std::make_unique<shared::ActionPhaseOrder>();
     }
 

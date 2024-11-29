@@ -22,16 +22,16 @@ namespace client
     }
 
 
-    void BoardPanel::drawBoard(std::shared_ptr<shared::Board> Board, bool is_active, unsigned int treasure)
+    void BoardPanel::drawBoard(std::shared_ptr<shared::Board> board, bool is_active, unsigned int treasure)
     {
         // this->DestroyChildren();
         LOG(INFO) << "Destroyed Children";
 
         // board_ = Board;
 
-        const auto &VictoryCards = Board->getVictoryCards();
-        const auto &TreasureCards = Board->getTreasureCards();
-        const auto &KingdomCards = Board->getKingdomCards();
+        const auto &VictoryCards = board->getVictoryCards();
+        const auto &TreasureCards = board->getTreasureCards();
+        const auto &KingdomCards = board->getKingdomCards();
         LOG(INFO) << "Got Cards";
 
         // use a grid bag sizer that allow us to place the cards in a grid
@@ -125,15 +125,15 @@ namespace client
         LOG(INFO) << "Done with this->SetSizer()";
     }
 
-    void BoardPanel::makeBuyable(PilePanel *Pile)
+    void BoardPanel::makeBuyable(PilePanel *pile)
     {
         // This display a little text box when hovering over the pile
-        Pile->SetToolTip("Buy card");
+        pile->SetToolTip("Buy card");
 
-        Pile->SetCursor(wxCursor(wxCURSOR_HAND));
+        pile->SetCursor(wxCursor(wxCURSOR_HAND));
 
         // Bind left click on the panel to the buyCard function
-        Pile->makeClickable([Pile](wxMouseEvent & /*event*/) { GameController::buyCard(Pile->getPile().card_id); });
+        pile->makeClickable([pile](wxMouseEvent & /*event*/) { GameController::buyCard(pile->getPile().card_id); });
     }
 
 

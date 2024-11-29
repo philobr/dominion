@@ -22,12 +22,12 @@ namespace client
     std::string GameController::_gameName = "";
     shared::PlayerBase::id_t GameController::_playerName = "";
 
-    void GameController::init(GameWindow *gameWindow)
+    void GameController::init(GameWindow *game_window)
     {
 
         LOG(INFO) << "GameController called in function init()";
 
-        GameController::_gameWindow = gameWindow;
+        GameController::_gameWindow = game_window;
 
         // Set up main panels
         GameController::_connectionPanel = new ConnectionPanel(gameWindow);
@@ -49,30 +49,30 @@ namespace client
         LOG(INFO) << "Done with GameController::init()";
     }
 
-    bool GameController::validInput(const wxString &inputServerAddress, const wxString &inputServerPort,
-                                    const wxString &inputPlayerName, const wxString &inputGameName)
+    bool GameController::validInput(const wxString &input_server_address, const wxString &input_server_port,
+                                    const wxString &input_player_name, const wxString &input_game_name)
     {
         LOG(INFO) << "GameController called in function validInput";
         // check that all values were provided
-        if ( inputServerAddress.IsEmpty() ) {
+        if ( input_server_address.IsEmpty() ) {
             GameController::showError("Input error", "Please provide the server's address");
             LOG(INFO) << "Done with GameController::validInput()";
             return false;
         }
 
-        if ( inputServerPort.IsEmpty() ) {
+        if ( input_server_port.IsEmpty() ) {
             GameController::showError("Input error", "Please provide the server's port number");
             LOG(INFO) << "Done with GameController::validInput()";
             return false;
         }
 
-        if ( inputPlayerName.IsEmpty() ) {
+        if ( input_player_name.IsEmpty() ) {
             GameController::showError("Input error", "Please enter your desired player name");
             LOG(INFO) << "Done with GameController::validInput()";
             return false;
         }
 
-        if ( inputGameName.IsEmpty() ) {
+        if ( input_game_name.IsEmpty() ) {
             GameController::showError("Input error", "Please enter the game name");
             LOG(INFO) << "Done with GameController::validInput()";
             return false;
@@ -80,7 +80,7 @@ namespace client
 
         // convert port from wxString to uint16_t
         unsigned long portAsLong;
-        if ( !inputServerPort.ToULong(&portAsLong) || portAsLong > 65535 ) {
+        if ( !input_server_port.ToULong(&portAsLong) || portAsLong > 65535 ) {
             GameController::showError("Connection error", "Invalid port");
             LOG(INFO) << "Done with GameController::validInput()";
             return false;
@@ -190,11 +190,11 @@ namespace client
         GameController::_clientNetworkManager->sendRequest(action_decision_message->toJson());
     }
 
-    void GameController::playCard(unsigned int cardIndex)
+    void GameController::playCard(unsigned int card_index)
     {
-        LOG(INFO) << "Playing card at position" << cardIndex << std::endl;
+        LOG(INFO) << "Playing card at position" << card_index << std::endl;
 
-        std::unique_ptr<shared::ActionDecision> decision(new shared::PlayActionCardDecision(cardIndex));
+        std::unique_ptr<shared::ActionDecision> decision(new shared::PlayActionCardDecision(card_index));
 
         // TODO(#120) Implement in_response_to
         std::optional<std::string> in_response_to = std::nullopt;

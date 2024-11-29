@@ -25,10 +25,10 @@ namespace client
          * @param is_active
          * @return void
          */
-        void drawPlayer(const std::unique_ptr<reduced::Player> &Player, bool is_active);
+        void drawPlayer(const std::unique_ptr<reduced::Player> &player, bool is_active);
 
     private:
-        void makePlayable(ImagePanel *Image, unsigned int cardIndex);
+        void makePlayable(ImagePanel *image, unsigned int card_index);
 
         wxSize hand_card_size = wxSize(100, 125);
 
@@ -49,7 +49,7 @@ namespace client
          *
          * @return wxPanel*
          */
-        wxPanel *createHandPanel(const std::unique_ptr<reduced::Player> &Player, const size_t card_width_borders,
+        wxPanel *createHandPanel(const std::unique_ptr<reduced::Player> &player, const size_t card_width_borders,
                                  const bool is_active);
 
         /**

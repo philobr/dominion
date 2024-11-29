@@ -147,3 +147,8 @@ void ClientNetworkManager::receiveMessage(const std::string &message)
 }
 
 void ClientNetworkManager::shutdown() { ClientNetworkManager::_connection->shutdown(); }
+
+bool ClientNetworkManager::failedToConnect()
+{
+    return !(ClientNetworkManager::_connectionSuccess && ClientNetworkManager::_connection->is_connected());
+}

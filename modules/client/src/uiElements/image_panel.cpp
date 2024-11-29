@@ -1,3 +1,4 @@
+#include <shared/utils/logger.h>
 #include <uiElements/image_panel.h>
 
 namespace client
@@ -9,12 +10,14 @@ namespace client
     {
         if ( !wxFileExists(file) ) {
             wxMessageBox("Could not find file: " + file, "File error", wxICON_ERROR);
-            return;
+            LOG(ERROR) << "Could not find file: " << file;
+            throw std::runtime_error("Could not find file: " + file);
         }
 
         if ( !this->_image.LoadFile(file, format) ) {
             wxMessageBox("Could not load file: " + file, "File error", wxICON_ERROR);
-            return;
+            LOG(ERROR) << "Could not load file: " << file;
+            throw std::runtime_error("Could not load file: " + file);
         }
 
         this->_rotation = rotation;

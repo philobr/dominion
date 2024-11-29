@@ -77,8 +77,8 @@ namespace client
         // TODO Remove this button before release
         wxButton *skipToVictoryScreenButton =
                 new wxButton(this, wxID_ANY, "Victory Screen", wxDefaultPosition, wxSize(100, 40));
-        skipToVictoryScreenButton->Bind(wxEVT_BUTTON,
-                                       [](const wxCommandEvent & /*event*/) { GameController::skipToVictoryScreenPanel(); });
+        skipToVictoryScreenButton->Bind(
+                wxEVT_BUTTON, [](const wxCommandEvent & /*event*/) { GameController::skipToVictoryScreenPanel(); });
         VerticalLayout->Add(skipToVictoryScreenButton, 0, wxALIGN_RIGHT | wxALL, 10);
         this->SetSizerAndFit(VerticalLayout);
     }

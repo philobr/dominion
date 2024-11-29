@@ -1,8 +1,8 @@
 #pragma once
 
 
-#include <wx/wx.h>
 #include <shared/game/game_state/reduced_game_state.h>
+#include <wx/wx.h>
 
 
 namespace client
@@ -25,7 +25,7 @@ namespace client
 
         /**
          * @brief Draw the victory screen for testing purposes
-         * 
+         *
          */
         void drawTestVictoryScreen();
 

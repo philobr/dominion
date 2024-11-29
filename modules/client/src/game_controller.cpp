@@ -366,9 +366,9 @@ namespace client
     }
 
     void GameController::skipToGamePanel() { GameController::_gameWindow->showPanel(GameController::_mainGamePanel); }
-    void GameController::skipToVictoryScreenPanel() 
-    {   
+    void GameController::skipToVictoryScreenPanel()
+    {
         GameController::_victoryScreenPanel->drawTestVictoryScreen();
-        GameController::_gameWindow->showPanel(GameController::_victoryScreenPanel); 
+        GameController::_gameWindow->showPanel(GameController::_victoryScreenPanel);
     }
 } // namespace client

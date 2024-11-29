@@ -8,40 +8,45 @@ namespace client
         
     }
 
-    void VictoryScreenPanel::drawVictoryScreen(reduced::GameState &gameState)
+    void VictoryScreenPanel::drawVictoryScreen(reduced::GameState& gameState)
     {
         // Clear the sizer
         this->victory_screen_sizer->Clear(true);
 
         // Add the title
-        wxStaticText *title =
-                new wxStaticText(this, wxID_ANY, "Score", wxDefaultPosition, wxDefaultSize, wxALIGN_CENTER);
+        wxStaticText* title =
+            new wxStaticText(this, wxID_ANY, "Score", wxDefaultPosition, wxDefaultSize, wxALIGN_CENTER);
         title->SetFont(wxFont(24, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD));
-        this->victory_screen_sizer->Add(title, 0, wxALIGN_CENTER, 10);
+        // Remove wxEXPAND, keep only alignment and border
+        this->victory_screen_sizer->Add(title, 0, wxALIGN_CENTER | wxALL, 10);
 
         // Create a vector of pairs with the name of each player and his points
         std::vector<std::pair<std::string, unsigned int>> players;
         players.push_back(
-                std::make_pair(gameState.reduced_player->getId(), gameState.reduced_player->getVictoryPoints()));
-        for ( auto &enemy : gameState.reduced_enemies ) {
+            std::make_pair(gameState.reduced_player->getId(), gameState.reduced_player->getVictoryPoints()));
+        for (auto& enemy : gameState.reduced_enemies) {
             players.push_back(std::make_pair(enemy->getId(), enemy->getVictoryPoints()));
         }
 
         // Sort the players by their points
         std::sort(players.begin(), players.end(),
-                  [](const std::pair<std::string, unsigned int> &a, const std::pair<std::string, unsigned int> &b)
-                  { return a.second > b.second; });
+            [](const std::pair<std::string, unsigned int>& a, const std::pair<std::string, unsigned int>& b)
+            { return a.second > b.second; });
 
-        // Add the players to the sizer
-        for ( auto &player : players ) {
-            wxStaticText *player_text =
-                    new wxStaticText(this, wxID_ANY, player.first + ": " + std::to_string(player.second),
-                                     wxDefaultPosition, wxDefaultSize, wxALIGN_CENTER);
-            this->victory_screen_sizer->Add(player_text, 0, wxALIGN_CENTER, 10);
+        // Add the players
+        for (auto& player : players) {
+            wxStaticText* player_text =
+                new wxStaticText(this, wxID_ANY, player.first + ": " + std::to_string(player.second),
+                    wxDefaultPosition, wxDefaultSize, wxALIGN_CENTER);
+            // Remove wxEXPAND, keep only alignment and border
+            this->victory_screen_sizer->Add(player_text, 0, wxALIGN_CENTER | wxALL, 5);
         }
 
-        // Set the sizer
-        this->SetSizerAndFit(this->victory_screen_sizer);
+        // Set minimum size for the panel
+        SetMinSize(wxSize(200, -1));
+
+        this->SetSizer(this->victory_screen_sizer);
+        this->Layout();
     }
 
     void VictoryScreenPanel::drawTestVictoryScreen()
@@ -50,10 +55,11 @@ namespace client
         this->victory_screen_sizer->Clear(true);
 
         // Add the title
-        wxStaticText *title = new wxStaticText(this, wxID_ANY, "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
-                                               wxDefaultPosition, wxDefaultSize, wxALIGN_CENTER);
+        wxStaticText* title =
+            new wxStaticText(this, wxID_ANY, "https://www.youtube.com/watch?v=dQw4w9WgXcQ", wxDefaultPosition, wxDefaultSize, wxALIGN_CENTER);
         title->SetFont(wxFont(24, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD));
-        this->victory_screen_sizer->Add(title, 0, wxALIGN_CENTER, 10);
+        // Remove wxEXPAND, keep only alignment and border
+        this->victory_screen_sizer->Add(title, 0, wxALIGN_CENTER | wxALL, 10);
 
         // Create a vector of pairs with the name of each player and his points
         std::vector<std::pair<std::string, unsigned int>> players;
@@ -70,15 +76,19 @@ namespace client
                   [](const std::pair<std::string, unsigned int> &a, const std::pair<std::string, unsigned int> &b)
                   { return a.second > b.second; });
 
-        // Add the players to the sizer
-        for ( auto &player : players ) {
-            wxStaticText *player_text =
-                    new wxStaticText(this, wxID_ANY, player.first + ": " + std::to_string(player.second),
-                                     wxDefaultPosition, wxDefaultSize, wxALIGN_CENTER);
-            this->victory_screen_sizer->Add(player_text, 0, wxALIGN_CENTER, 10);
+        // Add the players
+        for (auto& player : players) {
+            wxStaticText* player_text =
+                new wxStaticText(this, wxID_ANY, player.first + ": " + std::to_string(player.second),
+                    wxDefaultPosition, wxDefaultSize, wxALIGN_CENTER);
+            // Remove wxEXPAND, keep only alignment and border
+            this->victory_screen_sizer->Add(player_text, 0, wxALIGN_CENTER | wxALL, 5);
         }
 
-        // Set the sizer
-        this->SetSizerAndFit(this->victory_screen_sizer);
+        // Set minimum size for the panel
+        SetMinSize(wxSize(200, -1));
+
+        this->SetSizer(this->victory_screen_sizer);
+        this->Layout();
     }
 } // namespace client

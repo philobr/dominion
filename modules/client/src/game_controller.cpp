@@ -30,10 +30,10 @@ namespace client
         GameController::_gameWindow = game_window;
 
         // Set up main panels
-        GameController::_connectionPanel = new ConnectionPanel(gameWindow);
-        GameController::_mainGamePanel = new MainGamePanel(gameWindow);
-        GameController::_lobbyPanel = new LobbyPanel(gameWindow);
-        GameController::_victoryScreenPanel = new VictoryScreenPanel(gameWindow);
+        GameController::_connectionPanel = new ConnectionPanel(_gameWindow);
+        GameController::_mainGamePanel = new MainGamePanel(_gameWindow);
+        GameController::_lobbyPanel = new LobbyPanel(_gameWindow);
+        GameController::_victoryScreenPanel = new VictoryScreenPanel(_gameWindow);
 
         // Hide all panels
         GameController::_connectionPanel->Show(false);

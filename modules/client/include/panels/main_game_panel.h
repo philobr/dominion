@@ -25,7 +25,7 @@ namespace client
          *
          * @param GameState
          */
-        void drawGameState(const reduced::GameState &gameState);
+        void drawGameState(const reduced::GameState &game_state);
 
 
     private:

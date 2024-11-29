@@ -16,7 +16,7 @@ namespace client
         this->drawPlayer(reduced, true);
     }
 
-    void PlayerPanel::drawPlayer(const std::unique_ptr<reduced::Player> &Player, bool is_active)
+    void PlayerPanel::drawPlayer(const std::unique_ptr<reduced::Player> &player, bool is_active)
     {
         // Create a sizer to hold the player stuff
         wxBoxSizer *outersizer = new wxBoxSizer(wxHORIZONTAL);
@@ -26,13 +26,13 @@ namespace client
         outersizer->SetMinSize(wxSize(7 * card_width_borders, 150));
 
         // Create the draw pile panel
-        wxPanel *DrawPilePanel = createDrawPilePanel(Player->getDrawPileSize());
+        wxPanel *DrawPilePanel = createDrawPilePanel(player->getDrawPileSize());
 
         // Create the hand panel
-        wxPanel *hand = createHandPanel(Player, card_width_borders, is_active);
+        wxPanel *hand = createHandPanel(player, card_width_borders, is_active);
 
         // Create the discard pile panel
-        wxPanel *DiscardPilePanel = createDiscardPilePanel(Player->getDiscardPileSize(), Player->getTopDiscardCard());
+        wxPanel *DiscardPilePanel = createDiscardPilePanel(player->getDiscardPileSize(), player->getTopDiscardCard());
 
         outersizer->Add(DrawPilePanel, 0, wxTOP, 5);
         outersizer->Add(hand, 1, wxTOP, 5);
@@ -41,14 +41,14 @@ namespace client
         this->SetSizer(outersizer);
     }
 
-    void PlayerPanel::makePlayable(ImagePanel *Image, unsigned int cardIndex)
+    void PlayerPanel::makePlayable(ImagePanel *image, unsigned int card_index)
     {
-        Image->SetToolTip("Play card");
+        image->SetToolTip("Play card");
 
-        Image->SetCursor(wxCursor(wxCURSOR_HAND));
+        image->SetCursor(wxCursor(wxCURSOR_HAND));
 
         // Bind left click on the panel to the buyCard function
-        Image->Bind(wxEVT_LEFT_UP, [cardIndex](wxMouseEvent & /*event*/) { GameController::playCard(cardIndex); });
+        image->Bind(wxEVT_LEFT_UP, [card_index](wxMouseEvent & /*event*/) { GameController::playCard(card_index); });
     }
 
     wxPanel *PlayerPanel::createDrawPilePanel(const unsigned int draw_pile_size)
@@ -68,11 +68,11 @@ namespace client
         return DrawPilePanel;
     }
 
-    wxPanel *PlayerPanel::createHandPanel(const std::unique_ptr<reduced::Player> &Player,
+    wxPanel *PlayerPanel::createHandPanel(const std::unique_ptr<reduced::Player> &player,
                                           const size_t card_width_borders, const bool is_active)
     {
         // Get the hand cards
-        const auto &cards = Player->getHandCards();
+        const auto &cards = player->getHandCards();
         size_t hand_size = cards.size();
 
         // Create the hand panel
@@ -99,7 +99,7 @@ namespace client
 
             bool is_action = shared::CardFactory::getCard(cards[i]).isAction();
 
-            if ( is_action && is_active && Player->getActions() > 0 ) {
+            if ( is_action && is_active && player->getActions() > 0 ) {
                 makePlayable(card, i);
             }
 

@@ -368,13 +368,7 @@ namespace client
     void GameController::skipToGamePanel() { GameController::_gameWindow->showPanel(GameController::_mainGamePanel); }
     void GameController::skipToVictoryScreenPanel() 
     {   
-        std::vector<CardBase::id_t> kingdom_cards{"Village", "Artisan", "Market", "Smithy", "Festival", "Laboratory", "Witch", "Chapel", "Cellar", "Moat"};
-        shared::Board::ptr_t board = std::make_shared<shared::Board>(kingdom_cards);
-        reduced::Player::ptr_t player = reduced::Player::make(shared::PlayerBase("gigu"), {"Village", "Copper", "Copper", "Copper", "Estate"});
-        std::vector<reduced::Enemy::ptr_t> enemies;
-        enemies.push_back(reduced::Enemy::make(shared::PlayerBase("enemy1"), {"Village", "Copper", "Copper", "Copper", "Estate"}));
-        reduced::GameState gameState(board, )
-        GameController::_victoryScreenPanel->drawVictoryScreen(gameState);
+        GameController::_victoryScreenPanel->drawTestVictoryScreen();
         GameController::_gameWindow->showPanel(GameController::_victoryScreenPanel); 
     }
 } // namespace client

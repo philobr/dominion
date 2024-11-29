@@ -23,6 +23,12 @@ namespace client
          */
         void drawVictoryScreen(reduced::GameState &gameState);
 
+        /**
+         * @brief Draw the victory screen for testing purposes
+         * 
+         */
+        void drawTestVictoryScreen();
+
     private:
         wxBoxSizer *victory_screen_sizer;
     };

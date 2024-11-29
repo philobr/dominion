@@ -3,9 +3,9 @@
 namespace client
 {
     VictoryScreenPanel::VictoryScreenPanel(wxWindow *parent) :
-        wxPanel(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize)
+        wxPanel(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize), victory_screen_sizer(new wxBoxSizer(wxVERTICAL))
     {
-        this->victory_screen_sizer = new wxBoxSizer(wxVERTICAL);
+        
     }
 
     void VictoryScreenPanel::drawVictoryScreen(reduced::GameState &gameState)

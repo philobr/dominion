@@ -190,6 +190,8 @@ static std::unique_ptr<ActionDecisionMessage> parseActionDecision(const Document
         CardBase::id_t card;
         GET_STRING_MEMBER(card, json, "card");
         decision = new BuyCardDecision(card);
+    } else if ( action == "end_action_phase" ) {
+        decision = new EndActionPhaseDecision();
     } else if ( action == "end_turn" ) {
         decision = new EndTurnDecision();
     } else if ( action == "choose_n_cards_from_hand" ) {

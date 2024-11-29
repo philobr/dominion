@@ -48,6 +48,17 @@ namespace shared
         bool equals(const ActionDecision &other) const override;
     };
 
+    class EndActionPhaseDecision : public ActionDecision
+    {
+    public:
+        bool operator==(const EndActionPhaseDecision &other) const;
+        bool operator!=(const EndActionPhaseDecision &other) const;
+        EndActionPhaseDecision() = default;
+
+    protected:
+        bool equals(const ActionDecision &other) const override;
+    };
+
     class EndTurnDecision : public ActionDecision
     {
     public:

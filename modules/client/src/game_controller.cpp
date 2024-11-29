@@ -15,6 +15,7 @@ namespace client
     ConnectionPanel *GameController::_connectionPanel = nullptr;
     MainGamePanel *GameController::_mainGamePanel = nullptr;
     LobbyPanel *GameController::_lobbyPanel = nullptr;
+    VictoryScreenPanel *GameController::_victoryScreenPanel = nullptr;
 
     ClientState GameController::_clientState = ClientState::LOGIN_SCREEN;
     std::unique_ptr<reduced::GameState> GameController::_gameState = nullptr;
@@ -29,14 +30,16 @@ namespace client
         GameController::_gameWindow = game_window;
 
         // Set up main panels
-        GameController::_connectionPanel = new ConnectionPanel(game_window);
-        GameController::_mainGamePanel = new MainGamePanel(game_window);
-        GameController::_lobbyPanel = new LobbyPanel(game_window);
+        GameController::_connectionPanel = new ConnectionPanel(_gameWindow);
+        GameController::_mainGamePanel = new MainGamePanel(_gameWindow);
+        GameController::_lobbyPanel = new LobbyPanel(_gameWindow);
+        GameController::_victoryScreenPanel = new VictoryScreenPanel(_gameWindow);
 
         // Hide all panels
         GameController::_connectionPanel->Show(false);
         GameController::_mainGamePanel->Show(false);
         GameController::_lobbyPanel->Show(false);
+        GameController::_victoryScreenPanel->Show(false);
 
         // Only show connection panel at the start of the game
         GameController::_gameWindow->showPanel(GameController::_connectionPanel);
@@ -368,4 +371,9 @@ namespace client
     }
 
     void GameController::skipToGamePanel() { GameController::_gameWindow->showPanel(GameController::_mainGamePanel); }
+    void GameController::skipToVictoryScreenPanel()
+    {
+        GameController::_victoryScreenPanel->drawTestVictoryScreen();
+        GameController::_gameWindow->showPanel(GameController::_victoryScreenPanel);
+    }
 } // namespace client

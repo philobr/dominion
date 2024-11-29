@@ -7,6 +7,8 @@
 #include "shared/game/game_state/player_base.h"
 #include "windows/game_window.h"
 
+#include <panels/victory_screen_panel.h>
+
 #include <shared/message_types.h>
 
 namespace client
@@ -87,6 +89,11 @@ namespace client
          */
         static void skipToGamePanel();
 
+        /**
+         * @brief skips from the connection panel to the victory screen panel for gui testing
+         */
+        static void skipToVictoryScreenPanel();
+
     private:
         static void receiveActionOrderMessage(std::unique_ptr<shared::ActionOrderMessage> msg);
         static void receiveCreateLobbyResponseMessage(std::unique_ptr<shared::CreateLobbyResponseMessage> msg);
@@ -101,6 +108,8 @@ namespace client
         static ConnectionPanel *_connectionPanel;
         static MainGamePanel *_mainGamePanel;
         static LobbyPanel *_lobbyPanel;
+        static VictoryScreenPanel *_victoryScreenPanel;
+
         static ClientNetworkManager *_clientNetworkManager;
 
         static ClientState _clientState;

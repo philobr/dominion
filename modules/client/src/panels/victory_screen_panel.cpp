@@ -8,7 +8,7 @@ namespace client
         
     }
 
-    void VictoryScreenPanel::drawVictoryScreen(reduced::GameState& gameState)
+    void VictoryScreenPanel::drawVictoryScreen(reduced::GameState& game_state)
     {
         // Clear the sizer
         this->victory_screen_sizer->Clear(true);
@@ -23,8 +23,8 @@ namespace client
         // Create a vector of pairs with the name of each player and his points
         std::vector<std::pair<std::string, unsigned int>> players;
         players.push_back(
-            std::make_pair(gameState.reduced_player->getId(), gameState.reduced_player->getVictoryPoints()));
-        for (auto& enemy : gameState.reduced_enemies) {
+            std::make_pair(game_state.reduced_player->getId(), game_state.reduced_player->getVictoryPoints()));
+        for (auto& enemy : game_state.reduced_enemies) {
             players.push_back(std::make_pair(enemy->getId(), enemy->getVictoryPoints()));
         }
 

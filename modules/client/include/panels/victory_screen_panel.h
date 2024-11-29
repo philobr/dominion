@@ -21,7 +21,7 @@ namespace client
          * @param std::vector<std::string> player_names
          * @param std::vector<unsigned int> player_scores
          */
-        void drawVictoryScreen(reduced::GameState &gameState);
+        void drawVictoryScreen(reduced::GameState &game_state);
 
         /**
          * @brief Draw the victory screen for testing purposes

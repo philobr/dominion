@@ -1,5 +1,8 @@
 #include "dominion.h"
 
+#include <execinfo.h>
+#include <signal.h>
+
 #include <shared/utils/logger.h>
 #include <wx/cmdline.h>
 #include "game_controller.h"
@@ -12,12 +15,29 @@ static const wxCmdLineEntryDesc CMD_LINE_DESC[] = {
         {wxCMD_LINE_NONE, nullptr, nullptr, nullptr, wxCMD_LINE_VAL_NONE, wxCMD_LINE_PARAM_OPTIONAL}};
 
 
+void segFaultHandler(int sig) {
+    void *array[10];
+    size_t size;
+
+    // get void*'s for all entries on the stack
+    size = backtrace(array, 10);
+
+    // print out all the frames to stderr
+    fprintf(stderr, "Error: signal %d:\n", sig);
+    backtrace_symbols_fd(array, size, STDERR_FILENO);
+    exit(1);
+}
+
+
 namespace client
 {
 
     // Application entry point
     bool Dominion::OnInit()
     {
+        // Register signal handler for segfaults
+        signal(SIGSEGV, segFaultHandler);
+
         // Parse command line arguments
         wxCmdLineParser parser(CMD_LINE_DESC, argc, argv);
 

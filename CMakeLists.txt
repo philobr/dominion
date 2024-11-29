@@ -18,6 +18,11 @@ list(APPEND CMAKE_CTEST_ARGUMENTS "--output-on-failure" "--timeout" "10")
 add_compile_definitions(PROJECT_ROOT="${CMAKE_SOURCE_DIR}") 
 
 add_compile_options(
+    -g
+    # Necessary to output stack traces
+    -rdynamic
+
+    # ======= Warnings ======= #
     -Wall
     -Werror
     -Wextra

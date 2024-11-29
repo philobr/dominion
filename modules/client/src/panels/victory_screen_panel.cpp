@@ -6,14 +6,14 @@ namespace client
         wxPanel(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize), victory_screen_sizer(new wxBoxSizer(wxVERTICAL))
     {}
 
-    void VictoryScreenPanel::drawVictoryScreen(reduced::GameState& game_state)
+    void VictoryScreenPanel::drawVictoryScreen(reduced::GameState &game_state)
     {
         // Clear the sizer
         this->victory_screen_sizer->Clear(true);
 
         // Add the title
-        wxStaticText* title =
-            new wxStaticText(this, wxID_ANY, "Score", wxDefaultPosition, wxDefaultSize, wxALIGN_CENTER_HORIZONTAL);
+        wxStaticText *title =
+                new wxStaticText(this, wxID_ANY, "Score", wxDefaultPosition, wxDefaultSize, wxALIGN_CENTER_HORIZONTAL);
         title->SetFont(wxFont(24, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD));
         // Use wxCENTER instead of wxALIGN_CENTER
         this->victory_screen_sizer->Add(title, 0, wxCENTER | wxALL, 10);
@@ -32,10 +32,10 @@ namespace client
                   { return a.second > b.second; });
 
         // Add the players
-        for (auto& player : players) {
-            wxStaticText* player_text =
-                new wxStaticText(this, wxID_ANY, player.first + ": " + std::to_string(player.second),
-                    wxDefaultPosition, wxDefaultSize, wxALIGN_CENTER_HORIZONTAL);
+        for ( auto &player : players ) {
+            wxStaticText *player_text =
+                    new wxStaticText(this, wxID_ANY, player.first + ": " + std::to_string(player.second),
+                                     wxDefaultPosition, wxDefaultSize, wxALIGN_CENTER_HORIZONTAL);
             // Use wxCENTER instead of wxALIGN_CENTER
             this->victory_screen_sizer->Add(player_text, 0, wxCENTER | wxALL, 5);
         }
@@ -52,8 +52,8 @@ namespace client
         // Clear the sizer
         this->victory_screen_sizer->Clear(true);
 
-        wxStaticText* title =
-            new wxStaticText(this, wxID_ANY, "https://www.youtube.com/watch?v=dQw4w9WgXcQ", wxDefaultPosition, wxDefaultSize, wxALIGN_CENTER_HORIZONTAL);
+        wxStaticText *title = new wxStaticText(this, wxID_ANY, "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+                                               wxDefaultPosition, wxDefaultSize, wxALIGN_CENTER_HORIZONTAL);
         title->SetFont(wxFont(24, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD));
         // Remove wxEXPAND, keep only alignment and border
         this->victory_screen_sizer->Add(title, 0, wxCENTER | wxALL, 10);
@@ -74,10 +74,10 @@ namespace client
                   { return a.second > b.second; });
 
         // Add the players
-        for (auto& player : players) {
-            wxStaticText* player_text =
-                new wxStaticText(this, wxID_ANY, player.first + ": " + std::to_string(player.second),
-                    wxDefaultPosition, wxDefaultSize, wxALIGN_CENTER_HORIZONTAL);
+        for ( auto &player : players ) {
+            wxStaticText *player_text =
+                    new wxStaticText(this, wxID_ANY, player.first + ": " + std::to_string(player.second),
+                                     wxDefaultPosition, wxDefaultSize, wxALIGN_CENTER_HORIZONTAL);
             // Use wxCENTER instead of wxALIGN_CENTER
             this->victory_screen_sizer->Add(player_text, 0, wxCENTER | wxALL, 5);
         }

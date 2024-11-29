@@ -108,14 +108,19 @@ namespace client
 
             // connect to the server
             _clientNetworkManager->init(inputServerAddress.ToStdString(), portAsLong);
+            if ( _clientNetworkManager->failedToConnect() ) {
+                GameController::_clientState = ClientState::LOGIN_SCREEN;
+                LOG(INFO) << "Reverted to ClientState::LOGIN_SCREEN";
+            } else {
 
-            // send request to join game
-            shared::CreateLobbyRequestMessage request(inputGameName.ToStdString(), inputPlayerName.ToStdString());
-            GameController::sendRequest(request.toJson());
+                // send request to join game
+                shared::CreateLobbyRequestMessage request(inputGameName.ToStdString(), inputPlayerName.ToStdString());
+                GameController::sendRequest(request.toJson());
 
-            GameController::_gameName = inputGameName.ToStdString();
-            GameController::_playerName = inputPlayerName.ToStdString();
-            GameController::_clientState = ClientState::CREATING_LOBBY;
+                GameController::_gameName = inputGameName.ToStdString();
+                GameController::_playerName = inputPlayerName.ToStdString();
+                GameController::_clientState = ClientState::CREATING_LOBBY;
+            }
         }
     }
 

@@ -140,6 +140,8 @@ namespace shared
         } else if ( BuyCardDecision *buy_card = dynamic_cast<BuyCardDecision *>(action_decision) ) {
             ADD_STRING_MEMBER("buy_card", action);
             ADD_STRING_MEMBER(buy_card->card.c_str(), card);
+        } else if ( dynamic_cast<EndActionPhaseDecision *>(action_decision) != nullptr ) {
+            ADD_STRING_MEMBER("end_action_phase", action);
         } else if ( dynamic_cast<EndTurnDecision *>(action_decision) != nullptr ) {
             ADD_STRING_MEMBER("end_turn", action);
         } else if ( ChooseNCardsFromHandDecision *choose_n_cards =

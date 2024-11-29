@@ -240,6 +240,22 @@ TEST(SharedLibraryTest, ActionDecisionMessageTwoWayConversionBuyCard)
     ASSERT_EQ(*parsed_message, original_message);
 }
 
+TEST(SharedLibraryTest, ActionDecisionMessageTwoWayConversionEndActionPhase)
+{
+    ActionDecisionMessage original_message("123", "player1", std::make_unique<EndActionPhaseDecision>(), "789");
+
+    std::string json = original_message.toJson();
+
+    std::unique_ptr<ClientToServerMessage> base_message;
+    base_message = ClientToServerMessage::fromJson(json);
+
+    std::unique_ptr<ActionDecisionMessage> parsed_message(
+            dynamic_cast<ActionDecisionMessage *>(base_message.release()));
+
+    ASSERT_NE(parsed_message, nullptr);
+    ASSERT_EQ(*parsed_message, original_message);
+}
+
 TEST(SharedLibraryTest, ActionDecisionMessageTwoWayConversionEndTurn)
 {
     ActionDecisionMessage original_message("123", "player1", std::make_unique<EndTurnDecision>(), "789");

@@ -11,6 +11,11 @@ set(EXTERNAL_LIBS ${CMAKE_SOURCE_DIR}/external)
 
 enable_testing()
 
+# Enable sanitizers
+set(SANITIZER_FLAGS "-fsanitize=address,signed-integer-overflow,leak,undefined")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${SANITIZER_FLAGS}")
+set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${SANITIZER_FLAGS}")
+
 # always provide test output on failure
 list(APPEND CMAKE_CTEST_ARGUMENTS "--output-on-failure" "--timeout" "10")
 

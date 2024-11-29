@@ -122,44 +122,53 @@ namespace server
         play(player_id, card_id type, target_pile);
 
      */
-    bool GameState::tryPlay(const Player::id_t &affected_player, size_t hand_index, shared::CardAccess from)
+    void GameState::tryPlay(const Player::id_t &affected_player, const shared::CardBase::id_t &card_id,
+                            shared::CardAccess from)
     {
+        /*
+        1. is phase correct?
+        2. enough actions?
+        3. is action card?
+        4. valid pile + does card exist?
+        5. play the card
+        6. adjust the phase
+        */
+
+        if ( getPhase() != GamePhase::ACTION_PHASE ) {
+            LOG(ERROR) << "player tried to play an action card out of phase";
+            throw std::runtime_error("what should happen here?");
+        }
+
         auto &player = getPlayer(affected_player);
-        const auto &card_id = player.get<shared::CardAccess::HAND>()[hand_index];
         const auto &card = shared::CardFactory::getCard(card_id);
+
+        if ( player.getActions() == 0 ) {
+            LOG(ERROR) << "player tried to play an action card but he has no actions left";
+            throw std::runtime_error("unreachable code");
+        }
 
         if ( !card.isAction() ) {
             LOG(ERROR) << "tried to play a card that isn't an action card, card:" << card.getId();
             throw exception::InvalidCardType("");
-        } else if ( getPhase() != GamePhase::ACTION_PHASE ) {
-            LOG(ERROR) << "player(" << affected_player << ") is currently not in the action phase, throwing";
-            throw exception::OutOfPhase("");
-        } else if ( player.isCurrentlyPlayingCard() ) {
-            LOG(ERROR) << "player(" << affected_player
-                       << ") is already playing a different card, landed in the wrong handler";
-            throw std::runtime_error("message landed up in the wrong handler");
-        } else if ( player.getActions() == 0 ) {
-            forceSwitchPhase();
-            LOG(ERROR) << "tried to play an action card, but has no actions left";
-            throw exception::OutOfActions("");
-        } else if ( !(player.hasCardInHand(card_id) || player.hasCardStaged(card_id)) ) {
-            LOG(ERROR) << "tried to play a card that is not in the hand or staged cards";
-            throw exception::InvalidCardAccess("");
+        }
+
+        if ( from == shared::CardAccess::HAND && !player.hasCardInHand(card_id) ) {
+            LOG(ERROR) << "tried to play card with id: " << card_id << " from hand, but card is not in hand";
+            throw exception::InvalidCardAccess("card is not in hand");
+        } else if ( from == shared::CardAccess::STAGED_CARDS && !player.hasCardStaged(card_id) ) {
+            LOG(ERROR) << "tried to play card with id: " << card_id << " from staged cards, but card is not in hand";
+            throw exception::InvalidCardAccess("card is not staged");
+        }
+
+        if ( from == shared::CardAccess::HAND ) {
+            player.playCardFromHand(card_id);
+        } else if ( from == shared::CardAccess::STAGED_CARDS ) {
+            player.playCardFromStaged(card_id);
         }
 
         player.setCurrentlyPlayingCard(card_id);
         player.decActions();
         phase = GamePhase::PLAYING_ACTION_CARD;
-
-        if ( from == shared::CardAccess::HAND ) {
-            player.playCardFromHand(hand_index);
-        } else if ( from == shared::CardAccess::STAGED_CARDS ) {
-            player.playCardFromStaged(hand_index);
-        } else {
-            LOG(ERROR) << "tried to play a card from an invalid pile";
-            throw exception::InvalidCardAccess("");
-        }
-        return true;
     }
 
     void GameState::endTurn()
@@ -231,8 +240,7 @@ namespace server
                     }
                 }
                 break;
-            case GamePhase::PLAYING_ACTION_CARD: // we do nothing here
-                break;
+            case GamePhase::PLAYING_ACTION_CARD:
             default:
                 {
                     LOG(ERROR) << "tried to switch from GamePhase::" << static_cast<int>(phase)

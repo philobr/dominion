@@ -57,9 +57,15 @@ namespace server
         reduced::Player::ptr_t getReducedPlayer();
         reduced::Enemy::ptr_t getReducedEnemy();
 
+        inline bool hasCardInHand(const shared::CardBase::id_t &card_id) const
+        {
+            return hasCard<shared::HAND>(card_id);
+        }
 
-        bool hasCardInHand(const shared::CardBase::id_t &card_id) const;
-        bool hasCardStaged(const shared::CardBase::id_t &card_id) const;
+        inline bool hasCardStaged(const shared::CardBase::id_t &card_id) const
+        {
+            return hasCard<shared::STAGED_CARDS>(card_id);
+        }
 
         bool canBlock() const
         {
@@ -74,14 +80,18 @@ namespace server
          */
         inline void draw(size_t n) { move<shared::DRAW_PILE_TOP, shared::HAND>(n); }
 
-        inline void playCardFromHand(const size_t &card_index)
+        inline void playCardFromHand(const shared::CardBase::id_t &card_id)
         {
-            moveIndices<shared::HAND, shared::PLAYED_CARDS>(card_index);
+            // this assumes that the card actually exists!
+            const auto card_idx = getIndex<shared::HAND>(card_id);
+            moveIndices<shared::HAND, shared::PLAYED_CARDS>(card_idx);
         }
 
-        inline void playCardFromStaged(const size_t &card_index)
+        inline void playCardFromStaged(const shared::CardBase::id_t &card_id)
         {
-            moveIndices<shared::STAGED_CARDS, shared::PLAYED_CARDS>(card_index);
+            // this assumes that the card actually exists!
+            const auto card_idx = getIndex<shared::STAGED_CARDS>(card_id);
+            moveIndices<shared::STAGED_CARDS, shared::PLAYED_CARDS>(card_idx);
         }
 
         /**
@@ -159,6 +169,30 @@ namespace server
 
         template <enum shared::CardAccess PILE>
         inline void shuffle();
+
+        template <enum shared::CardAccess PILE>
+        inline bool hasCard(const shared::CardBase::id_t &card_id) const
+        {
+            const auto &cards = get<PILE>();
+            return std::find_if(cards.begin(), cards.end(), [card_id](const auto &id) { return id == card_id; }) !=
+                    cards.end();
+        }
+
+        template <enum shared::CardAccess PILE>
+        inline size_t getIndex(const shared::CardBase::id_t &card_id) const
+        {
+            if ( !hasCard<PILE>(card_id) ) {
+                LOG(WARN) << "tried to get an index of a card with id:" << card_id
+                          << " that is not in the specified pile";
+                throw std::runtime_error("unreachable code");
+            }
+
+            const auto &cards = get<PILE>();
+            const auto idx =
+                    std::find_if(cards.begin(), cards.end(), [card_id](const auto &id) { return id == card_id; });
+
+            return std::distance(cards.begin(), idx);
+        }
 
         /**
          * @brief Adds (no copy) the vector of cards to the specified pile.

@@ -76,5 +76,31 @@ namespace server
         RESPONSE_HANDLER(EndTurnDecision);
         RESPONSE_HANDLER(ChooseNCardsFromHandDecision);
 
+        response_t finished_playing_card()
+        {
+            cur_behaviours->resetBehaviours();
+
+            if ( game_state->getPhase() != server::GamePhase::PLAYING_ACTION_CARD ) {
+                LOG(ERROR) << "tried to finish playing a card while not even playing a card!";
+                throw std::runtime_error("unreachable code");
+            }
+
+            game_state->setPhase(server::GamePhase::ACTION_PHASE);
+            game_state->maybeSwitchPhase();
+            switch ( game_state->getPhase() ) {
+                case server::GamePhase::ACTION_PHASE:
+                    return std::make_unique<shared::ActionPhaseOrder>();
+                case server::GamePhase::BUY_PHASE:
+                    return std::make_unique<shared::BuyPhaseOrder>();
+                case server::GamePhase::PLAYING_ACTION_CARD:
+                default:
+                    {
+                        LOG(ERROR) << "game_state is out of phase";
+                        throw std::runtime_error("unreachable code");
+                    }
+                    break;
+            }
+        }
+
     }; // namespace server
 } // namespace server

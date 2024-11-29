@@ -65,17 +65,9 @@ namespace server
         void startTurn();
         void endTurn();
 
+        void setPhase(GamePhase new_phase) { phase = new_phase; }
+
         bool isGameOver() const;
-
-        inline bool canPlay(const Player::id_t &player_id, unsigned int hand_idx) const
-        {
-            return hand_idx < getPlayer(player_id).get<shared::CardAccess::HAND>().size();
-        }
-
-        inline const shared::CardBase::id_t &getCardId(const Player::id_t &player_id, unsigned int hand_idx) const
-        {
-            return getPlayer(player_id).get<shared::CardAccess::HAND>().at(hand_idx);
-        }
 
         /**
          * @brief As of now, this function tries to buy a card for the given player.
@@ -93,8 +85,8 @@ namespace server
          * the played cards and the currently_playing_card (in Player) and the actions are decremented.
          */
         bool tryBuy(const Player::id_t &player_id, const shared::CardBase::id_t &card);
-        bool tryPlay(const Player::id_t &affected_player, size_t hand_index, shared::CardAccess from);
-
+        void tryPlay(const Player::id_t &affected_player, const shared::CardBase::id_t &card_id,
+                     shared::CardAccess from = shared::CardAccess::HAND);
 
         /**
          * @brief Switches phases if necessary, this means: if a player is out of buys or out of actions

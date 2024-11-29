@@ -25,7 +25,8 @@ namespace shared
         bool operator!=(const PlayActionCardDecision &other) const;
         PlayActionCardDecision(shared::CardBase::id_t card_id,
                                shared::CardAccess from_pile = shared::CardAccess::HAND) :
-            card_id(card_id), from(from_pile)
+            card_id(card_id),
+            from(from_pile)
         {}
 
         shared::CardBase::id_t card_id;

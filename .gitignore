@@ -16,6 +16,7 @@ cmake-build-release/
 build/
 docker_build/
 build_docker/
+ubuntu_build/
 
 # Ignore IDE-specific files and folders
 .idea/

@@ -110,6 +110,18 @@ namespace server
         return true;
     }
 
+    /*
+    TODO: this needs to be redesigned somehow
+
+    the part with the index is stupid, we should just keep the hand cards sorted and call this function only by card_id
+
+    this function should also not be tryPlay, but play, the try part should happen beforehand
+
+    -> move all safety checks to game_interface (with nice helpers to keep it readable)
+    -> only if all safety checks pass (idx is valid etc etc etc) we call
+        play(player_id, card_id type, target_pile);
+
+     */
     bool GameState::tryPlay(const Player::id_t &affected_player, size_t hand_index, shared::CardAccess from)
     {
         auto &player = getPlayer(affected_player);
@@ -119,22 +131,18 @@ namespace server
         if ( !card.isAction() ) {
             LOG(ERROR) << "tried to play a card that isn't an action card";
             throw exception::InvalidCardType("");
-        }
-        if ( getPhase() != GamePhase::ACTION_PHASE ) {
+        } else if ( getPhase() != GamePhase::ACTION_PHASE ) {
             LOG(ERROR) << "player(" << affected_player << ") is currently not in the action phase, throwing";
             throw exception::OutOfPhase("");
-        }
-        if ( player.isCurrentlyPlayingCard() ) {
+        } else if ( player.isCurrentlyPlayingCard() ) {
             LOG(ERROR) << "player(" << affected_player
                        << ") is already playing a different card, landed in the wrong handler";
             throw std::runtime_error("message landed up in the wrong handler");
-        }
-        if ( player.getActions() == 0 ) {
+        } else if ( player.getActions() == 0 ) {
             forceSwitchPhase();
             LOG(ERROR) << "tried to play an action card, but has no actions left";
             throw exception::OutOfActions("");
-        }
-        if ( !(player.hasCardInHand(card_id) || player.hasCardStaged(card_id)) ) {
+        } else if ( !(player.hasCardInHand(card_id) || player.hasCardStaged(card_id)) ) {
             LOG(ERROR) << "tried to play a card that is not in the hand or staged cards";
             throw exception::InvalidCardAccess("");
         }

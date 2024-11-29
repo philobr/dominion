@@ -137,7 +137,7 @@ namespace server
          * @return const std::vector<shared::CardBase::id_t>&
          */
         template <enum shared::CardAccess PILE>
-        inline const std::vector<shared::CardBase::id_t> &get();
+        inline const std::vector<shared::CardBase::id_t> &get() const;
 
         /**
          * @brief Moves the played_cards & hand_cards to the discard_pile, then draws 5 cards again.
@@ -259,6 +259,27 @@ namespace server
 
     template <enum shared::CardAccess PILE>
     inline std::vector<shared::CardBase::id_t> &Player::getMutable()
+    {
+        if constexpr ( PILE == shared::DISCARD_PILE ) {
+            return discard_pile;
+        } else if constexpr ( PILE == shared::HAND ) {
+            return hand_cards;
+        } else if constexpr ( PILE == shared::PLAYED_CARDS ) {
+            return played_cards;
+        } else if constexpr ( PILE == shared::STAGED_CARDS ) {
+            return staged_cards;
+        } else if constexpr ( PILE == shared::DRAW_PILE_TOP ) {
+            return draw_pile;
+        } else if constexpr ( PILE == shared::DRAW_PILE_BOTTOM ) {
+            return draw_pile;
+        } else {
+            // should only happen for trash pile
+            throw std::invalid_argument("Invalid pile specified or pile is not accessible.");
+        }
+    }
+
+    template <enum shared::CardAccess PILE>
+    inline const std::vector<shared::CardBase::id_t> &Player::get() const
     {
         if constexpr ( PILE == shared::DISCARD_PILE ) {
             return discard_pile;
@@ -442,12 +463,6 @@ namespace server
     inline void Player::discard(const std::vector<unsigned int> &indices)
     {
         moveIndices<PILE, shared::DISCARD_PILE>(indices);
-    }
-
-    template <enum shared::CardAccess PILE>
-    inline const std::vector<shared::CardBase::id_t> &Player::get()
-    {
-        return getMutable<PILE>();
     }
 
     template <enum shared::CardAccess PILE>

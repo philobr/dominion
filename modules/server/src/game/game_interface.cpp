@@ -13,14 +13,13 @@ namespace server
 
     GameInterface::response_t GameInterface::handleMessage(std::unique_ptr<shared::ClientToServerMessage> &message)
     {
-        auto message = dynamic_cast<shared::ActionDecisionMessage *>(message.get());
-        if ( message == nullptr ) {
+        auto casted_msg = dynamic_cast<shared::ActionDecisionMessage *>(message.get());
+        if ( casted_msg == nullptr ) {
             LOG(ERROR) << "Received a non shared::ActionDecisionMessage in " << FUNC_NAME;
             throw std::runtime_error("unreachable code");
         }
 
         // THIS IS A HACKY WORK IN PROGRESS, WILL FIX LATER
-        auto *casted_msg = dynamic_cast<shared::ActionDecisionMessage *>(message.get());
         auto action_decision = std::move(casted_msg->decision);
 
         if ( casted_msg->in_response_to.has_value() ) {
@@ -81,13 +80,53 @@ namespace server
     GameInterface::PlayActionCardDecision_handler(std::unique_ptr<shared::PlayActionCardDecision> action_decision,
                                                   const Player::id_t &player_id)
     {
+        /*
+        this should probably be hand_cards in the first call?
+
         if ( action_decision->cardIndex >=
              game_state->getPlayer(player_id).get<shared::CardAccess::PLAYED_CARDS>().size() ) {
             LOG(ERROR) << "player(" << player_id << ") tried to play a card that is not in his played cards";
             throw exception::InvalidCardAccess("");
         }
-        const auto &card_id =
-                game_state->getPlayer(player_id).get<shared::CardAccess::HAND>()[action_decision->cardIndex];
+        */
+
+        /*
+        flow is:
+
+        - is phase correct?
+
+        - CAN this card be played? (exists?)
+        - get idx
+
+        try {
+            play(player, card_type, from_where); -> only moves the card from the given pile to the played cards
+        } catch (play_exception){
+            return error_msg; (no throw)
+        }
+
+        load behaviours
+        run them until return
+            if nullopt:
+                play_card_done(); // cleanup stuff, try phaseswitch etc etc
+            else return order.
+
+        // we also need a function that can keep running behaviours
+        -> can it be that all decision_responses go back into behaviours?
+        */
+
+
+        if ( game_state->getPhase() != GamePhase::ACTION_PHASE ) {
+            LOG(ERROR) << "player tried to play an action card out of phase";
+            throw std::runtime_error("what should happen here?");
+        }
+
+        const auto played_card_idx = action_decision->cardIndex;
+        if ( game_state->canPlay(player_id, played_card_idx) ) {
+            LOG(ERROR) << "player(" << player_id << ") tried to play a card that is not in his hand";
+            throw exception::InvalidCardAccess("");
+        }
+
+        const auto &card_id = game_state->getCardId(player_id, played_card_idx);
         // checks if the card is currently playable (multiple checks done)
         if ( game_state->tryPlay(player_id, action_decision->cardIndex, action_decision->from) ) {
 
@@ -115,7 +154,6 @@ namespace server
                                            const Player::id_t &player_id)
     {
         if ( game_state->getPhase() != GamePhase::BUY_PHASE ) {
-            // ASSUMING FOR NOW
             LOG(WARN) << "player(" << player_id << ") is currently not in the buy phase, retrying";
 
             return std::make_unique<shared::BuyPhaseOrder>();

@@ -50,7 +50,9 @@ namespace server
 
         const Player::id_t &getCurrentPlayerId() const { return player_order[current_player_idx]; }
         Player &getCurrentPlayer() { return *player_map[getCurrentPlayerId()]; }
+
         Player &getPlayer(const Player::id_t &id) { return *player_map.at(id); }
+        const Player &getPlayer(const Player::id_t &id) const { return *player_map.at(id); }
 
         GamePhase getPhase() const { return phase; }
 
@@ -65,6 +67,16 @@ namespace server
 
         bool isGameOver() const;
 
+        inline bool canPlay(const Player::id_t &player_id, unsigned int hand_idx) const
+        {
+            return hand_idx < getPlayer(player_id).get<shared::CardAccess::HAND>().size();
+        }
+
+        inline const shared::CardBase::id_t &getCardId(const Player::id_t &player_id, unsigned int hand_idx) const
+        {
+            return getPlayer(player_id).get<shared::CardAccess::HAND>().at(hand_idx);
+        }
+
         /**
          * @brief As of now, this function tries to buy a card for the given player.
          * It throws exception::InsufficientFunds or exception::CardNotAvailable accordingly.
@@ -76,9 +88,9 @@ namespace server
          */
 
         /**
-         * @brief This function checks if the player is in Action phase, the card is an action card and if the player
-         * has actions left. If both conditions are met, the card is moved from the hand/staged cards to the played
-         * cards and the currently_playing_card (in Player) and the actions are decremented.
+         * @brief This function checks if the player is in Action phase, the card is an action card and if the
+         * player has actions left. If both conditions are met, the card is moved from the hand/staged cards to
+         * the played cards and the currently_playing_card (in Player) and the actions are decremented.
          */
         bool tryBuy(const Player::id_t &player_id, const shared::CardBase::id_t &card);
         bool tryPlay(const Player::id_t &affected_player, size_t hand_index, shared::CardAccess from);

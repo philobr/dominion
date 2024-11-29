@@ -55,6 +55,8 @@ namespace server
         response_t handleResponse(std::unique_ptr<shared::ActionDecision> action_decision,
                                   const std::string &in_response_to, const Player::id_t &affected_player_id);
 
+        // TODO: we should remove those macro functions for readability before submitting
+
 #define HANDLER(decision_type) /* can also be used to define the func outside of the class */                          \
     response_t decision_type##_handler(std::unique_ptr<shared::decision_type> decision,                                \
                                        const Player::id_t &affected_player_id)

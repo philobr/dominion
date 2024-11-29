@@ -15,7 +15,8 @@ static const wxCmdLineEntryDesc CMD_LINE_DESC[] = {
         {wxCMD_LINE_NONE, nullptr, nullptr, nullptr, wxCMD_LINE_VAL_NONE, wxCMD_LINE_PARAM_OPTIONAL}};
 
 
-void segFaultHandler(int sig) {
+void segFaultHandler(int sig)
+{
     void *array[10];
     size_t size;
 

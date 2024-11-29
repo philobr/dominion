@@ -50,6 +50,7 @@ namespace server
 
         auto order_msg = std::make_unique<shared::ActionOrderMessage>(lobby_id, game_interface->handleMessage(message));
         message_interface.sendMessage(std::move(order_msg), requestor_id);
+        broadcastGameState(message_interface);
     }
 
     void Lobby::getGameState(MessageInterface &message_interface,

@@ -52,11 +52,8 @@ namespace server
         response_t handleAction(std::unique_ptr<shared::ActionDecision> action_decision,
                                 const Player::id_t &affected_player_id);
 
-        response_t handleResponse(std::unique_ptr<shared::ActionDecision> action_decision,
-                                  const std::string &in_response_to, const Player::id_t &affected_player_id);
 
         // TODO: we should remove those macro functions for readability before submitting
-
 #define HANDLER(decision_type) /* can also be used to define the func outside of the class */                          \
     response_t decision_type##_handler(std::unique_ptr<shared::decision_type> decision,                                \
                                        const Player::id_t &affected_player_id)
@@ -66,24 +63,14 @@ namespace server
         HANDLER(EndTurnDecision);
         HANDLER(ChooseNCardsFromHandDecision);
 
-#define RESPONSE_HANDLER(decision_type) /* can also be used to define the func outside of the class */                 \
-    response_t decision_type##_response_handler(std::unique_ptr<shared::decision_type> decision,                       \
-                                                const std::string &in_response_to,                                     \
-                                                const Player::id_t &affected_player_id)
-
-        RESPONSE_HANDLER(PlayActionCardDecision);
-        RESPONSE_HANDLER(BuyCardDecision);
-        RESPONSE_HANDLER(EndTurnDecision);
-        RESPONSE_HANDLER(ChooseNCardsFromHandDecision);
-
         response_t finished_playing_card()
         {
-            cur_behaviours->resetBehaviours();
-
             if ( game_state->getPhase() != server::GamePhase::PLAYING_ACTION_CARD ) {
                 LOG(ERROR) << "tried to finish playing a card while not even playing a card!";
                 throw std::runtime_error("unreachable code");
             }
+
+            cur_behaviours->resetBehaviours();
 
             game_state->setPhase(server::GamePhase::ACTION_PHASE);
             game_state->maybeSwitchPhase();

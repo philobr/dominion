@@ -89,8 +89,19 @@ namespace server
                                                     std::move(reduced_enemies), active_player_id);
     }
 
-    bool GameState::tryBuy(const Player::id_t &player_id, const shared::CardBase::id_t &card_id)
+    void GameState::tryBuy(const Player::id_t &player_id, const shared::CardBase::id_t &card_id)
     {
+        /*
+        1. can we buy? (only in buy phase and as reaction to playing action_card)
+        2. sufficient funds?
+        3. does card exist on the board?
+        */
+
+        if ( phase != GamePhase::BUY_PHASE ) {
+            LOG(ERROR) << "tried to buy, but is not in a valid phase";
+            throw std::runtime_error("unreachable code");
+        }
+
         auto &player = getPlayer(player_id);
         const auto card_cost = shared::CardFactory::getCard(card_id).getCost();
 
@@ -106,22 +117,8 @@ namespace server
 
         player.gain(card_id);
         player.decTreasure(card_cost);
-
-        return true;
     }
 
-    /*
-    TODO: this needs to be redesigned somehow
-
-    the part with the index is stupid, we should just keep the hand cards sorted and call this function only by card_id
-
-    this function should also not be tryPlay, but play, the try part should happen beforehand
-
-    -> move all safety checks to game_interface (with nice helpers to keep it readable)
-    -> only if all safety checks pass (idx is valid etc etc etc) we call
-        play(player_id, card_id type, target_pile);
-
-     */
     void GameState::tryPlay(const Player::id_t &affected_player, const shared::CardBase::id_t &card_id,
                             shared::CardAccess from)
     {
@@ -166,9 +163,7 @@ namespace server
             player.playCardFromStaged(card_id);
         }
 
-        player.setCurrentlyPlayingCard(card_id);
         player.decActions();
-        phase = GamePhase::PLAYING_ACTION_CARD;
     }
 
     void GameState::endTurn()

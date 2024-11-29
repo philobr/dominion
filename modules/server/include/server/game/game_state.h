@@ -84,7 +84,7 @@ namespace server
          * player has actions left. If both conditions are met, the card is moved from the hand/staged cards to
          * the played cards and the currently_playing_card (in Player) and the actions are decremented.
          */
-        bool tryBuy(const Player::id_t &player_id, const shared::CardBase::id_t &card);
+        void tryBuy(const Player::id_t &player_id, const shared::CardBase::id_t &card);
         void tryPlay(const Player::id_t &affected_player, const shared::CardBase::id_t &card_id,
                      shared::CardAccess from = shared::CardAccess::HAND);
 

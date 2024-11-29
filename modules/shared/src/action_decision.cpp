@@ -13,7 +13,7 @@ namespace shared
 
     bool PlayActionCardDecision::operator==(const PlayActionCardDecision &other) const
     {
-        return (this->cardIndex == other.cardIndex) && (this->from == other.from);
+        return (this->card_id == other.card_id) && (this->from == other.from);
     }
 
     bool PlayActionCardDecision::equals(const ActionDecision &other) const

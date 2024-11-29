@@ -187,11 +187,11 @@ namespace client
         GameController::_clientNetworkManager->sendRequest(action_decision_message->toJson());
     }
 
-    void GameController::playCard(unsigned int card_index)
+    void GameController::playCard(const std::string &card_id)
     {
-        LOG(INFO) << "Playing card at position" << card_index << std::endl;
+        LOG(INFO) << "Playing card " << card_id;
 
-        std::unique_ptr<shared::ActionDecision> decision(new shared::PlayActionCardDecision(card_index));
+        std::unique_ptr<shared::ActionDecision> decision(new shared::PlayActionCardDecision(card_id));
 
         // TODO(#120) Implement in_response_to
         std::optional<std::string> in_response_to = std::nullopt;
@@ -206,7 +206,7 @@ namespace client
 
     void GameController::endTurn()
     {
-        LOG(INFO) << "Ending turn" << std::endl;
+        LOG(INFO) << "Ending turn";
 
         std::unique_ptr<shared::ActionDecision> decision(new shared::EndTurnDecision());
 

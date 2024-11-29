@@ -55,7 +55,7 @@ namespace client
         static void startGame();
 
         static void buyCard(const std::string &card_id);
-        static void playCard(unsigned int card_index);
+        static void playCard(const std::string &card_id);
         static void endTurn();
         static void sendRequest(const std::string &req);
 

@@ -23,10 +23,12 @@ namespace shared
     public:
         bool operator==(const PlayActionCardDecision &other) const;
         bool operator!=(const PlayActionCardDecision &other) const;
-        PlayActionCardDecision(unsigned int card_index, shared::CardAccess from_pile = shared::CardAccess::HAND) :
-            cardIndex(card_index), from(from_pile)
+        PlayActionCardDecision(shared::CardBase::id_t card_id,
+                               shared::CardAccess from_pile = shared::CardAccess::HAND) :
+            card_id(card_id), from(from_pile)
         {}
-        unsigned int cardIndex;
+
+        shared::CardBase::id_t card_id;
         shared::CardAccess from;
 
     protected:

@@ -18,7 +18,7 @@ bool ClientNetworkManager::_failedToConnect = false;
 
 void ::ClientNetworkManager::init(const std::string &host, const uint16_t port)
 {
-    LOG(INFO) << "Called ClientNetworkManager::init()";
+    LOG(INFO) << "Initializing ClientNetworkManager";
     // initialize sockpp framework
     sockpp::socket_initializer sockInit;
 
@@ -51,13 +51,11 @@ void ::ClientNetworkManager::init(const std::string &host, const uint16_t port)
         LOG(ERROR) << "Failed to connect";
         //        GameController::showStatus("Not connected");
     }
-    LOG(INFO) << "Done with ClientNetworkManager::init()";
 }
 
 
 bool ClientNetworkManager::connect(const std::string &host, const uint16_t port)
 {
-    LOG(INFO) << "Called ClientNetworkManager::connect()";
     try {
 
         // create sockpp address and catch any errors
@@ -76,15 +74,12 @@ bool ClientNetworkManager::connect(const std::string &host, const uint16_t port)
         return false;
     }
 
-    LOG(INFO) << "Done with ClientNetworkManager::connect()";
     return true;
 }
 
 
 void ClientNetworkManager::sendRequest(const std::string message)
 {
-
-    LOG(INFO) << "Called ClientNetworkManager::sendRequest()";
     // wait until network is connected (max. 5 seconds)
     int connectionCheckCounter = 0;
     while ( !ClientNetworkManager::_connectionSuccess && !ClientNetworkManager::_failedToConnect &&
@@ -114,7 +109,7 @@ void ClientNetworkManager::sendRequest(const std::string message)
 
         // if the number of bytes sent does not match the length of the msg, probably something went wrong
         if ( bytesSent != ssize_t(msg.length()) ) {
-            LOG(ERROR) << "Error writing to TCP stream" << ClientNetworkManager::_connection->last_error_str();
+            LOG(ERROR) << "Error writing to TCP stream: " << ClientNetworkManager::_connection->last_error_str();
             // TODO Stuff for the gui team
             // GameController::showError("Network error", "Error writing to the TCP stream: " +
             // ClientNetworkManager::_connection->last_error_str());
@@ -125,22 +120,17 @@ void ClientNetworkManager::sendRequest(const std::string message)
         // TODO GUI TEAM
         // GameController::showError("Network error", "Lost connection to server");
     }
-    LOG(INFO) << "Done with ClientNetworkManager::sendRequest()";
 }
 
 
 void ClientNetworkManager::receiveMessage(const std::string &message)
 {
-    LOG(INFO) << "Called ClientNetworkManager::receive_message()";
     try {
         std::unique_ptr<shared::ServerToClientMessage> res = shared::ServerToClientMessage::fromJson(message);
-        // TODO Process the server message
         LOG(INFO) << "Received Message: " << message;
         client::GameController::receiveMessage(std::move(res));
-        LOG(INFO) << "Done with ClientNetworkManager::receive_message()";
-
     } catch ( std::exception &e ) {
-        LOG(ERROR) << "Exception in ClientNetworkManager::receive_message";
+        LOG(ERROR) << "Exception in ClientNetworkManager::receive_message: " << e.what();
         //        GameController::showError("JSON parsing error", "Failed to parse message from server:\n" + message +
         //        "\n" + (std::string) e.what());
     }

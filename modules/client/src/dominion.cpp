@@ -80,7 +80,6 @@ namespace client
         // Initialize game controller
         GameController::init(gameWindow);
 
-        LOG(INFO) << "Done with Dominion::OnInit()";
         return true;
     }
 

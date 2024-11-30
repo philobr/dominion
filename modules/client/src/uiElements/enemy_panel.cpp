@@ -12,7 +12,6 @@ namespace client
     EnemyPanel::EnemyPanel(wxWindow *parent, reduced::Enemy &enemy) :
         wxPanel(parent, wxID_ANY, wxDefaultPosition, wxSize(-1, 80))
     {
-        LOG(INFO) << "Ctor EnemyPanel";
         // Set a light red background color
         this->SetBackgroundStyle(wxBG_STYLE_PAINT);
         this->Bind(wxEVT_PAINT, &EnemyPanel::onPaint, this);

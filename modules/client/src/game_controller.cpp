@@ -207,6 +207,23 @@ namespace client
         GameController::_clientNetworkManager->sendRequest(action_decision_message->toJson());
     }
 
+    void GameController::endActionPhase()
+    {
+        LOG(INFO) << "Ending action phase";
+
+        std::unique_ptr<shared::ActionDecision> decision(new shared::EndActionPhaseDecision());
+
+        // TODO (#120) Implement in_response_to
+        std::optional<std::string> in_response_to = std::nullopt;
+
+        std::unique_ptr<shared::ActionDecisionMessage> action_decision_message =
+                std::make_unique<shared::ActionDecisionMessage>(GameController::_gameName,
+                                                                GameController::getPlayerName(), std::move(decision),
+                                                                in_response_to);
+
+        GameController::_clientNetworkManager->sendRequest(action_decision_message->toJson());
+    }
+
     void GameController::endTurn()
     {
         LOG(INFO) << "Ending turn";

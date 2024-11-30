@@ -58,6 +58,7 @@ namespace client
 
         static void buyCard(const std::string &card_id);
         static void playCard(const std::string &card_id);
+        static void endActionPhase();
         static void endTurn();
         static void sendRequest(const std::string &req);
 

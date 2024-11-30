@@ -58,7 +58,7 @@ namespace server
             static_assert(std::is_base_of_v<shared::ActionOrder, typename std::decay_t<T2>::element_type>,
                           "Expected order to be derived from ActionOrder.");
 
-            addOrder(std::forward<T1>(player_id), std::unique_ptr<shared::ActionOrder>(std::move(order)));
+            addOrder(std::forward<T1>(player_id), std::unique_ptr<shared::ActionOrder>(std::forward<T2>(order)));
 
             if constexpr ( sizeof...(Rest) > 0 ) {
                 addOrders(std::forward<Rest>(rest)...);

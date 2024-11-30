@@ -1,5 +1,6 @@
 #include <panels/player_panel.h>
 
+#include <dominion.h>
 #include <game_controller.h>
 #include <shared/game/cards/card_factory.h>
 #include <shared/utils/logger.h>
@@ -48,7 +49,8 @@ namespace client
         image->SetCursor(wxCursor(wxCURSOR_HAND));
 
         // Bind left click on the panel to the buyCard function
-        image->Bind(wxEVT_LEFT_UP, [card_id](wxMouseEvent & /*event*/) { GameController::playCard(card_id); });
+        image->Bind(wxEVT_LEFT_UP,
+                    [card_id](wxMouseEvent & /*event*/) { wxGetApp().getController().playCard(card_id); });
     }
 
     wxPanel *PlayerPanel::createDrawPilePanel(const unsigned int draw_pile_size)

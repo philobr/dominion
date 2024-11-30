@@ -81,10 +81,11 @@ namespace client
         );
         gameWindow->Show(true);
 
-        // Initialize game controller
-        GameController::init(gameWindow);
+        _controller = new GameController(gameWindow);
 
         return true;
     }
+
+    GameController &Dominion::getController() { return *_controller; }
 
 } // namespace client

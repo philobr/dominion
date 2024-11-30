@@ -11,7 +11,7 @@ namespace server
         }
 
         // handle create lobby
-        if ( auto *create_lobby_request = dynamic_cast<shared::CreateLobbyRequestMessage *>(message.get()) ) {
+        if ( dynamic_cast<shared::CreateLobbyRequestMessage *>(message.get()) ) {
             LOG(INFO) << "Trying to handle: CreateLobbyRequestMessage";
             std::unique_ptr<shared::CreateLobbyRequestMessage> unique_CreateLobbyRequestMessage(
                     static_cast<shared::CreateLobbyRequestMessage *>(message.release()));

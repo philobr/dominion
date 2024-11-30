@@ -1,4 +1,5 @@
 #include <client_network_manager.h>
+#include "dominion.h"
 
 #include <client_listener.h>
 #include <game_controller.h>
@@ -128,7 +129,7 @@ void ClientNetworkManager::receiveMessage(const std::string &message)
     try {
         std::unique_ptr<shared::ServerToClientMessage> res = shared::ServerToClientMessage::fromJson(message);
         LOG(INFO) << "Received Message: " << message;
-        client::GameController::receiveMessage(std::move(res));
+        wxGetApp().getController().receiveMessage(std::move(res));
     } catch ( std::exception &e ) {
         LOG(ERROR) << "Exception in ClientNetworkManager::receive_message: " << e.what();
         //        GameController::showError("JSON parsing error", "Failed to parse message from server:\n" + message +

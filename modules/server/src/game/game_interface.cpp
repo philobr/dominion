@@ -19,25 +19,20 @@ namespace server
             throw std::runtime_error("unreachable code");
         }
 
-        auto affected_player_id = casted_msg->player_id;
-        return handleAction(std::move(casted_msg->decision), affected_player_id);
+#define HANDLE_ACTION(type)                                                                                            \
+    if ( dynamic_cast<shared::type *>(casted_msg->decision.get()) ) {                                                  \
+        return type##_handler(                                                                                         \
+                std::unique_ptr<shared::type>(static_cast<shared::type *>(casted_msg->decision.release())),            \
+                casted_msg->player_id);                                                                                \
     }
 
-    GameInterface::response_t GameInterface::handleAction(std::unique_ptr<shared::ActionDecision> action_decision,
-                                                          const Player::id_t &affected_player_id)
-    {
-#define HANDLE_ACTION(type)                                                                                            \
-    if ( dynamic_cast<shared::type *>(action_decision.get()) ) {                                                       \
-        return type##_handler(std::unique_ptr<shared::type>(static_cast<shared::type *>(action_decision.release())),   \
-                              affected_player_id);                                                                     \
-    }
         HANDLE_ACTION(PlayActionCardDecision);
         HANDLE_ACTION(BuyCardDecision);
         HANDLE_ACTION(EndTurnDecision);
         HANDLE_ACTION(ChooseNCardsFromHandDecision);
 
         LOG(ERROR) << "Unreachable code: received some weird message type";
-        throw std::runtime_error("Unreachable code");
+        throw std::runtime_error("unreachable code in " + FUNC_NAME);
     }
 
     GameInterface::response_t
@@ -48,7 +43,7 @@ namespace server
             game_state->tryPlay(player_id, action_decision->card_id, action_decision->from);
             game_state->setPhase(GamePhase::PLAYING_ACTION_CARD); // phase is only set if we successfully played a card
         } catch ( std::exception &e ) {
-            LOG(ERROR) << "failed to play, TODO: handle this";
+            LOG(ERROR) << "failed to play, TODO: handle this more gracefully";
             throw std::runtime_error("failed to play card (GameInterface::PlayActionCardDecision_handler), this needs "
                                      "to be handled better");
         }
@@ -98,23 +93,45 @@ namespace server
     {
         // this will be implemented after ChooseNCardFromHandDecision is fixed
 
-        // auto order_msg = behaviour_chain->receiveAction(*game_state, action_decision);
-        //
-        // if ( !order_msg.empty() ) {
-        //     return order_msg;
-        // }
-        //
-        // return finishedPlayingCard();
-
         LOG(ERROR) << FUNC_NAME << " is not implemented yet!";
         throw std::runtime_error("unrachable code");
 
+        // auto order_msg = behaviour_chain->receiveAction(*game_state, action_decision);
         if ( behaviour_chain->empty() ) {
             return finishedPlayingCard();
         } else {
             // return empty order
             return OrderResponse();
         }
+    }
+
+    GameInterface::response_t GameInterface::nextPhase()
+    {
+        game_state->maybeSwitchPhase();
+        switch ( game_state->getPhase() ) {
+            case server::GamePhase::ACTION_PHASE:
+                return {game_state->getCurrentPlayerId(), std::make_unique<shared::ActionPhaseOrder>()};
+            case server::GamePhase::BUY_PHASE:
+                return {game_state->getCurrentPlayerId(), std::make_unique<shared::ActionPhaseOrder>()};
+            case server::GamePhase::PLAYING_ACTION_CARD:
+            default:
+                {
+                    LOG(ERROR) << "game_state is out of phase";
+                    throw std::runtime_error("unreachable code");
+                }
+                break;
+        }
+    }
+
+    GameInterface::response_t GameInterface::finishedPlayingCard()
+    {
+        if ( game_state->getPhase() != server::GamePhase::PLAYING_ACTION_CARD ) {
+            LOG(ERROR) << "tried to finish playing a card while not even playing a card!";
+            throw std::runtime_error("unreachable code in " + FUNC_NAME);
+        }
+
+        game_state->setPhase(server::GamePhase::ACTION_PHASE);
+        return nextPhase();
     }
 
 } // namespace server

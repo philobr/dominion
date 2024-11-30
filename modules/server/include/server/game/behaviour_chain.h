@@ -42,19 +42,9 @@ namespace server
         void resetBehaviours();
 
         inline void advance() { ++behaviour_idx; }
-        inline void advanceIfDone()
-        {
-            if ( currentBehaviour().isDone() ) {
-                advance();
-            }
-        }
-
         inline bool hasNext() const { return behaviour_idx < behaviour_list.size(); }
 
         base::Behaviour &currentBehaviour() { return *behaviour_list[behaviour_idx]; }
-
-        ret_t applyBehaviour(server::GameState &game_state,
-                             std::optional<std::unique_ptr<shared::ActionDecision>> action_decision = std::nullopt);
     };
 
     inline constexpr size_t BehaviourChain::INVALID_IDX = static_cast<size_t>(-1);

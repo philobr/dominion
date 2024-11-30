@@ -23,7 +23,7 @@ namespace server
         static ptr_t make(const std::string &game_id, const std::vector<shared::CardBase::id_t> &play_cards,
                           const std::vector<Player::id_t> &player_ids);
 
-        inline std::unique_ptr<reduced::GameState> getGameState(const shared::PlayerBase::id_t &player_id)
+        inline auto getGameState(const shared::PlayerBase::id_t &player_id)
         {
             return game_state->getReducedState(player_id);
         }
@@ -49,11 +49,11 @@ namespace server
             behaviour_chain(std::make_unique<BehaviourChain>()), game_id(game_id)
         {}
 
-        response_t handleAction(std::unique_ptr<shared::ActionDecision> action_decision,
-                                const Player::id_t &affected_player_id);
+        response_t nextPhase();
+        response_t finishedPlayingCard();
 
+        // TODO: expand this macro when the messages are finally final
 
-        // TODO: we should remove those macro functions for readability before submitting
 #define HANDLER(decision_type) /* can also be used to define the func outside of the class */                          \
     response_t decision_type##_handler(std::unique_ptr<shared::decision_type> decision,                                \
                                        const Player::id_t &affected_player_id)
@@ -62,37 +62,6 @@ namespace server
         HANDLER(BuyCardDecision);
         HANDLER(EndTurnDecision);
         HANDLER(ChooseNCardsFromHandDecision);
-
-        response_t nextPhase()
-        {
-            game_state->maybeSwitchPhase();
-            switch ( game_state->getPhase() ) {
-                case server::GamePhase::ACTION_PHASE:
-                    return OrderResponse(game_state->getCurrentPlayerId(),
-                                         std::make_unique<shared::ActionPhaseOrder>());
-                case server::GamePhase::BUY_PHASE:
-                    return OrderResponse(game_state->getCurrentPlayerId(),
-                                         std::make_unique<shared::ActionPhaseOrder>());
-                case server::GamePhase::PLAYING_ACTION_CARD:
-                default:
-                    {
-                        LOG(ERROR) << "game_state is out of phase";
-                        throw std::runtime_error("unreachable code");
-                    }
-                    break;
-            }
-        }
-
-        response_t finishedPlayingCard()
-        {
-            if ( game_state->getPhase() != server::GamePhase::PLAYING_ACTION_CARD ) {
-                LOG(ERROR) << "tried to finish playing a card while not even playing a card!";
-                throw std::runtime_error("unreachable code");
-            }
-
-            game_state->setPhase(server::GamePhase::ACTION_PHASE);
-            return nextPhase();
-        }
 
     }; // namespace server
 } // namespace server

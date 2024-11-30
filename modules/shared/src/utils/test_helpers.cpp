@@ -155,13 +155,19 @@ namespace test_helper
         return reduced::Enemy::make(player_base, n_hand_cards);
     }
 
-    std::vector<reduced::Enemy::ptr_t> getReducedEnemies(size_t n_enemies)
+    std::vector<reduced::Enemy::ptr_t> getReducedEnemies(size_t n_enemies, std::vector<size_t> hand_cards)
     {
         std::vector<reduced::Enemy::ptr_t> result;
         for ( size_t i = 0; i < n_enemies; ++i ) {
-            result.push_back(getReducedEnemy(std::string("reduced_enemy") + std::to_string(i + 1), 5));
+            result.push_back(getReducedEnemy(std::string("reduced_enemy") + std::to_string(i + 1), hand_cards[i]));
         }
         return result;
+    }
+
+    std::vector<reduced::Enemy::ptr_t> getReducedEnemies(size_t n_enemies)
+    {
+        std::vector<size_t> hand_cards(n_enemies, 5);
+        return getReducedEnemies(n_enemies, hand_cards);
     }
 
     shared::Board::ptr_t getBoard(size_t n_players, std::vector<shared::CardBase::id_t> kingdom_cards)
@@ -171,10 +177,40 @@ namespace test_helper
 
     shared::Board::ptr_t getBoard(size_t n_players) { return getBoard(n_players, getValidRandomKingdomCards(10)); }
 
-    reduced::GameState getReducedGameState(size_t n_players)
+    reduced::GameState getReducedGameState(size_t n_players, std::vector<shared::CardBase::id_t> kingdom_cards,
+                                           std::vector<shared::CardBase::id_t> hand_cards,
+                                           std::vector<size_t> enemy_hand_cards)
     {
         const std::string active_player = "reduced_player";
-        return reduced::GameState(getBoard(n_players), getReducedPlayer(active_player),
-                                  getReducedEnemies(n_players - 1), active_player);
+        auto board = getBoard(n_players, kingdom_cards);
+        auto reduced_player = getReducedPlayer(active_player, hand_cards);
+        auto reduced_enemies = getReducedEnemies(n_players - 1, enemy_hand_cards);
+        return reduced::GameState(std::move(board), std::move(reduced_player), std::move(reduced_enemies),
+                                  active_player);
+    }
+
+    reduced::GameState getReducedGameState(size_t n_players)
+    {
+        return getReducedGameState(n_players, getValidRandomKingdomCards(10), getRandomCards(5),
+                                   std::vector<size_t>(n_players - 1, 5));
+    }
+
+    std::unique_ptr<reduced::GameState> getReducedGameStatePtr(size_t n_players,
+                                                               std::vector<shared::CardBase::id_t> kingdom_cards,
+                                                               std::vector<shared::CardBase::id_t> hand_cards,
+                                                               std::vector<size_t> enemy_hand_cards)
+    {
+        const std::string active_player = "reduced_player";
+        auto board = getBoard(n_players, kingdom_cards);
+        auto reduced_player = getReducedPlayer(active_player, hand_cards);
+        auto reduced_enemies = getReducedEnemies(n_players - 1, enemy_hand_cards);
+        return std::make_unique<reduced::GameState>(std::move(board), std::move(reduced_player),
+                                                    std::move(reduced_enemies), active_player);
+    }
+
+    std::unique_ptr<reduced::GameState> getReducedGameStatePtr(size_t n_players)
+    {
+        return getReducedGameStatePtr(n_players, getValidRandomKingdomCards(10), getRandomCards(5),
+                                      std::vector<size_t>(n_players - 1, 5));
     }
 } // namespace test_helper

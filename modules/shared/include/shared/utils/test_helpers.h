@@ -41,11 +41,21 @@ namespace test_helper
     reduced::Player::ptr_t getReducedPlayer(const std::string &name);
 
     reduced::Enemy::ptr_t getReducedEnemy(const std::string &name, size_t n_hand_cards);
+    std::vector<reduced::Enemy::ptr_t> getReducedEnemies(size_t n_enemies, std::vector<size_t> hand_cards);
     std::vector<reduced::Enemy::ptr_t> getReducedEnemies(size_t n_enemies);
 
     shared::Board::ptr_t getBoard(size_t n_players, std::vector<shared::CardBase::id_t> kingdom_cards);
     shared::Board::ptr_t getBoard(size_t n_players);
 
     reduced::GameState getReducedGameState(size_t n_players);
+    reduced::GameState getReducedGameState(size_t n_players, std::vector<shared::CardBase::id_t> kingdom_cards,
+                                           std::vector<shared::CardBase::id_t> hand_cards,
+                                           std::vector<size_t> enemy_hand_cards);
+
+    std::unique_ptr<reduced::GameState> getReducedGameStatePtr(size_t n_players);
+    std::unique_ptr<reduced::GameState> getReducedGameStatePtr(size_t n_players,
+                                                               std::vector<shared::CardBase::id_t> kingdom_cards,
+                                                               std::vector<shared::CardBase::id_t> hand_cards,
+                                                               std::vector<size_t> enemy_hand_cards);
 
 } // namespace test_helper

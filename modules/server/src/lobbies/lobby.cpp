@@ -48,12 +48,20 @@ namespace server
             throw std::runtime_error("unreachable code");
         }
 
-        // TODO: i will change this (today, but not in this merge) such that the game interface always returns a vector
-        // of pair<action_order, game_state> (+-)
-        auto order_msg = std::make_unique<shared::ActionOrderMessage>(lobby_id, game_interface->handleMessage(message),
-                                                                      game_interface->getGameState(requestor_id));
-        message_interface.sendMessage(std::move(order_msg), requestor_id);
-        broadcastGameState(message_interface);
+        OrderResponse order_response = game_interface->handleMessage(message);
+
+        std::for_each(players.begin(), players.end(),
+                      [&](const auto &player_id)
+                      {
+                          if ( order_response.hasOrder(player_id) ) {
+                              message_interface.send<shared::ActionOrderMessage>(
+                                      player_id, lobby_id, std::move(order_response.getOrder(player_id)),
+                                      game_interface->getGameState(player_id));
+                          } else {
+                              message_interface.send<shared::GameStateMessage>(
+                                      player_id, lobby_id, std::move(game_interface->getGameState(player_id)));
+                          }
+                      });
     }
 
     void Lobby::getGameState(MessageInterface &message_interface,
@@ -62,16 +70,16 @@ namespace server
         LOG(ERROR) << "Not implemented yet";
         throw std::runtime_error("not implemented yet");
 
-        const auto &player_id = request->player_id;
+        const auto &requestor_id = request->player_id;
         if ( !gameRunning() ) {
             LOG(WARN) << "Tried to get the gamestate, but the game has not started yet";
-            message_interface.send<shared::ResultResponseMessage>(player_id, lobby_id, false, request->message_id,
+            message_interface.send<shared::ResultResponseMessage>(requestor_id, lobby_id, false, request->message_id,
                                                                   "Game has already started");
             return; // we do nothing in this case
         }
 
-        LOG(WARN) << "TODO: we always broadcast the gamestate if requested!";
-        broadcastGameState(message_interface);
+        message_interface.send<shared::GameStateMessage>(
+                requestor_id, lobby_id, game_interface->getGameState(requestor_id), request->message_id);
     }
 
     void Lobby::addPlayer(MessageInterface &message_interface,
@@ -106,11 +114,8 @@ namespace server
         // Add player to the lobby
         players.push_back(requestor_id);
 
-        // Send JoinLobbyBroadcast to all players
-        message_interface.broadcast<shared::JoinLobbyBroadcastMessage>(players, lobby_id, players);
-
-        // TODO: do we need this? isnt receiving a joinlobbybroadcast message enough?
         message_interface.send<shared::ResultResponseMessage>(requestor_id, lobby_id, true, request->message_id);
+        message_interface.broadcast<shared::JoinLobbyBroadcastMessage>(players, lobby_id, players);
     };
 
     // PRE: selected_cards are validated in message parsing
@@ -152,13 +157,10 @@ namespace server
             return;
         }
 
-        // Create new game interface
         game_interface = GameInterface::make(lobby_id, request->selected_cards, players);
 
-        // send messages
         LOG(INFO) << "Sending StartGameBroadcastMessage in Lobby ID: " << lobby_id;
         message_interface.broadcast<shared::StartGameBroadcastMessage>(players, lobby_id);
-
         broadcastGameState(message_interface);
     }
 } // namespace server

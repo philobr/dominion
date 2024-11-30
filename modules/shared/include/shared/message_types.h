@@ -240,8 +240,8 @@ namespace shared
                            std::unique_ptr<reduced::GameState> game_state,
                            std::optional<std::string> description = std::nullopt,
                            std::string message_id = UuidGenerator::generateUuidV4()) :
-            ServerToClientMessage(std::move(game_id), std::move(message_id)), order(std::move(order)),
-            game_state(std::move(game_state)), description(std::move(description))
+            ServerToClientMessage(std::move(game_id), std::move(message_id)),
+            order(std::move(order)), game_state(std::move(game_state)), description(std::move(description))
         {}
 
         ActionOrderMessage(std::string game_id, std::unique_ptr<ActionOrder> &order_ref,

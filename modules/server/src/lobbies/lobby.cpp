@@ -48,7 +48,10 @@ namespace server
             throw std::runtime_error("unreachable code");
         }
 
-        auto order_msg = std::make_unique<shared::ActionOrderMessage>(lobby_id, game_interface->handleMessage(message));
+        // TODO: i will change this (today, but not in this merge) such that the game interface always returns a vector
+        // of pair<action_order, game_state> (+-)
+        auto order_msg = std::make_unique<shared::ActionOrderMessage>(lobby_id, game_interface->handleMessage(message),
+                                                                      game_interface->getGameState(requestor_id));
         message_interface.sendMessage(std::move(order_msg), requestor_id);
         broadcastGameState(message_interface);
     }

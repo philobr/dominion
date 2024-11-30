@@ -64,7 +64,11 @@ namespace client
                 std::cerr << "Invalid log level: " << logLevel << std::endl;
                 return false;
             }
+        } else {
+            shared::Logger::setLevel(LogLevel::DEBUG);
         }
+
+        LOG(DEBUG) << "Initialized logger, log level: " << shared::Logger::getLevel();
 
         // Allow loading of JPEG  and PNG image files
         wxImage::AddHandler(new wxJPEGHandler());

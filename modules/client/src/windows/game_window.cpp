@@ -55,7 +55,6 @@ namespace client
                         this->_mainLayout->Layout();
                         this->Fit();
                     }
-
                 });
     }
 

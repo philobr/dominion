@@ -26,7 +26,8 @@ namespace server
          *
          * @param game_master The player who created the lobby.
          */
-        Lobby(const Player::id_t &game_master, const std::string &lobby_id);
+        Lobby(const Player::id_t &game_master,
+              const std::string &lobby_id); // TODO: add message_interface shared_ptr here
 
         /**
          * @brief The lobby receives a generic message. It handles what it is responsible for and the rest gets passed
@@ -36,7 +37,8 @@ namespace server
          * @param message
          */
         void handleMessage(MessageInterface &message_interface,
-                           std::unique_ptr<shared::ClientToServerMessage> &message);
+                           std::unique_ptr<shared::ClientToServerMessage>
+                                   &message); // TODO: remove message_interface shared_ptr here
 
         /**
          * @brief Get the players in the lobby.

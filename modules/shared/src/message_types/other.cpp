@@ -100,7 +100,7 @@ namespace shared
 
     bool ActionOrderMessage::operator==(const ActionOrderMessage &other) const
     {
-        return ServerToClientMessage::operator==(other) && *this->order == *other.order &&
-                this->description == other.description;
+        return ServerToClientMessage::operator==(other) && (*this->order == *other.order) &&
+                (*this->game_state == *other.game_state) && (this->description == other.description);
     }
 } // namespace shared

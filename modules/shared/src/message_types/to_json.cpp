@@ -93,8 +93,13 @@ namespace shared
     std::string ActionOrderMessage::toJson()
     {
         Document doc = documentFromServerToClientMsg("action_order", *this);
+
         Document order_json = this->order->toJson();
         doc.AddMember("order", order_json, doc.GetAllocator());
+
+        Document game_state_json = this->game_state->toJson();
+        doc.AddMember("game_state", game_state_json, doc.GetAllocator());
+
         ADD_OPTIONAL_STRING_MEMBER(this->description, description);
         return documentToString(doc);
     }

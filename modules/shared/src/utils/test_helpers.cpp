@@ -24,32 +24,11 @@ namespace test_helper
 {
     std::vector<shared::CardBase::id_t> getValidRandomKingdomCards(size_t n_cards)
     {
-        std::vector<std::string> action_cards = {"Moat",
-                                                 "Village",
-                                                 "Smithy",
-                                                 "Gardens",
-                                                 "Festival",
-                                                 "Market",
-                                                 "Laboratory",
-                                                 "Council_Room",
-                                                 "Witch"
-                                                 "Cellar",
-                                                 "Chapel",
-                                                 "Workshop",
-                                                 "Vassal",
-                                                 "Harbinger",
-                                                 "Poacher",
-                                                 "Moneylender",
-                                                 "Militia",
-                                                 "Bureaucrat",
-                                                 "Remodel",
-                                                 "Sentry",
-                                                 "Library",
-                                                 "Bandit",
-                                                 "Mine",
-                                                 "Artisan",
-                                                 "Merchant",
-                                                 "Throne_Room"};
+        std::vector<std::string> action_cards = {
+                "Moat",         "Village",     "Smithy",  "Gardens",    "Festival",   "Market", "Laboratory",
+                "Council_Room", "Witch",       "Cellar",  "Chapel",     "Workshop",   "Vassal", "Harbinger",
+                "Poacher",      "Moneylender", "Militia", "Bureaucrat", "Remodel",    "Sentry", "Library",
+                "Bandit",       "Mine",        "Artisan", "Merchant",   "Throne_Room"};
         std::set<std::string> cards;
 
         while ( cards.size() < n_cards ) {
@@ -84,32 +63,12 @@ namespace test_helper
 
     std::vector<shared::CardBase::id_t> getRandomKingdomCards(size_t n_cards)
     {
-        std::vector<std::string> action_cards = {"Moat",
-                                                 "Village",
-                                                 "Smithy",
-                                                 "Gardens",
-                                                 "Festival",
-                                                 "Market",
-                                                 "Laboratory",
-                                                 "Council_Room",
-                                                 "Witch"
-                                                 "Cellar",
-                                                 "Chapel",
-                                                 "Workshop",
-                                                 "Vassal",
-                                                 "Harbinger",
-                                                 "Poacher",
-                                                 "Moneylender",
-                                                 "Militia",
-                                                 "Bureaucrat",
-                                                 "Remodel",
-                                                 "Sentry",
-                                                 "Library",
-                                                 "Bandit",
-                                                 "Mine",
-                                                 "Artisan",
-                                                 "Merchant",
-                                                 "Throne_Room"};
+        std::vector<std::string> action_cards = {
+                "Moat",         "Village",     "Smithy",  "Gardens",    "Festival",   "Market", "Laboratory",
+                "Council_Room", "Witch",       "Cellar",  "Chapel",     "Workshop",   "Vassal", "Harbinger",
+                "Poacher",      "Moneylender", "Militia", "Bureaucrat", "Remodel",    "Sentry", "Library",
+                "Bandit",       "Mine",        "Artisan", "Merchant",   "Throne_Room"};
+
         std::vector<shared::CardBase::id_t> cards;
         for ( size_t i = 0; i < n_cards; ++i ) {
             size_t rand_idx = (static_cast<size_t>(std::rand()) % action_cards.size());

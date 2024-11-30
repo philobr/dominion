@@ -78,8 +78,8 @@ TEST(ServerLibraryTest, JoinLobby)
     {
         InSequence s;
         // request 2
-        EXPECT_CALL(*message_interface, sendMessage(IsJoinLobbyBroadcastMessage(), _)).Times(2);
         EXPECT_CALL(*message_interface, sendMessage(IsSuccessMessage(), player_2)).Times(1);
+        EXPECT_CALL(*message_interface, sendMessage(IsJoinLobbyBroadcastMessage(), _)).Times(2);
         // request 2 again
         EXPECT_CALL(*message_interface, sendMessage(IsFailureMessage(), player_2)).Times(1);
         // false_request 3

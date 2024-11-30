@@ -18,7 +18,7 @@ namespace server
     {
         // NOLINTBEGIN(bugprone-macro-parentheses)
 #define HANDLE(message_type, handler_func)                                                                             \
-    if ( auto req = dynamic_cast<shared::message_type *>(message.get()) ) {                                            \
+    if ( dynamic_cast<shared::message_type *>(message.get()) ) {                                                       \
         LOG(INFO) << "Trying to handle: " << #message_type;                                                            \
         std::unique_ptr<shared::message_type> casted_message(static_cast<shared::message_type *>(message.release()));  \
         handler_func(message_interface, casted_message);                                                               \

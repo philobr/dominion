@@ -19,9 +19,11 @@ namespace server
         size_t behaviour_idx;
         std::unique_ptr<BehaviourRegistry> behaviour_registry;
 
-        std::vector<std::unique_ptr<BehaviourBase>> behaviours_list;
+        std::vector<std::unique_ptr<base::Behaviour>> behaviour_list;
 
     public:
+        using ret_t = server::base::Behaviour::ret_t;
+
         BehaviourChain() :
             current_card(INVALID_CARD), behaviour_idx(INVALID_IDX),
             behaviour_registry(std::make_unique<BehaviourRegistry>())
@@ -30,27 +32,29 @@ namespace server
         }
 
         void loadBehaviours(const std::string &card_id);
-        void resetBehaviours();
 
-        /**
-         * @brief Using a raw pointer here as ownership transfer would be annoying.
-         *
-         * @param game_state
-         * @param action_decision
-         * @return std::optional<std::unique_ptr<shared::ActionOrder>>
-         */
-        std::optional<std::unique_ptr<shared::ActionOrder>>
-        receiveAction(server::GameState &game_state, Player::id_t player_id,
-                      std::optional<std::unique_ptr<shared::ActionDecision>> action_decision,
-                      std::optional<std::string> in_response_to);
+        ret_t start(server::GameState &game_state);
+        ret_t receiveAction(server::GameState &game_state, std::unique_ptr<shared::ActionDecision> &action_decision);
 
         bool empty() const { return behaviour_idx == INVALID_IDX && current_card == INVALID_CARD; }
 
     private:
-        void advance() { ++behaviour_idx; }
-        bool hasNext() const { return behaviour_idx < behaviours_list.size(); }
+        void resetBehaviours();
 
-        const BehaviourBase &getBehaviour() const { return *behaviours_list[behaviour_idx]; }
+        inline void advance() { ++behaviour_idx; }
+        inline void advanceIfDone()
+        {
+            if ( currentBehaviour().isDone() ) {
+                advance();
+            }
+        }
+
+        inline bool hasNext() const { return behaviour_idx < behaviour_list.size(); }
+
+        const base::Behaviour &currentBehaviour() const { return *behaviour_list[behaviour_idx]; }
+
+        ret_t applyBehaviour(server::GameState &game_state,
+                             std::optional<std::unique_ptr<shared::ActionDecision>> action_decision = std::nullopt);
     };
 
     inline constexpr size_t BehaviourChain::INVALID_IDX = static_cast<size_t>(-1);

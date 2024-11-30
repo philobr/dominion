@@ -11,8 +11,7 @@ void server::BehaviourChain::loadBehaviours(const std::string &card_id)
 
     behaviour_idx = 0;
     current_card = card_id;
-    // behaviours_list = behaviour_registry->getBehaviours(card_id)();
-    behaviours_list = behaviour_registry->getBehaviours(card_id);
+    behaviour_list = behaviour_registry->getBehaviours(card_id);
 }
 
 void server::BehaviourChain::resetBehaviours()
@@ -24,13 +23,10 @@ void server::BehaviourChain::resetBehaviours()
 
     behaviour_idx = INVALID_IDX;
     current_card = INVALID_CARD;
-    behaviours_list.clear();
+    behaviour_list.clear();
 }
 
-std::optional<std::unique_ptr<shared::ActionOrder>>
-server::BehaviourChain::receiveAction(server::GameState &game_state, Player::id_t player_id,
-                                      std::optional<std::unique_ptr<shared::ActionDecision>> action_decision,
-                                      std::optional<std::string> in_response_to)
+server::BehaviourChain::ret_t server::BehaviourChain::start(server::GameState &game_state)
 {
     if ( empty() ) {
         LOG(ERROR) << "Tried to use an empty BehaviourChain, crashing now";
@@ -38,15 +34,35 @@ server::BehaviourChain::receiveAction(server::GameState &game_state, Player::id_
     }
 
     while ( hasNext() ) {
-        auto action_order = getBehaviour().apply(game_state, std::move(action_decision));
-        action_decision = std::nullopt; // consume the action_decision, its only used once
+        auto action_order = currentBehaviour().apply(game_state, std::nullopt);
 
-        if ( action_order != std::nullopt ) {
+        if ( currentBehaviour().isDone() ) {
+            advance();
+        } else {
             return action_order;
         }
-
-        advance();
     }
 
+    // behaviour chain is done
+    resetBehaviours();
     return std::nullopt;
+}
+
+server::BehaviourChain::ret_t
+server::BehaviourChain::receiveAction(server::GameState &game_state,
+                                      std::unique_ptr<shared::ActionDecision> &action_decision)
+{
+    if ( empty() ) {
+        LOG(ERROR) << "Tried to use an empty BehaviourChain, crashing now";
+        throw std::runtime_error("Unreachable Code");
+    }
+
+    auto action_order = currentBehaviour().apply(game_state, std::move(action_decision));
+
+    if ( !currentBehaviour().isDone() ) {
+        return action_order;
+    }
+
+    advance();
+    return start(game_state);
 }

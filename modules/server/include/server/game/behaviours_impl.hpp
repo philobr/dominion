@@ -9,34 +9,30 @@ namespace server
 
 // False positive of clang-tidy
 // NOLINTBEGIN(bugprone-macro-parentheses)
-#define DEFINE_BEHAVIOUR(name, types)                                                                                  \
-    class name : public BehaviourBase                                                                                  \
+#define DEFINE_BEHAVIOUR(name)                                                                                         \
+    class name : public server::base::Behaviour                                                                        \
     {                                                                                                                  \
     public:                                                                                                            \
-        inline ret_t                                                                                                   \
-        apply(server::GameState &state,                                                                                \
-              std::optional<std::unique_ptr<shared::ActionDecision>> action_decision = std::nullopt) const;            \
+        inline ret_t apply(server::GameState &state,                                                                   \
+                           server::base::Behaviour::action_decision_t action_decision = std::nullopt) const;           \
     };                                                                                                                 \
-    inline BehaviourBase::ret_t name::apply(server::GameState &game_state,                                             \
-                                            std::optional<std::unique_ptr<shared::ActionDecision>> action_decision)    \
-            const
+    inline server::base::Behaviour::ret_t name::apply(                                                                 \
+            server::GameState &game_state, server::base::Behaviour::action_decision_t action_decision) const
 // NOLINTEND(bugprone-macro-parentheses)
 
 // False positive of clang-tidy
 // NOLINTBEGIN(bugprone-macro-parentheses)
-#define DEFINE_TEMPLATED_BEHAVIOUR(name, types, template_type, template_name)                                          \
+#define DEFINE_TEMPLATED_BEHAVIOUR(name, template_type, template_name)                                                 \
     template <template_type template_name>                                                                             \
-    class name : public BehaviourBase                                                                                  \
+    class name : public server::base::Behaviour                                                                        \
     {                                                                                                                  \
     public:                                                                                                            \
-        inline ret_t                                                                                                   \
-        apply(server::GameState &state,                                                                                \
-              std::optional<std::unique_ptr<shared::ActionDecision>> action_decision = std::nullopt) const;            \
+        inline ret_t apply(server::GameState &state,                                                                   \
+                           server::base::Behaviour::action_decision_t action_decision = std::nullopt) const;           \
     };                                                                                                                 \
     template <template_type template_name>                                                                             \
-    inline BehaviourBase::ret_t name<template_name>::apply(                                                            \
-            server::GameState &game_state, std::optional<std::unique_ptr<shared::ActionDecision>> action_decision)     \
-            const
+    inline server::base::Behaviour::ret_t name<template_name>::apply(                                                  \
+            server::GameState &game_state, server::base::Behaviour::action_decision_t action_decision) const
 // NOLINTEND(bugprone-macro-parentheses)
 
 // ================================
@@ -65,64 +61,72 @@ namespace server
  * @brief can be used like:
  * auto casted_decision = TRY_CAST_DECISION(expected_type);
  */
-#define TRY_CAST_DECISION(type)                                                                                        \
-    [](std::optional<std::unique_ptr<shared::ActionDecision>> &action_decision) -> type *                              \
+#define TRY_CAST_DECISION(decision_type)                                                                               \
+    [](server::base::Behaviour::action_decision_t &action_decision) -> decision_type *                                 \
     {                                                                                                                  \
         ASSERT_DECISION                                                                                                \
-        auto *casted_decision = dynamic_cast<(type) *>(action_decision->get());                                        \
+        auto *casted_decision = dynamic_cast<(decision_type) *>(action_decision->get());                               \
         if ( !casted_decision ) {                                                                                      \
-            LOG(ERROR) << "Decision has wrong type! Expected: " << utils::demangle(typeid(type).name())                \
+            LOG(ERROR) << "Decision has wrong type! Expected: " << utils::demangle(typeid(decision_type).name())       \
                        << ", but got: " << utils::demangle(typeid(*action_decision->get()).name());                    \
             throw std::runtime_error("Decision has wrong type");                                                       \
         }                                                                                                              \
         return casted_decision;                                                                                        \
     }(action_decision)
 
+#define BEHAVIOUR_DONE                                                                                                 \
+    finished_behaviour = true;                                                                                         \
+    return std::nullopt
+
 
         // ================================
         // BEHAVIOUR IMPLEMENTATIONS
         // ================================
-        DEFINE_TEMPLATED_BEHAVIOUR(GainCoins, BehaviourType::NON_INTERACTIVE, int, coins)
+        DEFINE_TEMPLATED_BEHAVIOUR(GainCoins, int, coins)
         {
             LOG_CALL;
             ASSERT_NO_DECISION;
 
             auto &affected_player = game_state.getCurrentPlayer();
             affected_player.addTreasure(coins);
-            return std::nullopt;
+
+            BEHAVIOUR_DONE;
         }
 
-        DEFINE_TEMPLATED_BEHAVIOUR(GainBuys, BehaviourType::NON_INTERACTIVE, int, buys)
+        DEFINE_TEMPLATED_BEHAVIOUR(GainBuys, int, buys)
         {
             LOG_CALL;
             ASSERT_NO_DECISION;
 
             auto &affected_player = game_state.getCurrentPlayer();
             affected_player.addBuys(buys);
-            return std::nullopt;
+
+            BEHAVIOUR_DONE;
         }
 
-        DEFINE_TEMPLATED_BEHAVIOUR(GainActions, BehaviourType::NON_INTERACTIVE, int, actions)
+        DEFINE_TEMPLATED_BEHAVIOUR(GainActions, int, actions)
         {
             LOG_CALL;
             ASSERT_NO_DECISION;
 
             auto &affected_player = game_state.getCurrentPlayer();
             affected_player.addActions(actions);
-            return std::nullopt;
+
+            BEHAVIOUR_DONE;
         }
 
-        DEFINE_TEMPLATED_BEHAVIOUR(GainPoints, BehaviourType::NON_INTERACTIVE, int, points)
+        DEFINE_TEMPLATED_BEHAVIOUR(GainPoints, int, points)
         {
             LOG_CALL;
             ASSERT_NO_DECISION;
 
             auto &affected_player = game_state.getCurrentPlayer();
             affected_player.addPoints(points);
-            return std::nullopt;
+
+            BEHAVIOUR_DONE;
         }
 
-        DEFINE_TEMPLATED_BEHAVIOUR(DrawCards, BehaviourType::NON_INTERACTIVE, int, n_cards)
+        DEFINE_TEMPLATED_BEHAVIOUR(DrawCards, int, n_cards)
         {
             LOG_CALL;
             ASSERT_NO_DECISION;
@@ -130,8 +134,7 @@ namespace server
             auto &affected_player = game_state.getCurrentPlayer();
             affected_player.draw(n_cards);
 
-            // assuming the state is updated automatically from the lobby/game_interface
-            return std::nullopt;
+            BEHAVIOUR_DONE;
         }
 
 #define TODO_IMPLEMENT_ME                                                                                              \
@@ -144,7 +147,7 @@ namespace server
         // ================================
         // PLACEHOLDER BEHAVIOUR
         // ================================
-        DEFINE_BEHAVIOUR(NOT_IMPLEMENTED_YET, BehaviourType::NON_INTERACTIVE) { TODO_IMPLEMENT_ME; }
+        DEFINE_BEHAVIOUR(NOT_IMPLEMENTED_YET) { TODO_IMPLEMENT_ME; }
 
         // ================================
         // TODO: add behaviours

@@ -237,15 +237,26 @@ namespace shared
     public:
         ~ActionOrderMessage() override = default;
         ActionOrderMessage(std::string game_id, std::unique_ptr<ActionOrder> order,
+                           std::unique_ptr<reduced::GameState> game_state,
                            std::optional<std::string> description = std::nullopt,
                            std::string message_id = UuidGenerator::generateUuidV4()) :
-            ServerToClientMessage(game_id, message_id),
-            order(std::move(order)), description(description)
+            ServerToClientMessage(std::move(game_id), std::move(message_id)), order(std::move(order)),
+            game_state(std::move(game_state)), description(std::move(description))
         {}
+
+        ActionOrderMessage(std::string game_id, std::unique_ptr<ActionOrder> &order_ref,
+                           std::unique_ptr<reduced::GameState> &game_state_ref,
+                           std::optional<std::string> description = std::nullopt,
+                           std::string message_id = UuidGenerator::generateUuidV4()) :
+            ActionOrderMessage(std::move(game_id), std::move(order_ref), std::move(game_state_ref),
+                               std::move(description), std::move(message_id))
+        {}
+
         std::string toJson() override;
         bool operator==(const ActionOrderMessage &other) const;
 
         std::unique_ptr<ActionOrder> order;
+        std::unique_ptr<reduced::GameState> game_state;
         std::optional<std::string> description;
     };
 } // namespace shared

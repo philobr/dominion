@@ -24,8 +24,7 @@ namespace client
 
     void GameController::init(GameWindow *game_window)
     {
-
-        LOG(INFO) << "GameController called in function init()";
+        LOG(INFO) << "Initializing GameController";
 
         GameController::_gameWindow = game_window;
 
@@ -46,35 +45,29 @@ namespace client
 
         // Set status bar
         GameController::showStatus("Not connected");
-        LOG(INFO) << "Done with GameController::init()";
     }
 
     bool GameController::validInput(const wxString &input_server_address, const wxString &input_server_port,
                                     const wxString &input_player_name, const wxString &input_game_name)
     {
-        LOG(INFO) << "GameController called in function validInput";
         // check that all values were provided
         if ( input_server_address.IsEmpty() ) {
             GameController::showError("Input error", "Please provide the server's address");
-            LOG(INFO) << "Done with GameController::validInput()";
             return false;
         }
 
         if ( input_server_port.IsEmpty() ) {
             GameController::showError("Input error", "Please provide the server's port number");
-            LOG(INFO) << "Done with GameController::validInput()";
             return false;
         }
 
         if ( input_player_name.IsEmpty() ) {
             GameController::showError("Input error", "Please enter your desired player name");
-            LOG(INFO) << "Done with GameController::validInput()";
             return false;
         }
 
         if ( input_game_name.IsEmpty() ) {
             GameController::showError("Input error", "Please enter the game name");
-            LOG(INFO) << "Done with GameController::validInput()";
             return false;
         }
 
@@ -82,11 +75,9 @@ namespace client
         unsigned long portAsLong;
         if ( !input_server_port.ToULong(&portAsLong) || portAsLong > 65535 ) {
             GameController::showError("Connection error", "Invalid port");
-            LOG(INFO) << "Done with GameController::validInput()";
             return false;
         }
 
-        LOG(INFO) << "Done with GameController::validInput()";
         return true;
     }
 
@@ -161,21 +152,19 @@ namespace client
 
     void GameController::startGame()
     {
-        // send request to start game
-        LOG(INFO) << "GameController called in function startGame()";
+        LOG(DEBUG) << "Starting game";
         std::vector<shared::CardBase::id_t> selectedCards{"Estate",       "Smithy",      "Village",      "Laboratory",
                                                           "Festival",     "Market",      "Placeholder1", "Placeholder2",
                                                           "Placeholder3", "Placeholder4"};
         shared::StartGameRequestMessage msg =
                 shared::StartGameRequestMessage(GameController::_gameName, GameController::_playerName, selectedCards);
         GameController::sendRequest(msg.toJson());
-        LOG(INFO) << "Done with GameController::startGame()";
     }
 
 
     void GameController::buyCard(const std::string &card_id)
     {
-        LOG(INFO) << "Buying card " << card_id << std::endl;
+        LOG(DEBUG) << "Buying card " << card_id << std::endl;
 
         std::unique_ptr<shared::ActionDecision> decision(new shared::BuyCardDecision(card_id));
 
@@ -192,7 +181,7 @@ namespace client
 
     void GameController::playCard(const std::string &card_id)
     {
-        LOG(INFO) << "Playing card " << card_id;
+        LOG(DEBUG) << "Playing card " << card_id;
 
         std::unique_ptr<shared::ActionDecision> decision(new shared::PlayActionCardDecision(card_id));
 
@@ -226,7 +215,7 @@ namespace client
 
     void GameController::endTurn()
     {
-        LOG(INFO) << "Ending turn";
+        LOG(DEBUG) << "Ending turn";
 
         std::unique_ptr<shared::ActionDecision> decision(new shared::EndTurnDecision());
 
@@ -262,12 +251,10 @@ namespace client
 
     void GameController::receiveCreateLobbyResponseMessage(std::unique_ptr<shared::CreateLobbyResponseMessage> /*msg*/)
     {
-        LOG(INFO) << "GameController called in function receiveCreateLobbyResponseMessage()";
         GameController::_gameWindow->showPanel(GameController::_lobbyPanel);
         // TODO maybe add player_id to the ServerToClientMessage ?
         GameController::_lobbyPanel->makeGameMaster();
         GameController::_lobbyPanel->addPlayer(GameController::_connectionPanel->getPlayerName().Trim().ToStdString());
-        LOG(INFO) << "Done with receiveCreateLobbyResponseMessage()";
     }
 
     void GameController::receiveJoinLobbyBroadcastMessage(std::unique_ptr<shared::JoinLobbyBroadcastMessage> msg)
@@ -277,7 +264,6 @@ namespace client
                 static_cast<shared::JoinLobbyBroadcastMessage *>(msg.release()));
 
         GameController::refreshPlayers(*jlbm);
-        LOG(INFO) << "Done with receiveJoinLobbyBroadcastMessage()";
     }
 
     void GameController::receiveResultResponseMessage(std::unique_ptr<shared::ResultResponseMessage> msg)
@@ -332,18 +318,15 @@ namespace client
 
     void GameController::receiveGameStateMessage(std::unique_ptr<shared::GameStateMessage> msg)
     {
-        LOG(INFO) << "GameController called in function receiveGameStateMessage()";
+        LOG(INFO) << "Received GameStateMessage, updating game state";
         GameController::_gameState = std::move(msg->game_state);
-        LOG(INFO) << "Updated GameState";
         GameController::_mainGamePanel->drawGameState(*GameController::_gameState);
-        LOG(INFO) << "Done with receiveGameStateMessage()";
     }
 
     void GameController::receiveStartGameBroadcastMessage(std::unique_ptr<shared::StartGameBroadcastMessage> /*msg*/)
     {
-        LOG(INFO) << "GameController called in function receiveStartGameBroadcastMessage()";
+        LOG(DEBUG) << "Starting game";
         GameController::_gameWindow->showPanel(GameController::_mainGamePanel);
-        LOG(INFO) << "Done with receiveStartGameBroadcastMessage()";
     }
 
     void GameController::receiveMessage(std::unique_ptr<shared::ServerToClientMessage> msg)
@@ -372,9 +355,8 @@ namespace client
 
     void GameController::refreshPlayers(shared::JoinLobbyBroadcastMessage &msg)
     {
-        LOG(INFO) << "Refreshing Players";
+        LOG(INFO) << "Refreshing Players on lobby panel";
         GameController::_lobbyPanel->refreshPlayers(msg.players);
-        LOG(INFO) << "Added new players";
     }
 
     shared::PlayerBase::id_t GameController::getPlayerName()

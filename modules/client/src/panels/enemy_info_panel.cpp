@@ -14,7 +14,6 @@ namespace client
         for ( const auto &Enemy : enemies ) {
             EnemyPanel *enemy_panel = new EnemyPanel(this, *Enemy);
             sizer->Add(enemy_panel, 0, wxALIGN_CENTER_HORIZONTAL);
-            LOG(INFO) << "EnemyPanel for " << Enemy->getId() << " added";
         }
 
         this->SetSizer(sizer);

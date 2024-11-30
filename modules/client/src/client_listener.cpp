@@ -11,7 +11,6 @@ ClientListener::~ClientListener() { this->_connection->shutdown(); }
 
 wxThread::ExitCode ClientListener::Entry()
 {
-    LOG(INFO) << "Called ClientListener::Entry()";
     try {
         char buffer[512]; // 512 bytes
         ssize_t count = 0;
@@ -72,7 +71,6 @@ wxThread::ExitCode ClientListener::Entry()
     }
 
     this->_connection->shutdown();
-    LOG(INFO) << "Done with ClientListener::Entry()";
     return (wxThread::ExitCode)0; // everything okay
 }
 

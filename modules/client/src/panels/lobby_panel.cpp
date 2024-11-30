@@ -34,7 +34,6 @@ namespace client
         NamesSizer->Clear(false);
         playerCount = 0;
         for ( auto player : players ) {
-            LOG(DEBUG) << "Adding player " << player;
             this->addPlayer(player);
         }
     }

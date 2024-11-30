@@ -46,22 +46,22 @@ namespace server
     {
         try {
             game_state->tryPlay(player_id, action_decision->card_id, action_decision->from);
-            game_state->setPhase(GamePhase::PLAYING_ACTION_CARD);
+            game_state->setPhase(GamePhase::PLAYING_ACTION_CARD); // phase is only set if we successfully played a card
         } catch ( std::exception &e ) {
             LOG(ERROR) << "failed to play, TODO: handle this";
             throw std::runtime_error("failed to play card (GameInterface::PlayActionCardDecision_handler), this needs "
                                      "to be handled better");
         }
 
-        cur_behaviours->loadBehaviours(action_decision->card_id);
-        auto response = cur_behaviours->receiveAction(*game_state, player_id, std::nullopt, std::nullopt);
-        if ( response.has_value() ) {
-            // this means we will receive a response for this
-            return std::move(response.value());
+        behaviour_chain->loadBehaviours(action_decision->card_id);
+        auto response = behaviour_chain->start(*game_state);
+
+        // we are done playing this card
+        if ( behaviour_chain->empty() ) {
+            return finishedPlayingCard();
         }
 
-        // the code below can probably be extracted into a seperate function
-        return finishedPlayingCard();
+        return response;
     }
 
     GameInterface::response_t
@@ -76,19 +76,7 @@ namespace server
                                      "handled better");
         }
 
-        game_state->maybeSwitchPhase();
-        switch ( game_state->getPhase() ) {
-            case server::GamePhase::BUY_PHASE:
-                return std::make_unique<shared::BuyPhaseOrder>();
-            case server::GamePhase::ACTION_PHASE:
-                return std::make_unique<shared::ActionPhaseOrder>();
-            default:
-                {
-                    LOG(ERROR) << "invalid phase after buying a card";
-                    throw std::runtime_error(
-                            "invalid phase after buying a card in GameInterface::BuyCardDecision_handler");
-                }
-        }
+        return nextPhase();
     }
 
     GameInterface::response_t
@@ -100,29 +88,33 @@ namespace server
             throw exception::OutOfPhase("");
         }
 
-        LOG(INFO) << "ending " << player_id << "\'s turn";
         game_state->endTurn();
 
-        return std::make_unique<shared::ActionPhaseOrder>();
+        return nextPhase();
     }
 
     GameInterface::response_t GameInterface::ChooseNCardsFromHandDecision_handler(
             std::unique_ptr<shared::ChooseNCardsFromHandDecision> action_decision, const Player::id_t &player_id)
     {
-        auto order_msg =
-                cur_behaviours->receiveAction(*game_state, player_id, std::move(action_decision), std::nullopt);
+        // this will be implemented after ChooseNCardFromHandDecision is fixed
 
-        if ( order_msg.has_value() ) {
-            return std::move(order_msg.value());
+        // auto order_msg = behaviour_chain->receiveAction(*game_state, action_decision);
+        //
+        // if ( !order_msg.empty() ) {
+        //     return order_msg;
+        // }
+        //
+        // return finishedPlayingCard();
+
+        LOG(ERROR) << FUNC_NAME << " is not implemented yet!";
+        throw std::runtime_error("unrachable code");
+
+        if ( behaviour_chain->empty() ) {
+            return finishedPlayingCard();
+        } else {
+            // return empty order
+            return OrderResponse();
         }
-
-        // this will probably lead to errors, some behaviours need multiple responses so we need to handle this here but
-        // i really dont care rn
-
-        // this can be fixed by adding a isDone() function to the behaviours
-
-        // finished playing the card
-        return finishedPlayingCard();
     }
 
 } // namespace server

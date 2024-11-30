@@ -51,7 +51,7 @@ namespace server
 
         inline bool hasNext() const { return behaviour_idx < behaviour_list.size(); }
 
-        const base::Behaviour &currentBehaviour() const { return *behaviour_list[behaviour_idx]; }
+        base::Behaviour &currentBehaviour() { return *behaviour_list[behaviour_idx]; }
 
         ret_t applyBehaviour(server::GameState &game_state,
                              std::optional<std::unique_ptr<shared::ActionDecision>> action_decision = std::nullopt);

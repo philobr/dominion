@@ -14,10 +14,10 @@ namespace server
     {                                                                                                                  \
     public:                                                                                                            \
         inline ret_t apply(server::GameState &state,                                                                   \
-                           server::base::Behaviour::action_decision_t action_decision = std::nullopt) const;           \
+                           server::base::Behaviour::action_decision_t action_decision = std::nullopt);                 \
     };                                                                                                                 \
-    inline server::base::Behaviour::ret_t name::apply(                                                                 \
-            server::GameState &game_state, server::base::Behaviour::action_decision_t action_decision) const
+    inline server::base::Behaviour::ret_t name::apply(server::GameState &game_state,                                   \
+                                                      server::base::Behaviour::action_decision_t action_decision)
 // NOLINTEND(bugprone-macro-parentheses)
 
 // False positive of clang-tidy
@@ -28,11 +28,11 @@ namespace server
     {                                                                                                                  \
     public:                                                                                                            \
         inline ret_t apply(server::GameState &state,                                                                   \
-                           server::base::Behaviour::action_decision_t action_decision = std::nullopt) const;           \
+                           server::base::Behaviour::action_decision_t action_decision = std::nullopt);                 \
     };                                                                                                                 \
     template <template_type template_name>                                                                             \
     inline server::base::Behaviour::ret_t name<template_name>::apply(                                                  \
-            server::GameState &game_state, server::base::Behaviour::action_decision_t action_decision) const
+            server::GameState &game_state, server::base::Behaviour::action_decision_t action_decision)
 // NOLINTEND(bugprone-macro-parentheses)
 
 // ================================
@@ -76,7 +76,7 @@ namespace server
 
 #define BEHAVIOUR_DONE                                                                                                 \
     finished_behaviour = true;                                                                                         \
-    return std::nullopt
+    return OrderResponse()
 
 
         // ================================
@@ -142,7 +142,7 @@ namespace server
     SUPPRESS_UNUSED_VAR_WARNING(action_decision);                                                                      \
     LOG(ERROR) << "BEHAVIOUR " << CLASS_NAME << " IS NOT IMPLEMENTED YET";                                             \
     throw std::runtime_error("not implemented");                                                                       \
-    return std::nullopt
+    return OrderResponse()
 
         // ================================
         // PLACEHOLDER BEHAVIOUR
@@ -154,6 +154,7 @@ namespace server
         // ================================
 
 #undef DEFINE_BEHAVIOUR
+#undef BEHAVIOUR_DONE
 #undef DEFINE_TEMPLATED_BEHAVIOUR
 #undef TRY_CAST_DECISION
 #undef LOG_CALL

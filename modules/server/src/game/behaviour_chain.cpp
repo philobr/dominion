@@ -45,7 +45,7 @@ server::BehaviourChain::ret_t server::BehaviourChain::start(server::GameState &g
 
     // behaviour chain is done
     resetBehaviours();
-    return std::nullopt;
+    return OrderResponse();
 }
 
 server::BehaviourChain::ret_t

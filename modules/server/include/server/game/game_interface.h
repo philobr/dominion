@@ -8,12 +8,12 @@ namespace server
     class GameInterface
     {
         std::shared_ptr<GameState> game_state;
-        std::shared_ptr<BehaviourChain> cur_behaviours;
+        std::shared_ptr<BehaviourChain> behaviour_chain;
         const std::string game_id;
 
     public:
         using ptr_t = std::unique_ptr<GameInterface>;
-        using response_t = std::unique_ptr<shared::ActionOrder>;
+        using response_t = server::BehaviourChain::ret_t;
 
         GameInterface operator=(const GameInterface &other) = delete;
         GameInterface(const GameInterface &other) = delete;
@@ -46,7 +46,7 @@ namespace server
         GameInterface(const std::string &game_id, const std::vector<shared::CardBase::id_t> &play_cards,
                       const std::vector<Player::id_t> &player_ids) :
             game_state(std::make_shared<GameState>(play_cards, player_ids)),
-            cur_behaviours(std::make_unique<BehaviourChain>()), game_id(game_id)
+            behaviour_chain(std::make_unique<BehaviourChain>()), game_id(game_id)
         {}
 
         response_t handleAction(std::unique_ptr<shared::ActionDecision> action_decision,
@@ -63,22 +63,16 @@ namespace server
         HANDLER(EndTurnDecision);
         HANDLER(ChooseNCardsFromHandDecision);
 
-        response_t finishedPlayingCard()
+        response_t nextPhase()
         {
-            if ( game_state->getPhase() != server::GamePhase::PLAYING_ACTION_CARD ) {
-                LOG(ERROR) << "tried to finish playing a card while not even playing a card!";
-                throw std::runtime_error("unreachable code");
-            }
-
-            cur_behaviours->resetBehaviours();
-
-            game_state->setPhase(server::GamePhase::ACTION_PHASE);
             game_state->maybeSwitchPhase();
             switch ( game_state->getPhase() ) {
                 case server::GamePhase::ACTION_PHASE:
-                    return std::make_unique<shared::ActionPhaseOrder>();
+                    return OrderResponse(game_state->getCurrentPlayerId(),
+                                         std::make_unique<shared::ActionPhaseOrder>());
                 case server::GamePhase::BUY_PHASE:
-                    return std::make_unique<shared::BuyPhaseOrder>();
+                    return OrderResponse(game_state->getCurrentPlayerId(),
+                                         std::make_unique<shared::ActionPhaseOrder>());
                 case server::GamePhase::PLAYING_ACTION_CARD:
                 default:
                     {
@@ -87,6 +81,17 @@ namespace server
                     }
                     break;
             }
+        }
+
+        response_t finishedPlayingCard()
+        {
+            if ( game_state->getPhase() != server::GamePhase::PLAYING_ACTION_CARD ) {
+                LOG(ERROR) << "tried to finish playing a card while not even playing a card!";
+                throw std::runtime_error("unreachable code");
+            }
+
+            game_state->setPhase(server::GamePhase::ACTION_PHASE);
+            return nextPhase();
         }
 
     }; // namespace server

@@ -15,6 +15,7 @@ namespace server
     {
         auto *casted_msg = dynamic_cast<shared::ActionDecisionMessage *>(message.get());
         if ( casted_msg == nullptr ) {
+            // ISSUE: 166
             LOG(ERROR) << "Received a non shared::ActionDecisionMessage in " << FUNC_NAME;
             throw std::runtime_error("unreachable code");
         }
@@ -46,6 +47,7 @@ namespace server
         } catch ( std::exception &e ) {
             // we throw for now, but this should be a message
             // discuss with gui guys or return shared::ResultResponseMessage(false)
+            // ISSUE: 166
             LOG(ERROR) << "failed to play, TODO: handle this more gracefully";
             throw std::runtime_error("failed to play card (GameInterface::PlayActionCardDecision_handler), this needs "
                                      "to be handled better");
@@ -71,6 +73,7 @@ namespace server
         } catch ( std::exception &e ) {
             // we throw for now, but this should be a message
             // discuss with gui guys or return shared::ResultResponseMessage(false)
+            // ISSUE: 166
             LOG(ERROR) << "failed to buy card";
             throw std::runtime_error("failed to buy in GameInterface::PlayActionCardDecision_handler, this needs to be "
                                      "handled better");
@@ -84,6 +87,7 @@ namespace server
                                            const Player::id_t &player_id)
     {
         if ( game_state->getPhase() == GamePhase::PLAYING_ACTION_CARD ) {
+            // ISSUE: 166
             LOG(ERROR) << "Player is trying to end his turn while playing a card";
             throw exception::OutOfPhase("");
         }
@@ -122,6 +126,7 @@ namespace server
             case server::GamePhase::PLAYING_ACTION_CARD:
             default:
                 {
+                    // ISSUE: 166
                     LOG(ERROR) << "game_state is out of phase";
                     throw std::runtime_error("unreachable code");
                 }
@@ -132,6 +137,7 @@ namespace server
     GameInterface::response_t GameInterface::finishedPlayingCard()
     {
         if ( game_state->getPhase() != server::GamePhase::PLAYING_ACTION_CARD ) {
+            // ISSUE: 166
             LOG(ERROR) << "tried to finish playing a card while not even playing a card!";
             throw std::runtime_error("unreachable code in " + FUNC_NAME);
         }

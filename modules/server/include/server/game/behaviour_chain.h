@@ -1,7 +1,6 @@
 #pragma once
 
 #include <server/game/behaviour_registry.h>
-#include <shared/utils/logger.h>
 #include <vector>
 
 namespace server
@@ -12,9 +11,6 @@ namespace server
      */
     class BehaviourChain
     {
-        static const size_t INVALID_IDX;
-        static const std::string INVALID_CARD;
-
         std::string current_card;
         size_t behaviour_idx;
         std::unique_ptr<BehaviourRegistry> behaviour_registry;
@@ -24,19 +20,25 @@ namespace server
     public:
         using ret_t = server::base::Behaviour::ret_t;
 
-        BehaviourChain() :
-            current_card(INVALID_CARD), behaviour_idx(INVALID_IDX),
-            behaviour_registry(std::make_unique<BehaviourRegistry>())
+        BehaviourChain() : current_card(""), behaviour_idx(0), behaviour_registry(std::make_unique<BehaviourRegistry>())
         {
             LOG(DEBUG) << "Created a new BehaviourChain";
         }
 
         void loadBehaviours(const std::string &card_id);
 
+        /**
+         * @brief This is called the first time we execute a behaviour.
+         * First calls never include an action order.
+         */
         ret_t start(server::GameState &game_state);
+
+        /**
+         * @brief If a card has multi-step behaviours we call this function to pass in the action_decision.
+         */
         ret_t receiveAction(server::GameState &game_state, std::unique_ptr<shared::ActionDecision> &action_decision);
 
-        bool empty() const { return behaviour_idx == INVALID_IDX && current_card == INVALID_CARD; }
+        inline bool empty() const { return (behaviour_idx == 0) && current_card.empty() && behaviour_list.empty(); }
 
     private:
         void resetBehaviours();
@@ -46,7 +48,4 @@ namespace server
 
         base::Behaviour &currentBehaviour() { return *behaviour_list[behaviour_idx]; }
     };
-
-    inline constexpr size_t BehaviourChain::INVALID_IDX = static_cast<size_t>(-1);
-    inline const std::string BehaviourChain::INVALID_CARD = "INVALID_CARD";
 } // namespace server

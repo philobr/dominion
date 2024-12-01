@@ -1,13 +1,14 @@
 #include <server/game/behaviour_chain.h>
+#include <shared/utils/logger.h>
 
 void server::BehaviourChain::loadBehaviours(const std::string &card_id)
 {
     if ( !empty() ) {
-        LOG(WARN) << "BehaviourList is already in use!";
+        LOG(WARN) << "BehaviourList is already in use for card: " << card_id;
         throw std::runtime_error("BehaviourList is already in use!");
     }
 
-    LOG(DEBUG) << "Loading Behaviours for card_id(" << card_id << ")";
+    LOG(DEBUG) << "Loading Behaviours for card:" << card_id;
 
     behaviour_idx = 0;
     current_card = card_id;
@@ -21,8 +22,8 @@ void server::BehaviourChain::resetBehaviours()
         return;
     }
 
-    behaviour_idx = INVALID_IDX;
-    current_card = INVALID_CARD;
+    behaviour_idx = 0;
+    current_card.clear();
     behaviour_list.clear();
 }
 
@@ -39,6 +40,7 @@ server::BehaviourChain::ret_t server::BehaviourChain::start(server::GameState &g
         if ( currentBehaviour().isDone() ) {
             advance();
         } else {
+            // can empty OrderResponse as well
             return action_order;
         }
     }
@@ -60,6 +62,7 @@ server::BehaviourChain::receiveAction(server::GameState &game_state,
     auto action_order = currentBehaviour().apply(game_state, std::move(action_decision));
 
     if ( !currentBehaviour().isDone() ) {
+        // can empty OrderResponse as well
         return action_order;
     }
 

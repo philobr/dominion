@@ -21,11 +21,13 @@ namespace shared
     SUPPLY CARDS
      */
 
-    // placeholder cards
+    // ================================
+    // TO BE DELETED: issue #165
     REGISTER_CARD(Placeholder1, CardType::ACTION, 2);
     REGISTER_CARD(Placeholder2, CardType::ACTION, 2);
     REGISTER_CARD(Placeholder3, CardType::ACTION, 2);
     REGISTER_CARD(Placeholder4, CardType::ACTION, 2);
+    // ================================
 
     // treasure
     REGISTER_CARD(Copper, CardType::TREASURE, 0);

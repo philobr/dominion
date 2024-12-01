@@ -1,6 +1,7 @@
 #include <server/game/behaviour_registry.h>
 
-std::vector<std::unique_ptr<server::BehaviourBase>> server::BehaviourRegistry::getBehaviours(const std::string &card_id)
+std::vector<std::unique_ptr<server::base::Behaviour>>
+server::BehaviourRegistry::getBehaviours(const std::string &card_id)
 {
     auto it = map_.find(card_id);
     if ( it == map_.end() ) {
@@ -33,11 +34,13 @@ void server::BehaviourRegistry::initialiseBehaviours()
      * insert can take multiple types as template param
      */
 
-    // placeholder cards
+    // ================================
+    // TO BE DELETED: issue #165
     insert<GainCoins<1>>("Placeholder1");
     insert<GainCoins<1>>("Placeholder2");
     insert<GainCoins<1>>("Placeholder3");
     insert<GainCoins<1>>("Placeholder4");
+    // ================================
 
     /*
     DONE

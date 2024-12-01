@@ -28,7 +28,7 @@ namespace server
          */
         BehaviourRegistry();
 
-        std::vector<std::unique_ptr<BehaviourBase>> getBehaviours(const std::string &card_id);
+        std::vector<std::unique_ptr<base::Behaviour>> getBehaviours(const std::string &card_id);
 
     private:
         /**
@@ -45,12 +45,12 @@ namespace server
         template <typename... BehaviourTypes>
         void insert(const std::string &card_id);
 
-        static std::unordered_map<std::string, std::function<std::vector<std::unique_ptr<BehaviourBase>>()>> map_;
+        static std::unordered_map<std::string, std::function<std::vector<std::unique_ptr<base::Behaviour>>()>> map_;
         static bool is_initialised;
     };
 
     // static member initialisation
-    inline std::unordered_map<std::string, std::function<std::vector<std::unique_ptr<BehaviourBase>>()>>
+    inline std::unordered_map<std::string, std::function<std::vector<std::unique_ptr<base::Behaviour>>()>>
             BehaviourRegistry::map_;
     inline bool BehaviourRegistry::is_initialised;
 
@@ -62,7 +62,7 @@ namespace server
 
         map_[card_id] = []()
         {
-            std::vector<std::unique_ptr<BehaviourBase>> behaviours;
+            std::vector<std::unique_ptr<base::Behaviour>> behaviours;
             (behaviours.emplace_back(std::make_unique<BehaviourType>()), ...);
             return behaviours;
         };

@@ -8,12 +8,12 @@ namespace server
     class GameInterface
     {
         std::shared_ptr<GameState> game_state;
-        std::shared_ptr<BehaviourChain> cur_behaviours;
+        std::shared_ptr<BehaviourChain> behaviour_chain;
         const std::string game_id;
 
     public:
         using ptr_t = std::unique_ptr<GameInterface>;
-        using response_t = std::unique_ptr<shared::ActionOrder>;
+        using response_t = server::BehaviourChain::ret_t;
 
         GameInterface operator=(const GameInterface &other) = delete;
         GameInterface(const GameInterface &other) = delete;
@@ -22,11 +22,6 @@ namespace server
 
         static ptr_t make(const std::string &game_id, const std::vector<shared::CardBase::id_t> &play_cards,
                           const std::vector<Player::id_t> &player_ids);
-
-        inline std::unique_ptr<reduced::GameState> getGameState(const shared::PlayerBase::id_t &player_id)
-        {
-            return game_state->getReducedState(player_id);
-        }
 
         /**
          * @brief Receives an ActionDecision from the Lobby and handles it accordingly.
@@ -42,18 +37,35 @@ namespace server
          */
         response_t handleMessage(std::unique_ptr<shared::ClientToServerMessage> &action_decision);
 
+        inline auto getGameState(const shared::PlayerBase::id_t &player_id)
+        {
+            return game_state->getReducedState(player_id);
+        }
+
     private:
         GameInterface(const std::string &game_id, const std::vector<shared::CardBase::id_t> &play_cards,
                       const std::vector<Player::id_t> &player_ids) :
             game_state(std::make_shared<GameState>(play_cards, player_ids)),
-            cur_behaviours(std::make_unique<BehaviourChain>()), game_id(game_id)
+            behaviour_chain(std::make_unique<BehaviourChain>()), game_id(game_id)
         {}
 
-        response_t handleAction(std::unique_ptr<shared::ActionDecision> action_decision,
-                                const Player::id_t &affected_player_id);
+        /**
+         * @brief Tries if we have to switch phase and returns the phase transition for the corresponding player.
+         *
+         * @return response_t
+         */
+        response_t nextPhase();
 
+        /**
+         * @brief Resets the phase from CURRENTLY_PLAYING_CARD to ACTION_PHASE and then returns the next phase.
+         *
+         * @return response_t
+         */
+        response_t finishedPlayingCard();
 
-        // TODO: we should remove those macro functions for readability before submitting
+        // TODO: expand this macro when the messages are finally final. Makes no sense now as there will probably be
+        // more messages in the future
+
 #define HANDLER(decision_type) /* can also be used to define the func outside of the class */                          \
     response_t decision_type##_handler(std::unique_ptr<shared::decision_type> decision,                                \
                                        const Player::id_t &affected_player_id)
@@ -62,32 +74,6 @@ namespace server
         HANDLER(BuyCardDecision);
         HANDLER(EndTurnDecision);
         HANDLER(ChooseNCardsFromHandDecision);
-
-        response_t finishedPlayingCard()
-        {
-            if ( game_state->getPhase() != server::GamePhase::PLAYING_ACTION_CARD ) {
-                LOG(ERROR) << "tried to finish playing a card while not even playing a card!";
-                throw std::runtime_error("unreachable code");
-            }
-
-            cur_behaviours->resetBehaviours();
-
-            game_state->setPhase(server::GamePhase::ACTION_PHASE);
-            game_state->maybeSwitchPhase();
-            switch ( game_state->getPhase() ) {
-                case server::GamePhase::ACTION_PHASE:
-                    return std::make_unique<shared::ActionPhaseOrder>();
-                case server::GamePhase::BUY_PHASE:
-                    return std::make_unique<shared::BuyPhaseOrder>();
-                case server::GamePhase::PLAYING_ACTION_CARD:
-                default:
-                    {
-                        LOG(ERROR) << "game_state is out of phase";
-                        throw std::runtime_error("unreachable code");
-                    }
-                    break;
-            }
-        }
 
     }; // namespace server
 } // namespace server

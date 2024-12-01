@@ -1,7 +1,6 @@
 #pragma once
 
 #include <server/game/behaviour_registry.h>
-#include <shared/utils/logger.h>
 #include <vector>
 
 namespace server
@@ -12,47 +11,44 @@ namespace server
      */
     class BehaviourChain
     {
-        static const size_t INVALID_IDX;
-        static const std::string INVALID_CARD;
-
         std::string current_card;
         size_t behaviour_idx;
         std::unique_ptr<BehaviourRegistry> behaviour_registry;
 
-        std::vector<std::unique_ptr<BehaviourBase>> behaviours_list;
+        std::vector<std::unique_ptr<base::Behaviour>> behaviour_list;
 
     public:
-        BehaviourChain() :
-            current_card(INVALID_CARD), behaviour_idx(INVALID_IDX),
-            behaviour_registry(std::make_unique<BehaviourRegistry>())
-        {
-            LOG(DEBUG) << "Created a new BehaviourChain";
-        }
+        using ret_t = server::base::Behaviour::ret_t;
+
+        BehaviourChain();
+        ~BehaviourChain() = default;
 
         void loadBehaviours(const std::string &card_id);
-        void resetBehaviours();
 
         /**
-         * @brief Using a raw pointer here as ownership transfer would be annoying.
-         *
-         * @param game_state
-         * @param action_decision
-         * @return std::optional<std::unique_ptr<shared::ActionOrder>>
+         * @brief This is called the first time we execute a behaviour.
+         * First calls never include an action order.
          */
-        std::optional<std::unique_ptr<shared::ActionOrder>>
-        receiveAction(server::GameState &game_state, Player::id_t player_id,
-                      std::optional<std::unique_ptr<shared::ActionDecision>> action_decision,
-                      std::optional<std::string> in_response_to);
+        ret_t startChain(server::GameState &game_state);
 
-        bool empty() const { return behaviour_idx == INVALID_IDX && current_card == INVALID_CARD; }
+        /**
+         * @brief If a card has multi-step behaviours we call this function to pass in the action_decision.
+         */
+        ret_t continueChain(server::GameState &game_state, std::unique_ptr<shared::ActionDecision> &action_decision);
+
+        inline bool empty() const { return (behaviour_idx == 0) && current_card.empty() && behaviour_list.empty(); }
 
     private:
-        void advance() { ++behaviour_idx; }
-        bool hasNext() const { return behaviour_idx < behaviours_list.size(); }
+        inline void resetBehaviours();
 
-        const BehaviourBase &getBehaviour() const { return *behaviours_list[behaviour_idx]; }
+        inline void advance() { ++behaviour_idx; }
+        inline bool hasNext() const { return behaviour_idx < behaviour_list.size(); }
+
+        base::Behaviour &currentBehaviour() { return *behaviour_list[behaviour_idx]; }
+
+        /**
+         * @warning Does not check (explicitly) if a behaviour is loaded, this happens in startChain and continueChain
+         */
+        inline ret_t runBehaviourChain(server::GameState &game_state);
     };
-
-    inline constexpr size_t BehaviourChain::INVALID_IDX = static_cast<size_t>(-1);
-    inline const std::string BehaviourChain::INVALID_CARD = "INVALID_CARD";
 } // namespace server

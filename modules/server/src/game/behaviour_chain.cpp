@@ -1,18 +1,23 @@
 #include <server/game/behaviour_chain.h>
+#include <shared/utils/logger.h>
+
+server::BehaviourChain::BehaviourChain() :
+    current_card(""), behaviour_idx(0), behaviour_registry(std::make_unique<BehaviourRegistry>())
+{
+    LOG(DEBUG) << "Created a new BehaviourChain";
+}
 
 void server::BehaviourChain::loadBehaviours(const std::string &card_id)
 {
     if ( !empty() ) {
-        LOG(WARN) << "BehaviourList is already in use!";
+        LOG(WARN) << "BehaviourList is already in use for card: " << card_id;
         throw std::runtime_error("BehaviourList is already in use!");
     }
 
-    LOG(DEBUG) << "Loading Behaviours for card_id(" << card_id << ")";
-
+    LOG(DEBUG) << "Loading Behaviours for card:" << card_id;
     behaviour_idx = 0;
     current_card = card_id;
-    // behaviours_list = behaviour_registry->getBehaviours(card_id)();
-    behaviours_list = behaviour_registry->getBehaviours(card_id);
+    behaviour_list = behaviour_registry->getBehaviours(card_id);
 }
 
 void server::BehaviourChain::resetBehaviours()
@@ -22,31 +27,55 @@ void server::BehaviourChain::resetBehaviours()
         return;
     }
 
-    behaviour_idx = INVALID_IDX;
-    current_card = INVALID_CARD;
-    behaviours_list.clear();
+    behaviour_idx = 0;
+    current_card.clear();
+    behaviour_list.clear();
 }
 
-std::optional<std::unique_ptr<shared::ActionOrder>>
-server::BehaviourChain::receiveAction(server::GameState &game_state, Player::id_t player_id,
-                                      std::optional<std::unique_ptr<shared::ActionDecision>> action_decision,
-                                      std::optional<std::string> in_response_to)
+server::BehaviourChain::ret_t server::BehaviourChain::startChain(server::GameState &game_state)
 {
     if ( empty() ) {
         LOG(ERROR) << "Tried to use an empty BehaviourChain, crashing now";
         throw std::runtime_error("Unreachable Code");
     }
 
-    while ( hasNext() ) {
-        auto action_order = getBehaviour().apply(game_state, std::move(action_decision));
-        action_decision = std::nullopt; // consume the action_decision, its only used once
+    return runBehaviourChain(game_state);
+}
 
-        if ( action_order != std::nullopt ) {
+server::BehaviourChain::ret_t server::BehaviourChain::runBehaviourChain(server::GameState &game_state)
+{
+    while ( hasNext() ) {
+        auto action_order = currentBehaviour().apply(game_state, std::nullopt);
+
+        if ( currentBehaviour().isDone() ) {
+            advance();
+        } else {
+            // can be an empty OrderResponse as well
             return action_order;
         }
-
-        advance();
     }
 
-    return std::nullopt;
+    // we applied all behaviours
+    resetBehaviours();
+    return OrderResponse();
+}
+
+server::BehaviourChain::ret_t
+server::BehaviourChain::continueChain(server::GameState &game_state,
+                                      std::unique_ptr<shared::ActionDecision> &action_decision)
+{
+    if ( empty() ) {
+        LOG(ERROR) << "Tried to use an empty BehaviourChain, crashing now";
+        throw std::runtime_error("Unreachable Code");
+    }
+
+    auto action_order = currentBehaviour().apply(game_state, std::move(action_decision));
+
+    if ( !currentBehaviour().isDone() ) {
+        // can be an empty OrderResponse as well
+        return action_order;
+    }
+
+    advance();
+    return runBehaviourChain(game_state);
 }

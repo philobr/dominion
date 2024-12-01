@@ -52,7 +52,7 @@ namespace server
         }
 
         behaviour_chain->loadBehaviours(action_decision->card_id);
-        auto response = behaviour_chain->start(*game_state);
+        auto response = behaviour_chain->startChain(*game_state);
 
         if ( behaviour_chain->empty() ) {
             return finishedPlayingCard();
@@ -101,7 +101,7 @@ namespace server
         LOG(ERROR) << FUNC_NAME << " is not implemented yet!";
         throw std::runtime_error("unrachable code");
 
-        // auto order_msg = behaviour_chain->receiveAction(*game_state, action_decision);
+        // auto order_msg = behaviour_chain->continueChain(*game_state, action_decision);
         if ( behaviour_chain->empty() ) {
             return finishedPlayingCard();
         } else {

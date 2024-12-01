@@ -20,10 +20,8 @@ namespace server
     public:
         using ret_t = server::base::Behaviour::ret_t;
 
-        BehaviourChain() : current_card(""), behaviour_idx(0), behaviour_registry(std::make_unique<BehaviourRegistry>())
-        {
-            LOG(DEBUG) << "Created a new BehaviourChain";
-        }
+        BehaviourChain();
+        ~BehaviourChain() = default;
 
         void loadBehaviours(const std::string &card_id);
 
@@ -31,21 +29,26 @@ namespace server
          * @brief This is called the first time we execute a behaviour.
          * First calls never include an action order.
          */
-        ret_t start(server::GameState &game_state);
+        ret_t startChain(server::GameState &game_state);
 
         /**
          * @brief If a card has multi-step behaviours we call this function to pass in the action_decision.
          */
-        ret_t receiveAction(server::GameState &game_state, std::unique_ptr<shared::ActionDecision> &action_decision);
+        ret_t continueChain(server::GameState &game_state, std::unique_ptr<shared::ActionDecision> &action_decision);
 
         inline bool empty() const { return (behaviour_idx == 0) && current_card.empty() && behaviour_list.empty(); }
 
     private:
-        void resetBehaviours();
+        inline void resetBehaviours();
 
         inline void advance() { ++behaviour_idx; }
         inline bool hasNext() const { return behaviour_idx < behaviour_list.size(); }
 
         base::Behaviour &currentBehaviour() { return *behaviour_list[behaviour_idx]; }
+
+        /**
+         * @warning Does not check (explicitly) if a behaviour is loaded, this happens in startChain and continueChain
+         */
+        inline ret_t runBehaviourChain(server::GameState &game_state);
     };
 } // namespace server

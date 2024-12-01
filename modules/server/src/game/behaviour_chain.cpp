@@ -1,6 +1,12 @@
 #include <server/game/behaviour_chain.h>
 #include <shared/utils/logger.h>
 
+server::BehaviourChain::BehaviourChain() :
+    current_card(""), behaviour_idx(0), behaviour_registry(std::make_unique<BehaviourRegistry>())
+{
+    LOG(DEBUG) << "Created a new BehaviourChain";
+}
+
 void server::BehaviourChain::loadBehaviours(const std::string &card_id)
 {
     if ( !empty() ) {
@@ -9,7 +15,6 @@ void server::BehaviourChain::loadBehaviours(const std::string &card_id)
     }
 
     LOG(DEBUG) << "Loading Behaviours for card:" << card_id;
-
     behaviour_idx = 0;
     current_card = card_id;
     behaviour_list = behaviour_registry->getBehaviours(card_id);
@@ -27,31 +32,36 @@ void server::BehaviourChain::resetBehaviours()
     behaviour_list.clear();
 }
 
-server::BehaviourChain::ret_t server::BehaviourChain::start(server::GameState &game_state)
+server::BehaviourChain::ret_t server::BehaviourChain::startChain(server::GameState &game_state)
 {
     if ( empty() ) {
         LOG(ERROR) << "Tried to use an empty BehaviourChain, crashing now";
         throw std::runtime_error("Unreachable Code");
     }
 
+    return runBehaviourChain(game_state);
+}
+
+server::BehaviourChain::ret_t server::BehaviourChain::runBehaviourChain(server::GameState &game_state)
+{
     while ( hasNext() ) {
         auto action_order = currentBehaviour().apply(game_state, std::nullopt);
 
         if ( currentBehaviour().isDone() ) {
             advance();
         } else {
-            // can empty OrderResponse as well
+            // can be an empty OrderResponse as well
             return action_order;
         }
     }
 
-    // behaviour chain is done
+    // we applied all behaviours
     resetBehaviours();
     return OrderResponse();
 }
 
 server::BehaviourChain::ret_t
-server::BehaviourChain::receiveAction(server::GameState &game_state,
+server::BehaviourChain::continueChain(server::GameState &game_state,
                                       std::unique_ptr<shared::ActionDecision> &action_decision)
 {
     if ( empty() ) {
@@ -62,10 +72,10 @@ server::BehaviourChain::receiveAction(server::GameState &game_state,
     auto action_order = currentBehaviour().apply(game_state, std::move(action_decision));
 
     if ( !currentBehaviour().isDone() ) {
-        // can empty OrderResponse as well
+        // can be an empty OrderResponse as well
         return action_order;
     }
 
     advance();
-    return start(game_state);
+    return runBehaviourChain(game_state);
 }

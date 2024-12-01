@@ -60,18 +60,7 @@ namespace server
             return;
         }
 
-        std::for_each(players.begin(), players.end(),
-                      [&](const auto &player_id)
-                      {
-                          if ( order_response.hasOrder(player_id) ) {
-                              message_interface.send<shared::ActionOrderMessage>(
-                                      player_id, lobby_id, std::move(order_response.getOrder(player_id)),
-                                      game_interface->getGameState(player_id));
-                          } else {
-                              message_interface.send<shared::GameStateMessage>(
-                                      player_id, lobby_id, std::move(game_interface->getGameState(player_id)));
-                          }
-                      });
+        broadcastOrders(message_interface, order_response);
     }
 
     void Lobby::getGameState(MessageInterface &message_interface,

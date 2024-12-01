@@ -11,17 +11,25 @@ namespace server
         class Behaviour
         {
         protected:
-            bool finished_behaviour = false;
+            /**
+             * @brief Used to store if a behaviour is finished.
+             * Behaviours can return an empty OrderResponse, but still not be finished, hence this flag.
+             */
+            bool finished_behaviour;
 
         public:
             using ret_t = OrderResponse;
             using action_decision_t = std::optional<std::unique_ptr<shared::ActionDecision>>;
 
-            Behaviour() = default;
+            Behaviour() : finished_behaviour(false) {}
             virtual ~Behaviour() = default;
 
             virtual ret_t apply(server::GameState &state, action_decision_t action_decision = std::nullopt) = 0;
 
+            /**
+             * @brief Can be called after a behaviour returns something from apply to check if its done or if there are
+             * more steps.
+             */
             bool isDone() const { return finished_behaviour; }
         };
     } // namespace base

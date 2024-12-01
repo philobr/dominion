@@ -48,7 +48,16 @@ namespace server
             throw std::runtime_error("unreachable code");
         }
 
-        OrderResponse order_response = game_interface->handleMessage(message);
+        OrderResponse order_response;
+        try {
+            // just to be sure
+            order_response = game_interface->handleMessage(message);
+        } catch ( std::exception &e ) {
+            LOG(WARN) << "Caught an error in " << FUNC_NAME << ": " << e.what();
+            message_interface.send<shared::ResultResponseMessage>(requestor_id, lobby_id, false, message->message_id,
+                                                                  e.what());
+            return;
+        }
 
         std::for_each(players.begin(), players.end(),
                       [&](const auto &player_id)

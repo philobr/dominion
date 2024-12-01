@@ -6,8 +6,8 @@ namespace server
                                              const std::vector<shared::CardBase::id_t> &play_cards,
                                              const std::vector<Player::id_t> &player_ids)
     {
-        LOG(INFO) << "Created a new GameInterface("
-                  << "game_id:" << game_id << ")";
+        LOG(DEBUG) << "Created a new GameInterface("
+                   << "game_id:" << game_id << ")";
         return ptr_t(new GameInterface(game_id, play_cards, player_ids));
     }
 
@@ -40,9 +40,12 @@ namespace server
                                                   const Player::id_t &player_id)
     {
         try {
+            // all checks are done here
             game_state->tryPlay(player_id, action_decision->card_id, action_decision->from);
             game_state->setPhase(GamePhase::PLAYING_ACTION_CARD); // phase is only set if we successfully played a card
         } catch ( std::exception &e ) {
+            // we throw for now, but this should be a message
+            // discuss with gui guys or return shared::ResultResponseMessage(false)
             LOG(ERROR) << "failed to play, TODO: handle this more gracefully";
             throw std::runtime_error("failed to play card (GameInterface::PlayActionCardDecision_handler), this needs "
                                      "to be handled better");
@@ -51,7 +54,6 @@ namespace server
         behaviour_chain->loadBehaviours(action_decision->card_id);
         auto response = behaviour_chain->start(*game_state);
 
-        // we are done playing this card
         if ( behaviour_chain->empty() ) {
             return finishedPlayingCard();
         }
@@ -64,8 +66,11 @@ namespace server
                                            const Player::id_t &player_id)
     {
         try {
+            // all checks are done here
             game_state->tryBuy(player_id, action_decision->card);
         } catch ( std::exception &e ) {
+            // we throw for now, but this should be a message
+            // discuss with gui guys or return shared::ResultResponseMessage(false)
             LOG(ERROR) << "failed to buy card";
             throw std::runtime_error("failed to buy in GameInterface::PlayActionCardDecision_handler, this needs to be "
                                      "handled better");
@@ -107,6 +112,7 @@ namespace server
 
     GameInterface::response_t GameInterface::nextPhase()
     {
+        // switches phase if: actions==0 OR (buys==0 -> end_turn + next player)
         game_state->maybeSwitchPhase();
         switch ( game_state->getPhase() ) {
             case server::GamePhase::ACTION_PHASE:

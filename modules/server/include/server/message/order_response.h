@@ -19,9 +19,6 @@ public:
     /**
      * @brief Constructor to allow to create OrderResponses with as many player/order pairs as one wants.
      * @warning you can't give a player more than one order!
-     *
-     * @tparam Args
-     * @param args
      */
     template <typename... Args>
     OrderResponse(Args &&...args);
@@ -54,13 +51,6 @@ private:
      * OrderResponse response;
      * response.add("id1", order1);
      * response.add("id2", order2);
-     *
-     * @tparam T1
-     * @tparam T2
-     * @tparam Rest
-     * @param player_id
-     * @param order
-     * @param rest
      */
     template <typename T1, typename T2, typename... Rest>
     void addOrders(T1 &&player_id, T2 &&order, Rest &&...rest);

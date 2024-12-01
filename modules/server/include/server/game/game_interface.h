@@ -23,11 +23,6 @@ namespace server
         static ptr_t make(const std::string &game_id, const std::vector<shared::CardBase::id_t> &play_cards,
                           const std::vector<Player::id_t> &player_ids);
 
-        inline auto getGameState(const shared::PlayerBase::id_t &player_id)
-        {
-            return game_state->getReducedState(player_id);
-        }
-
         /**
          * @brief Receives an ActionDecision from the Lobby and handles it accordingly.
          * It will return some sort of ServerToClient message, which the lobby manager can pass on.
@@ -42,6 +37,11 @@ namespace server
          */
         response_t handleMessage(std::unique_ptr<shared::ClientToServerMessage> &action_decision);
 
+        inline auto getGameState(const shared::PlayerBase::id_t &player_id)
+        {
+            return game_state->getReducedState(player_id);
+        }
+
     private:
         GameInterface(const std::string &game_id, const std::vector<shared::CardBase::id_t> &play_cards,
                       const std::vector<Player::id_t> &player_ids) :
@@ -49,10 +49,22 @@ namespace server
             behaviour_chain(std::make_unique<BehaviourChain>()), game_id(game_id)
         {}
 
+        /**
+         * @brief Tries if we have to switch phase and returns the phase transition for the corresponding player.
+         *
+         * @return response_t
+         */
         response_t nextPhase();
+
+        /**
+         * @brief Resets the phase from CURRENTLY_PLAYING_CARD to ACTION_PHASE and then returns the next phase.
+         *
+         * @return response_t
+         */
         response_t finishedPlayingCard();
 
-        // TODO: expand this macro when the messages are finally final
+        // TODO: expand this macro when the messages are finally final. Makes no sense now as there will probably be
+        // more messages in the future
 
 #define HANDLER(decision_type) /* can also be used to define the func outside of the class */                          \
     response_t decision_type##_handler(std::unique_ptr<shared::decision_type> decision,                                \

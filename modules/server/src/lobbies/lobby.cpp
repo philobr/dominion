@@ -51,6 +51,7 @@ namespace server
         OrderResponse order_response;
         try {
             // just to be sure
+            // ISSUE: 166
             order_response = game_interface->handleMessage(message);
         } catch ( std::exception &e ) {
             LOG(WARN) << "Caught an error in " << FUNC_NAME << ": " << e.what();

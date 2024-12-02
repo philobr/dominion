@@ -16,27 +16,6 @@ namespace client
         _gui = std::make_unique<Gui>(game_window);
     }
 
-    bool GameController::validInput(const ConnectionForm &input)
-    {
-        // check that all values were provided
-        if ( input.host.empty() ) {
-            _gui->showError("Input error", "Please provide the server's address");
-            return false;
-        }
-
-        if ( input.player_name.empty() ) {
-            _gui->showError("Input error", "Please enter your desired player name");
-            return false;
-        }
-
-        if ( input.lobby_name.empty() ) {
-            _gui->showError("Input error", "Please enter the game name");
-            return false;
-        }
-
-        return true;
-    }
-
     void GameController::createLobby()
     {
         if ( _clientState != ClientState::LOGIN_SCREEN ) {
@@ -51,22 +30,19 @@ namespace client
 
         LOG(DEBUG) << "Creating lobby " << input.lobby_name;
 
-        if ( validInput(input) ) {
-            // connect to the server
-            _clientNetworkManager->init(input.host, input.port);
-            if ( _clientNetworkManager->failedToConnect() ) {
-                _clientState = ClientState::LOGIN_SCREEN;
-                LOG(INFO) << "Reverted to ClientState::LOGIN_SCREEN";
-            } else {
+        _clientNetworkManager->init(input.host, input.port);
+        if ( _clientNetworkManager->failedToConnect() ) {
+            _clientState = ClientState::LOGIN_SCREEN;
+            LOG(INFO) << "Reverted to ClientState::LOGIN_SCREEN";
+        } else {
 
-                // send request to join game
-                shared::CreateLobbyRequestMessage request(input.lobby_name, input.player_name);
-                sendRequest(request.toJson());
+            // send request to join game
+            shared::CreateLobbyRequestMessage request(input.lobby_name, input.player_name);
+            sendRequest(request.toJson());
 
-                _gameName = input.lobby_name;
-                _playerName = input.player_name;
-                _clientState = ClientState::CREATING_LOBBY;
-            }
+            _gameName = input.lobby_name;
+            _playerName = input.player_name;
+            _clientState = ClientState::CREATING_LOBBY;
         }
     }
 
@@ -84,18 +60,14 @@ namespace client
 
         LOG(DEBUG) << "Joining lobby " << input.lobby_name;
 
-        if ( validInput(input) ) {
-            // connect to the server
-            _clientNetworkManager->init(input.host, input.port);
+        _clientNetworkManager->init(input.host, input.port);
 
-            // send request to join game
-            shared::JoinLobbyRequestMessage request(input.lobby_name, input.player_name);
-            sendRequest(request.toJson());
+        shared::JoinLobbyRequestMessage request(input.lobby_name, input.player_name);
+        sendRequest(request.toJson());
 
-            _gameName = input.lobby_name;
-            _playerName = input.player_name;
-            _clientState = ClientState::JOINING_LOBBY;
-        }
+        _gameName = input.lobby_name;
+        _playerName = input.player_name;
+        _clientState = ClientState::JOINING_LOBBY;
     }
 
     void GameController::startGame()

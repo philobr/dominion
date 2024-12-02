@@ -26,6 +26,11 @@ namespace client
     {
         form.host = _connectionPanel->getServerAddress().Trim().ToStdString();
 
+        if ( form.host.empty() ) {
+            showError("Invalid host", "Host must not be empty");
+            return false;
+        }
+
         unsigned long port = 0;
         if ( !_connectionPanel->getServerPort().ToULong(&port) || port == 0 || port > 65535 ) {
             showError("Invalid port", "Port must be a number between 1 and 65535");
@@ -34,7 +39,18 @@ namespace client
         form.port = port;
 
         form.player_name = _connectionPanel->getPlayerName().Trim().ToStdString();
+
+        if ( form.player_name.empty() ) {
+            showError("Invalid player name", "Player name must not be empty");
+            return false;
+        }
+
         form.lobby_name = _connectionPanel->getGameName().Trim().ToStdString();
+
+        if ( form.lobby_name.empty() ) {
+            showError("Invalid lobby name", "Lobby name must not be empty");
+            return false;
+        }
 
         return true;
     }

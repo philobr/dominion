@@ -35,11 +35,6 @@ namespace client
         ~GameController() = default;
 
         /**
-         * @brief Get all the necessary information to create a request message
-         */
-        bool validInput(const ConnectionForm &input);
-
-        /**
          * @brief Show the connection panel and send create lobby request
          */
         void createLobby();

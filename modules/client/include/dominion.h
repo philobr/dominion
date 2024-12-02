@@ -1,7 +1,7 @@
 #pragma once
 
+#include <game_controller.h>
 #include <wx/wx.h>
-#include "game_controller.h"
 
 namespace client
 {
@@ -17,7 +17,7 @@ namespace client
         GameController &getController();
 
     private:
-        GameController *_controller;
+        std::unique_ptr<GameController> _controller;
     };
 
 } // namespace client

@@ -24,7 +24,7 @@ namespace client
          * @brief Refreshes the players in the lobby.
          * @param players The list of players.
          */
-        void refreshPlayers(std::vector<std::string> &players);
+        void refreshPlayers(const std::vector<std::string> &players);
 
         /**
          * @brief Makes the player a game master. This will allow the player to start the game.

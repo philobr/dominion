@@ -81,7 +81,7 @@ namespace client
         );
         gameWindow->Show(true);
 
-        _controller = new GameController(gameWindow);
+        _controller = std::make_unique<GameController>(gameWindow);
 
         return true;
     }

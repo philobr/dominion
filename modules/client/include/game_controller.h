@@ -1,13 +1,9 @@
 #pragma once
 
-#include "client_network_manager.h"
-#include "panels/connection_panel.h"
-#include "panels/lobby_panel.h"
-#include "panels/main_game_panel.h"
-#include "shared/game/game_state/player_base.h"
-#include "windows/game_window.h"
-
-#include <panels/victory_screen_panel.h>
+#include <client_network_manager.h>
+#include <gui.h>
+#include <shared/game/game_state/player_base.h>
+#include <windows/game_window.h>
 
 #include <shared/message_types.h>
 
@@ -36,13 +32,12 @@ namespace client
         /**
          * @brief Destroy the game controller
          */
-        ~GameController();
+        ~GameController() = default;
 
         /**
          * @brief Get all the necessary information to create a request message
          */
-        bool validInput(const wxString &input_server_address, const wxString &input_server_port,
-                        const wxString &input_player_name, const wxString &input_game_name);
+        bool validInput(const ConnectionForm &input);
 
         /**
          * @brief Show the connection panel and send create lobby request
@@ -72,32 +67,11 @@ namespace client
          */
         void receiveMessage(std::unique_ptr<shared::ServerToClientMessage> msg);
 
-        /**
-         * @brief display an error message
-         *
-         */
-        void showError(const std::string &title, const std::string &message);
+        // TODO: This is for testing purposes only and will be removed later
+        void skipToVictoryScreen();
 
-        /**
-         * @brief display a status message in the status bar
-         *
-         */
-        void showStatus(const std::string &message);
-
-        /**
-         * @brief refreshes Players when a new player joins the lobby
-         */
-        void refreshPlayers(shared::JoinLobbyBroadcastMessage &msg);
-
-        /**
-         * @brief skips from the connection panel to the game panel for gui testing
-         */
+        // TODO: This is for testing purposes only and will be removed later
         void skipToGamePanel();
-
-        /**
-         * @brief skips from the connection panel to the victory screen panel for gui testing
-         */
-        void skipToVictoryScreenPanel();
 
     private:
         void receiveActionOrderMessage(std::unique_ptr<shared::ActionOrderMessage> msg);
@@ -109,11 +83,7 @@ namespace client
 
         shared::PlayerBase::id_t getPlayerName();
 
-        GameWindow *_gameWindow;
-        ConnectionPanel *_connectionPanel;
-        MainGamePanel *_mainGamePanel;
-        LobbyPanel *_lobbyPanel;
-        VictoryScreenPanel *_victoryScreenPanel;
+        std::unique_ptr<Gui> _gui;
 
         ClientNetworkManager *_clientNetworkManager;
 

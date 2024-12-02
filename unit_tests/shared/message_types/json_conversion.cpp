@@ -2,6 +2,7 @@
 #include <shared/utils/logger.h>
 
 #include <shared/message_types.h>
+#include <shared/utils/test_helpers.h>
 
 using namespace shared;
 
@@ -122,10 +123,11 @@ TEST(SharedLibraryTest, ResultResponseMessageTwoWayConversion)
     ASSERT_EQ(*parsed_message, original_message);
 }
 
+
 TEST(SharedLibraryTest, ActionOrderMessageTwoWayConversion)
 {
     std::unique_ptr<ActionOrder> order = std::make_unique<ChooseNCardsFromHandOrder>(1);
-    ActionOrderMessage original_message("123", std::move(order));
+    ActionOrderMessage original_message("123", std::move(order), test_helper::getReducedGameStatePtr(4));
 
     std::string json = original_message.toJson();
 

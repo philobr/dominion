@@ -90,9 +90,16 @@ static std::unique_ptr<ActionOrderMessage> parseActionOrder(const Document &json
     }
     std::unique_ptr<ActionOrder> order = ActionOrder::fromJson(json["order"]);
 
+    if ( !json.HasMember("game_state") ) {
+        LOG(WARN) << "GameStateMessage: No game_state member";
+        return nullptr;
+    }
+    std::unique_ptr<reduced::GameState> game_state = reduced::GameState::fromJson(json["game_state"]);
+
     GET_OPTIONAL_STRING_MEMBER(description, json, "description");
 
-    return std::make_unique<ActionOrderMessage>(game_id, std::move(order), description, message_id);
+    return std::make_unique<ActionOrderMessage>(game_id, std::move(order), std::move(game_state), description,
+                                                message_id);
 }
 
 namespace shared

@@ -125,7 +125,7 @@ namespace server
          *
          * @param message_interface
          */
-        void broadcastGameState(MessageInterface &message_interface) const
+        inline void broadcastGameState(MessageInterface &message_interface) const
         {
             std::for_each(players.begin(), players.end(),
                           [&](const auto &player_id)
@@ -134,6 +134,22 @@ namespace server
                                         << " to Player ID: " << player_id;
                               message_interface.send<shared::GameStateMessage>(player_id, lobby_id,
                                                                                game_interface->getGameState(player_id));
+                          });
+        }
+
+        inline void broadcastOrders(MessageInterface &message_interface, OrderResponse &orders) const
+        {
+            std::for_each(players.begin(), players.end(),
+                          [&](const auto &player_id)
+                          {
+                              if ( orders.hasOrder(player_id) ) {
+                                  message_interface.send<shared::ActionOrderMessage>(
+                                          player_id, lobby_id, std::move(orders.getOrder(player_id)),
+                                          game_interface->getGameState(player_id));
+                              } else {
+                                  message_interface.send<shared::GameStateMessage>(
+                                          player_id, lobby_id, std::move(game_interface->getGameState(player_id)));
+                              }
                           });
         }
     };

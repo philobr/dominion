@@ -48,9 +48,18 @@ namespace server
             throw std::runtime_error("unreachable code");
         }
 
-        auto order_msg = std::make_unique<shared::ActionOrderMessage>(lobby_id, game_interface->handleMessage(message));
-        message_interface.sendMessage(std::move(order_msg), requestor_id);
-        broadcastGameState(message_interface);
+        OrderResponse order_response;
+        try {
+            // ISSUE: 166
+            order_response = game_interface->handleMessage(message);
+        } catch ( std::exception &e ) {
+            LOG(WARN) << "Caught an error in " << FUNC_NAME << ": " << e.what();
+            message_interface.send<shared::ResultResponseMessage>(requestor_id, lobby_id, false, message->message_id,
+                                                                  e.what());
+            return;
+        }
+
+        broadcastOrders(message_interface, order_response);
     }
 
     void Lobby::getGameState(MessageInterface &message_interface,
@@ -59,16 +68,16 @@ namespace server
         LOG(ERROR) << "Not implemented yet";
         throw std::runtime_error("not implemented yet");
 
-        const auto &player_id = request->player_id;
+        const auto &requestor_id = request->player_id;
         if ( !gameRunning() ) {
             LOG(WARN) << "Tried to get the gamestate, but the game has not started yet";
-            message_interface.send<shared::ResultResponseMessage>(player_id, lobby_id, false, request->message_id,
+            message_interface.send<shared::ResultResponseMessage>(requestor_id, lobby_id, false, request->message_id,
                                                                   "Game has already started");
             return; // we do nothing in this case
         }
 
-        LOG(WARN) << "TODO: we always broadcast the gamestate if requested!";
-        broadcastGameState(message_interface);
+        message_interface.send<shared::GameStateMessage>(
+                requestor_id, lobby_id, game_interface->getGameState(requestor_id), request->message_id);
     }
 
     void Lobby::addPlayer(MessageInterface &message_interface,
@@ -103,11 +112,8 @@ namespace server
         // Add player to the lobby
         players.push_back(requestor_id);
 
-        // Send JoinLobbyBroadcast to all players
-        message_interface.broadcast<shared::JoinLobbyBroadcastMessage>(players, lobby_id, players);
-
-        // TODO: do we need this? isnt receiving a joinlobbybroadcast message enough?
         message_interface.send<shared::ResultResponseMessage>(requestor_id, lobby_id, true, request->message_id);
+        message_interface.broadcast<shared::JoinLobbyBroadcastMessage>(players, lobby_id, players);
     };
 
     // PRE: selected_cards are validated in message parsing
@@ -149,13 +155,10 @@ namespace server
             return;
         }
 
-        // Create new game interface
         game_interface = GameInterface::make(lobby_id, request->selected_cards, players);
 
-        // send messages
         LOG(INFO) << "Sending StartGameBroadcastMessage in Lobby ID: " << lobby_id;
         message_interface.broadcast<shared::StartGameBroadcastMessage>(players, lobby_id);
-
         broadcastGameState(message_interface);
     }
 } // namespace server

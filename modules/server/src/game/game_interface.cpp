@@ -6,8 +6,8 @@ namespace server
                                              const std::vector<shared::CardBase::id_t> &play_cards,
                                              const std::vector<Player::id_t> &player_ids)
     {
-        LOG(INFO) << "Created a new GameInterface("
-                  << "game_id:" << game_id << ")";
+        LOG(DEBUG) << "Created a new GameInterface("
+                   << "game_id:" << game_id << ")";
         return ptr_t(new GameInterface(game_id, play_cards, player_ids));
     }
 
@@ -15,29 +15,25 @@ namespace server
     {
         auto *casted_msg = dynamic_cast<shared::ActionDecisionMessage *>(message.get());
         if ( casted_msg == nullptr ) {
+            // ISSUE: 166
             LOG(ERROR) << "Received a non shared::ActionDecisionMessage in " << FUNC_NAME;
             throw std::runtime_error("unreachable code");
         }
 
-        auto affected_player_id = casted_msg->player_id;
-        return handleAction(std::move(casted_msg->decision), affected_player_id);
+#define HANDLE_ACTION(type)                                                                                            \
+    if ( dynamic_cast<shared::type *>(casted_msg->decision.get()) ) {                                                  \
+        return type##_handler(                                                                                         \
+                std::unique_ptr<shared::type>(static_cast<shared::type *>(casted_msg->decision.release())),            \
+                casted_msg->player_id);                                                                                \
     }
 
-    GameInterface::response_t GameInterface::handleAction(std::unique_ptr<shared::ActionDecision> action_decision,
-                                                          const Player::id_t &affected_player_id)
-    {
-#define HANDLE_ACTION(type)                                                                                            \
-    if ( dynamic_cast<shared::type *>(action_decision.get()) ) {                                                       \
-        return type##_handler(std::unique_ptr<shared::type>(static_cast<shared::type *>(action_decision.release())),   \
-                              affected_player_id);                                                                     \
-    }
         HANDLE_ACTION(PlayActionCardDecision);
         HANDLE_ACTION(BuyCardDecision);
         HANDLE_ACTION(EndTurnDecision);
         HANDLE_ACTION(ChooseNCardsFromHandDecision);
 
         LOG(ERROR) << "Unreachable code: received some weird message type";
-        throw std::runtime_error("Unreachable code");
+        throw std::runtime_error("unreachable code in " + FUNC_NAME);
     }
 
     GameInterface::response_t
@@ -45,23 +41,26 @@ namespace server
                                                   const Player::id_t &player_id)
     {
         try {
+            // all checks are done here
             game_state->tryPlay(player_id, action_decision->card_id, action_decision->from);
-            game_state->setPhase(GamePhase::PLAYING_ACTION_CARD);
+            game_state->setPhase(GamePhase::PLAYING_ACTION_CARD); // phase is only set if we successfully played a card
         } catch ( std::exception &e ) {
-            LOG(ERROR) << "failed to play, TODO: handle this";
+            // we throw for now, but this should be a message
+            // discuss with gui guys or return shared::ResultResponseMessage(false)
+            // ISSUE: 166
+            LOG(ERROR) << "failed to play, TODO: handle this more gracefully";
             throw std::runtime_error("failed to play card (GameInterface::PlayActionCardDecision_handler), this needs "
                                      "to be handled better");
         }
 
-        cur_behaviours->loadBehaviours(action_decision->card_id);
-        auto response = cur_behaviours->receiveAction(*game_state, player_id, std::nullopt, std::nullopt);
-        if ( response.has_value() ) {
-            // this means we will receive a response for this
-            return std::move(response.value());
+        behaviour_chain->loadBehaviours(action_decision->card_id);
+        auto response = behaviour_chain->startChain(*game_state);
+
+        if ( behaviour_chain->empty() ) {
+            return finishedPlayingCard();
         }
 
-        // the code below can probably be extracted into a seperate function
-        return finishedPlayingCard();
+        return response;
     }
 
     GameInterface::response_t
@@ -69,26 +68,18 @@ namespace server
                                            const Player::id_t &player_id)
     {
         try {
+            // all checks are done here
             game_state->tryBuy(player_id, action_decision->card);
         } catch ( std::exception &e ) {
+            // we throw for now, but this should be a message
+            // discuss with gui guys or return shared::ResultResponseMessage(false)
+            // ISSUE: 166
             LOG(ERROR) << "failed to buy card";
             throw std::runtime_error("failed to buy in GameInterface::PlayActionCardDecision_handler, this needs to be "
                                      "handled better");
         }
 
-        game_state->maybeSwitchPhase();
-        switch ( game_state->getPhase() ) {
-            case server::GamePhase::BUY_PHASE:
-                return std::make_unique<shared::BuyPhaseOrder>();
-            case server::GamePhase::ACTION_PHASE:
-                return std::make_unique<shared::ActionPhaseOrder>();
-            default:
-                {
-                    LOG(ERROR) << "invalid phase after buying a card";
-                    throw std::runtime_error(
-                            "invalid phase after buying a card in GameInterface::BuyCardDecision_handler");
-                }
-        }
+        return nextPhase();
     }
 
     GameInterface::response_t
@@ -96,33 +87,63 @@ namespace server
                                            const Player::id_t &player_id)
     {
         if ( game_state->getPhase() == GamePhase::PLAYING_ACTION_CARD ) {
+            // ISSUE: 166
             LOG(ERROR) << "Player is trying to end his turn while playing a card";
             throw exception::OutOfPhase("");
         }
 
-        LOG(INFO) << "ending " << player_id << "\'s turn";
         game_state->endTurn();
 
-        return std::make_unique<shared::ActionPhaseOrder>();
+        return nextPhase();
     }
 
     GameInterface::response_t GameInterface::ChooseNCardsFromHandDecision_handler(
             std::unique_ptr<shared::ChooseNCardsFromHandDecision> action_decision, const Player::id_t &player_id)
     {
-        auto order_msg =
-                cur_behaviours->receiveAction(*game_state, player_id, std::move(action_decision), std::nullopt);
+        // this will be implemented after ChooseNCardFromHandDecision is fixed
 
-        if ( order_msg.has_value() ) {
-            return std::move(order_msg.value());
+        LOG(ERROR) << FUNC_NAME << " is not implemented yet!";
+        throw std::runtime_error("unrachable code");
+
+        // auto order_msg = behaviour_chain->continueChain(*game_state, action_decision);
+        if ( behaviour_chain->empty() ) {
+            return finishedPlayingCard();
+        } else {
+            // return empty order
+            return OrderResponse();
+        }
+    }
+
+    GameInterface::response_t GameInterface::nextPhase()
+    {
+        // switches phase if: actions==0 OR (buys==0 -> end_turn + next player)
+        game_state->maybeSwitchPhase();
+        switch ( game_state->getPhase() ) {
+            case server::GamePhase::ACTION_PHASE:
+                return {game_state->getCurrentPlayerId(), std::make_unique<shared::ActionPhaseOrder>()};
+            case server::GamePhase::BUY_PHASE:
+                return {game_state->getCurrentPlayerId(), std::make_unique<shared::BuyPhaseOrder>()};
+            case server::GamePhase::PLAYING_ACTION_CARD:
+            default:
+                {
+                    // ISSUE: 166
+                    LOG(ERROR) << "game_state is out of phase";
+                    throw std::runtime_error("unreachable code");
+                }
+                break;
+        }
+    }
+
+    GameInterface::response_t GameInterface::finishedPlayingCard()
+    {
+        if ( game_state->getPhase() != server::GamePhase::PLAYING_ACTION_CARD ) {
+            // ISSUE: 166
+            LOG(ERROR) << "tried to finish playing a card while not even playing a card!";
+            throw std::runtime_error("unreachable code in " + FUNC_NAME);
         }
 
-        // this will probably lead to errors, some behaviours need multiple responses so we need to handle this here but
-        // i really dont care rn
-
-        // this can be fixed by adding a isDone() function to the behaviours
-
-        // finished playing the card
-        return finishedPlayingCard();
+        game_state->setPhase(server::GamePhase::ACTION_PHASE);
+        return nextPhase();
     }
 
 } // namespace server

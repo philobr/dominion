@@ -82,7 +82,7 @@ namespace client
                 new wxButton(this, wxID_ANY, "Victory Screen", wxDefaultPosition, wxSize(100, 40));
         skipToVictoryScreenButton->Bind(wxEVT_BUTTON,
                                         [](const wxCommandEvent & /*event*/)
-                                        { wxGetApp().getController().skipToVictoryScreenPanel(); });
+                                        { wxGetApp().getController().skipToVictoryScreen(); });
         VerticalLayout->Add(skipToVictoryScreenButton, 0, wxALIGN_RIGHT | wxALL, 10);
         this->SetSizerAndFit(VerticalLayout);
     }

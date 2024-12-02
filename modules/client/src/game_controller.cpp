@@ -1,3 +1,4 @@
+
 #include "game_controller.h"
 #include <memory>
 #include <shared/utils/logger.h>
@@ -10,127 +11,63 @@ using namespace shared;
 
 namespace client
 {
-    GameController::GameController(GameWindow *game_window) :
-        _gameWindow(game_window), _connectionPanel(new ConnectionPanel(game_window)),
-        _mainGamePanel(new MainGamePanel(game_window)), _lobbyPanel(new LobbyPanel(game_window)),
-        _victoryScreenPanel(new VictoryScreenPanel(game_window)), _clientState(ClientState::LOGIN_SCREEN)
+    GameController::GameController(GameWindow *game_window) : _clientState(ClientState::LOGIN_SCREEN)
     {
-        LOG(INFO) << "Initializing GameController";
-
-        // Hide all panels
-        _connectionPanel->Show(false);
-        _mainGamePanel->Show(false);
-        _lobbyPanel->Show(false);
-        _victoryScreenPanel->Show(false);
-
-        // Only show connection panel at the start of the game
-        _gameWindow->showPanel(_connectionPanel);
-
-        // Set status bar
-        showStatus("Not connected");
-    }
-
-    bool GameController::validInput(const wxString &input_server_address, const wxString &input_server_port,
-                                    const wxString &input_player_name, const wxString &input_game_name)
-    {
-        // check that all values were provided
-        if ( input_server_address.IsEmpty() ) {
-            showError("Input error", "Please provide the server's address");
-            return false;
-        }
-
-        if ( input_server_port.IsEmpty() ) {
-            showError("Input error", "Please provide the server's port number");
-            return false;
-        }
-
-        if ( input_player_name.IsEmpty() ) {
-            showError("Input error", "Please enter your desired player name");
-            return false;
-        }
-
-        if ( input_game_name.IsEmpty() ) {
-            showError("Input error", "Please enter the game name");
-            return false;
-        }
-
-        // convert port from wxString to uint16_t
-        unsigned long portAsLong;
-        if ( !input_server_port.ToULong(&portAsLong) || portAsLong > 65535 ) {
-            showError("Connection error", "Invalid port");
-            return false;
-        }
-
-        return true;
+        _gui = std::make_unique<Gui>(game_window);
     }
 
     void GameController::createLobby()
     {
         if ( _clientState != ClientState::LOGIN_SCREEN ) {
-            showError("Error", "Tried to create lobby while not in login screen");
+            _gui->showError("Error", "Tried to create lobby while not in login screen");
             return;
         }
 
-        // get values form UI input fields
-        wxString inputServerAddress = _connectionPanel->getServerAddress().Trim();
-        wxString inputServerPort = _connectionPanel->getServerPort().Trim();
-        wxString inputPlayerName = _connectionPanel->getPlayerName().Trim();
-        wxString inputGameName = _connectionPanel->getGameName().Trim();
+        ConnectionForm input;
+        if ( !_gui->getConnectionForm(input) ) {
+            return;
+        }
 
-        LOG(DEBUG) << "Creating lobby " << inputGameName;
+        LOG(DEBUG) << "Creating lobby " << input.lobby_name;
 
-        if ( validInput(inputServerAddress, inputServerPort, inputPlayerName, inputGameName) ) {
-            unsigned long portAsLong;
-            inputServerPort.ToULong(&portAsLong);
+        _clientNetworkManager->init(input.host, input.port);
+        if ( _clientNetworkManager->failedToConnect() ) {
+            _clientState = ClientState::LOGIN_SCREEN;
+            LOG(INFO) << "Reverted to ClientState::LOGIN_SCREEN";
+        } else {
 
-            // connect to the server
-            _clientNetworkManager->init(inputServerAddress.ToStdString(), portAsLong);
-            if ( _clientNetworkManager->failedToConnect() ) {
-                _clientState = ClientState::LOGIN_SCREEN;
-                LOG(INFO) << "Reverted to ClientState::LOGIN_SCREEN";
-            } else {
+            // send request to join game
+            shared::CreateLobbyRequestMessage request(input.lobby_name, input.player_name);
+            sendRequest(request.toJson());
 
-                // send request to join game
-                shared::CreateLobbyRequestMessage request(inputGameName.ToStdString(), inputPlayerName.ToStdString());
-                sendRequest(request.toJson());
-
-                _gameName = inputGameName.ToStdString();
-                _playerName = inputPlayerName.ToStdString();
-                _clientState = ClientState::CREATING_LOBBY;
-            }
+            _gameName = input.lobby_name;
+            _playerName = input.player_name;
+            _clientState = ClientState::CREATING_LOBBY;
         }
     }
 
     void GameController::joinLobby()
     {
         if ( _clientState != ClientState::LOGIN_SCREEN ) {
-            showError("Error", "Tried to join lobby while not in login screen");
+            _gui->showError("Error", "Tried to join lobby while not in login screen");
             return;
         }
 
-        // get values form UI input fields
-        wxString inputServerAddress = _connectionPanel->getServerAddress().Trim();
-        wxString inputServerPort = _connectionPanel->getServerPort().Trim();
-        wxString inputPlayerName = _connectionPanel->getPlayerName().Trim();
-        wxString inputGameName = _connectionPanel->getGameName().Trim();
-
-        LOG(DEBUG) << "Joining lobby " << inputGameName;
-
-        if ( validInput(inputServerAddress, inputServerPort, inputPlayerName, inputGameName) ) {
-            unsigned long portAsLong;
-            inputServerPort.ToULong(&portAsLong);
-
-            // connect to the server
-            _clientNetworkManager->init(inputServerAddress.ToStdString(), portAsLong);
-
-            // send request to join game
-            shared::JoinLobbyRequestMessage request(inputGameName.ToStdString(), inputPlayerName.ToStdString());
-            sendRequest(request.toJson());
-
-            _gameName = inputGameName.ToStdString();
-            _playerName = inputPlayerName.ToStdString();
-            _clientState = ClientState::JOINING_LOBBY;
+        ConnectionForm input;
+        if ( !_gui->getConnectionForm(input) ) {
+            return;
         }
+
+        LOG(DEBUG) << "Joining lobby " << input.lobby_name;
+
+        _clientNetworkManager->init(input.host, input.port);
+
+        shared::JoinLobbyRequestMessage request(input.lobby_name, input.player_name);
+        sendRequest(request.toJson());
+
+        _gameName = input.lobby_name;
+        _playerName = input.player_name;
+        _clientState = ClientState::JOINING_LOBBY;
     }
 
     void GameController::startGame()
@@ -208,14 +145,6 @@ namespace client
         _clientNetworkManager->sendRequest(action_decision_message->toJson());
     }
 
-    void GameController::showError(const std::string &title, const std::string &message)
-    {
-        LOG(WARN) << title << ": " << message << std::endl;
-        wxMessageBox(message, title, wxICON_ERROR);
-    }
-
-    void GameController::showStatus(const std::string &message) { _gameWindow->setStatus(message); }
-
     void GameController::sendRequest(const std::string &req) { _clientNetworkManager->sendRequest(req); }
 
     void GameController::receiveActionOrderMessage(std::unique_ptr<shared::ActionOrderMessage> /*msg*/)
@@ -226,19 +155,17 @@ namespace client
 
     void GameController::receiveCreateLobbyResponseMessage(std::unique_ptr<shared::CreateLobbyResponseMessage> /*msg*/)
     {
-        _gameWindow->showPanel(_lobbyPanel);
-        // TODO maybe add player_id to the ServerToClientMessage ?
-        _lobbyPanel->makeGameMaster();
-        _lobbyPanel->addPlayer(_connectionPanel->getPlayerName().Trim().ToStdString());
+        LOG(DEBUG) << "Successfully created lobby";
+        std::vector<reduced::Player::id_t> players = {_playerName};
+        _gui->showLobbyScreen(players, true);
     }
 
     void GameController::receiveJoinLobbyBroadcastMessage(std::unique_ptr<shared::JoinLobbyBroadcastMessage> msg)
     {
-        LOG(DEBUG) << "Player joined lobby: " << msg->players.back();
-        std::unique_ptr<shared::JoinLobbyBroadcastMessage> jlbm(
-                static_cast<shared::JoinLobbyBroadcastMessage *>(msg.release()));
-
-        refreshPlayers(*jlbm);
+        LOG(DEBUG) << "Successfully joined lobby";
+        LOG(DEBUG) << "Player " << msg->players.back() << " joined the lobby";
+        _gui->showLobbyScreen(msg->players, false);
+        _clientState = ClientState::IN_LOBBY;
     }
 
     void GameController::receiveResultResponseMessage(std::unique_ptr<shared::ResultResponseMessage> msg)
@@ -249,15 +176,13 @@ namespace client
                 break;
             case ClientState::JOINING_LOBBY:
                 if ( msg->success ) {
-                    LOG(DEBUG) << "Successfully joined lobby";
-                    _gameWindow->showPanel(_lobbyPanel);
-                    _clientState = ClientState::IN_LOBBY;
+                    // Nothing to do here, since everyhing is handled in JoinLobbyBroadcastMessage
                 } else {
                     LOG(DEBUG) << "Failed to join lobby";
                     if ( msg->additional_information.has_value() ) {
-                        showError("Failed to join lobby", msg->additional_information.value());
+                        _gui->showError("Failed to join lobby", msg->additional_information.value());
                     } else {
-                        showError("Failed to join lobby", "");
+                        _gui->showError("Failed to join lobby", "");
                     }
                     LOG(INFO) << "Returning to login screen";
                     _clientState = ClientState::LOGIN_SCREEN;
@@ -266,14 +191,14 @@ namespace client
             case ClientState::CREATING_LOBBY:
                 if ( msg->success ) {
                     LOG(DEBUG) << "Successfully created lobby";
-                    _gameWindow->showPanel(_lobbyPanel);
+                    _gui->showLobbyScreen({_playerName}, true);
                     _clientState = ClientState::IN_LOBBY;
                 } else {
                     LOG(DEBUG) << "Failed to create lobby";
                     if ( msg->additional_information.has_value() ) {
-                        showError("Failed to create lobby", msg->additional_information.value());
+                        _gui->showError("Failed to create lobby", msg->additional_information.value());
                     } else {
-                        showError("Failed to create lobby", "");
+                        _gui->showError("Failed to create lobby", "");
                     }
                     LOG(INFO) << "Returning to login screen";
                     _clientState = ClientState::LOGIN_SCREEN;
@@ -295,13 +220,13 @@ namespace client
     {
         LOG(INFO) << "Received GameStateMessage, updating game state";
         _gameState = std::move(msg->game_state);
-        _mainGamePanel->drawGameState(*_gameState);
+        _gui->drawGameState(*_gameState);
     }
 
     void GameController::receiveStartGameBroadcastMessage(std::unique_ptr<shared::StartGameBroadcastMessage> /*msg*/)
     {
         LOG(DEBUG) << "Starting game";
-        _gameWindow->showPanel(_mainGamePanel);
+        _gui->showMainGameScreen();
     }
 
     void GameController::receiveMessage(std::unique_ptr<shared::ServerToClientMessage> msg)
@@ -328,10 +253,16 @@ namespace client
         throw exception::UnreachableCode("Unknown message type");
     }
 
-    void GameController::refreshPlayers(shared::JoinLobbyBroadcastMessage &msg)
+    void GameController::skipToVictoryScreen()
     {
-        LOG(INFO) << "Refreshing Players on lobby panel";
-        _lobbyPanel->refreshPlayers(msg.players);
+        LOG(WARN) << "Skipping to victory screen, this is debug functionality";
+        _gui->showVictoryScreen();
+    }
+
+    void GameController::skipToGamePanel()
+    {
+        LOG(WARN) << "Skipping to game panel, this is debug functionality";
+        _gui->showMainGameScreen();
     }
 
     shared::PlayerBase::id_t GameController::getPlayerName()
@@ -342,12 +273,5 @@ namespace client
                     "GameController::getPlayerName should never be called without a game state");
         }
         return _gameState->reduced_player->getId();
-    }
-
-    void GameController::skipToGamePanel() { _gameWindow->showPanel(_mainGamePanel); }
-    void GameController::skipToVictoryScreenPanel()
-    {
-        _victoryScreenPanel->drawTestVictoryScreen();
-        _gameWindow->showPanel(_victoryScreenPanel);
     }
 } // namespace client

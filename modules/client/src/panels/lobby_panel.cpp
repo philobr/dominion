@@ -30,7 +30,7 @@ namespace client
         this->SetSizerAndFit(VerticalSizer);
     }
 
-    void LobbyPanel::refreshPlayers(std::vector<std::string> &players)
+    void LobbyPanel::refreshPlayers(const std::vector<std::string> &players)
     {
         NamesSizer->Clear(false);
         playerCount = 0;

@@ -78,7 +78,7 @@ namespace client
         if ( _numPlayers < shared::board_config::MIN_PLAYER_COUNT ||
              _numPlayers > shared::board_config::MAX_PLAYER_COUNT ) {
             LOG(WARN) << "Invalid number of players ( " << _numPlayers << " ) to start game";
-            _gui->showError("Error", "Invalid number of players");
+            _guiEventReceiver->getGui().showError("Error", "Invalid number of players");
             return;
         }
         LOG(DEBUG) << "Starting game";

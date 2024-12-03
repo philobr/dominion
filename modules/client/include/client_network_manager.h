@@ -2,8 +2,8 @@
 
 #include <cstdint>
 #include <string>
-#include "sockpp/tcp_connector.h"
 #include "shared/message_types.h"
+#include "sockpp/tcp_connector.h"
 
 class ClientNetworkManager
 {

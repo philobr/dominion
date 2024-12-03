@@ -21,8 +21,6 @@ namespace client
 
         void drawInfoPanel(const reduced::GameState& game_state);
     private:
-        wxSize played_card_size = formatting_constants::DEFAULT_CARD_SIZE;
-
         TextPanel* drawPlayerInfo(const std::unique_ptr<reduced::Player>& player);
 
         wxPanel* drawPlayedPanel(std::vector<shared::CardBase::id_t> played_cards);

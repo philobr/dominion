@@ -28,6 +28,23 @@ namespace client
         auto* infoPanel = drawPlayerInfo(game_state->reduced_player);
         sizer->Add(infoPanel, 0, wxALL, 5);
 
+        //Create End Action Phase Button
+        wxButton *endActionPhaseButton =
+                new wxButton(this, wxID_ANY, "End Action Phase", wxDefaultPosition, wxSize(100, 40));
+        endActionPhaseButton->Bind(
+                wxEVT_BUTTON, [](const wxCommandEvent & /*event*/) { wxGetApp().getController().endActionPhase(); });
+
+        //Create End Turn Button
+        wxButton *endTurnButton =
+                new wxButton(this, wxID_ANY, "End Turn", wxDefaultPosition, wxSize(100, 40));
+        endTurnButton->Bind(
+                wxEVT_BUTTON, [](const wxCommandEvent & /*event*/) { wxGetApp().getController().endTurn(); });
+
+
+        outersizer->Add(endActionPhaseButton, 0, wxALIGN_RIGHT | wxALL, 10);
+        outersizer->Add(endTurnButton, 0, wxALIGN_RIGHT | wxALL, 10);
+
+
         //
         // Set minimum width for the info bar
         SetMinSize(wxSize(150, -1));  // 150 pixels wide, height automatic
@@ -55,8 +72,7 @@ namespace client
     //     size_t hand_size = cards.size();
 
     //     // Create the hand panel
-    //     wxPanel* hand = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDefaultSize);
-
+    //     wxPanel* hand = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDefaultSize
     //     // Create the sizer for the hand
     //     wxGridSizer* sizer = new wxGridSizer(1, hand_size, 0, 0);
     //     sizer->SetMinSize(wxSize(5 * card_width_borders, 150));
@@ -90,4 +106,6 @@ namespace client
 
     //     return hand;
     // }
+    void 
 } // namespace client
+

@@ -75,6 +75,7 @@ namespace client
     void GameController::startGame()
     {
         LOG(DEBUG) << "Starting game";
+        // TODO Implement card selection
         std::vector<shared::CardBase::id_t> selectedCards{"Estate",       "Smithy",      "Village",      "Laboratory",
                                                           "Festival",     "Market",      "Placeholder1", "Placeholder2",
                                                           "Placeholder3", "Placeholder4"};
@@ -194,24 +195,16 @@ namespace client
                     _clientState = ClientState::LOGIN_SCREEN;
                 }
                 break;
-            case ClientState::CREATING_LOBBY:
+            case ClientState::IN_LOBBY:
                 if ( msg->success ) {
-                    LOG(DEBUG) << "Successfully created lobby";
-                    _gui->showLobbyScreen({_playerName}, true);
-                    _clientState = ClientState::IN_LOBBY;
+                    LOG(ERROR) << "Received ResultResponseMessage(success) while in lobby screen";
+                    throw std::runtime_error("Received ResultResponseMessage(success) while in lobby screen");
                 } else {
                     LOG(DEBUG) << "Failed to create lobby";
-                    if ( msg->additional_information.has_value() ) {
-                        _gui->showError("Failed to create lobby", msg->additional_information.value());
-                    } else {
-                        _gui->showError("Failed to create lobby", "");
-                    }
-                    LOG(INFO) << "Returning to login screen";
-                    _clientState = ClientState::LOGIN_SCREEN;
+                    _gui->showError("Failed to create lobby", msg->additional_information.value_or(""));
+                    LOG(INFO) << "Returning to lobby screen";
+                    _clientState = ClientState::IN_LOBBY;
                 }
-                break;
-            case ClientState::IN_LOBBY:
-                LOG(WARN) << "Received unexpected ResultResponseMessage while in lobby";
                 break;
             case ClientState::IN_GAME:
                 LOG(WARN) << "Received unexpected ResultResponseMessage while in running game";
@@ -232,6 +225,7 @@ namespace client
     void GameController::receiveStartGameBroadcastMessage(std::unique_ptr<shared::StartGameBroadcastMessage> /*msg*/)
     {
         LOG(DEBUG) << "Starting game";
+        _clientState = ClientState::IN_GAME;
         _gui->showMainGameScreen();
     }
 

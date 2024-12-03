@@ -15,7 +15,8 @@ namespace client
         // Set background color to light blue
         SetBackgroundColour(wxColour(200, 220, 240));
 
-        this->drawInfoPanel(*game_state);
+        this->drawPlayedPanelTest();
+        // this->drawInfoPanel(*game_state);
     }
 
     void PhaseInfoPanel::drawInfoPanel(const reduced::GameState& game_state)
@@ -65,6 +66,44 @@ namespace client
 
     wxPanel* PhaseInfoPanel::drawPlayedPanel(const std::vector<shared::CardBase::id_t> cards)
     {
+        // Get the hand cards
+        size_t cards_size = cards.size();
+        size_t card_width_borders = played_card_size.GetWidth() + 8;
+
+
+        // Create the hand panel
+        wxPanel* hand = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDefaultSize);
+
+        // Create the sizer for the hand
+        wxGridSizer* sizer = new wxGridSizer(1, cards_size, 0, 0);
+        sizer->SetMinSize(wxSize(5 * card_width_borders, 150));
+
+        // Set the sizer for the hand panel
+        hand->SetSizer(sizer);
+
+        // Set the size of the cards
+        if (card_width_borders * cards_size > 724) {
+            // scale bigger hands
+            played_card_size.SetWidth(724 / cards_size - 8);
+            played_card_size.SetHeight(played_card_size.GetWidth() / 4 * 5);
+        }
+
+        // Add the cards to the hand
+        for (size_t i = 0; i < cards_size; i++) {
+            ImagePanel* card = new ImagePanel(hand, "assets/" + cards[i] + ".png", wxBITMAP_TYPE_PNG, wxDefaultPosition,
+                played_card_size, 0);
+
+            sizer->Add(card, 0, wxALIGN_CENTER, 4);
+        }
+        return hand;
+    }
+
+    // test to see if the panel works
+    // TODO: remove this
+    wxPanel* PhaseInfoPanel::drawPlayedPanelTest()
+    {
+        // create a vector of played cards
+        std::vector<shared::CardBase::id_t> cards = { "Village", "Copper", "Copper", "Copper", "Estate" };
         // Get the hand cards
         size_t cards_size = cards.size();
         size_t card_width_borders = played_card_size.GetWidth() + 8;

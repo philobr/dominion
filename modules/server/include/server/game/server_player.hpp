@@ -62,6 +62,24 @@ inline bool server::Player::hasCard(const shared::CardBase::id_t &card_id) const
 }
 
 template <enum shared::CardAccess PILE>
+inline bool server::Player::hasType(shared::CardType type) const
+{
+    auto pile = get<PILE>();
+    return std::any_of(pile.begin(), pile.end(), [type](const auto &card_id)
+                       { return (shared::CardFactory::getCard(card_id).getType() & type) != 0; });
+}
+
+template <enum shared::CardAccess PILE>
+inline std::vector<shared::CardBase::id_t> server::Player::getType(shared::CardType type) const
+{
+    auto pile = get<PILE>();
+    std::vector<shared::CardBase::id_t> cards;
+    std::copy_if(pile.begin(), pile.end(), std::back_inserter(cards),
+                 [type](const auto &card_id) { return (shared::CardFactory::getCard(card_id).getType() & type) != 0; });
+    return cards;
+}
+
+template <enum shared::CardAccess PILE>
 inline size_t server::Player::getIndex(const shared::CardBase::id_t &card_id) const
 {
     if ( !hasCard<PILE>(card_id) ) {
@@ -73,6 +91,30 @@ inline size_t server::Player::getIndex(const shared::CardBase::id_t &card_id) co
     const auto idx = std::find_if(cards.begin(), cards.end(), [card_id](const auto &id) { return id == card_id; });
 
     return std::distance(cards.begin(), idx);
+}
+
+template <enum shared::CardAccess PILE>
+inline void server::Player::trash(const std::vector<unsigned int> &indices)
+{
+    moveIndices<PILE, shared::TRASH>(indices);
+}
+
+template <enum shared::CardAccess PILE>
+inline void server::Player::discard(const std::vector<unsigned int> &indices)
+{
+    moveIndices<PILE, shared::DISCARD_PILE>(indices);
+}
+
+template <enum shared::CardAccess PILE>
+inline void server::Player::stage(const std::vector<unsigned int> &indices)
+{
+    move_indices<PILE, shared::STAGED_CARDS>(indices);
+}
+
+template <enum shared::CardAccess TO_PILE>
+inline void server::Player::unStage(const std::vector<unsigned int> &indices)
+{
+    move_indices<shared::STAGED_CARDS, TO_PILE>(indices);
 }
 
 #pragma region ADD
@@ -109,4 +151,13 @@ template <enum shared::CardAccess TO>
 inline void server::Player::add(const std::vector<shared::CardBase::id_t> &cards)
 {
     add<TO>(cards.begin(), cards.end());
+}
+
+#pragma region MOVE
+
+template <enum shared::CardAccess FROM, enum shared::CardAccess TO>
+inline void server::Player::move(const shared::CardBase::id_t &card_id)
+{
+    auto index = getIndex<FROM>(card_id);
+    moveIndices<FROM, TO>(index);
 }

@@ -147,7 +147,8 @@ namespace server
         switch ( phase ) {
             case GamePhase::ACTION_PHASE:
                 {
-                    if ( player.getActions() == 0 || !player.hasActionCardsInHand() ) {
+                    if ( player.getActions() == 0 ||
+                         !player.hasType<shared::CardAccess::HAND>(shared::CardType::ACTION) ) {
                         phase = GamePhase::BUY_PHASE;
                     }
                 }
@@ -249,7 +250,7 @@ namespace server
             throw exception::OutOfActions();
         }
 
-        if ( !player.hasCardInHand(card_id) ) {
+        if ( !player.hasCard<shared::CardAccess::HAND>(card_id) ) {
             LOG(WARN) << "Player " << requestor_id << " attempted to play card " << card_id << " not in their hand.";
             throw exception::CardNotAvailable();
         }
@@ -275,7 +276,7 @@ namespace server
         }
 
         auto player = getPlayer(requestor_id);
-        if ( !player.hasCardStaged(card_id) ) {
+        if ( !player.hasCard<shared::CardAccess::STAGED_CARDS>(card_id) ) {
             LOG(WARN) << "Player " << requestor_id << " attempted to play card " << card_id << " not in staged cards.";
             throw exception::CardNotAvailable();
         }

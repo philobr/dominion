@@ -37,7 +37,7 @@ namespace server
 
     void Player::playAvailableTreasureCards()
     {
-        for ( const auto &card_id : getTreasureInHand() ) {
+        for ( const auto &card_id : getType<shared::CardAccess::HAND>(shared::CardType::TREASURE) ) {
             playCardFromHand(card_id);
         }
     }

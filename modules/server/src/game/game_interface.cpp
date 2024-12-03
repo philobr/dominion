@@ -151,7 +151,8 @@ namespace server
                 return {game_state->getCurrentPlayerId(), std::make_unique<shared::ActionPhaseOrder>()};
             case server::GamePhase::BUY_PHASE:
                 {
-                    for ( const auto &card_id : game_state->getCurrentPlayer().getTreasureInHand() ) {
+                    for ( const auto &card_id : game_state->getCurrentPlayer().getType<shared::CardAccess::HAND>(
+                                  shared::CardType::TREASURE) ) {
                         behaviour_chain->loadBehaviours(card_id);
                         behaviour_chain->startChain(*game_state);
                     }

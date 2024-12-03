@@ -44,45 +44,17 @@ namespace server
 
         void playAvailableTreasureCards();
 
-        inline bool hasActionCardsInHand() const
-        {
-            auto hand = get<shared::HAND>();
-            return std::any_of(hand.begin(), hand.end(),
-                               [](const auto &card_id) { return shared::CardFactory::getCard(card_id).isAction(); });
-        }
+        template <enum shared::CardAccess PILE>
+        inline bool hasCard(const shared::CardBase::id_t &card_id) const;
 
-        auto getTreasureInHand() const
-        {
-            auto cards = get<shared::HAND>();
-            std::vector<shared::CardBase::id_t> treasure_cards;
-            std::for_each(cards.begin(), cards.end(),
-                          [&](const auto &card_id)
-                          {
-                              const auto card = shared::CardFactory::getCard(card_id);
-                              if ( card.isTreasure() && !card.isAction() ) {
-                                  treasure_cards.push_back(card_id);
-                              }
-                          });
-            return treasure_cards;
-        }
+        template <enum shared::CardAccess PILE>
+        inline bool hasType(shared::CardType type) const;
 
-        bool canBuy(unsigned int cost) { return buys > 0 && treasure >= cost; }
+        template <enum shared::CardAccess PILE>
+        inline std::vector<shared::CardBase::id_t> getType(shared::CardType type) const;
 
-        inline bool hasCardInHand(const shared::CardBase::id_t &card_id) const
-        {
-            return hasCard<shared::HAND>(card_id);
-        }
-
-        inline bool hasCardStaged(const shared::CardBase::id_t &card_id) const
-        {
-            return hasCard<shared::STAGED_CARDS>(card_id);
-        }
-
-        bool canBlock() const
-        {
-            return std::any_of(hand_cards.begin(), hand_cards.end(),
-                               [&](const auto &card_id) { return shared::CardFactory::getCard(card_id).isReaction(); });
-        }
+        inline bool canBuy(unsigned int cost) { return buys > 0 && treasure >= cost; }
+        inline bool canBlock() const { return hasType<shared::CardAccess::HAND>(shared::CardType::REACTION); }
 
         /**
          * @brief Draw the min(n, draw_pile_size) top cards from the deck and put them in the hand
@@ -93,16 +65,12 @@ namespace server
 
         inline void playCardFromHand(const shared::CardBase::id_t &card_id)
         {
-            // this assumes that the card actually exists!
-            const auto card_idx = getIndex<shared::HAND>(card_id);
-            moveIndices<shared::HAND, shared::PLAYED_CARDS>(card_idx);
+            move<shared::HAND, shared::PLAYED_CARDS>(card_id);
         }
 
         inline void playCardFromStaged(const shared::CardBase::id_t &card_id)
         {
-            // this assumes that the card actually exists!
-            const auto card_idx = getIndex<shared::STAGED_CARDS>(card_id);
-            moveIndices<shared::STAGED_CARDS, shared::PLAYED_CARDS>(card_idx);
+            move<shared::STAGED_CARDS, shared::PLAYED_CARDS>(card_id);
         }
 
         /**
@@ -112,36 +80,24 @@ namespace server
 
         /**
          * @brief Trashes the cards at the given indices
-         *
-         * @tparam FROM_PILE
-         * @param indices
          */
         template <enum shared::CardAccess FROM_PILE>
         inline void trash(const std::vector<unsigned int> &indices);
 
         /**
          * @brief Moves the cards at the given pile to the back of the discard pile
-         *
-         * @tparam FROM_PILE
-         * @param indices
          */
         template <enum shared::CardAccess FROM_PILE>
         inline void discard(const std::vector<unsigned int> &indices);
 
         /**
          * @brief Moves the cards at the given pile to the back of the stage pile
-         *
-         * @tparam FROM_PILE
-         * @param indices
          */
         template <enum shared::CardAccess FROM_PILE>
         inline void stage(const std::vector<unsigned int> &indices);
 
         /**
          * @brief Unstages the cards at the specified indices to the specified pile.
-         *
-         * @tparam TO_PILE
-         * @param indices
          */
         template <enum shared::CardAccess TO_PILE>
         inline void unStage(const std::vector<unsigned int> &indices);
@@ -152,18 +108,12 @@ namespace server
         void addPoints(unsigned int n) { victory_points += n; }
 
         /**
-         * @brief Returns a const ref to the specified pile
-         *
-         * @tparam PILE
-         * @return const std::vector<shared::CardBase::id_t>&
-         */
-        template <enum shared::CardAccess PILE>
-        inline const std::vector<shared::CardBase::id_t> &get() const;
-
-        /**
          * @brief Moves the played_cards & hand_cards to the discard_pile, then draws 5 cards again.
          */
         void endTurn();
+
+        template <enum shared::CardAccess PILE>
+        inline const std::vector<shared::CardBase::id_t> &get() const;
 
         template <enum shared::CardAccess TO>
         inline void add(std::vector<shared::CardBase::id_t> &&cards);
@@ -173,6 +123,9 @@ namespace server
 
         template <enum shared::CardAccess TO>
         inline void add(const shared::CardBase::id_t &card_id);
+
+        template <enum shared::CardAccess FROM, enum shared::CardAccess TO>
+        inline void move(const shared::CardBase::id_t &card_id);
 
     protected:
         /**
@@ -191,14 +144,14 @@ namespace server
         inline size_t getIndex(const shared::CardBase::id_t &card_id) const;
 
         template <enum shared::CardAccess PILE>
-        inline bool hasCard(const shared::CardBase::id_t &card_id) const;
-
-        template <enum shared::CardAccess PILE>
         inline void shuffle();
 
+
         /**
-         * @brief Always does push_back except for DRAW_PILE_BOTTOM
+         * @brief Adds the given cards to the specified TO pile.
+         * Will always perform a push_back, except for DRAW_PILE_BOTTOM
          * @throw std::invalid_argument
+         * @tparam TO pile to which we add to
          */
         template <enum shared::CardAccess TO, typename Iterator>
         inline void add(Iterator begin, Iterator end);
@@ -273,6 +226,7 @@ namespace server
         inline void moveIndices(const std::vector<unsigned int> &indices);
     };
 
+#pragma region TO_BE_MOVED
     template <enum shared::CardAccess FROM>
     inline std::vector<shared::CardBase::id_t> Player::take(unsigned int n)
     {
@@ -384,30 +338,6 @@ namespace server
         } else {
             add<TO>(takeIndices<FROM>(indices));
         }
-    }
-
-    template <enum shared::CardAccess PILE>
-    inline void Player::trash(const std::vector<unsigned int> &indices)
-    {
-        moveIndices<PILE, shared::TRASH>(indices);
-    }
-
-    template <enum shared::CardAccess PILE>
-    inline void Player::discard(const std::vector<unsigned int> &indices)
-    {
-        moveIndices<PILE, shared::DISCARD_PILE>(indices);
-    }
-
-    template <enum shared::CardAccess PILE>
-    inline void Player::stage(const std::vector<unsigned int> &indices)
-    {
-        move_indices<PILE, shared::STAGED_CARDS>(indices);
-    }
-
-    template <enum shared::CardAccess TO_PILE>
-    inline void Player::unStage(const std::vector<unsigned int> &indices)
-    {
-        move_indices<shared::STAGED_CARDS, TO_PILE>(indices);
     }
 
 #include "server_player.hpp"

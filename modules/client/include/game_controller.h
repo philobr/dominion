@@ -67,8 +67,17 @@ namespace client
         // TODO: This is for testing purposes only and will be removed later
         void skipToGamePanel();
 
-        void showStatus(const std::string &message) { _guiEventReceiver->getGui().showStatus(message); }
+        /**
+         * @brief Show a message in the status bar
+         * @param message The message to show
+         */
+        void showStatus(std::string message);
 
+        /**
+         * @brief Show an error message popup
+         * @param title The title of the popup
+         * @param message The content of the popup
+         */
         void showError(std::string title, std::string message);
 
     private:

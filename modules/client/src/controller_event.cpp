@@ -8,6 +8,9 @@ namespace client
     std::ostream &operator<<(std::ostream &os, ControllerEventType type)
     {
         switch ( type ) {
+            case ControllerEventType::SHOW_STATUS:
+                os << "ShowStatus";
+                break;
             case ControllerEventType::SHOW_ERROR:
                 os << "ShowError";
                 break;
@@ -28,6 +31,8 @@ namespace client
         return os;
     }
 
+    ShowStatusEventData::ShowStatusEventData(std::string message) : message(std::move(message)) {}
+
     ShowErrorEventData::ShowErrorEventData(std::string title, std::string message) :
         title(std::move(title)), message(std::move(message))
     {}
@@ -41,6 +46,12 @@ namespace client
     ShowGameScreenEventData::ShowGameScreenEventData(std::unique_ptr<reduced::GameState> game_state) :
         game_state(std::move(game_state))
     {}
+
+    ControllerEvent *ControllerEvent::showStatus(std::string status)
+    {
+        ShowStatusEventData data(std::move(status));
+        return new ControllerEvent(ControllerEventType::SHOW_STATUS, data);
+    }
 
     ControllerEvent *ControllerEvent::showError(std::string title, std::string message)
     {

@@ -17,6 +17,7 @@ namespace client
 
     enum class ControllerEventType
     {
+        SHOW_STATUS,
         SHOW_ERROR,
         SHOW_LOBBY_SCREEN,
         SHOW_GAME_SCREEN,
@@ -24,6 +25,14 @@ namespace client
     };
 
     std::ostream &operator<<(std::ostream &os, ControllerEventType type);
+
+    struct ShowStatusEventData
+    {
+    public:
+        ShowStatusEventData(std::string message);
+
+        std::string message;
+    };
 
     struct ShowErrorEventData
     {
@@ -56,6 +65,7 @@ namespace client
     class ControllerEvent : public wxThreadEvent
     {
     public:
+        static ControllerEvent *showStatus(const std::string message);
         static ControllerEvent *showError(const std::string title, const std::string message);
         static ControllerEvent *showLobbyScreen(const std::vector<std::string> players, const bool is_game_master);
         static ControllerEvent *showGameScreen(std::unique_ptr<reduced::GameState> game_state);

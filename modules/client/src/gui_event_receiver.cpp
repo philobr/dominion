@@ -16,6 +16,12 @@ namespace client
         auto &controllerEvent = static_cast<client::ControllerEvent &>(event);
 
         switch ( controllerEvent.getType() ) {
+            case ControllerEventType::SHOW_STATUS:
+                {
+                    ShowStatusEventData data = controllerEvent.getData<ShowStatusEventData>();
+                    _gui->showStatus(std::move(data.message));
+                    break;
+                }
             case ControllerEventType::SHOW_ERROR:
                 {
                     ShowErrorEventData data = controllerEvent.getData<ShowErrorEventData>();

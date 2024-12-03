@@ -12,6 +12,11 @@ using namespace shared;
 
 namespace client
 {
+    void GameController::showStatus(std::string message)
+    {
+        wxQueueEvent(_guiEventReceiver.get(), ControllerEvent::showStatus(std::move(message)));
+    }
+
     void GameController::showError(std::string title, std::string message)
     {
         wxQueueEvent(_guiEventReceiver.get(), ControllerEvent::showError(std::move(title), std::move(message)));

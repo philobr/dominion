@@ -16,6 +16,7 @@ namespace client
         CREATING_LOBBY,
         JOINING_LOBBY,
         IN_LOBBY,
+        STARTING_GAME,
         IN_GAME
     };
 

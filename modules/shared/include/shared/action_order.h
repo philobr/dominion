@@ -145,7 +145,8 @@ namespace shared
     public:
         ChooseFromStagedOrder(unsigned int min_cards, unsigned int max_cards, AllowedChoice choices,
                               std::vector<shared::CardBase::id_t> cards) :
-            ChooseFromOrder(min_cards, max_cards, choices), cards(cards)
+            ChooseFromOrder(min_cards, max_cards, choices),
+            cards(cards)
         {}
 
         ~ChooseFromStagedOrder() = default;

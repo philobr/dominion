@@ -122,7 +122,10 @@ namespace shared
 
     bool ChooseFromOrder::operator!=(const ChooseFromOrder &other) const { return !ChooseFromOrder::operator==(other); }
 
-    bool ChooseFromOrder::equals(const ActionOrder &other) const { return *this == dynamic_cast<const ChooseFromOrder &>(other); }
+    bool ChooseFromOrder::equals(const ActionOrder &other) const
+    {
+        return *this == dynamic_cast<const ChooseFromOrder &>(other);
+    }
 
 
     bool ChooseFromStagedOrder::operator==(const ChooseFromStagedOrder &other) const
@@ -142,9 +145,15 @@ namespace shared
     }
 
 
-    bool ChooseFromHandOrder::operator==(const ChooseFromHandOrder &other) const { return !ChooseFromOrder::operator==(other); }
+    bool ChooseFromHandOrder::operator==(const ChooseFromHandOrder &other) const
+    {
+        return !ChooseFromOrder::operator==(other);
+    }
 
-    bool ChooseFromHandOrder::operator!=(const ChooseFromHandOrder &other) const { return !ChooseFromHandOrder::operator==(other); }
+    bool ChooseFromHandOrder::operator!=(const ChooseFromHandOrder &other) const
+    {
+        return !ChooseFromHandOrder::operator==(other);
+    }
 
     bool ChooseFromHandOrder::equals(const ActionOrder &other) const
     {

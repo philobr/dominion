@@ -180,8 +180,9 @@ namespace shared
         Board(pile_container_t victory_cards, pile_container_t treasure_cards, pile_container_t kingdom_cards,
               Pile curse_card_pile, std::vector<shared::CardBase::id_t> trash,
               std::vector<shared::CardBase::id_t> played_cards) :
-            victory_cards(victory_cards), treasure_cards(treasure_cards), kingdom_cards(kingdom_cards),
-            curse_card_pile(curse_card_pile), trash(trash), played_cards(played_cards)
+            victory_cards(victory_cards),
+            treasure_cards(treasure_cards), kingdom_cards(kingdom_cards), curse_card_pile(curse_card_pile),
+            trash(trash), played_cards(played_cards)
         {}
     };
 

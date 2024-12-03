@@ -30,7 +30,6 @@ namespace server
         HANDLE_ACTION(PlayActionCardDecision);
         HANDLE_ACTION(BuyCardDecision);
         HANDLE_ACTION(EndTurnDecision);
-        HANDLE_ACTION(ChooseNCardsFromHandDecision);
 
         LOG(ERROR) << "Unreachable code: received some weird message type";
         throw std::runtime_error("unreachable code in " + FUNC_NAME);
@@ -97,22 +96,24 @@ namespace server
         return nextPhase();
     }
 
-    GameInterface::response_t GameInterface::ChooseNCardsFromHandDecision_handler(
-            std::unique_ptr<shared::ChooseNCardsFromHandDecision> action_decision, const Player::id_t &player_id)
-    {
-        // this will be implemented after ChooseNCardFromHandDecision is fixed
+    /*
+        GameInterface::response_t GameInterface::ChooseNCardsFromHandDecision_handler(
+                std::unique_ptr<shared::ChooseNCardsFromHandDecision> action_decision, const Player::id_t &player_id)
+        {
+            // this will be implemented after ChooseNCardFromHandDecision is fixed
 
-        LOG(ERROR) << FUNC_NAME << " is not implemented yet!";
-        throw std::runtime_error("unrachable code");
+            LOG(ERROR) << FUNC_NAME << " is not implemented yet!";
+            throw std::runtime_error("unrachable code");
 
-        // auto order_msg = behaviour_chain->continueChain(*game_state, action_decision);
-        if ( behaviour_chain->empty() ) {
-            return finishedPlayingCard();
-        } else {
-            // return empty order
-            return OrderResponse();
+            // auto order_msg = behaviour_chain->continueChain(*game_state, action_decision);
+            if ( behaviour_chain->empty() ) {
+                return finishedPlayingCard();
+            } else {
+                // return empty order
+                return OrderResponse();
+            }
         }
-    }
+    */
 
     GameInterface::response_t GameInterface::nextPhase()
     {

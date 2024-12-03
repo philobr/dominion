@@ -64,6 +64,20 @@
         (var).push_back(elem.GetUint());                                                                               \
     }
 
+#define GET_ENUM_ARRAY_MEMBER(var, document, member, type)                                                             \
+    var = std::vector<type>();                                                                                         \
+    if ( !(document).HasMember(member) || !(document)[member].IsArray() ) {                                            \
+        LOG(WARN) << "Missing or invalid member: " << (member);                                                        \
+        return nullptr;                                                                                                \
+    }                                                                                                                  \
+    for ( const auto &elem : (document)[member].GetArray() ) {                                                         \
+        if ( !elem.IsUint() ) {                                                                                        \
+            LOG(WARN) << "Missing or invalid member: " << (member);                                                    \
+            return nullptr;                                                                                            \
+        }                                                                                                              \
+        (var).push_back(static_cast<type>(elem.GetUint()));                                                            \
+    }
+
 #define GET_OPTIONAL_STRING_MEMBER(var, document, member)                                                              \
     if ( (document).HasMember(member) ) {                                                                              \
         if ( !(document)[member].IsString() ) {                                                                        \
@@ -120,6 +134,15 @@
     for ( const auto &item : (var) ) {                                                                                 \
         rapidjson::Value item_value;                                                                                   \
         item_value.SetUint(item);                                                                                      \
+        key##_array.PushBack(item_value, doc.GetAllocator());                                                          \
+    }                                                                                                                  \
+    doc.AddMember(#key, key##_array, doc.GetAllocator());
+
+#define ADD_ARRAY_OF_ENUMS_MEMBER(var, key, type)                                                                      \
+    rapidjson::Value key##_array(rapidjson::kArrayType);                                                               \
+    for ( const auto &item : (var) ) {                                                                                 \
+        rapidjson::Value item_value;                                                                                   \
+        item_value.SetUint(static_cast<type>(item));                                                                   \
         key##_array.PushBack(item_value, doc.GetAllocator());                                                          \
     }                                                                                                                  \
     doc.AddMember(#key, key##_array, doc.GetAllocator());

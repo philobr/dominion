@@ -3,6 +3,8 @@
 
 #include <memory>
 #include <rapidjson/document.h>
+#include <shared/game/cards/card_base.h>
+#include <shared/game/game_state/player_base.h>
 
 namespace shared
 {
@@ -83,24 +85,91 @@ namespace shared
         bool equals(const ActionOrder &other) const override;
     };
 
-    class ChooseNCardsFromHandOrder : public ActionOrder
-    {
-    public:
-        ChooseNCardsFromHandOrder(unsigned int n) : n(n) {}
-        bool operator==(const ChooseNCardsFromHandOrder &other) const;
-        bool operator!=(const ChooseNCardsFromHandOrder &other) const;
-        unsigned int n;
-
-    protected:
-        bool equals(const ActionOrder &other) const override;
-    };
-
     class EndTurnOrder : public ActionOrder
     {
     public:
         EndTurnOrder() = default;
         bool operator==(const EndTurnOrder &other) const;
         bool operator!=(const EndTurnOrder &other) const;
+
+    protected:
+        bool equals(const ActionOrder &other) const override;
+    };
+
+    class GainFromBoardOrder : public ActionOrder
+    {
+    public:
+        GainFromBoardOrder(unsigned int max_cost, shared::CardType allowed_type) :
+            max_cost(max_cost), allowed_type(allowed_type)
+        {}
+        bool operator==(const GainFromBoardOrder &other) const;
+        bool operator!=(const GainFromBoardOrder &other) const { return !(*this == other); }
+
+        unsigned int max_cost;
+        shared::CardType allowed_type;
+
+    protected:
+        bool equals(const ActionOrder &other) const override;
+    };
+
+    class ChooseFromOrder : public ActionOrder
+    {
+    public:
+        enum AllowedChoice
+        {
+            PLAY = 1,
+            TRASH = 2,
+            DISCARD = 4,
+            DRAW_PILE = 8,
+            HAND_CARDS = 16
+        };
+
+        ChooseFromOrder(unsigned int min_cards, unsigned int max_cards, AllowedChoice allowed_choices) :
+            min_cards(min_cards), max_cards(max_cards), allowed_choices(allowed_choices)
+        {}
+        ~ChooseFromOrder() override = default;
+
+        bool operator==(const ChooseFromOrder &other) const;
+        bool operator!=(const ChooseFromOrder &other) const;
+
+        unsigned int min_cards;
+        unsigned int max_cards;
+        AllowedChoice allowed_choices;
+
+    protected:
+        bool equals(const ActionOrder &other) const override;
+    };
+
+    class ChooseFromStagedOrder : public ChooseFromOrder
+    {
+    public:
+        ChooseFromStagedOrder(unsigned int min_cards, unsigned int max_cards, AllowedChoice choices,
+                              std::vector<shared::CardBase::id_t> cards) :
+            ChooseFromOrder(min_cards, max_cards, choices),
+            cards(cards)
+        {}
+
+        ~ChooseFromStagedOrder() override = default;
+
+        bool operator==(const ChooseFromStagedOrder &other) const;
+        bool operator!=(const ChooseFromStagedOrder &other) const;
+
+        std::vector<shared::CardBase::id_t> cards;
+
+    protected:
+        bool equals(const ActionOrder &other) const override;
+    };
+
+    class ChooseFromHandOrder : public ChooseFromOrder
+    {
+    public:
+        ChooseFromHandOrder(unsigned int min_cards, unsigned int max_cards, AllowedChoice choices) :
+            ChooseFromOrder(min_cards, max_cards, choices)
+        {}
+        ~ChooseFromHandOrder() override = default;
+
+        bool operator==(const ChooseFromHandOrder &other) const;
+        bool operator!=(const ChooseFromHandOrder &other) const;
 
     protected:
         bool equals(const ActionOrder &other) const override;

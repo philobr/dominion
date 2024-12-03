@@ -42,7 +42,7 @@ namespace server
     {
         try {
             // all checks are done here
-            game_state->tryPlay(player_id, action_decision->card_id, action_decision->from);
+            game_state->tryPlayFromHand(player_id, action_decision->card_id);
             game_state->setPhase(GamePhase::PLAYING_ACTION_CARD); // phase is only set if we successfully played a card
         } catch ( std::exception &e ) {
             // we throw for now, but this should be a message

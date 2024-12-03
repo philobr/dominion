@@ -124,9 +124,14 @@ namespace shared
 #undef GET_PILE_CONTAINER
 
         std::vector<shared::CardBase::id_t> trash;
+        std::vector<shared::CardBase::id_t> played_cards;
+        std::vector<shared::CardBase::id_t> staged_cards;
         GET_STRING_ARRAY_MEMBER(trash, json, "trash");
+        GET_STRING_ARRAY_MEMBER(played_cards, json, "played_cards");
+        GET_STRING_ARRAY_MEMBER(staged_cards, json, "staged_cards");
 
-        return std::unique_ptr<Board>(new Board(victory_cards, treasure_cards, kingdom_cards, curse_pile, trash));
+        return std::unique_ptr<Board>(
+                new Board(victory_cards, treasure_cards, kingdom_cards, curse_pile, trash, played_cards, staged_cards));
     }
 
     rapidjson::Document Board::toJson() const
@@ -156,6 +161,8 @@ namespace shared
 #undef ADD_PILE_CONTAINER
 
         ADD_ARRAY_OF_STRINGS_MEMBER(trash, trash);
+        ADD_ARRAY_OF_STRINGS_MEMBER(played_cards, played_cards);
+        ADD_ARRAY_OF_STRINGS_MEMBER(staged_cards, staged_cards);
 
         return doc;
     }

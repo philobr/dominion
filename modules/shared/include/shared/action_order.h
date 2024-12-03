@@ -85,18 +85,6 @@ namespace shared
         bool equals(const ActionOrder &other) const override;
     };
 
-    class ChooseNCardsFromHandOrder : public ActionOrder
-    {
-    public:
-        ChooseNCardsFromHandOrder(unsigned int n) : n(n) {}
-        bool operator==(const ChooseNCardsFromHandOrder &other) const;
-        bool operator!=(const ChooseNCardsFromHandOrder &other) const;
-        unsigned int n;
-
-    protected:
-        bool equals(const ActionOrder &other) const override;
-    };
-
     class EndTurnOrder : public ActionOrder
     {
     public:
@@ -115,7 +103,7 @@ namespace shared
             max_cost(max_cost), allowed_type(allowed_type)
         {}
         bool operator==(const GainFromBoard &other) const;
-        bool operator!=(const GainFromBoard &other) const;
+        bool operator!=(const GainFromBoard &other) const { return !(*this == other); }
 
         unsigned int max_cost;
         shared::CardType allowed_type;
@@ -129,20 +117,24 @@ namespace shared
     public:
         enum AllowedChoice
         {
-            PLAY,
-            TRASH,
-            DISCARD,
-            DRAW_PILE
+            PLAY = 1,
+            TRASH = 2,
+            DISCARD = 4,
+            DRAW_PILE = 8,
+            HAND_CARDS = 16
         };
 
-        ChooseFrom(unsigned int max_cards, AllowedChoice allowed_choices) :
-            max_cards(max_cards), allowed_choices(allowed_choices)
+        ChooseFrom(unsigned int min_cards, unsigned int max_cards, AllowedChoice allowed_choices) :
+            min_cards(min_cards), max_cards(max_cards), allowed_choices(allowed_choices)
         {}
+        ~ChooseFrom() = default;
+
         bool operator==(const ChooseFrom &other) const;
         bool operator!=(const ChooseFrom &other) const;
 
-        AllowedChoice allowed_choices;
+        unsigned int min_cards;
         unsigned int max_cards;
+        AllowedChoice allowed_choices;
 
     protected:
         bool equals(const ActionOrder &other) const override;
@@ -151,9 +143,12 @@ namespace shared
     class ChooseFromStaged : public ChooseFrom
     {
     public:
-        ChooseFromStaged(std::vector<shared::CardBase::id_t> cards, AllowedChoice choices) :
-            cards(cards), ChooseFrom(cards.size(), choices)
+        ChooseFromStaged(unsigned int min_cards, unsigned int max_cards, AllowedChoice choices,
+                         std::vector<shared::CardBase::id_t> cards) :
+            ChooseFrom(min_cards, max_cards, choices), cards(cards)
         {}
+
+        ~ChooseFromStaged() = default;
 
         bool operator==(const ChooseFromStaged &other) const;
         bool operator!=(const ChooseFromStaged &other) const;
@@ -167,7 +162,9 @@ namespace shared
     class ChooseFromHand : public ChooseFrom
     {
     public:
-        ChooseFromHand(unsigned int max_cards, AllowedChoice choices) : ChooseFrom(max_cards, choices) {}
+        ChooseFromHand(unsigned int min_cards, unsigned int max_cards, AllowedChoice choices) :
+            ChooseFrom(min_cards, max_cards, choices)
+        {}
 
         bool operator==(const ChooseFromHand &other) const;
         bool operator!=(const ChooseFromHand &other) const;

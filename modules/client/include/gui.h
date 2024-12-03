@@ -47,9 +47,8 @@ namespace client
 
         void showLobbyScreen(const std::vector<reduced::Player::id_t> &players, bool is_game_master);
 
-        void showMainGameScreen();
-
-        void drawGameState(const reduced::GameState &game_state);
+        // TODO(#169): This should be a reference instead of a shared_ptr
+        void showGameScreen(std::shared_ptr<reduced::GameState> game_state);
 
         void showVictoryScreen();
 

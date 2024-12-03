@@ -83,4 +83,37 @@ namespace shared
     protected:
         bool equals(const ActionDecision &other) const override;
     };
+
+    class DeckChoiceDecision : public ActionDecision
+    {
+    public:
+        enum AllowedChoice
+        {
+            PLAY,
+            TRASH,
+            DISCARD,
+            DRAW_PILE
+        };
+
+        std::vector<shared::CardBase::id_t> cards;
+        std::vector<AllowedChoice> choices;
+
+        DeckChoiceDecision(std::vector<shared::CardBase::id_t> cards, std::vector<AllowedChoice> choices) :
+            cards(cards), choices(choices)
+        {}
+
+        DeckChoiceDecision(shared::CardBase::id_t card, AllowedChoice choices) : cards(cards), choices(choices) {}
+
+        bool operator==(const EndTurnDecision &other) const;
+        bool operator!=(const EndTurnDecision &other) const;
+
+    protected:
+        bool equals(const ActionDecision &other) const override;
+    };
+
+    class BoardChoiceDecision : public ActionDecision
+    {
+    public:
+        shared::CardBase::id_t chosen_card;
+    };
 } // namespace shared

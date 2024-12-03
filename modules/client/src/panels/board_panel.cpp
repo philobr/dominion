@@ -93,18 +93,10 @@ namespace client
             counter++;
         }
 
-        wxButton *EndTurnButton = new wxButton(this, wxID_ANY, "End Turn");
-        EndTurnButton->Bind(wxEVT_BUTTON, [](const wxCommandEvent &) { wxGetApp().getController().endTurn(); });
-
-        wxGBPosition position = wxGBPosition(3, 9);
-        wxGBSpan span = wxGBSpan(1, 1);
-        sizer->Add(EndTurnButton, position, span, wxALIGN_CENTER_HORIZONTAL);
-
         // necessary command for the grid bag sizer to do it's thing and arrange
         // the panels
         this->SetSizer(sizer, true);
         sizer->Layout();
-
     }
 
     void BoardPanel::makeBuyable(PilePanel *pile)

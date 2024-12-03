@@ -33,7 +33,10 @@ namespace server
             case GamePhase::PLAYING_ACTION_CARD:
                 return "currently playing phase";
             default:
-                return "INVALID PHASE";
+                {
+                    LOG(ERROR) << "Received unexpected phase in " << FUNC_NAME << ": " << static_cast<int>(phase);
+                    return "INVALID PHASE";
+                }
         }
     }
 

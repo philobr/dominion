@@ -17,7 +17,8 @@ inline std::vector<shared::CardBase::id_t> &server::Player::getMutable()
     } else if constexpr ( PILE == shared::DRAW_PILE_BOTTOM ) {
         return draw_pile;
     } else {
-        // should only happen for trash pile
+        // should only happen for the trash pile
+        LOG(ERROR) << "Invalid pile specified or pile is not accessible.";
         throw std::invalid_argument("Invalid pile specified or pile is not accessible.");
     }
 }
@@ -38,8 +39,8 @@ inline const std::vector<shared::CardBase::id_t> &server::Player::get() const
     } else if constexpr ( PILE == shared::DRAW_PILE_BOTTOM ) {
         return draw_pile;
     } else {
-        // should only happen for trash pile
-        LOG(ERROR) << "Tried to access an invalid player pile";
+        // should only happen for the trash pile
+        LOG(ERROR) << "Invalid pile specified or pile is not accessible.";
         throw std::invalid_argument("Invalid pile specified or pile is not accessible.");
     }
 }
@@ -47,8 +48,8 @@ inline const std::vector<shared::CardBase::id_t> &server::Player::get() const
 template <enum shared::CardAccess PILE>
 inline void server::Player::shuffle()
 {
-    static std::random_device rd; // we only need one instance
-    static std::mt19937 gen(rd()); // we only need one instance
+    static std::random_device rd;
+    static std::mt19937 gen(rd());
 
     auto &cards = getMutable<PILE>();
     std::shuffle(cards.begin(), cards.end(), gen);

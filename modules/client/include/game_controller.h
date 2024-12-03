@@ -67,6 +67,10 @@ namespace client
         // TODO: This is for testing purposes only and will be removed later
         void skipToGamePanel();
 
+        void showError(const std::string &title, const std::string &message) { _gui->showError(title, message); }
+
+        void showStatus(const std::string &message) { _gui->showStatus(message); }
+
     private:
         void receiveActionOrderMessage(std::unique_ptr<shared::ActionOrderMessage> msg);
         void receiveCreateLobbyResponseMessage(std::unique_ptr<shared::CreateLobbyResponseMessage> msg);

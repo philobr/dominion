@@ -122,6 +122,20 @@ namespace server
         return response;
     }
 
+    GameInterface::response_t
+    GameInterface::EndActionPhaseDecision_handler(std::unique_ptr<shared::EndActionPhaseDecision> decision,
+                                                  const Player::id_t &affected_player_id)
+    {
+        if ( game_state->getPhase() != server::GamePhase::ACTION_PHASE ) {
+            LOG(ERROR) << "Player tries to end ACTION_PHASE while not being in the action phase";
+            throw exception::OutOfPhase("");
+        }
+
+        game_state->endActionPhase();
+
+        return nextPhase();
+    }
+
     GameInterface::response_t GameInterface::nextPhase()
     {
         // switches phase if: actions==0 OR (buys==0 -> end_turn + next player)

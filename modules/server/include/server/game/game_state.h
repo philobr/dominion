@@ -90,6 +90,8 @@ namespace server
          */
         void maybeSwitchPhase();
 
+        void endActionPhase() { forceSwitchPhase(); }
+
     private:
         /**
          * @brief Forces a phase switch. This is called if a player ends a phase early

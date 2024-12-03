@@ -75,5 +75,6 @@ namespace server
         HANDLER(PlayActionCardDecision);
         HANDLER(BuyCardDecision);
         HANDLER(EndTurnDecision);
+        HANDLER(EndActionPhaseDecision);
     }; // namespace server
 } // namespace server

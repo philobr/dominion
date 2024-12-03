@@ -67,7 +67,10 @@ namespace client
         // TODO: This is for testing purposes only and will be removed later
         void skipToGamePanel();
 
-        void showError(const std::string &title, const std::string &message) { _guiEventReceiver->getGui().showError(title, message); }
+        void showError(const std::string &title, const std::string &message)
+        {
+            _guiEventReceiver->getGui().showError(title, message);
+        }
 
         void showStatus(const std::string &message) { _guiEventReceiver->getGui().showStatus(message); }
 

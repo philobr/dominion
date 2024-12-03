@@ -67,7 +67,11 @@ namespace server
         GamePhase getPhase() const { return phase; }
 
         void startGame();
-        void endGame() { return; }
+        void endGame()
+        {
+            LOG(ERROR) << FUNC_NAME << " is not implemented lol";
+            return;
+        }
 
         void initialisePlayers(const std::vector<Player::id_t> &player_ids);
         void initialiseBoard(const std::vector<shared::CardBase::id_t> &selected_cards);

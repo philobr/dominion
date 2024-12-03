@@ -95,7 +95,7 @@ namespace server
         switchPlayer();
         resetPhase();
 
-        board->getPlayedCards().clear();
+        board->resetPlayedCards();
 
         if ( isGameOver() ) {
             endGame();

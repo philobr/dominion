@@ -56,6 +56,8 @@ namespace server
          */
         void trashCard(const shared::CardBase::id_t &card_id);
 
+        void resetPlayedCards() { played_cards.clear(); }
+
     protected:
         /**
          * @brief Construct a new Server Board object. This is protected to make testing easier and to enforce the use

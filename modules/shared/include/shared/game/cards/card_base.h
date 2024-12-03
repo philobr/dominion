@@ -8,9 +8,9 @@ namespace shared
     // Example: `ACTION | ATTACK` will create a card that is both an action and an attack.
     enum CardType
     {
-        ACTION = 0b1,
-        ATTACK = 0b10,
-        REACTION = 0b100,
+        ACTION = 1,
+        ATTACK = 2 | ACTION,
+        REACTION = 4 | ACTION,
         TREASURE = 0b1000,
         VICTORY = 0b10000,
         CURSE = 0b100000

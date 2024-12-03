@@ -36,10 +36,12 @@ namespace server
          */
         shared::Board::ptr_t getReduced();
 
+        void addToPlayedCards(const shared::CardBase::id_t &card_id) { played_cards.push_back(card_id); }
+
         /**
          * @brief Throws if the card_id one wants to buy is not available.
          */
-        void tryBuy(const shared::CardBase::id_t &card_id);
+        void tryTake(const shared::CardBase::id_t &card_id);
 
         bool has(const shared::CardBase::id_t &card_id);
 

@@ -57,6 +57,10 @@ namespace server
         reduced::Player::ptr_t getReducedPlayer();
         reduced::Enemy::ptr_t getReducedEnemy();
 
+        // =====  NEW FUNCTIONS ====
+
+        bool canBuy(unsigned int cost) { return buys > 0 && treasure >= cost; }
+
         inline bool hasCardInHand(const shared::CardBase::id_t &card_id) const
         {
             return hasCard<shared::HAND>(card_id);

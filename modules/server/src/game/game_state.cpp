@@ -89,35 +89,6 @@ namespace server
                                                     std::move(reduced_enemies), active_player_id);
     }
 
-    void GameState::tryBuy(const Player::id_t &player_id, const shared::CardBase::id_t &card_id)
-    {
-        /*
-        1. can we buy? (only in buy phase and as reaction to playing action_card)
-        2. sufficient funds?
-        3. does card exist on the board?
-        */
-
-        if ( phase != GamePhase::BUY_PHASE ) {
-            LOG(ERROR) << "tried to buy, but is not in a valid phase";
-            throw std::runtime_error("unreachable code");
-        }
-
-        auto &player = getPlayer(player_id);
-        const auto card_cost = shared::CardFactory::getCard(card_id).getCost();
-
-        if ( player.getTreasure() < card_cost ) {
-            LOG(ERROR) << player_id << " has " << player.getTreasure() << " coins but needs " << card_cost;
-            throw exception::InsufficientFunds("");
-        }
-
-        if ( !board->buy(card_id) ) {
-            LOG(ERROR) << card_id << " is not available";
-            throw exception::CardNotAvailable("");
-        }
-
-        player.gain(card_id);
-        player.decTreasure(card_cost);
-    }
 
     void GameState::tryPlay(const Player::id_t &affected_player, const shared::CardBase::id_t &card_id,
                             shared::CardAccess from)

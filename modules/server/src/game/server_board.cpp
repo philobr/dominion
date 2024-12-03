@@ -18,7 +18,7 @@ namespace server
         return std::static_pointer_cast<shared::Board>(shared_from_this());
     }
 
-    void ServerBoard::tryBuy(const shared::CardBase::id_t &card_id)
+    void ServerBoard::tryTake(const shared::CardBase::id_t &card_id)
     {
         if ( !has(card_id) ) {
             LOG(WARN) << "tried to buy card: " << card_id << " but its not available";

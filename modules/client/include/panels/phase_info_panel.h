@@ -1,6 +1,8 @@
 #pragma once
 
 #include <shared/game/reduced/player.h>
+#include <shared/game/game_state/reduced_game_state.h>
+#include <uiElements/text_panel.h>
 
 #include <vector>
 #include <wx/wx.h>
@@ -16,10 +18,12 @@ namespace client
     public:
         PhaseInfoPanel(wxWindow* parent, wxSize size);
 
-        void drawInfoPanel(const std::unique_ptr<reduced::Player>& player);
+        void drawInfoPanel(const reduced::Player::ptr_t &player, const std::vector<reduced::Enemy::ptr_t> &enemies, const shared::PlayerBase::id_t &active_player);
 
-        TextPanel *drawPlayerInfo(const std::unique_ptr<reduced::Player>& player);
     private:
+        TextPanel* drawPlayerInfo(const std::unique_ptr<reduced::Player>& player);
+
+        wxPanel* drawPlayedPanel(std::vector<shared::CardBase::id_t> played_cards);
     };
 
 } // namespace client

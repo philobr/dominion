@@ -59,7 +59,7 @@ namespace client
             syncCv.wait(lock, [] { return taskCompleted; }); // Wait until task is complete
         }
         LOG(INFO) << "Board drawn";
-        PhaseInfo->drawInfoPanel(game_state.reduced_player);
+        PhaseInfo->drawInfoPanel(game_state.reduced_player, game_state.reduced_enemies, game_state.active_player);
         LOG(INFO) << "PhaseInfo drawn";
         Player->drawPlayer(game_state.reduced_player, is_active);
         LOG(INFO) << "Player drawn";

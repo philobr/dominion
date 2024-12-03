@@ -210,7 +210,7 @@ TEST(CardServerTest, BehaviourNotDoneYetTest)
     // For this test, we need a behaviour that returns NOT_DONE_YET
     // We'll create a mock behaviour for this purpose
 
-    struct MockBehaviourNotDoneYet : public server::behaviour::BehaviourBase
+    struct MockBehaviourNotDoneYet : public server::base::Behaviour
     {
         bool apply(server::GameState & /*gamestate*/, server::Player::id_t & /*affected_player*/) override
         {

@@ -30,16 +30,8 @@ namespace server
         using ptr_t = std::unique_ptr<Player>;
         using card_id = shared::CardBase::id_t;
 
-        /**
-         * @brief Creates a new player based on an id.
-         * @param id the new players name
-         */
         explicit Player(shared::PlayerBase::id_t id) : shared::PlayerBase(id){};
 
-        /**
-         * @brief Copy constructor
-         * @param other
-         */
         Player(const Player &other) :
             shared::PlayerBase(other), draw_pile(other.draw_pile), discard_pile(other.discard_pile),
             hand_cards(other.hand_cards), played_cards(other.played_cards)
@@ -57,6 +49,21 @@ namespace server
             auto hand = get<shared::HAND>();
             return std::any_of(hand.begin(), hand.end(),
                                [](const auto &card_id) { return shared::CardFactory::getCard(card_id).isAction(); });
+        }
+
+        auto getTreasureInHand() const
+        {
+            auto cards = get<shared::HAND>();
+            std::vector<shared::CardBase::id_t> treasure_cards;
+            std::for_each(cards.begin(), cards.end(),
+                          [&](const auto &card_id)
+                          {
+                              const auto card = shared::CardFactory::getCard(card_id);
+                              if ( card.isTreasure() && !card.isAction() ) {
+                                  treasure_cards.push_back(card_id);
+                              }
+                          });
+            return treasure_cards;
         }
 
         bool canBuy(unsigned int cost) { return buys > 0 && treasure >= cost; }
@@ -158,13 +165,22 @@ namespace server
          */
         void endTurn();
 
+        template <enum shared::CardAccess TO>
+        inline void add(std::vector<shared::CardBase::id_t> &&cards);
+
+        template <enum shared::CardAccess TO>
+        inline void add(const std::vector<shared::CardBase::id_t> &cards);
+
+        template <enum shared::CardAccess TO>
+        inline void add(const shared::CardBase::id_t &card_id);
+
     protected:
         /**
          * @brief Resets the 'stats' to:
-         * - actions                1
-         * - buys                   1
-         * - treasure               0
-         * - victory_points         0
+         * - actions            1
+         * - buys               1
+         * - treasure           0
+         * - victory_points     0
          */
         void resetValues();
 
@@ -172,73 +188,20 @@ namespace server
         inline std::vector<shared::CardBase::id_t> &getMutable();
 
         template <enum shared::CardAccess PILE>
+        inline size_t getIndex(const shared::CardBase::id_t &card_id) const;
+
+        template <enum shared::CardAccess PILE>
+        inline bool hasCard(const shared::CardBase::id_t &card_id) const;
+
+        template <enum shared::CardAccess PILE>
         inline void shuffle();
 
-        template <enum shared::CardAccess PILE>
-        inline bool hasCard(const shared::CardBase::id_t &card_id) const
-        {
-            const auto &cards = get<PILE>();
-            return std::find_if(cards.begin(), cards.end(), [card_id](const auto &id) { return id == card_id; }) !=
-                    cards.end();
-        }
-
-        auto getTreasureInHand() const
-        {
-            auto cards = get<shared::HAND>();
-            std::vector<shared::CardBase::id_t> treasure_cards;
-            std::for_each(cards.begin(), cards.end(),
-                          [&](const auto &card_id)
-                          {
-                              const auto card = shared::CardFactory::getCard(card_id);
-                              if ( card.isTreasure() && !card.isAction() ) {
-                                  treasure_cards.push_back(card_id);
-                              }
-                          });
-            return treasure_cards;
-        }
-
-        template <enum shared::CardAccess PILE>
-        inline size_t getIndex(const shared::CardBase::id_t &card_id) const
-        {
-            if ( !hasCard<PILE>(card_id) ) {
-                LOG(WARN) << "tried to get an index of a card with id:" << card_id
-                          << " that is not in the specified pile";
-                throw std::runtime_error("unreachable code");
-            }
-
-            const auto &cards = get<PILE>();
-            const auto idx =
-                    std::find_if(cards.begin(), cards.end(), [card_id](const auto &id) { return id == card_id; });
-
-            return std::distance(cards.begin(), idx);
-        }
-
         /**
-         * @brief Adds (no copy) the vector of cards to the specified pile.
-         *
-         * @tparam TO
-         * @param cards
+         * @brief Always does push_back except for DRAW_PILE_BOTTOM
+         * @throw std::invalid_argument
          */
-        template <enum shared::CardAccess TO>
-        inline void add(std::vector<shared::CardBase::id_t> &&cards);
-
-        /**
-         * @brief Adds (with copy) the vector of cards to the specified pile.
-         *
-         * @tparam TO
-         * @param cards
-         */
-        template <enum shared::CardAccess TO>
-        inline void add(const std::vector<shared::CardBase::id_t> &cards);
-
-        /**
-         * @brief Adds the card_id to the back of the specified pile
-         *
-         * @tparam TO
-         * @param card_id
-         */
-        template <enum shared::CardAccess TO>
-        inline void add(const shared::CardBase::id_t &card_id);
+        template <enum shared::CardAccess TO, typename Iterator>
+        inline void add(Iterator begin, Iterator end);
 
         /**
          * @brief Removes $n$ cards from a pile.
@@ -310,58 +273,6 @@ namespace server
         inline void moveIndices(const std::vector<unsigned int> &indices);
     };
 
-    template <enum shared::CardAccess PILE>
-    inline std::vector<shared::CardBase::id_t> &Player::getMutable()
-    {
-        if constexpr ( PILE == shared::DISCARD_PILE ) {
-            return discard_pile;
-        } else if constexpr ( PILE == shared::HAND ) {
-            return hand_cards;
-        } else if constexpr ( PILE == shared::PLAYED_CARDS ) {
-            return played_cards;
-        } else if constexpr ( PILE == shared::STAGED_CARDS ) {
-            return staged_cards;
-        } else if constexpr ( PILE == shared::DRAW_PILE_TOP ) {
-            return draw_pile;
-        } else if constexpr ( PILE == shared::DRAW_PILE_BOTTOM ) {
-            return draw_pile;
-        } else {
-            // should only happen for trash pile
-            throw std::invalid_argument("Invalid pile specified or pile is not accessible.");
-        }
-    }
-
-    template <enum shared::CardAccess PILE>
-    inline const std::vector<shared::CardBase::id_t> &Player::get() const
-    {
-        if constexpr ( PILE == shared::DISCARD_PILE ) {
-            return discard_pile;
-        } else if constexpr ( PILE == shared::HAND ) {
-            return hand_cards;
-        } else if constexpr ( PILE == shared::PLAYED_CARDS ) {
-            return played_cards;
-        } else if constexpr ( PILE == shared::STAGED_CARDS ) {
-            return staged_cards;
-        } else if constexpr ( PILE == shared::DRAW_PILE_TOP ) {
-            return draw_pile;
-        } else if constexpr ( PILE == shared::DRAW_PILE_BOTTOM ) {
-            return draw_pile;
-        } else {
-            // should only happen for trash pile
-            throw std::invalid_argument("Invalid pile specified or pile is not accessible.");
-        }
-    }
-
-    template <enum shared::CardAccess PILE>
-    inline void Player::shuffle()
-    {
-        static std::random_device rd; // we only need one instance
-        static std::mt19937 gen(rd()); // we only need one instance
-
-        auto &cards = getMutable<PILE>();
-        std::shuffle(cards.begin(), cards.end(), gen);
-    }
-
     template <enum shared::CardAccess FROM>
     inline std::vector<shared::CardBase::id_t> Player::take(unsigned int n)
     {
@@ -408,6 +319,7 @@ namespace server
 
         // check for overflow
         if ( index >= pile.size() ) {
+            LOG(ERROR) << "Index out of range in " << FUNC_NAME;
             throw std::out_of_range("Index out of range for the pile.");
         }
 
@@ -442,38 +354,6 @@ namespace server
         return taken_cards;
     }
 
-    template <enum shared::CardAccess TO>
-    inline void Player::add(std::vector<shared::CardBase::id_t> &&cards)
-    {
-        auto &pile = getMutable<TO>();
-        if constexpr ( TO == shared::DRAW_PILE_TOP ) {
-            pile.insert(pile.begin(), std::make_move_iterator(cards.begin()), std::make_move_iterator(cards.end()));
-        } else {
-            pile.insert(pile.end(), std::make_move_iterator(cards.begin()), std::make_move_iterator(cards.end()));
-        }
-    }
-
-    template <enum shared::CardAccess TO>
-    inline void Player::add(const shared::CardBase::id_t &card_id)
-    {
-        auto &pile = getMutable<TO>();
-        if constexpr ( TO == shared::DRAW_PILE_TOP ) {
-            pile.push_front(card_id);
-        } else {
-            pile.push_back(card_id);
-        }
-    }
-
-    template <enum shared::CardAccess TO>
-    inline void Player::add(const std::vector<shared::CardBase::id_t> &cards)
-    {
-        auto &pile = getMutable<TO>();
-        if constexpr ( TO == shared::DRAW_PILE_TOP ) {
-            pile.insert(pile.begin(), cards.begin(), cards.end());
-        } else {
-            pile.insert(pile.end(), cards.begin(), cards.end());
-        }
-    }
 
     template <enum shared::CardAccess FROM, enum shared::CardAccess TO>
     inline void Player::move(unsigned int n)
@@ -529,4 +409,7 @@ namespace server
     {
         move_indices<shared::STAGED_CARDS, TO_PILE>(indices);
     }
+
+#include "server_player.hpp"
+
 } // namespace server

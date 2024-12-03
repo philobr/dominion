@@ -2,6 +2,20 @@
 #include <gui.h>
 #include <shared/utils/logger.h>
 
+/**
+ * Macro to check if the current thread is the main thread.
+ * If not, a warning is logged.
+ *
+ * Every GUI function should be called from the main thread.
+ * This macro is used to check if this is the case.
+ */
+#define ONLY_MAIN_THREAD()                                                                                             \
+    do {                                                                                                               \
+        if ( !wxThread::IsMain() ) {                                                                                   \
+            LOG(WARN) << "Warning: GUI code not running in main thread" << std::endl;                                  \
+        }                                                                                                              \
+    } while ( 0 )
+
 namespace client
 {
     Gui::Gui(GameWindow *game_window) :
@@ -9,6 +23,8 @@ namespace client
         _mainGamePanel(new MainGamePanel(game_window)), _lobbyPanel(new LobbyPanel(game_window)),
         _victoryScreenPanel(new VictoryScreenPanel(game_window))
     {
+        ONLY_MAIN_THREAD();
+
         // Hide all panels
         _connectionPanel->Show(false);
         _mainGamePanel->Show(false);
@@ -24,6 +40,8 @@ namespace client
 
     bool Gui::getConnectionForm(ConnectionForm &form)
     {
+        ONLY_MAIN_THREAD();
+
         form.host = _connectionPanel->getServerAddress().Trim().ToStdString();
 
         if ( form.host.empty() ) {
@@ -57,14 +75,23 @@ namespace client
 
     void Gui::showError(const std::string &title, const std::string &message)
     {
+        ONLY_MAIN_THREAD();
+
         LOG(WARN) << title << ": " << message << std::endl;
         wxMessageBox(message, title, wxICON_ERROR);
     }
 
-    void Gui::showStatus(const std::string &message) { _gameWindow->setStatus(message); }
+    void Gui::showStatus(const std::string &message)
+    {
+        ONLY_MAIN_THREAD();
+
+        _gameWindow->setStatus(message);
+    }
 
     void Gui::showLobbyScreen(const std::vector<reduced::Player::id_t> &players, bool is_game_master)
     {
+        ONLY_MAIN_THREAD();
+
         LOG(INFO) << "Showing lobby screen";
 
         _gameWindow->showPanel(_lobbyPanel);
@@ -74,12 +101,24 @@ namespace client
         _lobbyPanel->refreshPlayers(players);
     }
 
-    void Gui::showMainGameScreen() { _gameWindow->showPanel(_mainGamePanel); }
+    void Gui::showMainGameScreen()
+    {
+        ONLY_MAIN_THREAD();
 
-    void Gui::drawGameState(const reduced::GameState &game_state) { _mainGamePanel->drawGameState(game_state); }
+        _gameWindow->showPanel(_mainGamePanel);
+    }
+
+    void Gui::drawGameState(const reduced::GameState &game_state)
+    {
+        ONLY_MAIN_THREAD();
+
+        _mainGamePanel->drawGameState(game_state);
+    }
 
     void Gui::showVictoryScreen()
     {
+        ONLY_MAIN_THREAD();
+
         _victoryScreenPanel->drawTestVictoryScreen();
         _gameWindow->showPanel(_victoryScreenPanel);
     }

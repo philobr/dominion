@@ -18,7 +18,7 @@ namespace client
 
         mainLayout->Add(EnemyInfo, 1, wxEXPAND, 10);
         mainLayout->Add(Board, 5, wxEXPAND, 10);
-        mainLayout->Add(PhaseInfo, 3, wxEXPAND, 10);
+        mainLayout->Add(PhaseInfo, 1, wxEXPAND, 10);
         mainLayout->Add(Player, 3, wxEXPAND, 10);
 
         this->SetSizerAndFit(mainLayout);

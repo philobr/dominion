@@ -107,8 +107,8 @@ namespace server
 
         auto decision = std::move(message->decision);
 
-        if ( !dynamic_cast<shared::DeckChoiceDecision *>(decision.get()) &&
-             !dynamic_cast<shared::GainFromBoardDecision *>(decision.get()) ) {
+        if ( (dynamic_cast<shared::DeckChoiceDecision *>(decision.get()) == nullptr) &&
+             (dynamic_cast<shared::GainFromBoardDecision *>(decision.get()) == nullptr) ) {
             LOG(ERROR) << "Unreachable code: received some unexpected decision type in: " << FUNC_NAME;
             throw std::runtime_error("unreachable code in " + FUNC_NAME);
         }

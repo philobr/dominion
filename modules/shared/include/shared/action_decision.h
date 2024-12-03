@@ -70,29 +70,16 @@ namespace shared
         bool equals(const ActionDecision &other) const override;
     };
 
-    class ChooseNCardsFromHandDecision : public ActionDecision
-    {
-    public:
-        bool operator==(const ChooseNCardsFromHandDecision &other) const;
-        bool operator!=(const ChooseNCardsFromHandDecision &other) const;
-        ChooseNCardsFromHandDecision(std::vector<unsigned int> cards) : cards(cards) {}
-        // TODO: Where do we enforce that these indices are unique?
-        // why dont we just use CardBase::id_t here? would make life easier in game_state
-        std::vector<unsigned int> cards;
-
-    protected:
-        bool equals(const ActionDecision &other) const override;
-    };
-
     class DeckChoiceDecision : public ActionDecision
     {
     public:
         enum AllowedChoice
         {
-            PLAY,
-            TRASH,
-            DISCARD,
-            DRAW_PILE
+            PLAY = 1,
+            TRASH = 2,
+            DISCARD = 4,
+            DRAW_PILE = 8,
+            HAND_CARDS = 16
         };
 
         std::vector<shared::CardBase::id_t> cards;
@@ -102,10 +89,8 @@ namespace shared
             cards(cards), choices(choices)
         {}
 
-        DeckChoiceDecision(shared::CardBase::id_t card, AllowedChoice choices) : cards(cards), choices(choices) {}
-
-        bool operator==(const EndTurnDecision &other) const;
-        bool operator!=(const EndTurnDecision &other) const;
+        bool operator==(const DeckChoiceDecision &other) const;
+        bool operator!=(const DeckChoiceDecision &other) const;
 
     protected:
         bool equals(const ActionDecision &other) const override;
@@ -115,5 +100,11 @@ namespace shared
     {
     public:
         shared::CardBase::id_t chosen_card;
+        BoardChoiceDecision(shared::CardBase::id_t chosen_card) : chosen_card(chosen_card) {}
+        bool operator==(const BoardChoiceDecision &other) const;
+        bool operator!=(const BoardChoiceDecision &other) const;
+
+    protected:
+        bool equals(const ActionDecision &other) const override;
     };
 } // namespace shared

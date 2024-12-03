@@ -172,7 +172,7 @@ namespace client
     {
         if ( _clientState != ClientState::CREATING_LOBBY ) {
             LOG(EROOR) << "Received unexpected CreateLobbyResponseMessage";
-            throw std::runtime_error("Received unexpected CreateLobbyResponseMessage");
+            return;
         }
         LOG(DEBUG) << "Successfully created lobby";
         std::vector<reduced::Player::id_t> players = {_playerName};
@@ -229,7 +229,7 @@ namespace client
             case ClientState::STARTING_GAME:
                 if ( msg->success ) {
                     LOG(ERROR) << "Received ResultResponseMessage(success) while starting game";
-                    throw std::runtime_error("Received ResultResponseMessage(success) while starting game");
+                    return;
                 } else {
                     LOG(DEBUG) << "Failed to start game";
                     gui.showError("Failed to start game, error: ", msg->additional_information.value_or(""));

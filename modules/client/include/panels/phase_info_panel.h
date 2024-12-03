@@ -27,7 +27,9 @@ namespace client
         wxPanel* drawPlayedPanel(std::vector<shared::CardBase::id_t> played_cards);
 
         wxPanel* drawPlayedPanelTest();
-        
+
+        wxPanel* drawButtonPanel();
+
         wxButton* getEndActionButton();
         wxButton* getEndTurnButton();
     };

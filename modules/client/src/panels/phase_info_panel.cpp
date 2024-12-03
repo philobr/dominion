@@ -15,16 +15,16 @@ namespace client
         // Set background color to light blue
         SetBackgroundColour(wxColour(200, 220, 240));
 
-        this->drawPlayedPanelTest();
-        // this->drawInfoPanel(*game_state);
+        // this->drawPlayedPanelTest();
+        this->drawInfoPanel(*game_state);
     }
 
     void PhaseInfoPanel::drawInfoPanel(const reduced::GameState& game_state)
     {
         this->DestroyChildren();
 
-        // Create vertical BoxSizer
-        auto* sizer = new wxBoxSizer(wxHORIZONTAL);
+        // Create a grid sizer for the panel
+        wxGridSizer* sizer = new wxGridSizer(1, 3, 0, 10);                
 
         // Add player info to the sizer
         auto* infoPanel = drawPlayerInfo(game_state.reduced_player);
@@ -32,17 +32,13 @@ namespace client
         // Add played cards to the sizer
         auto* playedPanel = drawPlayedPanel(game_state.reduced_player->getPlayedCards());
 
-        //Create End Action Phase Button
-        wxButton* endActionPhaseButton = getEndActionButton();
-
-        //Create End Turn Button
-        wxButton* endTurnButton = getEndTurnButton();
+        // Add buttons to the sizer
+        auto* buttonsPanel = drawButtonPanel();
 
         // Add the panels to the sizer
-        sizer->Add(infoPanel, 0, wxALL, 5);
-        sizer->Add(playedPanel, 4, wxALL, 5);
-        sizer->Add(endActionPhaseButton, 0, wxALL, 10);
-        sizer->Add(endTurnButton, 0, wxALL, 10);
+        sizer->Add(infoPanel, wxSizerFlags().Align(wxALIGN_CENTER_HORIZONTAL).Border(wxALL, 5));
+        sizer->Add(playedPanel, wxSizerFlags().Align(wxALIGN_CENTER_HORIZONTAL).Border(wxALL, 5));
+        sizer->Add(buttonsPanel, wxSizerFlags().Align(wxALIGN_CENTER_HORIZONTAL).Border(wxALL, 5));
 
         // Set minimum width for the info bar
         SetMinSize(wxSize(150, -1));  // 150 pixels wide, height automatic
@@ -103,7 +99,7 @@ namespace client
     wxPanel* PhaseInfoPanel::drawPlayedPanelTest()
     {
         // create a vector of played cards
-        std::vector<shared::CardBase::id_t> cards = { "Village", "Copper", "Copper", "Copper", "Estate" };
+        std::vector<shared::CardBase::id_t> cards = { };
         // Get the hand cards
         size_t cards_size = cards.size();
         size_t card_width_borders = played_card_size.GetWidth() + 8;
@@ -153,5 +149,32 @@ namespace client
             wxEVT_BUTTON, [](const wxCommandEvent& /*event*/) { wxGetApp().getController().endTurn(); });
         return endTurnButton;
     }
+
+    wxPanel* PhaseInfoPanel::drawButtonPanel()
+    {
+        // Create a container panel for the buttons
+        wxPanel* buttonPanel = new wxPanel(this, wxID_ANY);
+
+        // Create a vertical sizer for the buttons
+        wxBoxSizer* verticalSizer = new wxBoxSizer(wxVERTICAL);
+
+        // Get the buttons using existing functions
+        wxButton* endActionPhaseButton = getEndActionButton();
+        wxButton* endTurnButton = getEndTurnButton();
+
+        // Reparent the buttons to the new panel
+        endActionPhaseButton->Reparent(buttonPanel);
+        endTurnButton->Reparent(buttonPanel);
+
+        // Add buttons to the vertical sizer with some spacing
+        verticalSizer->Add(endActionPhaseButton, 0, wxALL | wxEXPAND, 5);
+        verticalSizer->Add(endTurnButton, 0, wxALL | wxEXPAND, 5);
+
+        // Set the sizer for the panel
+        buttonPanel->SetSizer(verticalSizer);
+
+        return buttonPanel;
+    }
+
 } // namespace client
 

@@ -22,13 +22,8 @@ namespace server
         std::vector<shared::CardBase::id_t> discard_pile;
         std::vector<shared::CardBase::id_t> hand_cards;
 
-        // TODO: move this inside the playerbase class? (does this help gui people?)
-        std::vector<shared::CardBase::id_t> played_cards; // TODO: move this to base player
-        std::vector<shared::CardBase::id_t> staged_cards; // TODO: move this to base player
-
-        // TODO: this is ugly, rename or smth
-        shared::CardBase::id_t currently_playing_card;
-        size_t current_behaviour_idx;
+        std::vector<shared::CardBase::id_t> played_cards;
+        std::vector<shared::CardBase::id_t> staged_cards;
 
     public:
         using id_t = shared::PlayerBase::id_t;
@@ -47,19 +42,21 @@ namespace server
          */
         Player(const Player &other) :
             shared::PlayerBase(other), draw_pile(other.draw_pile), discard_pile(other.discard_pile),
-            hand_cards(other.hand_cards), played_cards(other.played_cards),
-            currently_playing_card(other.currently_playing_card), current_behaviour_idx(other.current_behaviour_idx)
+            hand_cards(other.hand_cards), played_cards(other.played_cards)
         {}
-
-        bool isCurrentlyPlayingCard() const { return !currently_playing_card.empty(); }
-        void setCurrentlyPlayingCard(const shared::CardBase::id_t &card_id) { currently_playing_card = card_id; }
 
         reduced::Player::ptr_t getReducedPlayer();
         reduced::Enemy::ptr_t getReducedEnemy();
 
+        inline bool hasCardInHand(const shared::CardBase::id_t &card_id) const
+        {
+            return hasCard<shared::HAND>(card_id);
+        }
 
-        bool hasCardInHand(const shared::CardBase::id_t &card_id) const;
-        bool hasCardStaged(const shared::CardBase::id_t &card_id) const;
+        inline bool hasCardStaged(const shared::CardBase::id_t &card_id) const
+        {
+            return hasCard<shared::STAGED_CARDS>(card_id);
+        }
 
         bool canBlock() const
         {
@@ -74,14 +71,18 @@ namespace server
          */
         inline void draw(size_t n) { move<shared::DRAW_PILE_TOP, shared::HAND>(n); }
 
-        inline void playCardFromHand(const size_t &card_index)
+        inline void playCardFromHand(const shared::CardBase::id_t &card_id)
         {
-            moveIndices<shared::HAND, shared::PLAYED_CARDS>(card_index);
+            // this assumes that the card actually exists!
+            const auto card_idx = getIndex<shared::HAND>(card_id);
+            moveIndices<shared::HAND, shared::PLAYED_CARDS>(card_idx);
         }
 
-        inline void playCardFromStaged(const size_t &card_index)
+        inline void playCardFromStaged(const shared::CardBase::id_t &card_id)
         {
-            moveIndices<shared::STAGED_CARDS, shared::PLAYED_CARDS>(card_index);
+            // this assumes that the card actually exists!
+            const auto card_idx = getIndex<shared::STAGED_CARDS>(card_id);
+            moveIndices<shared::STAGED_CARDS, shared::PLAYED_CARDS>(card_idx);
         }
 
         /**
@@ -137,7 +138,7 @@ namespace server
          * @return const std::vector<shared::CardBase::id_t>&
          */
         template <enum shared::CardAccess PILE>
-        inline const std::vector<shared::CardBase::id_t> &get();
+        inline const std::vector<shared::CardBase::id_t> &get() const;
 
         /**
          * @brief Moves the played_cards & hand_cards to the discard_pile, then draws 5 cards again.
@@ -159,6 +160,30 @@ namespace server
 
         template <enum shared::CardAccess PILE>
         inline void shuffle();
+
+        template <enum shared::CardAccess PILE>
+        inline bool hasCard(const shared::CardBase::id_t &card_id) const
+        {
+            const auto &cards = get<PILE>();
+            return std::find_if(cards.begin(), cards.end(), [card_id](const auto &id) { return id == card_id; }) !=
+                    cards.end();
+        }
+
+        template <enum shared::CardAccess PILE>
+        inline size_t getIndex(const shared::CardBase::id_t &card_id) const
+        {
+            if ( !hasCard<PILE>(card_id) ) {
+                LOG(WARN) << "tried to get an index of a card with id:" << card_id
+                          << " that is not in the specified pile";
+                throw std::runtime_error("unreachable code");
+            }
+
+            const auto &cards = get<PILE>();
+            const auto idx =
+                    std::find_if(cards.begin(), cards.end(), [card_id](const auto &id) { return id == card_id; });
+
+            return std::distance(cards.begin(), idx);
+        }
 
         /**
          * @brief Adds (no copy) the vector of cards to the specified pile.
@@ -259,6 +284,27 @@ namespace server
 
     template <enum shared::CardAccess PILE>
     inline std::vector<shared::CardBase::id_t> &Player::getMutable()
+    {
+        if constexpr ( PILE == shared::DISCARD_PILE ) {
+            return discard_pile;
+        } else if constexpr ( PILE == shared::HAND ) {
+            return hand_cards;
+        } else if constexpr ( PILE == shared::PLAYED_CARDS ) {
+            return played_cards;
+        } else if constexpr ( PILE == shared::STAGED_CARDS ) {
+            return staged_cards;
+        } else if constexpr ( PILE == shared::DRAW_PILE_TOP ) {
+            return draw_pile;
+        } else if constexpr ( PILE == shared::DRAW_PILE_BOTTOM ) {
+            return draw_pile;
+        } else {
+            // should only happen for trash pile
+            throw std::invalid_argument("Invalid pile specified or pile is not accessible.");
+        }
+    }
+
+    template <enum shared::CardAccess PILE>
+    inline const std::vector<shared::CardBase::id_t> &Player::get() const
     {
         if constexpr ( PILE == shared::DISCARD_PILE ) {
             return discard_pile;
@@ -442,12 +488,6 @@ namespace server
     inline void Player::discard(const std::vector<unsigned int> &indices)
     {
         moveIndices<PILE, shared::DISCARD_PILE>(indices);
-    }
-
-    template <enum shared::CardAccess PILE>
-    inline const std::vector<shared::CardBase::id_t> &Player::get()
-    {
-        return getMutable<PILE>();
     }
 
     template <enum shared::CardAccess PILE>

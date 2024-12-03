@@ -6,6 +6,7 @@
 #include <wx/gbsizer.h>
 #include <wx/wx.h>
 
+#include <dominion.h>
 #include <shared/game/cards/card_factory.h>
 #include <shared/utils/test_helpers.h>
 #include <uiElements/formatting_constants.h>
@@ -93,7 +94,7 @@ namespace client
         }
 
         wxButton *EndTurnButton = new wxButton(this, wxID_ANY, "End Turn");
-        EndTurnButton->Bind(wxEVT_BUTTON, [](const wxCommandEvent &) { GameController::endTurn(); });
+        EndTurnButton->Bind(wxEVT_BUTTON, [](const wxCommandEvent &) { wxGetApp().getController().endTurn(); });
 
         wxGBPosition position = wxGBPosition(3, 9);
         wxGBSpan span = wxGBSpan(1, 1);
@@ -113,7 +114,8 @@ namespace client
         pile->SetCursor(wxCursor(wxCURSOR_HAND));
 
         // Bind left click on the panel to the buyCard function
-        pile->makeClickable([pile](wxMouseEvent & /*event*/) { GameController::buyCard(pile->getPile().card_id); });
+        pile->makeClickable([pile](wxMouseEvent & /*event*/)
+                            { wxGetApp().getController().buyCard(pile->getPile().card_id); });
     }
 
 

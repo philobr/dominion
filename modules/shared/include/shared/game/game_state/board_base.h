@@ -122,6 +122,8 @@ namespace shared
         pile_container_t &getTreasureCards() { return treasure_cards; }
         pile_container_t &getKingdomCards() { return kingdom_cards; }
         Pile &getCurseCardPile() { return curse_card_pile; }
+        auto &getPlayedCards() { return played_cards; }
+
 
     protected:
         pile_container_t victory_cards;
@@ -129,6 +131,8 @@ namespace shared
         pile_container_t kingdom_cards;
         Pile curse_card_pile;
         std::vector<shared::CardBase::id_t> trash;
+
+        std::vector<shared::CardBase::id_t> played_cards;
 
         /**
          * @brief Constructs a new board. It is assumed that the type is valid, as we have no way of checking it.
@@ -174,9 +178,11 @@ namespace shared
 
     private:
         Board(pile_container_t victory_cards, pile_container_t treasure_cards, pile_container_t kingdom_cards,
-              Pile curse_card_pile, std::vector<shared::CardBase::id_t> trash) :
+              Pile curse_card_pile, std::vector<shared::CardBase::id_t> trash,
+              std::vector<shared::CardBase::id_t> played_cards) :
             victory_cards(victory_cards),
-            treasure_cards(treasure_cards), kingdom_cards(kingdom_cards), curse_card_pile(curse_card_pile), trash(trash)
+            treasure_cards(treasure_cards), kingdom_cards(kingdom_cards), curse_card_pile(curse_card_pile),
+            trash(trash), played_cards(played_cards)
         {}
     };
 

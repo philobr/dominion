@@ -2,6 +2,7 @@
 #include <wx/gdicmn.h>
 #include <wx/wx.h>
 
+#include <dominion.h>
 #include <game_controller.h>
 #include <uiElements/image_panel.h>
 
@@ -61,19 +62,28 @@ namespace client
         VerticalLayout->Add(this->_gameName, 0, wxALIGN_CENTER | wxTOP | wxLEFT | wxRIGHT, 10);
 
         wxButton *createLobbyButton = new wxButton(this, wxID_ANY, "create Lobby", wxDefaultPosition, wxSize(100, 40));
-        createLobbyButton->Bind(wxEVT_BUTTON, [](const wxCommandEvent & /*event*/) { GameController::createLobby(); });
+        createLobbyButton->Bind(wxEVT_BUTTON,
+                                [](const wxCommandEvent & /*event*/) { wxGetApp().getController().createLobby(); });
         VerticalLayout->Add(createLobbyButton, 0, wxALIGN_RIGHT | wxALL, 10);
         wxButton *joinLobbyButton = new wxButton(this, wxID_ANY, "join Lobby", wxDefaultPosition, wxSize(100, 40));
-        joinLobbyButton->Bind(wxEVT_BUTTON, [](const wxCommandEvent & /*event*/) { GameController::joinLobby(); });
+        joinLobbyButton->Bind(wxEVT_BUTTON,
+                              [](const wxCommandEvent & /*event*/) { wxGetApp().getController().joinLobby(); });
         VerticalLayout->Add(joinLobbyButton, 0, wxALIGN_RIGHT | wxALL, 10);
 
         // TODO Remove this button before release
         wxButton *skipToGameScreenButton =
                 new wxButton(this, wxID_ANY, "Game Screen", wxDefaultPosition, wxSize(100, 40));
-        skipToGameScreenButton->Bind(wxEVT_BUTTON,
-                                     [](const wxCommandEvent & /*event*/) { GameController::skipToGamePanel(); });
+        skipToGameScreenButton->Bind(
+                wxEVT_BUTTON, [](const wxCommandEvent & /*event*/) { wxGetApp().getController().skipToGamePanel(); });
         VerticalLayout->Add(skipToGameScreenButton, 0, wxALIGN_RIGHT | wxALL, 10);
 
+        // TODO Remove this button before release
+        wxButton *skipToVictoryScreenButton =
+                new wxButton(this, wxID_ANY, "Victory Screen", wxDefaultPosition, wxSize(100, 40));
+        skipToVictoryScreenButton->Bind(wxEVT_BUTTON,
+                                        [](const wxCommandEvent & /*event*/)
+                                        { wxGetApp().getController().skipToVictoryScreen(); });
+        VerticalLayout->Add(skipToVictoryScreenButton, 0, wxALIGN_RIGHT | wxALL, 10);
         this->SetSizerAndFit(VerticalLayout);
     }
 

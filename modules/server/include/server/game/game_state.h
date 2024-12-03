@@ -16,10 +16,6 @@
 
 namespace server
 {
-    class MessageInterface;
-    // forward declaration
-    class ServerBoard;
-
     enum class GamePhase
     {
         ACTION_PHASE,
@@ -50,7 +46,9 @@ namespace server
 
         const Player::id_t &getCurrentPlayerId() const { return player_order[current_player_idx]; }
         Player &getCurrentPlayer() { return *player_map[getCurrentPlayerId()]; }
+
         Player &getPlayer(const Player::id_t &id) { return *player_map.at(id); }
+        const Player &getPlayer(const Player::id_t &id) const { return *player_map.at(id); }
 
         GamePhase getPhase() const { return phase; }
 
@@ -62,6 +60,8 @@ namespace server
 
         void startTurn();
         void endTurn();
+
+        void setPhase(GamePhase new_phase) { phase = new_phase; }
 
         bool isGameOver() const;
 
@@ -76,13 +76,12 @@ namespace server
          */
 
         /**
-         * @brief This function checks if the player is in Action phase, the card is an action card and if the player
-         * has actions left. If both conditions are met, the card is moved from the hand/staged cards to the played
-         * cards and the currently_playing_card (in Player) and the actions are decremented.
+         * @brief This function checks if the player is in Action phase, the card is an action card and if the
+         * player has actions left. If both conditions are met, the card is moved from the hand/staged cards to
+         * the played cards and the currently_playing_card (in Player) and the actions are decremented.
          */
-        bool tryBuy(const Player::id_t &player_id, const shared::CardBase::id_t &card);
-        bool tryPlay(const Player::id_t &affected_player, size_t hand_index, shared::CardAccess from);
-
+        void tryBuy(const Player::id_t &player_id, const shared::CardBase::id_t &card);
+        void tryPlayFromHand(const Player::id_t &affected_player, const shared::CardBase::id_t &card_id);
 
         /**
          * @brief Switches phases if necessary, this means: if a player is out of buys or out of actions

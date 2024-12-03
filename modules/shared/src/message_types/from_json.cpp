@@ -90,9 +90,16 @@ static std::unique_ptr<ActionOrderMessage> parseActionOrder(const Document &json
     }
     std::unique_ptr<ActionOrder> order = ActionOrder::fromJson(json["order"]);
 
+    if ( !json.HasMember("game_state") ) {
+        LOG(WARN) << "GameStateMessage: No game_state member";
+        return nullptr;
+    }
+    std::unique_ptr<reduced::GameState> game_state = reduced::GameState::fromJson(json["game_state"]);
+
     GET_OPTIONAL_STRING_MEMBER(description, json, "description");
 
-    return std::make_unique<ActionOrderMessage>(game_id, std::move(order), description, message_id);
+    return std::make_unique<ActionOrderMessage>(game_id, std::move(order), std::move(game_state), description,
+                                                message_id);
 }
 
 namespace shared
@@ -181,15 +188,17 @@ static std::unique_ptr<ActionDecisionMessage> parseActionDecision(const Document
     std::string action;
     GET_STRING_MEMBER(action, json, "action");
     if ( action == "play_action_card" ) {
-        unsigned int cardIndex;
+        shared::CardBase::id_t card_id;
         shared::CardAccess from;
-        GET_UINT_MEMBER(cardIndex, json, "card_index");
+        GET_STRING_MEMBER(card_id, json, "card_id");
         GET_ENUM_MEMBER(from, json, "from", shared::CardAccess);
-        decision = new PlayActionCardDecision(cardIndex, from);
+        decision = new PlayActionCardDecision(card_id, from);
     } else if ( action == "buy_card" ) {
         CardBase::id_t card;
         GET_STRING_MEMBER(card, json, "card");
         decision = new BuyCardDecision(card);
+    } else if ( action == "end_action_phase" ) {
+        decision = new EndActionPhaseDecision();
     } else if ( action == "end_turn" ) {
         decision = new EndTurnDecision();
     } else if ( action == "choose_n_cards_from_hand" ) {

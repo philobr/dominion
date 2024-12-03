@@ -2,6 +2,7 @@
 #include <shared/utils/logger.h>
 
 #include <shared/message_types.h>
+#include <shared/utils/test_helpers.h>
 
 using namespace shared;
 
@@ -122,10 +123,11 @@ TEST(SharedLibraryTest, ResultResponseMessageTwoWayConversion)
     ASSERT_EQ(*parsed_message, original_message);
 }
 
+
 TEST(SharedLibraryTest, ActionOrderMessageTwoWayConversion)
 {
     std::unique_ptr<ActionOrder> order = std::make_unique<ChooseNCardsFromHandOrder>(1);
-    ActionOrderMessage original_message("123", std::move(order));
+    ActionOrderMessage original_message("123", std::move(order), test_helper::getReducedGameStatePtr(4));
 
     std::string json = original_message.toJson();
 
@@ -209,7 +211,7 @@ TEST(SharedLibraryTest, StartGameRequestMessageTwoWayConversion)
 
 TEST(SharedLibraryTest, ActionDecisionMessageTwoWayConversionPlayActionCard)
 {
-    std::unique_ptr<ActionDecision> decision = std::make_unique<PlayActionCardDecision>(1);
+    std::unique_ptr<ActionDecision> decision = std::make_unique<PlayActionCardDecision>("Village");
     ActionDecisionMessage original_message("123", "player1", std::move(decision), "789");
 
     std::string json = original_message.toJson();
@@ -227,6 +229,22 @@ TEST(SharedLibraryTest, ActionDecisionMessageTwoWayConversionPlayActionCard)
 TEST(SharedLibraryTest, ActionDecisionMessageTwoWayConversionBuyCard)
 {
     ActionDecisionMessage original_message("123", "player1", std::make_unique<BuyCardDecision>("copper"));
+
+    std::string json = original_message.toJson();
+
+    std::unique_ptr<ClientToServerMessage> base_message;
+    base_message = ClientToServerMessage::fromJson(json);
+
+    std::unique_ptr<ActionDecisionMessage> parsed_message(
+            dynamic_cast<ActionDecisionMessage *>(base_message.release()));
+
+    ASSERT_NE(parsed_message, nullptr);
+    ASSERT_EQ(*parsed_message, original_message);
+}
+
+TEST(SharedLibraryTest, ActionDecisionMessageTwoWayConversionEndActionPhase)
+{
+    ActionDecisionMessage original_message("123", "player1", std::make_unique<EndActionPhaseDecision>(), "789");
 
     std::string json = original_message.toJson();
 

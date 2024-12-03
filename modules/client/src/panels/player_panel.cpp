@@ -1,5 +1,6 @@
 #include <panels/player_panel.h>
 
+#include <dominion.h>
 #include <game_controller.h>
 #include <shared/game/cards/card_factory.h>
 #include <shared/utils/logger.h>
@@ -41,14 +42,15 @@ namespace client
         this->SetSizer(outersizer);
     }
 
-    void PlayerPanel::makePlayable(ImagePanel *image, unsigned int card_index)
+    void PlayerPanel::makePlayable(ImagePanel *image, const std::string &card_id)
     {
         image->SetToolTip("Play card");
 
         image->SetCursor(wxCursor(wxCURSOR_HAND));
 
         // Bind left click on the panel to the buyCard function
-        image->Bind(wxEVT_LEFT_UP, [card_index](wxMouseEvent & /*event*/) { GameController::playCard(card_index); });
+        image->Bind(wxEVT_LEFT_UP,
+                    [card_id](wxMouseEvent & /*event*/) { wxGetApp().getController().playCard(card_id); });
     }
 
     wxPanel *PlayerPanel::createDrawPilePanel(const unsigned int draw_pile_size)
@@ -100,7 +102,7 @@ namespace client
             bool is_action = shared::CardFactory::getCard(cards[i]).isAction();
 
             if ( is_action && is_active && player->getActions() > 0 ) {
-                makePlayable(card, i);
+                makePlayable(card, cards[i]);
             }
 
             sizer->Add(card, 0, wxALIGN_CENTER, 4);

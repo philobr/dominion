@@ -8,7 +8,6 @@ namespace client
     GameWindow::GameWindow(const wxString &title, const wxPoint &pos, const wxSize &size) :
         wxFrame(nullptr, wxID_ANY, title, pos, size), _mainLayout(new wxBoxSizer(wxVERTICAL)), _currentPanel(nullptr)
     {
-        LOG(INFO) << "Called GameWindow::GameWindow()";
         // Set up layout that will contain and center all content
         wxBoxSizer *outerLayout = new wxBoxSizer(wxHORIZONTAL);
         outerLayout->Add(this->_mainLayout, 1, wxCENTER);
@@ -23,14 +22,11 @@ namespace client
 
         // Set the minimum size of the window. The user won't be able to resize the window to a size smaller than this
         this->SetMinSize(wxSize(1000, 720));
-        LOG(INFO) << "Done with GameWindow::GameWindow()";
     }
 
 
     void GameWindow::showPanel(wxPanel *panel)
     {
-        LOG(INFO) << "Called GameWindow::showPanel()";
-
         // if we are already showing the panel, we don't need to do anything
         if ( this->_currentPanel == panel ) {
             return;
@@ -59,10 +55,7 @@ namespace client
                         this->_mainLayout->Layout();
                         this->Fit();
                     }
-
-                    LOG(INFO) << "Done with GameWindow::showPanel()";
                 });
-        LOG(INFO) << "Done with GameWindow::showPanel()";
     }
 
 

@@ -89,8 +89,19 @@ namespace server
                                                     std::move(reduced_enemies), active_player_id);
     }
 
-    bool GameState::tryBuy(const Player::id_t &player_id, const shared::CardBase::id_t &card_id)
+    void GameState::tryBuy(const Player::id_t &player_id, const shared::CardBase::id_t &card_id)
     {
+        /*
+        1. can we buy? (only in buy phase and as reaction to playing action_card)
+        2. sufficient funds?
+        3. does card exist on the board?
+        */
+
+        if ( phase != GamePhase::BUY_PHASE ) {
+            LOG(ERROR) << "tried to buy, but is not in a valid phase";
+            throw std::runtime_error("unreachable code");
+        }
+
         auto &player = getPlayer(player_id);
         const auto card_cost = shared::CardFactory::getCard(card_id).getCost();
 
@@ -106,52 +117,46 @@ namespace server
 
         player.gain(card_id);
         player.decTreasure(card_cost);
-
-        return true;
     }
 
-    bool GameState::tryPlay(const Player::id_t &affected_player, size_t hand_index, shared::CardAccess from)
+    void GameState::tryPlayFromHand(const Player::id_t &affected_player, const shared::CardBase::id_t &card_id)
     {
+        /*
+        1. is phase correct?
+        2. enough actions?
+        3. is action card?
+        4. valid pile + does card exist?
+        5. play the card
+        6. adjust the phase
+        */
+
+        if ( getPhase() != GamePhase::ACTION_PHASE ) {
+            LOG(ERROR) << "player tried to play an action card out of phase";
+            throw std::runtime_error("what should happen here?");
+        }
+
         auto &player = getPlayer(affected_player);
-        const auto &card_id = player.get<shared::CardAccess::HAND>()[hand_index];
         const auto &card = shared::CardFactory::getCard(card_id);
 
+        if ( player.getActions() == 0 ) {
+            LOG(ERROR) << "player tried to play an action card but he has no actions left";
+            throw std::runtime_error("unreachable code");
+        }
+
         if ( !card.isAction() ) {
-            LOG(ERROR) << "tried to play a card that isn't an action card";
+            LOG(ERROR) << "tried to play a card that isn't an action card, card:" << card.getId();
             throw exception::InvalidCardType("");
         }
-        if ( getPhase() != GamePhase::ACTION_PHASE ) {
-            LOG(ERROR) << "player(" << affected_player << ") is currently not in the action phase, throwing";
-            throw exception::OutOfPhase("");
-        }
-        if ( player.isCurrentlyPlayingCard() ) {
-            LOG(ERROR) << "player(" << affected_player
-                       << ") is already playing a different card, landed in the wrong handler";
-            throw std::runtime_error("message landed up in the wrong handler");
-        }
-        if ( player.getActions() == 0 ) {
-            forceSwitchPhase();
-            LOG(ERROR) << "tried to play an action card, but has no actions left";
-            throw exception::OutOfActions("");
-        }
-        if ( !(player.hasCardInHand(card_id) || player.hasCardStaged(card_id)) ) {
-            LOG(ERROR) << "tried to play a card that is not in the hand or staged cards";
-            throw exception::InvalidCardAccess("");
+
+        if ( !player.hasCardInHand(card_id) ) {
+            LOG(ERROR) << "tried to play card with id: " << card_id << " from hand, but card is not in hand";
+            throw exception::InvalidCardAccess("card is not in hand");
         }
 
-        player.setCurrentlyPlayingCard(card_id);
+        player.playCardFromHand(card_id);
+
+        board->getPlayedCards().push_back(card_id);
         player.decActions();
-        phase = GamePhase::PLAYING_ACTION_CARD;
-
-        if ( from == shared::CardAccess::HAND ) {
-            player.playCardFromHand(hand_index);
-        } else if ( from == shared::CardAccess::STAGED_CARDS ) {
-            player.playCardFromStaged(hand_index);
-        } else {
-            LOG(ERROR) << "tried to play a card from an invalid pile";
-            throw exception::InvalidCardAccess("");
-        }
-        return true;
     }
 
     void GameState::endTurn()
@@ -159,6 +164,8 @@ namespace server
         getCurrentPlayer().endTurn();
         switchPlayer();
         resetPhase();
+
+        board->getPlayedCards().clear();
 
         if ( isGameOver() ) {
             endGame();
@@ -223,8 +230,7 @@ namespace server
                     }
                 }
                 break;
-            case GamePhase::PLAYING_ACTION_CARD: // we do nothing here
-                break;
+            case GamePhase::PLAYING_ACTION_CARD:
             default:
                 {
                     LOG(ERROR) << "tried to switch from GamePhase::" << static_cast<int>(phase)

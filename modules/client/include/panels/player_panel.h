@@ -22,11 +22,13 @@ namespace client
          * @brief Draw the player
          *
          * @param Player
+         * @param is_active
+         * @return void
          */
         void drawPlayer(const std::unique_ptr<reduced::Player> &player, bool is_active);
 
     private:
-        void makePlayable(ImagePanel *image, unsigned int card_index);
+        void makePlayable(ImagePanel *image, const std::string &card_id);
 
         wxSize hand_card_size = wxSize(100, 125);
 
@@ -53,6 +55,8 @@ namespace client
         /**
          * @brief Create the discard pile panel
          * @param  discard_pile_size
+         * @param  top_discard_card
+         * @return wxPanel*
          */
         wxPanel *createDiscardPilePanel(const unsigned int discard_pile_size, const std::string &top_discard_card);
     };

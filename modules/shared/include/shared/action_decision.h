@@ -23,10 +23,13 @@ namespace shared
     public:
         bool operator==(const PlayActionCardDecision &other) const;
         bool operator!=(const PlayActionCardDecision &other) const;
-        PlayActionCardDecision(unsigned int card_index, shared::CardAccess from_pile = shared::CardAccess::HAND) :
-            cardIndex(card_index), from(from_pile)
+        PlayActionCardDecision(shared::CardBase::id_t card_id,
+                               shared::CardAccess from_pile = shared::CardAccess::HAND) :
+            card_id(card_id),
+            from(from_pile)
         {}
-        unsigned int cardIndex;
+
+        shared::CardBase::id_t card_id;
         shared::CardAccess from;
 
     protected:
@@ -40,6 +43,17 @@ namespace shared
         bool operator!=(const BuyCardDecision &other) const;
         BuyCardDecision(CardBase::id_t card) : card(card) {}
         CardBase::id_t card;
+
+    protected:
+        bool equals(const ActionDecision &other) const override;
+    };
+
+    class EndActionPhaseDecision : public ActionDecision
+    {
+    public:
+        bool operator==(const EndActionPhaseDecision &other) const;
+        bool operator!=(const EndActionPhaseDecision &other) const;
+        EndActionPhaseDecision() = default;
 
     protected:
         bool equals(const ActionDecision &other) const override;

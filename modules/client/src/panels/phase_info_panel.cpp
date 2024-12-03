@@ -49,45 +49,47 @@ namespace client
         return new TextPanel(this, wxID_ANY, info);
     }
 
-    // wxPanel* PhaseInfoPanel::drawPlayedPanel(const std::vector<shared::CardBase::id_t> cards)
-    // {
-    //     // Get the hand cards
-    //     size_t hand_size = cards.size();
+    wxPanel* PhaseInfoPanel::drawPlayedPanel(const std::vector<shared::CardBase::id_t> cards, const size_t card_width_borders)
+    {
+        // Get the hand cards
+        size_t cards_size = cards.size();
+        size_t card_width_borders = cards_size.GetWidth() + 8;
 
-    //     // Create the hand panel
-    //     wxPanel* hand = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDefaultSize);
 
-    //     // Create the sizer for the hand
-    //     wxGridSizer* sizer = new wxGridSizer(1, hand_size, 0, 0);
-    //     sizer->SetMinSize(wxSize(5 * card_width_borders, 150));
+        // Create the hand panel
+        wxPanel* hand = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDefaultSize);
 
-    //     // Set the sizer for the hand panel
-    //     hand->SetSizer(sizer);
+        // Create the sizer for the hand
+        wxGridSizer* sizer = new wxGridSizer(1, hand_size, 0, 0);
+        sizer->SetMinSize(wxSize(5 * card_width_borders, 150));
 
-    //     // Set the size of the cards
-    //     if (card_width_borders * hand_size > 724) {
-    //         // scale bigger hands
-    //         hand_card_size.SetWidth(724 / hand_size - 8);
-    //         hand_card_size.SetHeight(hand_card_size.GetWidth() / 4 * 5);
-    //     }
+        // Set the sizer for the hand panel
+        hand->SetSizer(sizer);
 
-    //     // Add the cards to the hand
-    //     for (size_t i = 0; i < hand_size; i++) {
-    //         ImagePanel* card = new ImagePanel(hand, "assets/" + cards[i] + ".png", wxBITMAP_TYPE_PNG, wxDefaultPosition,
-    //             hand_card_size, 0);
+        // Set the size of the cards
+        if (card_width_borders * hand_size > 724) {
+            // scale bigger hands
+            hand_card_size.SetWidth(724 / hand_size - 8);
+            hand_card_size.SetHeight(hand_card_size.GetWidth() / 4 * 5);
+        }
 
-    //         bool is_action = shared::CardFactory::getCard(cards[i]).isAction();
+        // Add the cards to the hand
+        for (size_t i = 0; i < hand_size; i++) {
+            ImagePanel* card = new ImagePanel(hand, "assets/" + cards[i] + ".png", wxBITMAP_TYPE_PNG, wxDefaultPosition,
+                hand_card_size, 0);
 
-    //         if (is_action && is_active && player->getActions() > 0) {
-    //             makePlayable(card, cards[i]);
-    //         }
+            bool is_action = shared::CardFactory::getCard(cards[i]).isAction();
 
-    //         sizer->Add(card, 0, wxALIGN_CENTER, 4);
-    //     }
+            if (is_action && is_active && player->getActions() > 0) {
+                makePlayable(card, cards[i]);
+            }
 
-    //     // Set the sizer for the hand panel
-    //     sizer->Layout();
+            sizer->Add(card, 0, wxALIGN_CENTER, 4);
+        }
 
-    //     return hand;
-    // }
+        // Set the sizer for the hand panel
+        sizer->Layout();
+
+        return hand;
+    }
 } // namespace client

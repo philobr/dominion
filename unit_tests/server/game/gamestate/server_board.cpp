@@ -144,8 +144,11 @@ TEST_P(ServerBoardBuyCardTest, BuyCardTest)
     }
 
     // Perform the buy operation
-    bool success = board->buy(card_to_buy);
-    EXPECT_EQ(success, should_succeed);
+    if ( should_succeed ) {
+        EXPECT_NO_THROW(board->tryTake(card_to_buy));
+    } else {
+        EXPECT_THROW(board->tryTake(card_to_buy), exception::CardNotAvailable);
+    }
 
     if ( should_succeed && card_exists ) {
         // After buying, check the count has decreased
@@ -240,13 +243,11 @@ TEST(ServerBoardTest, BuyAllCopiesOfCard)
     const size_t total_copies = shared::board_config::KINGDOM_CARD_COUNT;
 
     for ( size_t i = 0; i < total_copies; ++i ) {
-        bool success = board.buy(card_to_buy);
-        EXPECT_TRUE(success);
+        EXPECT_NO_THROW(board.tryTake(card_to_buy));
     }
 
     // Attempt to buy one more, should fail
-    bool success = board.buy(card_to_buy);
-    EXPECT_FALSE(success);
+    EXPECT_THROW(board.tryTake(card_to_buy), exception::CardNotAvailable);
 
     // Check that the pile count is zero
     const auto &kingdom_piles = board.getKingdomCards();

@@ -5,6 +5,7 @@
 #include <shared/game/cards/card_factory.h>
 #include <shared/utils/logger.h>
 #include <uiElements/image_panel.h>
+#include <uiElements/formatting_constants.h>
 #include <wx/wx.h>
 
 namespace client
@@ -20,6 +21,7 @@ namespace client
 
     void PlayerPanel::drawPlayer(const std::unique_ptr<reduced::Player> &player, bool is_active)
     {
+        LOG(INFO) << "Drawing player " << player->getId();
         // Create a sizer to hold the player stuff
         wxBoxSizer *outersizer = new wxBoxSizer(wxHORIZONTAL);
 
@@ -57,10 +59,11 @@ namespace client
 
     wxPanel *PlayerPanel::createDrawPilePanel(const unsigned int draw_pile_size)
     {
+        LOG(INFO) << "Creating draw pile panel";
         // Create the draw pile panel
         wxPanel *DrawPilePanel = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDefaultSize);
         // Create the draw pile
-        PilePanel *DrawPile = new PilePanel(DrawPilePanel, shared::Pile("Card_back", draw_pile_size));
+        PilePanel *DrawPile = new PilePanel(DrawPilePanel, shared::Pile("Card_back", draw_pile_size), formatting_constants::DEFAULT_BOARD_PILE_SIZE);
         // Create the sizer for the draw pile
         wxBoxSizer *DrawPileSizer = new wxBoxSizer(wxVERTICAL);
         DrawPileSizer->SetMinSize(wxSize(1 * hand_card_size.GetWidth(), 150));
@@ -119,6 +122,7 @@ namespace client
     wxPanel *PlayerPanel::createDiscardPilePanel(const unsigned int discard_pile_size,
                                                  const std::string &top_discard_card)
     {
+        LOG(INFO) << "Creating discard pile panel";
         // Create the discard pile panel
         wxPanel *DiscardPilePanel = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDefaultSize);
 
@@ -127,7 +131,7 @@ namespace client
 
         // Create the discard pile
         if ( discard_pile_size == 0 ) {
-            DiscardPile = new PilePanel(DiscardPilePanel, shared::Pile("logo", 0));
+            DiscardPile = new PilePanel(DiscardPilePanel, shared::Pile("logo", 0), formatting_constants::DEFAULT_BOARD_PILE_SIZE);
         } else {
             DiscardPile = new PilePanel(DiscardPilePanel, shared::Pile(top_discard_card, discard_pile_size));
         }

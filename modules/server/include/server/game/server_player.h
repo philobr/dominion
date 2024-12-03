@@ -50,6 +50,13 @@ namespace server
 
         // =====  NEW FUNCTIONS ====
 
+        inline bool hasActionCardsInHand() const
+        {
+            auto hand = get<shared::HAND>();
+            return std::any_of(hand.begin(), hand.end(),
+                               [](const auto &card_id) { return shared::CardFactory::getCard(card_id).isAction(); });
+        }
+
         bool canBuy(unsigned int cost) { return buys > 0 && treasure >= cost; }
 
         inline bool hasCardInHand(const shared::CardBase::id_t &card_id) const

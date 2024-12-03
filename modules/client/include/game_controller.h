@@ -15,6 +15,7 @@ namespace client
         CREATING_LOBBY,
         JOINING_LOBBY,
         IN_LOBBY,
+        STARTING_GAME,
         IN_GAME
     };
 
@@ -52,7 +53,7 @@ namespace client
         void playCard(const std::string &card_id);
         void endActionPhase();
         void endTurn();
-        void sendRequest(const std::string &req);
+        void sendRequest(std::unique_ptr<shared::ClientToServerMessage> req);
 
         /**
          * @brief Receive a message from the server
@@ -66,6 +67,10 @@ namespace client
         // TODO: This is for testing purposes only and will be removed later
         void skipToGamePanel();
 
+        void showStatus(const std::string &message) { _guiEventReceiver->getGui().showStatus(message); }
+
+        void showError(std::string title, std::string message);
+
     private:
         void receiveActionOrderMessage(std::unique_ptr<shared::ActionOrderMessage> msg);
         void receiveCreateLobbyResponseMessage(std::unique_ptr<shared::CreateLobbyResponseMessage> msg);
@@ -74,7 +79,6 @@ namespace client
         void receiveGameStateMessage(std::unique_ptr<shared::GameStateMessage> msg);
         void receiveStartGameBroadcastMessage(std::unique_ptr<shared::StartGameBroadcastMessage> msg);
 
-        void showError(std::string title, std::string message);
         void showLobbyScreen(std::vector<reduced::Player::id_t> players, bool is_game_master);
         void showGameScreen(std::unique_ptr<reduced::GameState> game_state);
         void showVictoryScreen();
@@ -84,6 +88,8 @@ namespace client
         ClientNetworkManager *_clientNetworkManager;
 
         ClientState _clientState;
+
+        size_t _numPlayers;
         shared::PlayerBase::id_t _playerName;
         std::string _gameName;
     };

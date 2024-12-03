@@ -58,8 +58,9 @@ namespace client
         } else {
 
             // send request to join game
-            shared::CreateLobbyRequestMessage request(input.lobby_name, input.player_name);
-            sendRequest(request.toJson());
+            std::unique_ptr<shared::CreateLobbyRequestMessage> request =
+                    std::make_unique<shared::CreateLobbyRequestMessage>(input.lobby_name, input.player_name);
+            sendRequest(std::move(request));
 
             _gameName = input.lobby_name;
             _playerName = input.player_name;
@@ -84,8 +85,9 @@ namespace client
 
         _clientNetworkManager->init(input.host, input.port);
 
-        shared::JoinLobbyRequestMessage request(input.lobby_name, input.player_name);
-        sendRequest(request.toJson());
+        std::unique_ptr<shared::JoinLobbyRequestMessage> request =
+                std::make_unique<shared::JoinLobbyRequestMessage>(input.lobby_name, input.player_name);
+        sendRequest(std::move(request));
 
         _gameName = input.lobby_name;
         _playerName = input.player_name;
@@ -94,12 +96,21 @@ namespace client
 
     void GameController::startGame()
     {
+        if ( _numPlayers < shared::board_config::MIN_PLAYER_COUNT ||
+             _numPlayers > shared::board_config::MAX_PLAYER_COUNT ) {
+            LOG(DEBUG) << "Invalid number of players ( " << _numPlayers << " ) to start game";
+            _guiEventReceiver->getGui().showError("Error", "Invalid number of players");
+            return;
+        }
         LOG(DEBUG) << "Starting game";
+        // TODO Implement card selection
         std::vector<shared::CardBase::id_t> selectedCards{"Estate",       "Smithy",      "Village",      "Laboratory",
                                                           "Festival",     "Market",      "Placeholder1", "Placeholder2",
                                                           "Placeholder3", "Placeholder4"};
-        shared::StartGameRequestMessage msg = shared::StartGameRequestMessage(_gameName, _playerName, selectedCards);
-        sendRequest(msg.toJson());
+        std::unique_ptr<shared::StartGameRequestMessage> msg =
+                std::make_unique<shared::StartGameRequestMessage>(_gameName, _playerName, selectedCards);
+        sendRequest(std::move(msg));
+        _clientState = ClientState::STARTING_GAME;
     }
 
 
@@ -116,7 +127,7 @@ namespace client
                 std::make_unique<shared::ActionDecisionMessage>(_gameName, _playerName, std::move(decision),
                                                                 in_response_to);
 
-        _clientNetworkManager->sendRequest(action_decision_message->toJson());
+        _clientNetworkManager->sendRequest(std::move(action_decision_message));
     }
 
     void GameController::playCard(const std::string &card_id)
@@ -132,7 +143,7 @@ namespace client
                 std::make_unique<shared::ActionDecisionMessage>(_gameName, _playerName, std::move(decision),
                                                                 in_response_to);
 
-        _clientNetworkManager->sendRequest(action_decision_message->toJson());
+        _clientNetworkManager->sendRequest(std::move(action_decision_message));
     }
 
     void GameController::endActionPhase()
@@ -148,7 +159,7 @@ namespace client
                 std::make_unique<shared::ActionDecisionMessage>(_gameName, _playerName, std::move(decision),
                                                                 in_response_to);
 
-        _clientNetworkManager->sendRequest(action_decision_message->toJson());
+        _clientNetworkManager->sendRequest(std::move(action_decision_message));
     }
 
     void GameController::endTurn()
@@ -164,10 +175,13 @@ namespace client
                 std::make_unique<shared::ActionDecisionMessage>(_gameName, _playerName, std::move(decision),
                                                                 in_response_to);
 
-        _clientNetworkManager->sendRequest(action_decision_message->toJson());
+        _clientNetworkManager->sendRequest(std::move(action_decision_message));
     }
 
-    void GameController::sendRequest(const std::string &req) { _clientNetworkManager->sendRequest(req); }
+    void GameController::sendRequest(std::unique_ptr<shared::ClientToServerMessage> req)
+    {
+        _clientNetworkManager->sendRequest(std::move(req));
+    }
 
     void GameController::receiveActionOrderMessage(std::unique_ptr<shared::ActionOrderMessage> /*msg*/)
     {
@@ -177,8 +191,13 @@ namespace client
 
     void GameController::receiveCreateLobbyResponseMessage(std::unique_ptr<shared::CreateLobbyResponseMessage> /*msg*/)
     {
+        if ( _clientState != ClientState::CREATING_LOBBY ) {
+            LOG(ERROR) << "Received unexpected CreateLobbyResponseMessage";
+            return;
+        }
         LOG(DEBUG) << "Successfully created lobby";
         std::vector<reduced::Player::id_t> players = {_playerName};
+        _numPlayers = 1;
         showLobbyScreen(players, true);
     }
 
@@ -187,6 +206,7 @@ namespace client
         LOG(DEBUG) << "Successfully joined lobby";
         LOG(DEBUG) << "Player " << msg->players.back() << " joined the lobby";
         showLobbyScreen(msg->players, false);
+        _numPlayers = msg->players.size();
         _clientState = ClientState::IN_LOBBY;
     }
 
@@ -226,8 +246,20 @@ namespace client
                     _clientState = ClientState::LOGIN_SCREEN;
                 }
                 break;
+            case ClientState::STARTING_GAME:
+                if ( msg->success ) {
+                    LOG(ERROR) << "Received ResultResponseMessage(success) while starting game";
+                    return;
+                } else {
+                    LOG(DEBUG) << "Failed to start game";
+                    // TODO(#175) This should be cleaned up, returning "Unknown problem" is not very helpful
+                    showError("Failed to start game, error: ", msg->additional_information.value_or("Unknown problem"));
+                    LOG(INFO) << "Returning to lobby screen";
+                    _clientState = ClientState::IN_LOBBY;
+                }
+                break;
             case ClientState::IN_LOBBY:
-                LOG(WARN) << "Received unexpected ResultResponseMessage while in lobby";
+                LOG(WARN) << "Received unexpected ResultResponseMessage while in lobby screen";
                 break;
             case ClientState::IN_GAME:
                 LOG(WARN) << "Received unexpected ResultResponseMessage while in running game";
@@ -247,6 +279,7 @@ namespace client
     void GameController::receiveStartGameBroadcastMessage(std::unique_ptr<shared::StartGameBroadcastMessage> /*msg*/)
     {
         LOG(DEBUG) << "Starting game";
+        _clientState = ClientState::IN_GAME;
         // TODO(#174) This is a hacky workaround, we should not need to call showGameScreen here
         // See the issue for more information
         showGameScreen(nullptr);

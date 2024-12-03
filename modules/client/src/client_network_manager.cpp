@@ -37,20 +37,20 @@ void ::ClientNetworkManager::init(const std::string &host, const uint16_t port)
     // try to connect to server
     if ( ClientNetworkManager::connect(host, port) ) {
         LOG(INFO) << "Connected to " << host << ":" << std::to_string(port);
-        //        GameController::showStatus("Connected to " + host + ":" + std::to_string(port));
+        wxGetApp().getController().showStatus("Connected to " + host + ":" + std::to_string(port));
         ClientNetworkManager::_connectionSuccess = true;
         // start network thread
         ClientListener *clientlistener = new ClientListener(ClientNetworkManager::_connection);
 
         if ( clientlistener->Run() != wxTHREAD_NO_ERROR ) {
             LOG(ERROR) << "Could not create client network thread";
-            //            GameController::showError("Connection error", "Could not create client network thread");
+            wxGetApp().getController().showError("Connection error", "Could not create client network thread");
         }
 
     } else {
         ClientNetworkManager::_failedToConnect = true;
         LOG(ERROR) << "Failed to connect";
-        //        GameController::showStatus("Not connected");
+        wxGetApp().getController().showStatus("Not connected");
     }
 }
 
@@ -64,13 +64,13 @@ bool ClientNetworkManager::connect(const std::string &host, const uint16_t port)
 
         // establish connection to given address
         if ( !ClientNetworkManager::_connection->connect(address) ) {
-            //        GameController::showError("Connection error", "Failed to connect to server " +
-            //        address.to_string());
+            wxGetApp().getController().showError("Connection error",
+                                                 "Failed to connect to server " + address.to_string());
             LOG(ERROR) << "Failed to connect to server " << address.to_string();
             return false;
         }
     } catch ( const sockpp::getaddrinfo_error &e ) {
-        //        GameController::showError("Connection error", "Failed to resolve address " + e.hostname());
+        wxGetApp().getController().showError("Connection error", "Failed to resolve address " + e.hostname());
         LOG(ERROR) << "Failed to resolve address" << e.hostname();
         return false;
     }
@@ -79,7 +79,7 @@ bool ClientNetworkManager::connect(const std::string &host, const uint16_t port)
 }
 
 
-void ClientNetworkManager::sendRequest(const std::string message)
+void ClientNetworkManager::sendRequest(std::unique_ptr<shared::ClientToServerMessage> req)
 {
     // wait until network is connected (max. 5 seconds)
     int connectionCheckCounter = 0;
@@ -98,6 +98,9 @@ void ClientNetworkManager::sendRequest(const std::string message)
     if ( ClientNetworkManager::_connectionSuccess && ClientNetworkManager::_connection->is_connected() ) {
         LOG(INFO) << "Connected to server";
 
+        // convert message to json
+        std::string message = req->toJson();
+
         // turn message into stream and prepend message length
         std::stringstream messageStream;
         messageStream << std::to_string(message.size()) << ':' << message;
@@ -111,15 +114,14 @@ void ClientNetworkManager::sendRequest(const std::string message)
         // if the number of bytes sent does not match the length of the msg, probably something went wrong
         if ( bytesSent != ssize_t(msg.length()) ) {
             LOG(ERROR) << "Error writing to TCP stream: " << ClientNetworkManager::_connection->last_error_str();
-            // TODO Stuff for the gui team
-            // GameController::showError("Network error", "Error writing to the TCP stream: " +
-            // ClientNetworkManager::_connection->last_error_str());
+            wxGetApp().getController().showError("Network error",
+                                                 "Error writing to the TCP stream: " +
+                                                         ClientNetworkManager::_connection->last_error_str());
         }
 
     } else {
         LOG(ERROR) << "Lost connection to server";
-        // TODO GUI TEAM
-        // GameController::showError("Network error", "Lost connection to server");
+        wxGetApp().getController().showError("Network error", "Lost connection to server");
     }
 }
 
@@ -132,8 +134,9 @@ void ClientNetworkManager::receiveMessage(const std::string &message)
         wxGetApp().getController().receiveMessage(std::move(res));
     } catch ( std::exception &e ) {
         LOG(ERROR) << "Exception in ClientNetworkManager::receive_message: " << e.what();
-        //        GameController::showError("JSON parsing error", "Failed to parse message from server:\n" + message +
-        //        "\n" + (std::string) e.what());
+        wxGetApp().getController().showError("JSON parsing error",
+                                             "Failed to parse message from server:\n" + message + "\n" +
+                                                     (std::string)e.what());
     }
 }
 

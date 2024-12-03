@@ -30,7 +30,8 @@ namespace client
                 }
             case ControllerEventType::SHOW_GAME_SCREEN:
                 {
-                    _gui->showGameScreen();
+                    ShowGameScreenEventData data = controllerEvent.getData<ShowGameScreenEventData>();
+                    _gui->showGameScreen(data.game_state);
                     break;
                 }
             case ControllerEventType::SHOW_VICTORY_SCREEN:

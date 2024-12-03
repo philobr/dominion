@@ -47,11 +47,8 @@ namespace client
 
         void showLobbyScreen(const std::vector<reduced::Player::id_t> &players, bool is_game_master);
 
-        // TODO(#169): This should take the game state as an argument
-        void showGameScreen();
-
-        // TODO(#169): This shoul be removed and be part of the showGameScreen method
-        void drawGameState(const reduced::GameState &game_state);
+        // TODO(#169): This should be a reference instead of a shared_ptr
+        void showGameScreen(std::shared_ptr<reduced::GameState> game_state);
 
         void showVictoryScreen();
 

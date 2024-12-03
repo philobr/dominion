@@ -22,7 +22,10 @@ namespace client
         wxQueueEvent(_guiEventReceiver.get(), ControllerEvent::showLobbyScreen(std::move(players), is_game_master));
     }
 
-    void GameController::showGameScreen() { wxQueueEvent(_guiEventReceiver.get(), ControllerEvent::showGameScreen()); }
+    void GameController::showGameScreen(std::unique_ptr<reduced::GameState> game_state)
+    {
+        wxQueueEvent(_guiEventReceiver.get(), ControllerEvent::showGameScreen(std::move(game_state)));
+    }
 
     void GameController::showVictoryScreen()
     {
@@ -110,7 +113,7 @@ namespace client
         std::optional<std::string> in_response_to = std::nullopt;
 
         std::unique_ptr<shared::ActionDecisionMessage> action_decision_message =
-                std::make_unique<shared::ActionDecisionMessage>(_gameName, getPlayerName(), std::move(decision),
+                std::make_unique<shared::ActionDecisionMessage>(_gameName, _playerName, std::move(decision),
                                                                 in_response_to);
 
         _clientNetworkManager->sendRequest(action_decision_message->toJson());
@@ -126,7 +129,7 @@ namespace client
         std::optional<std::string> in_response_to = std::nullopt;
 
         std::unique_ptr<shared::ActionDecisionMessage> action_decision_message =
-                std::make_unique<shared::ActionDecisionMessage>(_gameName, getPlayerName(), std::move(decision),
+                std::make_unique<shared::ActionDecisionMessage>(_gameName, _playerName, std::move(decision),
                                                                 in_response_to);
 
         _clientNetworkManager->sendRequest(action_decision_message->toJson());
@@ -142,7 +145,7 @@ namespace client
         std::optional<std::string> in_response_to = std::nullopt;
 
         std::unique_ptr<shared::ActionDecisionMessage> action_decision_message =
-                std::make_unique<shared::ActionDecisionMessage>(_gameName, getPlayerName(), std::move(decision),
+                std::make_unique<shared::ActionDecisionMessage>(_gameName, _playerName, std::move(decision),
                                                                 in_response_to);
 
         _clientNetworkManager->sendRequest(action_decision_message->toJson());
@@ -158,7 +161,7 @@ namespace client
         std::optional<std::string> in_response_to = std::nullopt;
 
         std::unique_ptr<shared::ActionDecisionMessage> action_decision_message =
-                std::make_unique<shared::ActionDecisionMessage>(_gameName, getPlayerName(), std::move(decision),
+                std::make_unique<shared::ActionDecisionMessage>(_gameName, _playerName, std::move(decision),
                                                                 in_response_to);
 
         _clientNetworkManager->sendRequest(action_decision_message->toJson());
@@ -238,15 +241,15 @@ namespace client
     void GameController::receiveGameStateMessage(std::unique_ptr<shared::GameStateMessage> msg)
     {
         LOG(INFO) << "Received GameStateMessage, updating game state";
-        _gameState = std::move(msg->game_state);
-        _guiEventReceiver->getGui().drawGameState(*_gameState);
-        showGameScreen();
+        showGameScreen(std::move(msg->game_state));
     }
 
     void GameController::receiveStartGameBroadcastMessage(std::unique_ptr<shared::StartGameBroadcastMessage> /*msg*/)
     {
         LOG(DEBUG) << "Starting game";
-        showGameScreen();
+        // TODO(#174) This is a hacky workaround, we should not need to call showGameScreen here
+        // See the issue for more information
+        showGameScreen(nullptr);
     }
 
     void GameController::receiveMessage(std::unique_ptr<shared::ServerToClientMessage> msg)
@@ -282,16 +285,8 @@ namespace client
     void GameController::skipToGamePanel()
     {
         LOG(WARN) << "Skipping to game panel, this is debug functionality";
-        showGameScreen();
-    }
-
-    shared::PlayerBase::id_t GameController::getPlayerName()
-    {
-        if ( _gameState == nullptr ) {
-            LOG(ERROR) << "GameController::getPlayerName called without a game state";
-            throw exception::UnreachableCode(
-                    "GameController::getPlayerName should never be called without a game state");
-        }
-        return _gameState->reduced_player->getId();
+        // We need a game state here, but we don't have one
+        // We just pass nullptr for now
+        showGameScreen(nullptr);
     }
 } // namespace client

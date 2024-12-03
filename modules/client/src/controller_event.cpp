@@ -31,10 +31,15 @@ namespace client
     ShowErrorEventData::ShowErrorEventData(std::string title, std::string message) :
         title(std::move(title)), message(std::move(message))
     {}
+
     ShowLobbyScreenEventData::ShowLobbyScreenEventData(std::vector<reduced::Player::id_t> players,
                                                        bool is_game_master) :
         players(std::move(players)),
         is_game_master(is_game_master)
+    {}
+
+    ShowGameScreenEventData::ShowGameScreenEventData(std::unique_ptr<reduced::GameState> game_state) :
+        game_state(std::move(game_state))
     {}
 
     ControllerEvent *ControllerEvent::showError(std::string title, std::string message)
@@ -49,9 +54,10 @@ namespace client
         return new ControllerEvent(ControllerEventType::SHOW_LOBBY_SCREEN, data);
     }
 
-    ControllerEvent *ControllerEvent::showGameScreen()
+    ControllerEvent *ControllerEvent::showGameScreen(std::unique_ptr<reduced::GameState> game_state)
     {
-        return new ControllerEvent(ControllerEventType::SHOW_GAME_SCREEN, std::any());
+        ShowGameScreenEventData data(std::move(game_state));
+        return new ControllerEvent(ControllerEventType::SHOW_GAME_SCREEN, data);
     }
 
     ControllerEvent *ControllerEvent::showVictoryScreen()

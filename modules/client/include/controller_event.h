@@ -4,6 +4,7 @@
 #include <any>
 #include <memory>
 #include <shared/game/game_state/player_base.h>
+#include <shared/game/game_state/reduced_game_state.h>
 #include <shared/game/reduced/player.h>
 #include <shared/utils/logger.h>
 #include <string>
@@ -42,12 +43,22 @@ namespace client
         bool is_game_master;
     };
 
+    struct ShowGameScreenEventData
+    {
+    public:
+        ShowGameScreenEventData(std::unique_ptr<reduced::GameState> game_state);
+
+        // This is hacky bullshit, but this is the easiest way to make this
+        // struct copyable. We should really be using a unique_ptr here.
+        std::shared_ptr<reduced::GameState> game_state;
+    };
+
     class ControllerEvent : public wxThreadEvent
     {
     public:
         static ControllerEvent *showError(const std::string title, const std::string message);
         static ControllerEvent *showLobbyScreen(const std::vector<std::string> players, const bool is_game_master);
-        static ControllerEvent *showGameScreen();
+        static ControllerEvent *showGameScreen(std::unique_ptr<reduced::GameState> game_state);
         static ControllerEvent *showVictoryScreen();
 
         ControllerEvent(ControllerEventType type, std::any data = {});

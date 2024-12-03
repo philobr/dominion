@@ -76,17 +76,14 @@ namespace client
 
         void showError(std::string title, std::string message);
         void showLobbyScreen(std::vector<reduced::Player::id_t> players, bool is_game_master);
-        void showGameScreen();
+        void showGameScreen(std::unique_ptr<reduced::GameState> game_state);
         void showVictoryScreen();
-
-        shared::PlayerBase::id_t getPlayerName();
 
         std::unique_ptr<GuiEventReceiver> _guiEventReceiver;
 
         ClientNetworkManager *_clientNetworkManager;
 
         ClientState _clientState;
-        std::unique_ptr<reduced::GameState> _gameState;
         shared::PlayerBase::id_t _playerName;
         std::string _gameName;
     };

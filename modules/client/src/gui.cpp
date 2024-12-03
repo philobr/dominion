@@ -101,23 +101,26 @@ namespace client
         _lobbyPanel->refreshPlayers(players);
     }
 
-    void Gui::showGameScreen()
+    void Gui::showGameScreen(std::shared_ptr<reduced::GameState> game_state)
     {
         ONLY_MAIN_THREAD();
 
+        LOG(INFO) << "Showing game screen";
+
+        if ( game_state == nullptr ) {
+            LOG(WARN) << "Game state is null" << std::endl;
+            return;
+        } else {
+            _mainGamePanel->drawGameState(*game_state);
+        }
         _gameWindow->showPanel(_mainGamePanel);
-    }
-
-    void Gui::drawGameState(const reduced::GameState &game_state)
-    {
-        ONLY_MAIN_THREAD();
-
-        _mainGamePanel->drawGameState(game_state);
     }
 
     void Gui::showVictoryScreen()
     {
         ONLY_MAIN_THREAD();
+
+        LOG(INFO) << "Showing victory screen";
 
         _victoryScreenPanel->drawTestVictoryScreen();
         _gameWindow->showPanel(_victoryScreenPanel);

@@ -285,9 +285,6 @@ namespace client
     {
         LOG(DEBUG) << "Starting game";
         _clientState = ClientState::IN_GAME;
-        // TODO(#174) This is a hacky workaround, we should not need to call showGameScreen here
-        // See the issue for more information
-        showGameScreen(nullptr);
     }
 
     void GameController::receiveMessage(std::unique_ptr<shared::ServerToClientMessage> msg)

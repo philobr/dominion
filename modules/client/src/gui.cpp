@@ -101,7 +101,7 @@ namespace client
         _lobbyPanel->refreshPlayers(players);
     }
 
-    void Gui::showMainGameScreen()
+    void Gui::showGameScreen()
     {
         ONLY_MAIN_THREAD();
 

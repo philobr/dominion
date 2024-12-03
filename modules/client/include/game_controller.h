@@ -2,7 +2,6 @@
 
 #include <client_network_manager.h>
 #include <gui_event_receiver.h>
-#include <shared/game/game_state/player_base.h>
 #include <windows/game_window.h>
 
 #include <shared/message_types.h>
@@ -74,6 +73,11 @@ namespace client
         void receiveResultResponseMessage(std::unique_ptr<shared::ResultResponseMessage> msg);
         void receiveGameStateMessage(std::unique_ptr<shared::GameStateMessage> msg);
         void receiveStartGameBroadcastMessage(std::unique_ptr<shared::StartGameBroadcastMessage> msg);
+
+        void showError(std::string title, std::string message);
+        void showLobbyScreen(std::vector<reduced::Player::id_t> players, bool is_game_master);
+        void showGameScreen();
+        void showVictoryScreen();
 
         shared::PlayerBase::id_t getPlayerName();
 

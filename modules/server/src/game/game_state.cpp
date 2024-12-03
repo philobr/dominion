@@ -166,7 +166,6 @@ namespace server
         resetPhase();
 
         board->getPlayedCards().clear();
-        board->getStagedCards().clear();
 
         if ( isGameOver() ) {
             endGame();

@@ -96,13 +96,13 @@ namespace shared
         bool equals(const ActionDecision &other) const override;
     };
 
-    class BoardChoiceDecision : public ActionDecision
+    class GainFromBoardDecision : public ActionDecision
     {
     public:
         shared::CardBase::id_t chosen_card;
-        BoardChoiceDecision(shared::CardBase::id_t chosen_card) : chosen_card(chosen_card) {}
-        bool operator==(const BoardChoiceDecision &other) const;
-        bool operator!=(const BoardChoiceDecision &other) const;
+        GainFromBoardDecision(shared::CardBase::id_t chosen_card) : chosen_card(chosen_card) {}
+        bool operator==(const GainFromBoardDecision &other) const;
+        bool operator!=(const GainFromBoardDecision &other) const;
 
     protected:
         bool equals(const ActionDecision &other) const override;

@@ -122,8 +122,6 @@ namespace server
 
         /**
          * @brief Broadcasts the gamestate to all players in the lobby.
-         *
-         * @param message_interface
          */
         inline void broadcastGameState(MessageInterface &message_interface) const
         {
@@ -137,8 +135,16 @@ namespace server
                           });
         }
 
+        /**
+         * @brief If a player received an order we send it, else we send the gamestate.
+         */
         inline void broadcastOrders(MessageInterface &message_interface, OrderResponse &orders) const
         {
+            if ( orders.empty() ) {
+                broadcastGameState(message_interface);
+                return;
+            }
+
             std::for_each(players.begin(), players.end(),
                           [&](const auto &player_id)
                           {

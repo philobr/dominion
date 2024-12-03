@@ -23,6 +23,23 @@ namespace server
         PLAYING_ACTION_CARD,
     };
 
+    inline std::string toString(GamePhase phase)
+    {
+        switch ( phase ) {
+            case GamePhase::ACTION_PHASE:
+                return "action phase";
+            case GamePhase::BUY_PHASE:
+                return "buy phase";
+            case GamePhase::PLAYING_ACTION_CARD:
+                return "currently playing phase";
+            default:
+                {
+                    LOG(ERROR) << "Received unexpected phase in " << FUNC_NAME << ": " << static_cast<int>(phase);
+                    return "INVALID PHASE";
+                }
+        }
+    }
+
     /**
      * @brief This holds the complete game stae on the server.
      *
@@ -53,7 +70,11 @@ namespace server
         GamePhase getPhase() const { return phase; }
 
         void startGame();
-        void endGame() { return; }
+        void endGame()
+        {
+            LOG(ERROR) << FUNC_NAME << " is not implemented lol";
+            return;
+        }
 
         void initialisePlayers(const std::vector<Player::id_t> &player_ids);
         void initialiseBoard(const std::vector<shared::CardBase::id_t> &selected_cards);
@@ -61,27 +82,9 @@ namespace server
         void startTurn();
         void endTurn();
 
-        void setPhase(GamePhase new_phase) { phase = new_phase; }
+        inline void setPhase(GamePhase new_phase) { phase = new_phase; }
 
         bool isGameOver() const;
-
-        /**
-         * @brief As of now, this function tries to buy a card for the given player.
-         * It throws exception::InsufficientFunds or exception::CardNotAvailable accordingly.
-         *
-         * @param player_id
-         * @param card
-         * @return true
-         * @return false
-         */
-
-        /**
-         * @brief This function checks if the player is in Action phase, the card is an action card and if the
-         * player has actions left. If both conditions are met, the card is moved from the hand/staged cards to
-         * the played cards and the currently_playing_card (in Player) and the actions are decremented.
-         */
-        void tryBuy(const Player::id_t &player_id, const shared::CardBase::id_t &card);
-        void tryPlayFromHand(const Player::id_t &affected_player, const shared::CardBase::id_t &card_id);
 
         /**
          * @brief Switches phases if necessary, this means: if a player is out of buys or out of actions
@@ -89,14 +92,45 @@ namespace server
          */
         void maybeSwitchPhase();
 
+        /**
+         * @brief Ends the action phase if possible
+         * @throws exception::InvalidRequest, exception::OutOfPhase
+         */
+        void tryEndActionPhase(const shared::PlayerBase::id_t &requestor_id);
+
+        /**
+         * @brief Buys a card from the board and adds it to the players discard pile.
+         * @throws exception::InvalidRequest, exception::OutOfPhase, exception::InsufficientFunds
+         */
+        void tryBuy(const shared::PlayerBase::id_t &requestor_id, const shared::CardBase::id_t &card_id);
+
+        /**
+         * @brief Takes a card from the board (without payment)
+         * @throws exception::OutOfPhase, exception::CardNotAvailable
+         */
+        void tryGain(const shared::PlayerBase::id_t &requestor_id, const shared::CardBase::id_t &card_id);
+
+        /**
+         * @brief Plays a card from the hand cards. This involves moving the card from the hand to played cards.
+         * @throws exception::InvalidRequest, exception::OutOfPhase, exception::OutOfActions,
+         * exception::CardNotAvailable
+         */
+        void tryPlayFromHand(const shared::PlayerBase::id_t &requestor_id, const shared::CardBase::id_t &card_id);
+
+        /**
+         * @brief Plays a card from the staged cards. This involves moving the card from staged to played cards.
+         * @throws exception::InvalidRequest, exception::OutOfPhase, exception::CardNotAvailable
+         */
+        void tryPlayFromStaged(const shared::PlayerBase::id_t &requestor_id, const shared::CardBase::id_t &card_id);
+
     private:
         /**
          * @brief Forces a phase switch. This is called if a player ends a phase early
          */
         void forceSwitchPhase();
 
-        void resetPhase() { phase = GamePhase::ACTION_PHASE; }
-        void switchPlayer() { current_player_idx = (current_player_idx + 1) % player_map.size(); }
+        inline void resetPhase() { phase = GamePhase::ACTION_PHASE; }
+        inline void switchPlayer() { current_player_idx = (current_player_idx + 1) % player_map.size(); }
 
         /**
          * @brief Checks if all ids exist and if the CardType is one of:

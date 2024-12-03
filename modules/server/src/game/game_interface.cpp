@@ -13,7 +13,9 @@ namespace server
 
     GameInterface::response_t GameInterface::handleMessage(std::unique_ptr<shared::ClientToServerMessage> &message)
     {
-        auto *casted_msg = dynamic_cast<shared::ActionDecisionMessage *>(message.get());
+        auto casted_msg = std::unique_ptr<shared::ActionDecisionMessage>(
+                static_cast<shared::ActionDecisionMessage *>(message.release()));
+
         if ( casted_msg == nullptr ) {
             // ISSUE: 166
             LOG(ERROR) << "Received a non shared::ActionDecisionMessage in " << FUNC_NAME;
@@ -31,8 +33,7 @@ namespace server
         HANDLE_ACTION(BuyCardDecision);
         HANDLE_ACTION(EndTurnDecision);
 
-        LOG(ERROR) << "Unreachable code: received some weird message type";
-        throw std::runtime_error("unreachable code in " + FUNC_NAME);
+        return passToBehaviour(casted_msg);
     }
 
     GameInterface::response_t
@@ -83,11 +84,11 @@ namespace server
 
     GameInterface::response_t
     GameInterface::EndTurnDecision_handler(std::unique_ptr<shared::EndTurnDecision> action_decision,
-                                           const Player::id_t &player_id)
+                                           const Player::id_t &requestor_id)
     {
         if ( game_state->getPhase() == GamePhase::PLAYING_ACTION_CARD ) {
             // ISSUE: 166
-            LOG(ERROR) << "Player is trying to end his turn while playing a card";
+            LOG(ERROR) << "Player " << requestor_id << " is trying to end his turn while playing a card";
             throw exception::OutOfPhase("");
         }
 
@@ -96,24 +97,50 @@ namespace server
         return nextPhase();
     }
 
-    /*
-        GameInterface::response_t GameInterface::ChooseNCardsFromHandDecision_handler(
-                std::unique_ptr<shared::ChooseNCardsFromHandDecision> action_decision, const Player::id_t &player_id)
-        {
-            // this will be implemented after ChooseNCardFromHandDecision is fixed
-
-            LOG(ERROR) << FUNC_NAME << " is not implemented yet!";
-            throw std::runtime_error("unrachable code");
-
-            // auto order_msg = behaviour_chain->continueChain(*game_state, action_decision);
-            if ( behaviour_chain->empty() ) {
-                return finishedPlayingCard();
-            } else {
-                // return empty order
-                return OrderResponse();
-            }
+    /**
+     * @brief This function is used for ActionDecisionMessages that are not handled by other handlers. Those are assumed
+     * to be expected by an ongoing behaviour.
+     */
+    GameInterface::response_t GameInterface::passToBehaviour(std::unique_ptr<shared::ActionDecisionMessage> &message)
+    {
+        // we expect to be in this state because the behaviour chain needs to be initialised
+        // -> implying we are playing a card
+        if ( game_state->getPhase() != server::GamePhase::PLAYING_ACTION_CARD ) {
+            LOG(ERROR) << "Unexpected message type, player " << message->player_id
+                       << " is currently not playing a card";
+            throw exception::OutOfPhase("");
         }
-    */
+
+        auto decision = std::move(message->decision);
+
+        if ( (dynamic_cast<shared::DeckChoiceDecision *>(decision.get()) == nullptr) &&
+             (dynamic_cast<shared::GainFromBoardDecision *>(decision.get()) == nullptr) ) {
+            LOG(ERROR) << "Unreachable code: received some unexpected decision type in: " << FUNC_NAME;
+            throw std::runtime_error("unreachable code in " + FUNC_NAME);
+        }
+
+        auto response = behaviour_chain->continueChain(*game_state, decision);
+
+        if ( behaviour_chain->empty() ) {
+            return finishedPlayingCard();
+        }
+
+        return response;
+    }
+
+    GameInterface::response_t
+    GameInterface::EndActionPhaseDecision_handler(std::unique_ptr<shared::EndActionPhaseDecision> decision,
+                                                  const Player::id_t &requestor_id)
+    {
+        if ( game_state->getPhase() != server::GamePhase::ACTION_PHASE ) {
+            LOG(ERROR) << "Player tries to end ACTION_PHASE while not being in the action phase";
+            throw exception::OutOfPhase("");
+        }
+
+        game_state->tryEndActionPhase(requestor_id);
+
+        return nextPhase();
+    }
 
     GameInterface::response_t GameInterface::nextPhase()
     {

@@ -60,18 +60,18 @@ namespace shared
         return *this == dynamic_cast<const DeckChoiceDecision &>(other);
     }
 
-    bool BoardChoiceDecision::operator==(const BoardChoiceDecision &other) const
+    bool GainFromBoardDecision::operator==(const GainFromBoardDecision &other) const
     {
         return chosen_card == other.chosen_card;
     }
 
-    bool BoardChoiceDecision::operator!=(const BoardChoiceDecision &other) const
+    bool GainFromBoardDecision::operator!=(const GainFromBoardDecision &other) const
     {
-        return BoardChoiceDecision::operator==(other);
+        return GainFromBoardDecision::operator==(other);
     }
 
-    bool BoardChoiceDecision::equals(const ActionDecision &other) const
+    bool GainFromBoardDecision::equals(const ActionDecision &other) const
     {
-        return *this == dynamic_cast<const BoardChoiceDecision &>(other);
+        return *this == dynamic_cast<const GainFromBoardDecision &>(other);
     }
 } // namespace shared

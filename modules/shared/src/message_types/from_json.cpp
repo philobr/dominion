@@ -211,7 +211,7 @@ static std::unique_ptr<ActionDecisionMessage> parseActionDecision(const Document
     } else if ( action == "board_choice" ) {
         shared::CardBase::id_t chosen_card;
         GET_STRING_MEMBER(chosen_card, json, "chosen_card");
-        decision = new BoardChoiceDecision(chosen_card);
+        decision = new GainFromBoardDecision(chosen_card);
     } else {
         return nullptr;
     }

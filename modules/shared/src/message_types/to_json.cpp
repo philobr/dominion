@@ -153,7 +153,7 @@ namespace shared
             ADD_STRING_MEMBER("deck_choice", action);
             ADD_ARRAY_OF_STRINGS_MEMBER(deck_choice->cards, cards);
             ADD_ARRAY_OF_ENUMS_MEMBER(deck_choice->choices, choices, DeckChoiceDecision::AllowedChoice);
-        } else if ( BoardChoiceDecision *board_choice = dynamic_cast<BoardChoiceDecision *>(action_decision) ) {
+        } else if ( GainFromBoardDecision *board_choice = dynamic_cast<GainFromBoardDecision *>(action_decision) ) {
             ADD_STRING_MEMBER("board_choice", action);
             ADD_STRING_MEMBER(board_choice->chosen_card.c_str(), chosen_card);
         }

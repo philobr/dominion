@@ -150,7 +150,7 @@ namespace client
 
         // Add buttons to the vertical sizer with some spacing
         verticalSizer->Add(endActionPhaseButton, 0, wxALL, 5);
-        verticalSizer->Add(endTurnButton, 0, wxALLe, 5);
+        verticalSizer->Add(endTurnButton, 0, wxALL, 5);
 
         // Set the sizer for the panel
         buttonPanel->SetSizer(verticalSizer);

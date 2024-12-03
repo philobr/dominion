@@ -81,8 +81,7 @@ namespace server
          * the played cards and the currently_playing_card (in Player) and the actions are decremented.
          */
         void tryBuy(const Player::id_t &player_id, const shared::CardBase::id_t &card);
-        void tryPlay(const Player::id_t &affected_player, const shared::CardBase::id_t &card_id,
-                     shared::CardAccess from = shared::CardAccess::HAND);
+        void tryPlayFromHand(const Player::id_t &affected_player, const shared::CardBase::id_t &card_id);
 
         /**
          * @brief Switches phases if necessary, this means: if a player is out of buys or out of actions

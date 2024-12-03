@@ -10,6 +10,9 @@
 namespace client
 {
 
+    /**
+     * @brief Structure representing the data entered by the user in the connection screen
+     */
     struct ConnectionForm
     {
         std::string host;
@@ -18,6 +21,12 @@ namespace client
         std::string lobby_name;
     };
 
+    /**
+     * @brief Class managing the graphical user interface
+     *
+     * This class is responsible for displaying the different screens of the game.
+     * It is a wrapper around wxWidgets, and uses the GameWindow class to display the game.
+     */
     class Gui
     {
     public:

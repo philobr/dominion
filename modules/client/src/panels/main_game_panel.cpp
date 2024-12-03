@@ -50,7 +50,7 @@ namespace client
                     });
             syncCv.wait(lock, [] { return taskCompleted; }); // Wait until task is complete
         }
-        PhaseInfo->drawInfoPanel(game_state.reduced_player, game_state.reduced_enemies, game_state.active_player);
+        PhaseInfo->drawInfoPanel(game_state);
         LOG(INFO) << "PhaseInfo drawn";
         Player->drawPlayer(game_state.reduced_player, is_active);
 

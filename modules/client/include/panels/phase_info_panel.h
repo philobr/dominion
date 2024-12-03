@@ -6,6 +6,7 @@
 
 #include <vector>
 #include <wx/wx.h>
+#include <dominion.h>
 
 namespace client
 {
@@ -18,12 +19,13 @@ namespace client
     public:
         PhaseInfoPanel(wxWindow* parent, wxSize size);
 
-        void drawInfoPanel(const reduced::Player::ptr_t &player, const std::vector<reduced::Enemy::ptr_t> &enemies, const shared::PlayerBase::id_t &active_player);
-
+        void drawInfoPanel(const reduced::GameState& game_state);
     private:
+        wxSize played_card_size = wxSize(100, 125);
+
         TextPanel* drawPlayerInfo(const std::unique_ptr<reduced::Player>& player);
 
-        wxPanel* drawPlayedPanel(std::vector<shared::CardBase::id_t> played_cards);
+        wxPanel* drawPlayedPanel(std::vector<shared::CardBase::id_t> played_cards, const size_t card_width_borders);
     };
 
 } // namespace client

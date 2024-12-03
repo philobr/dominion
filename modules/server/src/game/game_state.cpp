@@ -263,6 +263,9 @@ namespace server
 
         player.playCardFromHand(card_id);
         board->addToPlayedCards(card_id);
+
+        LOG(INFO) << "player: " << requestor_id << " successfully played a card with id: " << card_id
+                  << " from his hand";
     }
 
     void GameState::tryPlayFromStaged(const shared::PlayerBase::id_t &requestor_id,
@@ -288,6 +291,9 @@ namespace server
 
         player.playCardFromStaged(card_id);
         board->addToPlayedCards(card_id);
+
+        LOG(INFO) << "player: " << requestor_id << " successfully played a card with id: " << card_id
+                  << " from his staged cards";
     }
 
 } // namespace server

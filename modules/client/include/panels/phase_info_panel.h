@@ -3,6 +3,7 @@
 #include <shared/game/reduced/player.h>
 #include <shared/game/game_state/reduced_game_state.h>
 #include <uiElements/text_panel.h>
+#include <uiElements/formatting_constants.h>
 
 #include <vector>
 #include <wx/wx.h>
@@ -20,7 +21,7 @@ namespace client
 
         void drawInfoPanel(const reduced::GameState& game_state);
     private:
-        wxSize played_card_size = wxSize(100, 125);
+        wxSize played_card_size = formatting_constants::DEFAULT_CARD_SIZE;
 
         TextPanel* drawPlayerInfo(const std::unique_ptr<reduced::Player>& player);
 

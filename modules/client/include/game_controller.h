@@ -54,7 +54,7 @@ namespace client
         void playCard(const std::string &card_id);
         void endActionPhase();
         void endTurn();
-        void sendRequest(const std::string &req);
+        void sendRequest(std::unique_ptr<shared::ClientToServerMessage> req);
 
         /**
          * @brief Receive a message from the server

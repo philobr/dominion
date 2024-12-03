@@ -3,6 +3,7 @@
 #include <cstdint>
 #include <string>
 #include "sockpp/tcp_connector.h"
+#include "shared/message_types.h"
 
 class ClientNetworkManager
 {
@@ -10,7 +11,7 @@ class ClientNetworkManager
 public:
     static void init(const std::string &host, const uint16_t port);
 
-    static void sendRequest(const std::string message);
+    static void sendRequest(std::unique_ptr<shared::ClientToServerMessage> req);
 
     static void receiveMessage(const std::string &message);
 

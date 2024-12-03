@@ -39,7 +39,6 @@ namespace client
     class ControllerEvent : public wxThreadEvent
     {
     public:
-
         static ControllerEvent showError(const std::string message);
         static ControllerEvent showLobbyScreen(const std::vector<std::string> players, const bool is_game_master);
         static ControllerEvent showMainGameScreen();

@@ -30,7 +30,8 @@ namespace client
 
     ShowErrorEventData::ShowErrorEventData(const std::string message) : message(message) {}
 
-    ControllerEvent ControllerEvent::showError(const std::string message) {
+    ControllerEvent ControllerEvent::showError(const std::string message)
+    {
         ShowErrorEventData data(message);
         return ControllerEvent(ControllerEventType::SHOW_ERROR, data);
     }

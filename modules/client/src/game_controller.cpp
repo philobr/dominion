@@ -11,7 +11,9 @@ using namespace shared;
 
 namespace client
 {
-    GameController::GameController(GuiEventReceiver *event_receiver) : _guiEventReceiver(event_receiver), _clientState(ClientState::LOGIN_SCREEN) {}
+    GameController::GameController(GuiEventReceiver *event_receiver) :
+        _guiEventReceiver(event_receiver), _clientState(ClientState::LOGIN_SCREEN)
+    {}
 
     void GameController::createLobby()
     {

@@ -3,10 +3,10 @@
 #include <execinfo.h>
 #include <signal.h>
 
+#include <gui_event_receiver.h>
 #include <shared/utils/logger.h>
 #include <wx/cmdline.h>
 #include "game_controller.h"
-#include <gui_event_receiver.h>
 #include "windows/game_window.h"
 
 static const wxCmdLineEntryDesc CMD_LINE_DESC[] = {

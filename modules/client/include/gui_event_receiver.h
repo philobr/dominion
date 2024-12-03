@@ -15,14 +15,14 @@ namespace client
     class GuiEventReceiver : public wxEvtHandler
     {
     public:
-        GuiEventReceiver(Gui* gui);
+        GuiEventReceiver(Gui *gui);
         ~GuiEventReceiver() override = default;
 
         // TODO: This is only a temporary solution and should be removed asap
         /**
          * @brief Get the Gui object
          */
-        Gui& getGui();
+        Gui &getGui();
 
         /**
          * @brief This is called by wxWidgets when a controller event is triggered
@@ -30,6 +30,7 @@ namespace client
          * @param event The event that was triggered by the controller
          */
         void onControllerEvent(wxThreadEvent &event);
+
     private:
         std::unique_ptr<Gui> _gui;
     };

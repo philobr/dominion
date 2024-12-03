@@ -9,12 +9,9 @@ namespace client
         Bind(wxEVT_CONTROLLER, &GuiEventReceiver::onControllerEvent, this);
     }
 
-    Gui& GuiEventReceiver::getGui()
-    {
-        return *_gui;
-    }
+    Gui &GuiEventReceiver::getGui() { return *_gui; }
 
-    void GuiEventReceiver::onControllerEvent(wxThreadEvent & /*event*/ )
+    void GuiEventReceiver::onControllerEvent(wxThreadEvent & /*event*/)
     {
         LOG(DEBUG) << "GUI received event from GameController";
         LOG(WARN) << "OnControllerEvent handler not implemented";

@@ -24,7 +24,8 @@ namespace client
         this->DestroyChildren();
 
         // Create a grid sizer for the panel
-        wxGridSizer* sizer = new wxGridSizer(1, 3, 0, 10);                
+        wxGridSizer* sizer = new wxGridSizer(1, 3, 0, 10);     
+
 
         // Add player info to the sizer
         auto* infoPanel = drawPlayerInfo(game_state.reduced_player);

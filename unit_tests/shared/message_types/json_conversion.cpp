@@ -126,8 +126,8 @@ TEST(SharedLibraryTest, ResultResponseMessageTwoWayConversion)
 
 TEST(SharedLibraryTest, ActionOrderMessageTwoWayConversion)
 {
-    std::unique_ptr<ActionOrder> order = std::make_unique<ChooseFromStaged>(
-            1, 1, shared::ChooseFrom::AllowedChoice::DISCARD, std::vector<shared::CardBase::id_t>(1, "a card"));
+    std::unique_ptr<ActionOrder> order = std::make_unique<ChooseFromStagedOrder>(
+            1, 1, shared::ChooseFromOrder::AllowedChoice::DISCARD, std::vector<shared::CardBase::id_t>(1, "a card"));
     ActionOrderMessage original_message("123", std::move(order), test_helper::getReducedGameStatePtr(4));
 
     std::string json = original_message.toJson();

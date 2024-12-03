@@ -28,18 +28,18 @@ namespace shared
         } else if ( type == "choose_from_hand" || type == "choose_from_staged" ) {
             unsigned int min_cards;
             unsigned int max_cards;
-            shared::ChooseFrom::AllowedChoice allowed_choices;
+            shared::ChooseFromOrder::AllowedChoice allowed_choices;
 
             GET_UINT_MEMBER(min_cards, json, "min_cards");
             GET_UINT_MEMBER(max_cards, json, "max_cards");
-            GET_ENUM_MEMBER(allowed_choices, json, "allowed_choices", shared::ChooseFrom::AllowedChoice);
+            GET_ENUM_MEMBER(allowed_choices, json, "allowed_choices", shared::ChooseFromOrder::AllowedChoice);
 
             if ( type == "choose_from_hand" ) {
-                return std::make_unique<ChooseFromHand>(min_cards, max_cards, allowed_choices);
+                return std::make_unique<ChooseFromHandOrder>(min_cards, max_cards, allowed_choices);
             } else if ( type == "choose_from_staged" ) {
                 std::vector<shared::CardBase::id_t> cards;
                 GET_STRING_ARRAY_MEMBER(cards, json, "cards");
-                return std::make_unique<ChooseFromStaged>(min_cards, max_cards, allowed_choices, cards);
+                return std::make_unique<ChooseFromStagedOrder>(min_cards, max_cards, allowed_choices, cards);
             } else {
                 return nullptr;
             }
@@ -60,17 +60,17 @@ namespace shared
             doc.AddMember("type", "gain_card", doc.GetAllocator());
             ADD_UINT_MEMBER(dynamic_cast<const GainFromBoard *>(this)->max_cost, max_cost);
             ADD_ENUM_MEMBER(dynamic_cast<const GainFromBoard *>(this)->allowed_type, allowed_type);
-        } else if ( typeid(*this) == typeid(ChooseFromHand) ) {
+        } else if ( typeid(*this) == typeid(ChooseFromHandOrder) ) {
             doc.AddMember("type", "choose_from_hand", doc.GetAllocator());
-            ADD_UINT_MEMBER(dynamic_cast<const ChooseFromHand *>(this)->min_cards, min_cards);
-            ADD_UINT_MEMBER(dynamic_cast<const ChooseFromHand *>(this)->max_cards, max_cards);
-            ADD_ENUM_MEMBER(dynamic_cast<const ChooseFromHand *>(this)->allowed_choices, allowed_choices);
-        } else if ( typeid(*this) == typeid(ChooseFromStaged) ) {
+            ADD_UINT_MEMBER(dynamic_cast<const ChooseFromHandOrder *>(this)->min_cards, min_cards);
+            ADD_UINT_MEMBER(dynamic_cast<const ChooseFromHandOrder *>(this)->max_cards, max_cards);
+            ADD_ENUM_MEMBER(dynamic_cast<const ChooseFromHandOrder *>(this)->allowed_choices, allowed_choices);
+        } else if ( typeid(*this) == typeid(ChooseFromStagedOrder) ) {
             doc.AddMember("type", "choose_from_staged", doc.GetAllocator());
-            ADD_UINT_MEMBER(dynamic_cast<const ChooseFromStaged *>(this)->min_cards, min_cards);
-            ADD_UINT_MEMBER(dynamic_cast<const ChooseFromStaged *>(this)->max_cards, max_cards);
-            ADD_ENUM_MEMBER(dynamic_cast<const ChooseFromStaged *>(this)->allowed_choices, allowed_choices);
-            ADD_ARRAY_OF_STRINGS_MEMBER(dynamic_cast<const ChooseFromStaged *>(this)->cards, cards);
+            ADD_UINT_MEMBER(dynamic_cast<const ChooseFromStagedOrder *>(this)->min_cards, min_cards);
+            ADD_UINT_MEMBER(dynamic_cast<const ChooseFromStagedOrder *>(this)->max_cards, max_cards);
+            ADD_ENUM_MEMBER(dynamic_cast<const ChooseFromStagedOrder *>(this)->allowed_choices, allowed_choices);
+            ADD_ARRAY_OF_STRINGS_MEMBER(dynamic_cast<const ChooseFromStagedOrder *>(this)->cards, cards);
         }
         return doc;
     }
@@ -115,40 +115,40 @@ namespace shared
         return *this == dynamic_cast<const GainFromBoard &>(other);
     }
 
-    bool ChooseFrom::operator==(const ChooseFrom &other) const
+    bool ChooseFromOrder::operator==(const ChooseFromOrder &other) const
     {
         return min_cards == other.min_cards && max_cards == other.max_cards && allowed_choices == other.allowed_choices;
     }
 
-    bool ChooseFrom::operator!=(const ChooseFrom &other) const { return !ChooseFrom::operator==(other); }
+    bool ChooseFromOrder::operator!=(const ChooseFromOrder &other) const { return !ChooseFromOrder::operator==(other); }
 
-    bool ChooseFrom::equals(const ActionOrder &other) const { return *this == dynamic_cast<const ChooseFrom &>(other); }
+    bool ChooseFromOrder::equals(const ActionOrder &other) const { return *this == dynamic_cast<const ChooseFromOrder &>(other); }
 
 
-    bool ChooseFromStaged::operator==(const ChooseFromStaged &other) const
+    bool ChooseFromStagedOrder::operator==(const ChooseFromStagedOrder &other) const
     {
         return (cards.size() == other.cards.size() && std::equal(cards.begin(), cards.end(), other.cards.begin())) &&
-                ChooseFrom::operator==(other);
+                ChooseFromOrder::operator==(other);
     }
 
-    bool ChooseFromStaged::operator!=(const ChooseFromStaged &other) const
+    bool ChooseFromStagedOrder::operator!=(const ChooseFromStagedOrder &other) const
     {
-        return !ChooseFromStaged::operator==(other);
+        return !ChooseFromStagedOrder::operator==(other);
     }
 
-    bool ChooseFromStaged::equals(const ActionOrder &other) const
+    bool ChooseFromStagedOrder::equals(const ActionOrder &other) const
     {
-        return *this == dynamic_cast<const ChooseFromStaged &>(other);
+        return *this == dynamic_cast<const ChooseFromStagedOrder &>(other);
     }
 
 
-    bool ChooseFromHand::operator==(const ChooseFromHand &other) const { return !ChooseFrom::operator==(other); }
+    bool ChooseFromHandOrder::operator==(const ChooseFromHandOrder &other) const { return !ChooseFromOrder::operator==(other); }
 
-    bool ChooseFromHand::operator!=(const ChooseFromHand &other) const { return !ChooseFromHand::operator==(other); }
+    bool ChooseFromHandOrder::operator!=(const ChooseFromHandOrder &other) const { return !ChooseFromHandOrder::operator==(other); }
 
-    bool ChooseFromHand::equals(const ActionOrder &other) const
+    bool ChooseFromHandOrder::equals(const ActionOrder &other) const
     {
-        return *this == dynamic_cast<const ChooseFromHand &>(other);
+        return *this == dynamic_cast<const ChooseFromHandOrder &>(other);
     }
 
 } // namespace shared

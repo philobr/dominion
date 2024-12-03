@@ -171,7 +171,7 @@ namespace shared
 
 /*
 else if ( GainFromBoard *gain_from_board = dynamic_cast<GainFromBoard *>(action_decision) ) {
-        } else if ( ChooseFromStaged *gain_from_board = dynamic_cast<ChooseFromStaged *>(action_decision) ) {
-        } else if ( ChooseFromHand *gain_from_board = dynamic_cast<ChooseFromHand *>(action_decision) ) {
+        } else if ( ChooseFromStagedOrder *gain_from_board = dynamic_cast<ChooseFromStagedOrder *>(action_decision) ) {
+        } else if ( ChooseFromHandOrder *gain_from_board = dynamic_cast<ChooseFromHandOrder *>(action_decision) ) {
         }
 */

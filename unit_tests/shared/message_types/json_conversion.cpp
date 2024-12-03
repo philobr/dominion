@@ -277,7 +277,7 @@ TEST(SharedLibraryTest, ActionDecisionMessageTwoWayConversionEndTurn)
 
 TEST(SharedLibraryTest, ActionDecisionMessageTwoWayConversionChooseNCardsFromHand)
 {
-    std::unique_ptr<ActionDecision> decision = std::make_unique<BoardChoiceDecision>("a_card");
+    std::unique_ptr<ActionDecision> decision = std::make_unique<GainFromBoardDecision>("a_card");
     ActionDecisionMessage original_message("123", "player1", std::move(decision));
 
     std::string json = original_message.toJson();

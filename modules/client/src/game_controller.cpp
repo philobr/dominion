@@ -37,8 +37,9 @@ namespace client
         } else {
 
             // send request to join game
-            shared::CreateLobbyRequestMessage request(input.lobby_name, input.player_name);
-            sendRequest(request.toJson());
+            std::unique_ptr<shared::CreateLobbyRequestMessage> request =
+                    std::make_unique<shared::CreateLobbyRequestMessage>(input.lobby_name, input.player_name);
+            sendRequest(std::move(request));
 
             _gameName = input.lobby_name;
             _playerName = input.player_name;
@@ -62,8 +63,9 @@ namespace client
 
         _clientNetworkManager->init(input.host, input.port);
 
-        shared::JoinLobbyRequestMessage request(input.lobby_name, input.player_name);
-        sendRequest(request.toJson());
+        std::unique_ptr<shared::JoinLobbyRequestMessage> request =
+                std::make_unique<shared::JoinLobbyRequestMessage>(input.lobby_name, input.player_name);
+        sendRequest(std::move(request));
 
         _gameName = input.lobby_name;
         _playerName = input.player_name;
@@ -76,8 +78,9 @@ namespace client
         std::vector<shared::CardBase::id_t> selectedCards{"Estate",       "Smithy",      "Village",      "Laboratory",
                                                           "Festival",     "Market",      "Placeholder1", "Placeholder2",
                                                           "Placeholder3", "Placeholder4"};
-        shared::StartGameRequestMessage msg = shared::StartGameRequestMessage(_gameName, _playerName, selectedCards);
-        sendRequest(msg.toJson());
+        std::unique_ptr<shared::StartGameRequestMessage> msg =
+                std::make_unique<shared::StartGameRequestMessage>(_gameName, _playerName, selectedCards);
+        sendRequest(std::move(msg));
     }
 
 
@@ -94,7 +97,7 @@ namespace client
                 std::make_unique<shared::ActionDecisionMessage>(_gameName, getPlayerName(), std::move(decision),
                                                                 in_response_to);
 
-        _clientNetworkManager->sendRequest(action_decision_message->toJson());
+        _clientNetworkManager->sendRequest(std::move(action_decision_message));
     }
 
     void GameController::playCard(const std::string &card_id)
@@ -110,7 +113,7 @@ namespace client
                 std::make_unique<shared::ActionDecisionMessage>(_gameName, getPlayerName(), std::move(decision),
                                                                 in_response_to);
 
-        _clientNetworkManager->sendRequest(action_decision_message->toJson());
+        _clientNetworkManager->sendRequest(std::move(action_decision_message));
     }
 
     void GameController::endActionPhase()
@@ -126,7 +129,7 @@ namespace client
                 std::make_unique<shared::ActionDecisionMessage>(_gameName, getPlayerName(), std::move(decision),
                                                                 in_response_to);
 
-        _clientNetworkManager->sendRequest(action_decision_message->toJson());
+        _clientNetworkManager->sendRequest(std::move(action_decision_message));
     }
 
     void GameController::endTurn()
@@ -142,10 +145,13 @@ namespace client
                 std::make_unique<shared::ActionDecisionMessage>(_gameName, getPlayerName(), std::move(decision),
                                                                 in_response_to);
 
-        _clientNetworkManager->sendRequest(action_decision_message->toJson());
+        _clientNetworkManager->sendRequest(std::move(action_decision_message));
     }
 
-    void GameController::sendRequest(const std::string &req) { _clientNetworkManager->sendRequest(req); }
+    void GameController::sendRequest(std::unique_ptr<shared::ClientToServerMessage> req)
+    {
+        _clientNetworkManager->sendRequest(std::move(req));
+    }
 
     void GameController::receiveActionOrderMessage(std::unique_ptr<shared::ActionOrderMessage> /*msg*/)
     {

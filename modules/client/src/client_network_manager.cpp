@@ -79,7 +79,7 @@ bool ClientNetworkManager::connect(const std::string &host, const uint16_t port)
 }
 
 
-void ClientNetworkManager::sendRequest(const std::string message)
+void ClientNetworkManager::sendRequest(std::unique_ptr<shared::ClientToServerMessage> req)
 {
     // wait until network is connected (max. 5 seconds)
     int connectionCheckCounter = 0;
@@ -97,6 +97,9 @@ void ClientNetworkManager::sendRequest(const std::string message)
 
     if ( ClientNetworkManager::_connectionSuccess && ClientNetworkManager::_connection->is_connected() ) {
         LOG(INFO) << "Connected to server";
+
+        // convert message to json
+        std::string message = req->toJson();
 
         // turn message into stream and prepend message length
         std::stringstream messageStream;

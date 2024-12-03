@@ -14,7 +14,7 @@ namespace client
             case ControllerEventType::SHOW_LOBBY_SCREEN:
                 os << "ShowLobbyScreen";
                 break;
-            case ControllerEventType::SHOW_MAIN_GAME_SCREEN:
+            case ControllerEventType::SHOW_GAME_SCREEN:
                 os << "ShowMainGameScreen";
                 break;
             case ControllerEventType::SHOW_VICTORY_SCREEN:
@@ -28,12 +28,35 @@ namespace client
         return os;
     }
 
-    ShowErrorEventData::ShowErrorEventData(const std::string message) : message(message) {}
+    ShowErrorEventData::ShowErrorEventData(std::string title, std::string message) :
+        title(std::move(title)), message(std::move(message))
+    {}
+    ShowLobbyScreenEventData::ShowLobbyScreenEventData(std::vector<reduced::Player::id_t> players,
+                                                       bool is_game_master) :
+        players(std::move(players)),
+        is_game_master(is_game_master)
+    {}
 
-    ControllerEvent ControllerEvent::showError(const std::string message)
+    ControllerEvent *ControllerEvent::showError(std::string title, std::string message)
     {
-        ShowErrorEventData data(message);
-        return ControllerEvent(ControllerEventType::SHOW_ERROR, data);
+        ShowErrorEventData data(std::move(title), std::move(message));
+        return new ControllerEvent(ControllerEventType::SHOW_ERROR, data);
+    }
+
+    ControllerEvent *ControllerEvent::showLobbyScreen(std::vector<reduced::Player::id_t> players, bool is_game_master)
+    {
+        ShowLobbyScreenEventData data(std::move(players), is_game_master);
+        return new ControllerEvent(ControllerEventType::SHOW_LOBBY_SCREEN, data);
+    }
+
+    ControllerEvent *ControllerEvent::showGameScreen()
+    {
+        return new ControllerEvent(ControllerEventType::SHOW_GAME_SCREEN, std::any());
+    }
+
+    ControllerEvent *ControllerEvent::showVictoryScreen()
+    {
+        return new ControllerEvent(ControllerEventType::SHOW_VICTORY_SCREEN, std::any());
     }
 
     ControllerEvent::ControllerEvent(ControllerEventType type, std::any data) :

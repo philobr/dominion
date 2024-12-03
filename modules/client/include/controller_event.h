@@ -3,6 +3,8 @@
 
 #include <any>
 #include <memory>
+#include <shared/game/game_state/player_base.h>
+#include <shared/game/reduced/player.h>
 #include <shared/utils/logger.h>
 #include <string>
 #include <vector>
@@ -16,7 +18,7 @@ namespace client
     {
         SHOW_ERROR,
         SHOW_LOBBY_SCREEN,
-        SHOW_MAIN_GAME_SCREEN,
+        SHOW_GAME_SCREEN,
         SHOW_VICTORY_SCREEN
     };
 
@@ -25,13 +27,17 @@ namespace client
     struct ShowErrorEventData
     {
     public:
-        ShowErrorEventData(const std::string message);
+        ShowErrorEventData(std::string title, std::string message);
 
+        std::string title;
         std::string message;
     };
 
     struct ShowLobbyScreenEventData
     {
+    public:
+        ShowLobbyScreenEventData(std::vector<std::string> players, bool is_game_master);
+
         std::vector<std::string> players;
         bool is_game_master;
     };
@@ -39,10 +45,10 @@ namespace client
     class ControllerEvent : public wxThreadEvent
     {
     public:
-        static ControllerEvent showError(const std::string message);
-        static ControllerEvent showLobbyScreen(const std::vector<std::string> players, const bool is_game_master);
-        static ControllerEvent showMainGameScreen();
-        static ControllerEvent showVictoryScreen();
+        static ControllerEvent *showError(const std::string title, const std::string message);
+        static ControllerEvent *showLobbyScreen(const std::vector<std::string> players, const bool is_game_master);
+        static ControllerEvent *showGameScreen();
+        static ControllerEvent *showVictoryScreen();
 
         ControllerEvent(ControllerEventType type, std::any data = {});
 

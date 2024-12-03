@@ -18,24 +18,43 @@ namespace server
         return std::static_pointer_cast<shared::Board>(shared_from_this());
     }
 
-    bool ServerBoard::buy(const shared::CardBase::id_t &key)
+    void ServerBoard::tryBuy(const shared::CardBase::id_t &card_id)
     {
-        // helper to search the card in each pile
-        auto buy_card = [key](auto &pile_vector) -> bool
-        {
-            return std::any_of(pile_vector.begin(), pile_vector.end(),
-                               [key](auto &card_pile)
-                               {
-                                   if ( card_pile.card_id != key || card_pile.count == 0 ) {
-                                       return false;
-                                   }
+        if ( !has(card_id) ) {
+            LOG(WARN) << "tried to buy card: " << card_id << " but its not available";
+            throw exception::CardNotAvailable();
+        }
 
-                                   --card_pile.count;
-                                   return true;
-                               });
+        buy(card_id);
+    }
+
+    bool ServerBoard::has(const shared::CardBase::id_t &card_id)
+    {
+        auto has_card = [card_id](const auto &pile)
+        {
+            if ( pile.find(card_id) != pile.end() ) {
+                return pile.find(card_id)->count > 0;
+            }
+            return false;
         };
 
-        return buy_card(treasure_cards) || buy_card(victory_cards) || buy_card(kingdom_cards);
+        return (curse_card_pile.card_id == card_id && curse_card_pile.count > 0) || has_card(treasure_cards) ||
+                has_card(victory_cards) || has_card(kingdom_cards);
+    }
+
+    void ServerBoard::buy(const shared::CardBase::id_t &card_id)
+    {
+        // helper to search the card in each pile
+        auto buy_card = [card_id](auto &card_piles) -> bool
+        {
+            if ( card_piles.find(card_id) != card_piles.end() ) {
+                --card_piles.find(card_id)->count;
+            }
+        };
+
+        buy_card(treasure_cards);
+        buy_card(victory_cards);
+        buy_card(kingdom_cards);
     }
 
     void ServerBoard::trashCard(const shared::CardBase::id_t &card) { this->trash.push_back(card); }

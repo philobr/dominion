@@ -4,6 +4,8 @@
 
 #include <shared/game/game_state/board_base.h>
 #include <shared/utils/assert.h>
+#include <shared/utils/logger.h>
+
 namespace server
 {
 
@@ -31,10 +33,26 @@ namespace server
         /**
          * @brief Returns the reduced representation of the board (exactly the same as this one, but with less
          * functions)
-         *
-         * @return shared::Board::ptr_t
          */
         shared::Board::ptr_t getReduced();
+
+        /**
+         * @brief Throws if the card_id one wants to buy is not available.
+         */
+        void tryBuy(const shared::CardBase::id_t &card_id);
+
+        bool has(const shared::CardBase::id_t &card_id);
+
+        /**
+         * @brief Adds the card_id to the trash
+         */
+        void trashCard(const shared::CardBase::id_t &card_id);
+
+    protected:
+        /**
+         * @brief Construct a new Server Board object. This is protected to make testing easier and to enforce the use
+         */
+        ServerBoard(const std::vector<shared::CardBase::id_t> &kingdom_cards, size_t player_count);
 
         /**
          * @brief Tries to buy a card based on id.
@@ -43,23 +61,7 @@ namespace server
          * @return true successfully bought the card
          * @return false card_id can not be bought
          */
-        bool buy(const shared::CardBase::id_t &card_id);
-
-        /**
-         * @brief Adds the card_id to the trash
-         * @param card
-         */
-        void trashCard(const shared::CardBase::id_t &card_id);
-
-    protected:
-        /**
-         * @brief Construct a new Server Board object. This is protected to make testing easier and to enforce the use
-         * of shared_ptr
-         *
-         * @param kingdom_cards
-         * @param player_count
-         */
-        ServerBoard(const std::vector<shared::CardBase::id_t> &kingdom_cards, size_t player_count);
+        void buy(const shared::CardBase::id_t &card_id);
     };
 
 } // namespace server

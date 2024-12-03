@@ -1,7 +1,7 @@
 #pragma once
 
 #include <client_network_manager.h>
-#include <gui.h>
+#include <gui_event_receiver.h>
 #include <shared/game/game_state/player_base.h>
 #include <windows/game_window.h>
 
@@ -25,9 +25,8 @@ namespace client
     public:
         /**
          * @brief Initialize the game controller
-         * @param gameWindow The main window of the game
          */
-        GameController(GameWindow *game_window);
+        GameController(GuiEventReceiver *event_receiver);
 
         /**
          * @brief Destroy the game controller
@@ -78,7 +77,7 @@ namespace client
 
         shared::PlayerBase::id_t getPlayerName();
 
-        std::unique_ptr<Gui> _gui;
+        std::unique_ptr<GuiEventReceiver> _guiEventReceiver;
 
         ClientNetworkManager *_clientNetworkManager;
 

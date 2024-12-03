@@ -3,6 +3,7 @@
 #include <execinfo.h>
 #include <signal.h>
 
+#include <gui_event_receiver.h>
 #include <shared/utils/logger.h>
 #include <wx/cmdline.h>
 #include "game_controller.h"
@@ -81,7 +82,9 @@ namespace client
         );
         gameWindow->Show(true);
 
-        _controller = std::make_unique<GameController>(gameWindow);
+        Gui *gui = new Gui(gameWindow);
+        GuiEventReceiver *eventReceiver = new GuiEventReceiver(gui);
+        _controller = std::make_unique<GameController>(eventReceiver);
 
         return true;
     }

@@ -205,6 +205,22 @@ namespace client
                     _clientState = ClientState::LOGIN_SCREEN;
                 }
                 break;
+            case ClientState::CREATING_LOBBY:
+                if ( msg->success ) {
+                    LOG(DEBUG) << "Successfully created lobby";
+                    gui.showLobbyScreen({_playerName}, true);
+                    _clientState = ClientState::IN_LOBBY;
+                } else {
+                    LOG(DEBUG) << "Failed to create lobby";
+                    if ( msg->additional_information.has_value() ) {
+                        gui.showError("Failed to create lobby", msg->additional_information.value());
+                    } else {
+                        gui.showError("Failed to create lobby", "");
+                    }
+                    LOG(INFO) << "Returning to login screen";
+                    _clientState = ClientState::LOGIN_SCREEN;
+                }
+                break;
             case ClientState::IN_LOBBY:
                 if ( msg->success ) {
                     LOG(ERROR) << "Received ResultResponseMessage(success) while in lobby screen";

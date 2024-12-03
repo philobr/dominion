@@ -41,6 +41,7 @@ namespace client
         outersizer->Add(DiscardPilePanel, 0, wxTOP, 5);
 
         this->SetSizer(outersizer);
+        this->Layout();
     }
 
     void PlayerPanel::makePlayable(ImagePanel *image, const std::string &card_id)

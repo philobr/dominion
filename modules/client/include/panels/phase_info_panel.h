@@ -6,7 +6,6 @@
 
 #include <vector>
 #include <wx/wx.h>
-#include <dominion.h>
 
 namespace client
 {
@@ -25,7 +24,10 @@ namespace client
 
         TextPanel* drawPlayerInfo(const std::unique_ptr<reduced::Player>& player);
 
-        wxPanel* drawPlayedPanel(std::vector<shared::CardBase::id_t> played_cards, const size_t card_width_borders);
+        wxPanel* drawPlayedPanel(std::vector<shared::CardBase::id_t> played_cards);
+
+        wxButton* getEndActionButton();
+        wxButton* getEndTurnButton();
     };
 
 } // namespace client

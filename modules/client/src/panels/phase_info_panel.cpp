@@ -1,6 +1,7 @@
 #include <panels/phase_info_panel.h>
 #include <shared/utils/logger.h>
 
+#include <dominion.h>
 
 namespace client
 {
@@ -22,35 +23,31 @@ namespace client
         this->DestroyChildren();
 
         // Create vertical BoxSizer
-        auto* sizer = new wxBoxSizer(wxVERTICAL);
+        auto* sizer = new wxBoxSizer(wxHORIZONTAL);
 
         // Add player info to the sizer
         auto* infoPanel = drawPlayerInfo(game_state.reduced_player);
-        sizer->Add(infoPanel, 0, wxALL, 5);
+
+        // Add played cards to the sizer
+        auto* playedPanel = drawPlayedPanel(game_state.reduced_player->getPlayedCards());
 
         //Create End Action Phase Button
-        wxButton *endActionPhaseButton =
-                new wxButton(this, wxID_ANY, "End Action Phase", wxDefaultPosition, wxSize(100, 40));
-        endActionPhaseButton->Bind(
-                wxEVT_BUTTON, [](const wxCommandEvent & /*event*/) { wxGetApp().getController().endActionPhase(); });
+        wxButton* endActionPhaseButton = getEndActionButton();
 
         //Create End Turn Button
-        wxButton *endTurnButton =
-                new wxButton(this, wxID_ANY, "End Turn", wxDefaultPosition, wxSize(100, 40));
-        endTurnButton->Bind(
-                wxEVT_BUTTON, [](const wxCommandEvent & /*event*/) { wxGetApp().getController().endTurn(); });
+        wxButton* endTurnButton = getEndTurnButton();
 
+        // Add the panels to the sizer
+        sizer->Add(infoPanel, 0, wxALL, 5);
+        sizer->Add(playedPanel, 4, wxALL, 5);
+        sizer->Add(endActionPhaseButton, 0, wxALL, 10);
+        sizer->Add(endTurnButton, 0, wxALL, 10);
 
-        sizer->Add(endActionPhaseButton, 0, wxALIGN_RIGHT | wxALL, 10);
-        sizer->Add(endTurnButton, 0, wxALIGN_RIGHT | wxALL, 10);
-
-
-        //
         // Set minimum width for the info bar
         SetMinSize(wxSize(150, -1));  // 150 pixels wide, height automatic
 
         this->SetSizer(sizer);
-        sizer->Layout();
+        this->Layout();
     }
 
     TextPanel* PhaseInfoPanel::drawPlayerInfo(const std::unique_ptr<reduced::Player>& player)
@@ -66,7 +63,7 @@ namespace client
         return new TextPanel(this, wxID_ANY, info);
     }
 
-    wxPanel* PhaseInfoPanel::drawPlayedPanel(const std::vector<shared::CardBase::id_t> cards, const size_t card_width_borders)
+    wxPanel* PhaseInfoPanel::drawPlayedPanel(const std::vector<shared::CardBase::id_t> cards)
     {
         // Get the hand cards
         size_t cards_size = cards.size();
@@ -98,6 +95,24 @@ namespace client
             sizer->Add(card, 0, wxALIGN_CENTER, 4);
         }
         return hand;
+    }
+
+    wxButton* PhaseInfoPanel::getEndActionButton()
+    {
+        wxButton* endActionPhaseButton =
+            new wxButton(this, wxID_ANY, "End Action", wxDefaultPosition, wxSize(100, 40));
+        endActionPhaseButton->Bind(
+            wxEVT_BUTTON, [](const wxCommandEvent& /*event*/) { wxGetApp().getController().endActionPhase(); });
+        return endActionPhaseButton;
+    }
+
+    wxButton* PhaseInfoPanel::getEndTurnButton()
+    {
+        wxButton* endTurnButton =
+            new wxButton(this, wxID_ANY, "End Turn", wxDefaultPosition, wxSize(100, 40));
+        endTurnButton->Bind(
+            wxEVT_BUTTON, [](const wxCommandEvent& /*event*/) { wxGetApp().getController().endTurn(); });
+        return endTurnButton;
     }
 } // namespace client
 

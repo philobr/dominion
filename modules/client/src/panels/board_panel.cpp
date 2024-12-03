@@ -102,8 +102,9 @@ namespace client
 
         // necessary command for the grid bag sizer to do it's thing and arrange
         // the panels
-        sizer->Layout();
         this->SetSizer(sizer, true);
+        sizer->Layout();
+
     }
 
     void BoardPanel::makeBuyable(PilePanel *pile)

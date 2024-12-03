@@ -127,7 +127,7 @@ namespace shared
         ChooseFromOrder(unsigned int min_cards, unsigned int max_cards, AllowedChoice allowed_choices) :
             min_cards(min_cards), max_cards(max_cards), allowed_choices(allowed_choices)
         {}
-        ~ChooseFromOrder() = default;
+        ~ChooseFromOrder() override = default;
 
         bool operator==(const ChooseFromOrder &other) const;
         bool operator!=(const ChooseFromOrder &other) const;
@@ -149,7 +149,7 @@ namespace shared
             cards(cards)
         {}
 
-        ~ChooseFromStagedOrder() = default;
+        ~ChooseFromStagedOrder() override = default;
 
         bool operator==(const ChooseFromStagedOrder &other) const;
         bool operator!=(const ChooseFromStagedOrder &other) const;
@@ -166,7 +166,7 @@ namespace shared
         ChooseFromHandOrder(unsigned int min_cards, unsigned int max_cards, AllowedChoice choices) :
             ChooseFromOrder(min_cards, max_cards, choices)
         {}
-        ~ChooseFromHandOrder() = default;
+        ~ChooseFromHandOrder() override = default;
 
         bool operator==(const ChooseFromHandOrder &other) const;
         bool operator!=(const ChooseFromHandOrder &other) const;

@@ -90,8 +90,7 @@ namespace server
     }
 
 
-    void GameState::tryPlay(const Player::id_t &affected_player, const shared::CardBase::id_t &card_id,
-                            shared::CardAccess from)
+    void GameState::tryPlayFromHand(const Player::id_t &affected_player, const shared::CardBase::id_t &card_id)
     {
         /*
         1. is phase correct?
@@ -120,20 +119,14 @@ namespace server
             throw exception::InvalidCardType("");
         }
 
-        if ( from == shared::CardAccess::HAND && !player.hasCardInHand(card_id) ) {
+        if ( !player.hasCardInHand(card_id) ) {
             LOG(ERROR) << "tried to play card with id: " << card_id << " from hand, but card is not in hand";
             throw exception::InvalidCardAccess("card is not in hand");
-        } else if ( from == shared::CardAccess::STAGED_CARDS && !player.hasCardStaged(card_id) ) {
-            LOG(ERROR) << "tried to play card with id: " << card_id << " from staged cards, but card is not in hand";
-            throw exception::InvalidCardAccess("card is not staged");
         }
 
-        if ( from == shared::CardAccess::HAND ) {
-            player.playCardFromHand(card_id);
-        } else if ( from == shared::CardAccess::STAGED_CARDS ) {
-            player.playCardFromStaged(card_id);
-        }
+        player.playCardFromHand(card_id);
 
+        board->getPlayedCards().push_back(card_id);
         player.decActions();
     }
 
@@ -142,6 +135,8 @@ namespace server
         getCurrentPlayer().endTurn();
         switchPlayer();
         resetPhase();
+
+        board->getPlayedCards().clear();
 
         if ( isGameOver() ) {
             endGame();

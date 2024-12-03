@@ -22,13 +22,8 @@ namespace server
         std::vector<shared::CardBase::id_t> discard_pile;
         std::vector<shared::CardBase::id_t> hand_cards;
 
-        // TODO: move this inside the playerbase class? (does this help gui people?)
-        std::vector<shared::CardBase::id_t> played_cards; // TODO: move this to base player
-        std::vector<shared::CardBase::id_t> staged_cards; // TODO: move this to base player
-
-        // TODO: this is ugly, rename or smth
-        shared::CardBase::id_t currently_playing_card;
-        size_t current_behaviour_idx;
+        std::vector<shared::CardBase::id_t> played_cards;
+        std::vector<shared::CardBase::id_t> staged_cards;
 
     public:
         using id_t = shared::PlayerBase::id_t;
@@ -47,12 +42,8 @@ namespace server
          */
         Player(const Player &other) :
             shared::PlayerBase(other), draw_pile(other.draw_pile), discard_pile(other.discard_pile),
-            hand_cards(other.hand_cards), played_cards(other.played_cards),
-            currently_playing_card(other.currently_playing_card), current_behaviour_idx(other.current_behaviour_idx)
+            hand_cards(other.hand_cards), played_cards(other.played_cards)
         {}
-
-        bool isCurrentlyPlayingCard() const { return !currently_playing_card.empty(); }
-        void setCurrentlyPlayingCard(const shared::CardBase::id_t &card_id) { currently_playing_card = card_id; }
 
         reduced::Player::ptr_t getReducedPlayer();
         reduced::Enemy::ptr_t getReducedEnemy();

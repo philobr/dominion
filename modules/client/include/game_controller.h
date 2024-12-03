@@ -1,7 +1,7 @@
 #pragma once
 
 #include <client_network_manager.h>
-#include <gui.h>
+#include <gui_event_receiver.h>
 #include <shared/game/game_state/player_base.h>
 #include <windows/game_window.h>
 
@@ -16,6 +16,7 @@ namespace client
         CREATING_LOBBY,
         JOINING_LOBBY,
         IN_LOBBY,
+        STARTING_GAME,
         IN_GAME
     };
 
@@ -25,9 +26,8 @@ namespace client
     public:
         /**
          * @brief Initialize the game controller
-         * @param gameWindow The main window of the game
          */
-        GameController(GameWindow *game_window);
+        GameController(GuiEventReceiver *event_receiver);
 
         /**
          * @brief Destroy the game controller
@@ -68,6 +68,13 @@ namespace client
         // TODO: This is for testing purposes only and will be removed later
         void skipToGamePanel();
 
+        void showError(const std::string &title, const std::string &message)
+        {
+            _guiEventReceiver->getGui().showError(title, message);
+        }
+
+        void showStatus(const std::string &message) { _guiEventReceiver->getGui().showStatus(message); }
+
     private:
         void receiveActionOrderMessage(std::unique_ptr<shared::ActionOrderMessage> msg);
         void receiveCreateLobbyResponseMessage(std::unique_ptr<shared::CreateLobbyResponseMessage> msg);
@@ -78,11 +85,12 @@ namespace client
 
         shared::PlayerBase::id_t getPlayerName();
 
-        std::unique_ptr<Gui> _gui;
+        std::unique_ptr<GuiEventReceiver> _guiEventReceiver;
 
         ClientNetworkManager *_clientNetworkManager;
 
         ClientState _clientState;
+        size_t _numPlayers;
         std::unique_ptr<reduced::GameState> _gameState;
         shared::PlayerBase::id_t _playerName;
         std::string _gameName;

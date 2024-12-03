@@ -11,20 +11,20 @@ using namespace shared;
 
 namespace client
 {
-    GameController::GameController(GameWindow *game_window) : _clientState(ClientState::LOGIN_SCREEN)
-    {
-        _gui = std::make_unique<Gui>(game_window);
-    }
+    GameController::GameController(GuiEventReceiver *event_receiver) :
+        _guiEventReceiver(event_receiver), _clientState(ClientState::LOGIN_SCREEN)
+    {}
 
     void GameController::createLobby()
     {
+        Gui &gui = _guiEventReceiver->getGui();
         if ( _clientState != ClientState::LOGIN_SCREEN ) {
-            _gui->showError("Error", "Tried to create lobby while not in login screen");
+            gui.showError("Error", "Tried to create lobby while not in login screen");
             return;
         }
 
         ConnectionForm input;
-        if ( !_gui->getConnectionForm(input) ) {
+        if ( !gui.getConnectionForm(input) ) {
             return;
         }
 
@@ -49,13 +49,14 @@ namespace client
 
     void GameController::joinLobby()
     {
+        Gui &gui = _guiEventReceiver->getGui();
         if ( _clientState != ClientState::LOGIN_SCREEN ) {
-            _gui->showError("Error", "Tried to join lobby while not in login screen");
+            gui.showError("Error", "Tried to join lobby while not in login screen");
             return;
         }
 
         ConnectionForm input;
-        if ( !_gui->getConnectionForm(input) ) {
+        if ( !gui.getConnectionForm(input) ) {
             return;
         }
 
@@ -74,13 +75,21 @@ namespace client
 
     void GameController::startGame()
     {
+        if ( _numPlayers < shared::board_config::MIN_PLAYER_COUNT ||
+             _numPlayers > shared::board_config::MAX_PLAYER_COUNT ) {
+            LOG(DEBUG) << "Invalid number of players ( " << _numPlayers << " ) to start game";
+            _guiEventReceiver->getGui().showError("Error", "Invalid number of players");
+            return;
+        }
         LOG(DEBUG) << "Starting game";
+        // TODO Implement card selection
         std::vector<shared::CardBase::id_t> selectedCards{"Estate",       "Smithy",      "Village",      "Laboratory",
                                                           "Festival",     "Market",      "Placeholder1", "Placeholder2",
                                                           "Placeholder3", "Placeholder4"};
         std::unique_ptr<shared::StartGameRequestMessage> msg =
                 std::make_unique<shared::StartGameRequestMessage>(_gameName, _playerName, selectedCards);
         sendRequest(std::move(msg));
+        _clientState = ClientState::STARTING_GAME;
     }
 
 
@@ -161,21 +170,28 @@ namespace client
 
     void GameController::receiveCreateLobbyResponseMessage(std::unique_ptr<shared::CreateLobbyResponseMessage> /*msg*/)
     {
+        if ( _clientState != ClientState::CREATING_LOBBY ) {
+            LOG(ERROR) << "Received unexpected CreateLobbyResponseMessage";
+            return;
+        }
         LOG(DEBUG) << "Successfully created lobby";
         std::vector<reduced::Player::id_t> players = {_playerName};
-        _gui->showLobbyScreen(players, true);
+        _numPlayers = 1;
+        _guiEventReceiver->getGui().showLobbyScreen(players, true);
     }
 
     void GameController::receiveJoinLobbyBroadcastMessage(std::unique_ptr<shared::JoinLobbyBroadcastMessage> msg)
     {
         LOG(DEBUG) << "Successfully joined lobby";
         LOG(DEBUG) << "Player " << msg->players.back() << " joined the lobby";
-        _gui->showLobbyScreen(msg->players, false);
+        _guiEventReceiver->getGui().showLobbyScreen(msg->players, false);
+        _numPlayers = msg->players.size();
         _clientState = ClientState::IN_LOBBY;
     }
 
     void GameController::receiveResultResponseMessage(std::unique_ptr<shared::ResultResponseMessage> msg)
     {
+        Gui &gui = _guiEventReceiver->getGui();
         switch ( _clientState ) {
             case ClientState::LOGIN_SCREEN:
                 LOG(WARN) << "Received unexpected ResultResponseMessage while in login screen";
@@ -186,9 +202,9 @@ namespace client
                 } else {
                     LOG(DEBUG) << "Failed to join lobby";
                     if ( msg->additional_information.has_value() ) {
-                        _gui->showError("Failed to join lobby", msg->additional_information.value());
+                        gui.showError("Failed to join lobby", msg->additional_information.value());
                     } else {
-                        _gui->showError("Failed to join lobby", "");
+                        gui.showError("Failed to join lobby", "");
                     }
                     LOG(INFO) << "Returning to login screen";
                     _clientState = ClientState::LOGIN_SCREEN;
@@ -197,21 +213,32 @@ namespace client
             case ClientState::CREATING_LOBBY:
                 if ( msg->success ) {
                     LOG(DEBUG) << "Successfully created lobby";
-                    _gui->showLobbyScreen({_playerName}, true);
+                    gui.showLobbyScreen({_playerName}, true);
                     _clientState = ClientState::IN_LOBBY;
                 } else {
                     LOG(DEBUG) << "Failed to create lobby";
                     if ( msg->additional_information.has_value() ) {
-                        _gui->showError("Failed to create lobby", msg->additional_information.value());
+                        gui.showError("Failed to create lobby", msg->additional_information.value());
                     } else {
-                        _gui->showError("Failed to create lobby", "");
+                        gui.showError("Failed to create lobby", "");
                     }
                     LOG(INFO) << "Returning to login screen";
                     _clientState = ClientState::LOGIN_SCREEN;
                 }
                 break;
+            case ClientState::STARTING_GAME:
+                if ( msg->success ) {
+                    LOG(ERROR) << "Received ResultResponseMessage(success) while starting game";
+                    return;
+                } else {
+                    LOG(DEBUG) << "Failed to start game";
+                    gui.showError("Failed to start game, error: ", msg->additional_information.value_or(""));
+                    LOG(INFO) << "Returning to lobby screen";
+                    _clientState = ClientState::IN_LOBBY;
+                }
+                break;
             case ClientState::IN_LOBBY:
-                LOG(WARN) << "Received unexpected ResultResponseMessage while in lobby";
+                LOG(WARN) << "Received unexpected ResultResponseMessage while in lobby screen";
                 break;
             case ClientState::IN_GAME:
                 LOG(WARN) << "Received unexpected ResultResponseMessage while in running game";
@@ -226,13 +253,14 @@ namespace client
     {
         LOG(INFO) << "Received GameStateMessage, updating game state";
         _gameState = std::move(msg->game_state);
-        _gui->drawGameState(*_gameState);
+        _guiEventReceiver->getGui().drawGameState(*_gameState);
     }
 
     void GameController::receiveStartGameBroadcastMessage(std::unique_ptr<shared::StartGameBroadcastMessage> /*msg*/)
     {
         LOG(DEBUG) << "Starting game";
-        _gui->showMainGameScreen();
+        _clientState = ClientState::IN_GAME;
+        _guiEventReceiver->getGui().showMainGameScreen();
     }
 
     void GameController::receiveMessage(std::unique_ptr<shared::ServerToClientMessage> msg)
@@ -262,13 +290,13 @@ namespace client
     void GameController::skipToVictoryScreen()
     {
         LOG(WARN) << "Skipping to victory screen, this is debug functionality";
-        _gui->showVictoryScreen();
+        _guiEventReceiver->getGui().showVictoryScreen();
     }
 
     void GameController::skipToGamePanel()
     {
         LOG(WARN) << "Skipping to game panel, this is debug functionality";
-        _gui->showMainGameScreen();
+        _guiEventReceiver->getGui().showMainGameScreen();
     }
 
     shared::PlayerBase::id_t GameController::getPlayerName()

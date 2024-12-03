@@ -13,12 +13,6 @@
 
 namespace server
 {
-    class BehaviourBase; // forward declaration
-
-    /**
-     * @brief here we can look up card_ids/behaviour lists.
-     * compiletime is not possible, so we will have to put it in its constructor.
-     */
     class BehaviourRegistry
     {
     public:

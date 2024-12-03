@@ -16,10 +16,6 @@
 
 namespace server
 {
-    class MessageInterface;
-    // forward declaration
-    class ServerBoard;
-
     enum class GamePhase
     {
         ACTION_PHASE,

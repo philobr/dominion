@@ -1,5 +1,7 @@
 #include <panels/phase_info_panel.h>
 #include <shared/utils/logger.h>
+#include <uiElements/formatting_constants.h>
+#include <uiElements/single_card_panel.h>
 
 #include <dominion.h>
 
@@ -9,14 +11,13 @@ namespace client
     {
         LOG(WARN) << "using hard coded game_state for testing";
         auto player = shared::PlayerBase("gigu");
-        auto reduced = reduced::Player::make(player, { "Village", "Copper", "Copper", "Copper", "Estate" });
+        auto reduced = reduced::Player::make(player, { "Village", "Copper", "Copper" });
         auto game_state = std::make_unique<reduced::GameState>(nullptr, std::move(reduced), std::vector<reduced::Enemy::ptr_t>(), "gigu");
 
         // Set background color to light blue
         SetBackgroundColour(wxColour(200, 220, 240));
 
-        // this->drawPlayedPanelTest();
-        this->drawInfoPanel(*game_state);
+        drawInfoPanel(*game_state);
     }
 
     void PhaseInfoPanel::drawInfoPanel(const reduced::GameState& game_state)
@@ -30,7 +31,8 @@ namespace client
         auto* infoPanel = drawPlayerInfo(game_state.reduced_player);
 
         // Add played cards to the sizer
-        auto* playedPanel = drawPlayedPanel(game_state.reduced_player->getPlayedCards());
+        auto* playedPanel = drawPlayedPanelTest();
+        //auto* playedPanel = drawPlayedPanel(game_state.reduced_player->getPlayedCards());
 
         // Add buttons to the sizer
         auto* buttonsPanel = drawButtonPanel();
@@ -99,36 +101,35 @@ namespace client
     wxPanel* PhaseInfoPanel::drawPlayedPanelTest()
     {
         // create a vector of played cards
-        std::vector<shared::CardBase::id_t> cards = { };
+        std::vector<shared::CardBase::id_t> cards = {"Village", "Copper", "Copper", "Estate", "Smithy", "Laboratory", "Festival", "Market"};
         // Get the hand cards
         size_t cards_size = cards.size();
         size_t card_width_borders = played_card_size.GetWidth() + 8;
+        const size_t num_cards = std::min(cards_size, (size_t)5);
 
 
         // Create the hand panel
         wxPanel* hand = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDefaultSize);
 
         // Create the sizer for the hand
-        wxGridSizer* sizer = new wxGridSizer(1, cards_size, 0, 0);
-        sizer->SetMinSize(wxSize(5 * card_width_borders, 150));
+        wxGridSizer* sizer = new wxGridSizer(1, num_cards, 5, 5);
+        sizer->SetMinSize(wxSize(5 * card_width_borders, 150));        
+
+        const size_t start_idx = cards_size - num_cards;
+        // Add the cards to the hand
+        LOG(ERROR) << "start_idx: " << start_idx;
+        LOG(ERROR) << "cards_size: " << cards_size;
+        LOG(ERROR) << "num_cards: " << num_cards;
+        LOG(ERROR) << "max: " << std::max(num_cards, cards_size);
+        for (size_t i = start_idx; i < std::max(num_cards, cards_size); i++) {
+            LOG(WARN) << "i: " << i;
+            SingleCardPanel* card = new SingleCardPanel(hand, cards[i], formatting_constants::DEFAULT_PLAYED_CARD_SIZE);
+
+            sizer->Add(card, 0, wxALL, 4);
+        }
 
         // Set the sizer for the hand panel
         hand->SetSizer(sizer);
-
-        // Set the size of the cards
-        if (card_width_borders * cards_size > 724) {
-            // scale bigger hands
-            played_card_size.SetWidth(724 / cards_size - 8);
-            played_card_size.SetHeight(played_card_size.GetWidth() / 4 * 5);
-        }
-
-        // Add the cards to the hand
-        for (size_t i = 0; i < cards_size; i++) {
-            ImagePanel* card = new ImagePanel(hand, "assets/" + cards[i] + ".png", wxBITMAP_TYPE_PNG, wxDefaultPosition,
-                played_card_size, 0);
-
-            sizer->Add(card, 0, wxALIGN_CENTER, 4);
-        }
         return hand;
     }
 

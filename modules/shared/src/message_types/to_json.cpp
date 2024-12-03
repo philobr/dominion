@@ -93,8 +93,13 @@ namespace shared
     std::string ActionOrderMessage::toJson()
     {
         Document doc = documentFromServerToClientMsg("action_order", *this);
+
         Document order_json = this->order->toJson();
         doc.AddMember("order", order_json, doc.GetAllocator());
+
+        Document game_state_json = this->game_state->toJson();
+        doc.AddMember("game_state", game_state_json, doc.GetAllocator());
+
         ADD_OPTIONAL_STRING_MEMBER(this->description, description);
         return documentToString(doc);
     }
@@ -140,6 +145,8 @@ namespace shared
         } else if ( BuyCardDecision *buy_card = dynamic_cast<BuyCardDecision *>(action_decision) ) {
             ADD_STRING_MEMBER("buy_card", action);
             ADD_STRING_MEMBER(buy_card->card.c_str(), card);
+        } else if ( dynamic_cast<EndActionPhaseDecision *>(action_decision) != nullptr ) {
+            ADD_STRING_MEMBER("end_action_phase", action);
         } else if ( dynamic_cast<EndTurnDecision *>(action_decision) != nullptr ) {
             ADD_STRING_MEMBER("end_turn", action);
         } else if ( ChooseNCardsFromHandDecision *choose_n_cards =

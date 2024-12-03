@@ -28,6 +28,13 @@ namespace shared
         return *this == dynamic_cast<const BuyCardDecision &>(other);
     }
 
+    bool EndActionPhaseDecision::operator==(const EndActionPhaseDecision & /*other*/) const { return true; }
+
+    bool EndActionPhaseDecision::equals(const ActionDecision &other) const
+    {
+        return *this == dynamic_cast<const EndActionPhaseDecision &>(other);
+    }
+
     bool EndTurnDecision::operator==(const EndTurnDecision & /*other*/) const { return true; }
 
     bool EndTurnDecision::equals(const ActionDecision &other) const

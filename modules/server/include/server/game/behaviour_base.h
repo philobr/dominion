@@ -1,41 +1,38 @@
 #pragma once
 #include <server/game/game_state.h>
+#include <server/message/order_response.h>
 #include <shared/message_types.h>
 #include <shared/utils/logger.h>
 
 namespace server
 {
-    enum BehaviourType
+    namespace base
     {
-        NONE,
-        NON_INTERACTIVE = 1,
-        DEMANDS_ACTION = 2,
-        EXPECTS_RESPONSE = 4,
+        class Behaviour
+        {
+        protected:
+            /**
+             * @brief Used to store if a behaviour is finished.
+             * Behaviours can return an empty OrderResponse, but still not be finished, hence this flag.
+             */
+            bool finished_behaviour;
 
-        ORDER_ONLY = NON_INTERACTIVE | DEMANDS_ACTION,
-        INTERACTIVE = DEMANDS_ACTION | EXPECTS_RESPONSE
-    };
+        public:
+            using ret_t = OrderResponse;
+            using action_decision_t = std::optional<std::unique_ptr<shared::ActionDecision>>;
 
-    class BehaviourBase
-    {
-    protected:
-        const BehaviourType behaviour_type;
+            Behaviour() : finished_behaviour(false) {}
+            virtual ~Behaviour() = default;
 
-    public:
-        using ret_t = std::optional<std::unique_ptr<shared::ActionOrder>>;
+            virtual ret_t apply(server::GameState &state, action_decision_t action_decision = std::nullopt) = 0;
 
-        BehaviourBase() : behaviour_type(BehaviourType::NONE) {}
-        BehaviourBase(BehaviourType type) : behaviour_type(type) {}
-        virtual ~BehaviourBase() = default;
-
-        virtual ret_t
-        apply(server::GameState &state,
-              std::optional<std::unique_ptr<shared::ActionDecision>> action_decision = std::nullopt) const = 0;
-
-        // i think we dont even need this
-        bool expectsResponse() const { return (behaviour_type & BehaviourType::EXPECTS_RESPONSE) != 0; }
-    };
-
+            /**
+             * @brief Can be called after a behaviour returns something from apply to check if its done or if there are
+             * more steps.
+             */
+            bool isDone() const { return finished_behaviour; }
+        };
+    } // namespace base
 } // namespace server
 
 #include <server/game/behaviours_impl.hpp>

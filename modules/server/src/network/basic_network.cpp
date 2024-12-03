@@ -54,7 +54,7 @@ namespace server
         {
             std::shared_lock<std::shared_mutex> shared_lock(_rw_lock);
             if ( !isNewPlayer(player_id) ) {
-                LOG(WARN) << "Player with ID " << player_id << " is already registered.";
+                LOG(INFO) << "Player with ID " << player_id << " is already registered.";
                 return;
             }
         }

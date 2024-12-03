@@ -7,6 +7,7 @@
 #include <wx/gdicmn.h>
 #include <wx/sizer.h>
 #include <wx/wx.h>
+#include "dominion.h"
 #include "shared/utils/logger.h"
 #include "uiElements/text_panel.h"
 
@@ -29,12 +30,11 @@ namespace client
         this->SetSizerAndFit(VerticalSizer);
     }
 
-    void LobbyPanel::refreshPlayers(std::vector<std::string> &players)
+    void LobbyPanel::refreshPlayers(const std::vector<std::string> &players)
     {
         NamesSizer->Clear(false);
         playerCount = 0;
         for ( auto player : players ) {
-            LOG(DEBUG) << "Adding player " << player;
             this->addPlayer(player);
         }
     }
@@ -43,7 +43,7 @@ namespace client
     {
         wxButton *StartButton = new wxButton(this, wxID_ANY, "Start Game");
 
-        StartButton->Bind(wxEVT_BUTTON, [](const wxCommandEvent &) { GameController::startGame(); });
+        StartButton->Bind(wxEVT_BUTTON, [](const wxCommandEvent &) { wxGetApp().getController().startGame(); });
 
         this->GetSizer()->Add(StartButton, 0, wxALIGN_CENTER | wxALL, 5);
     }

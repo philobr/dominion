@@ -2,6 +2,8 @@
 #include <gtest/gtest.h>
 #include <shared/message_types.h>
 
+#include <shared/utils/test_helpers.h>
+
 using namespace shared;
 
 // ======= SERVER -> CLIENT ======= //
@@ -249,33 +251,50 @@ TEST(SharedLibraryTest, ResultResponseMessageEquality)
     ASSERT_NE(message1, message7);
 }
 
+
 TEST(SharedLibraryTest, ActionOrderMessageEquality)
 {
+    size_t n_players = 3;
+
+    auto kingdom_cards = test_helper::getValidRandomKingdomCards(10);
+    auto hand_cards = test_helper::getRandomCards(5);
+    std::vector<size_t> enemy_hand_cards = {5, 5};
+
     std::unique_ptr<ActionOrder> order1 = std::make_unique<ChooseNCardsFromHandOrder>(3);
-    ActionOrderMessage message1("game1", std::move(order1), "description", "message1");
+    ActionOrderMessage message1(
+            "game1", std::move(order1),
+            test_helper::getReducedGameStatePtr(n_players, kingdom_cards, hand_cards, enemy_hand_cards), "description",
+            "message1");
     ASSERT_EQ(message1, message1);
 
     std::unique_ptr<ActionOrder> order2 = std::make_unique<ChooseNCardsFromHandOrder>(3);
-    ActionOrderMessage message2("game1", std::move(order2), "description", "message1");
+    ActionOrderMessage message2(
+            "game1", std::move(order2),
+            test_helper::getReducedGameStatePtr(n_players, kingdom_cards, hand_cards, enemy_hand_cards), "description",
+            "message1");
     ASSERT_EQ(message1, message2);
 
     std::unique_ptr<ActionOrder> order3 = std::make_unique<ChooseNCardsFromHandOrder>(3);
-    ActionOrderMessage message3("game2", std::move(order3), "description", "message1");
+    ActionOrderMessage message3("game2", std::move(order3), test_helper::getReducedGameStatePtr(n_players),
+                                "description", "message1");
     ASSERT_NE(message1, message3);
 
     std::unique_ptr<ActionOrder> order4 = std::make_unique<ChooseNCardsFromHandOrder>(3);
-    ActionOrderMessage message4("game1", std::move(order4), "description", "message2");
+    ActionOrderMessage message4("game1", std::move(order4), test_helper::getReducedGameStatePtr(n_players),
+                                "description", "message2");
     ASSERT_NE(message1, message4);
 
     std::unique_ptr<ActionOrder> order5 = std::make_unique<ChooseNCardsFromHandOrder>(4);
-    ActionOrderMessage message5("game1", std::move(order5), "description", "message1");
+    ActionOrderMessage message5("game1", std::move(order5), test_helper::getReducedGameStatePtr(n_players),
+                                "description", "message1");
     ASSERT_NE(message1, message5);
 
     std::unique_ptr<ActionOrder> order6 = std::make_unique<ChooseNCardsFromHandOrder>(3);
-    ActionOrderMessage message6("game1", std::move(order6), "message1");
+    ActionOrderMessage message6("game1", std::move(order6), test_helper::getReducedGameStatePtr(n_players), "message1");
     ASSERT_NE(message1, message6);
 
     std::unique_ptr<ActionOrder> order7 = std::make_unique<ChooseNCardsFromHandOrder>(3);
-    ActionOrderMessage message7("game1", std::move(order7), "description0", "message1");
+    ActionOrderMessage message7("game1", std::move(order7), test_helper::getReducedGameStatePtr(n_players),
+                                "description0", "message1");
     ASSERT_NE(message1, message7);
 }

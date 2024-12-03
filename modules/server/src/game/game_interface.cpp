@@ -6,40 +6,25 @@ namespace server
                                              const std::vector<shared::CardBase::id_t> &play_cards,
                                              const std::vector<Player::id_t> &player_ids)
     {
-        LOG(INFO) << "Created a new GameInterface("
-                  << "game_id:" << game_id << ")";
+        LOG(DEBUG) << "Created a new GameInterface("
+                   << "game_id:" << game_id << ")";
         return ptr_t(new GameInterface(game_id, play_cards, player_ids));
     }
 
     GameInterface::response_t GameInterface::handleMessage(std::unique_ptr<shared::ClientToServerMessage> &message)
     {
-        // THIS IS A HACKY WORK IN PROGRESS, WILL FIX LATER
         auto *casted_msg = dynamic_cast<shared::ActionDecisionMessage *>(message.get());
-        auto action_decision = std::move(casted_msg->decision);
-
-        if ( casted_msg->in_response_to.has_value() ) {
-            LOG(ERROR) << "this is not implemented yet!";
-            throw std::runtime_error("not implemented");
+        if ( casted_msg == nullptr ) {
+            // ISSUE: 166
+            LOG(ERROR) << "Received a non shared::ActionDecisionMessage in " << FUNC_NAME;
+            throw std::runtime_error("unreachable code");
         }
 
-        auto affected_player_id = casted_msg->player_id;
-        return handleAction(std::move(action_decision), affected_player_id);
-
-        /* This might become useful later on
-         * TODO: use this or delete it
-        return in_response_to.has_value()
-                ? handle_response(std::move(action_decision), affected_player_id, in_response_to.value());
-                : handle_action(std::move(action_decision), affected_player_id)
-        */
-    }
-
-    GameInterface::response_t GameInterface::handleAction(std::unique_ptr<shared::ActionDecision> action_decision,
-                                                          const Player::id_t &affected_player_id)
-    {
 #define HANDLE_ACTION(type)                                                                                            \
-    if ( dynamic_cast<shared::type *>(action_decision.get()) ) {                                                       \
-        return type##_handler(std::unique_ptr<shared::type>(static_cast<shared::type *>(action_decision.release())),   \
-                              affected_player_id);                                                                     \
+    if ( dynamic_cast<shared::type *>(casted_msg->decision.get()) ) {                                                  \
+        return type##_handler(                                                                                         \
+                std::unique_ptr<shared::type>(static_cast<shared::type *>(casted_msg->decision.release())),            \
+                casted_msg->player_id);                                                                                \
     }
 
         HANDLE_ACTION(PlayActionCardDecision);
@@ -47,141 +32,118 @@ namespace server
         HANDLE_ACTION(EndTurnDecision);
         HANDLE_ACTION(ChooseNCardsFromHandDecision);
 
-        LOG(ERROR) << "This should not be reachable, i will self destruct now!";
-        throw std::runtime_error("Unreachable code");
-    }
-
-    GameInterface::response_t GameInterface::handleResponse(std::unique_ptr<shared::ActionDecision> /*action_decision*/,
-                                                            const std::string & /*in_response_to*/,
-                                                            const Player::id_t & /*affected_player_id*/)
-    {
-#define HANDLE_RESPONSE(type)                                                                                          \
-    if ( dynamic_cast<shared::type *>(action_decision.get()) ) {                                                       \
-        return type##_response_handler(                                                                                \
-                std::unique_ptr<shared::type>(static_cast<shared::type *>(action_decision.release())),                 \
-                affected_player_id, in_response_to);                                                                   \
-    }
-
-        // HANDLE_RESPONSE(PlayActionCardDecision);
-        // HANDLE_RESPONSE(BuyCardDecision);
-        // HANDLE_RESPONSE(EndTurnDecision);
-        // HANDLE_RESPONSE(ChooseNCardsFromHandDecision);
-
-        LOG(ERROR) << "This should not be reachable, i will self destruct now!";
-        throw std::runtime_error("Unreachable code");
+        LOG(ERROR) << "Unreachable code: received some weird message type";
+        throw std::runtime_error("unreachable code in " + FUNC_NAME);
     }
 
     GameInterface::response_t
     GameInterface::PlayActionCardDecision_handler(std::unique_ptr<shared::PlayActionCardDecision> action_decision,
                                                   const Player::id_t &player_id)
     {
-        /*
-        if ( action_decision->cardIndex >=
-             game_state->getPlayer(player_id).get<shared::CardAccess::PLAYED_CARDS>().size() ) {
-            LOG(ERROR) << "player(" << player_id << ") tried to play a card that is not in his played cards";
-            throw exception::InvalidCardAccess("");
-        }
-        const auto &card_id =
-                game_state->getPlayer(player_id).get<shared::CardAccess::HAND>()[action_decision->cardIndex];
-        // checks if the card is currently playable (multiple checks done)
-        if ( game_state->tryPlay(player_id, action_decision->cardIndex, action_decision->from) ) {
-
-            cur_behaviours->loadBehaviours(card_id);
-            auto response = cur_behaviours->receiveAction(*game_state, player_id, std::nullopt, std::nullopt).value();
-            if ( response == nullptr ) {
-                if ( game_state->getPlayer(player_id).getActions() != 0 ) {
-                    return std::make_unique<shared::ActionPhaseOrder>();
-                } else if ( game_state->getPlayer(player_id).getBuys() != 0 ) {
-                    return std::make_unique<shared::BuyPhaseOrder>();
-                } else {
-                    return std::make_unique<shared::EndTurnOrder>();
-                }
-            } else {
-                return response;
-            }
+        try {
+            // all checks are done here
+            game_state->tryPlay(player_id, action_decision->card_id, action_decision->from);
+            game_state->setPhase(GamePhase::PLAYING_ACTION_CARD); // phase is only set if we successfully played a card
+        } catch ( std::exception &e ) {
+            // we throw for now, but this should be a message
+            // discuss with gui guys or return shared::ResultResponseMessage(false)
+            // ISSUE: 166
+            LOG(ERROR) << "failed to play, TODO: handle this more gracefully";
+            throw std::runtime_error("failed to play card (GameInterface::PlayActionCardDecision_handler), this needs "
+                                     "to be handled better");
         }
 
-        // something went wrong, retry ActionPhase
-        */
-        return std::make_unique<shared::ActionPhaseOrder>();
+        behaviour_chain->loadBehaviours(action_decision->card_id);
+        auto response = behaviour_chain->startChain(*game_state);
+
+        if ( behaviour_chain->empty() ) {
+            return finishedPlayingCard();
+        }
+
+        return response;
     }
 
     GameInterface::response_t
     GameInterface::BuyCardDecision_handler(std::unique_ptr<shared::BuyCardDecision> action_decision,
                                            const Player::id_t &player_id)
     {
-        if ( game_state->getPhase() != GamePhase::BUY_PHASE ) {
-            LOG(WARN) << "player(" << player_id << ") is currently not in the buy phase, retrying";
-            // TODO: this makes no sense, the player will just try to buy again
-            return std::make_unique<shared::BuyPhaseOrder>();
+        try {
+            // all checks are done here
+            game_state->tryBuy(player_id, action_decision->card);
+        } catch ( std::exception &e ) {
+            // we throw for now, but this should be a message
+            // discuss with gui guys or return shared::ResultResponseMessage(false)
+            // ISSUE: 166
+            LOG(ERROR) << "failed to buy card";
+            throw std::runtime_error("failed to buy in GameInterface::PlayActionCardDecision_handler, this needs to be "
+                                     "handled better");
         }
 
-        game_state->tryBuy(player_id, action_decision->card);
-
-        // TODO: turn should end automatically if a player cant buy anymore
-        return std::make_unique<shared::BuyPhaseOrder>();
+        return nextPhase();
     }
 
     GameInterface::response_t
-    GameInterface::EndTurnDecision_handler(std::unique_ptr<shared::EndTurnDecision> /*action_decision*/,
+    GameInterface::EndTurnDecision_handler(std::unique_ptr<shared::EndTurnDecision> action_decision,
                                            const Player::id_t &player_id)
     {
         if ( game_state->getPhase() == GamePhase::PLAYING_ACTION_CARD ) {
+            // ISSUE: 166
             LOG(ERROR) << "Player is trying to end his turn while playing a card";
             throw exception::OutOfPhase("");
         }
 
-        LOG(INFO) << "ending " << player_id << "\'s turn";
         game_state->endTurn();
-        // We put the next player into action phase
-        return std::make_unique<shared::ActionPhaseOrder>();
+
+        return nextPhase();
     }
 
     GameInterface::response_t GameInterface::ChooseNCardsFromHandDecision_handler(
-            std::unique_ptr<shared::ChooseNCardsFromHandDecision> /*action_decision*/,
-            const Player::id_t & /*player_id*/)
+            std::unique_ptr<shared::ChooseNCardsFromHandDecision> action_decision, const Player::id_t &player_id)
     {
-        // TODO: Implement for MVP 3
-        LOG(ERROR) << "Not implemented yet, i will kill myself now:) much fun debugging!";
-        throw std::runtime_error("Not implemented yet");
+        // this will be implemented after ChooseNCardFromHandDecision is fixed
+
+        LOG(ERROR) << FUNC_NAME << " is not implemented yet!";
+        throw std::runtime_error("unrachable code");
+
+        // auto order_msg = behaviour_chain->continueChain(*game_state, action_decision);
+        if ( behaviour_chain->empty() ) {
+            return finishedPlayingCard();
+        } else {
+            // return empty order
+            return OrderResponse();
+        }
     }
 
-    GameInterface::response_t GameInterface::PlayActionCardDecision_response_handler(
-            std::unique_ptr<shared::PlayActionCardDecision> action_decision, const Player::id_t &player_id,
-            const std::string &in_response_to)
+    GameInterface::response_t GameInterface::nextPhase()
     {
-        // Checks for validity are done in the behaviour chain
-        return (cur_behaviours->receiveAction(*game_state, player_id, std::move(action_decision), in_response_to))
-                .value();
+        // switches phase if: actions==0 OR (buys==0 -> end_turn + next player)
+        game_state->maybeSwitchPhase();
+        switch ( game_state->getPhase() ) {
+            case server::GamePhase::ACTION_PHASE:
+                return {game_state->getCurrentPlayerId(), std::make_unique<shared::ActionPhaseOrder>()};
+            case server::GamePhase::BUY_PHASE:
+                return {game_state->getCurrentPlayerId(), std::make_unique<shared::BuyPhaseOrder>()};
+            case server::GamePhase::PLAYING_ACTION_CARD:
+            default:
+                {
+                    // ISSUE: 166
+                    LOG(ERROR) << "game_state is out of phase";
+                    throw std::runtime_error("unreachable code");
+                }
+                break;
+        }
     }
 
-    GameInterface::response_t
-    GameInterface::BuyCardDecision_response_handler(std::unique_ptr<shared::BuyCardDecision> /*action_decision*/,
-                                                    const Player::id_t & /*player_id*/,
-                                                    const std::string & /*in_response_to*/)
+    GameInterface::response_t GameInterface::finishedPlayingCard()
     {
-        // TODO: Implement for MVP 3
-        LOG(ERROR) << "Not implemented";
-        throw std::runtime_error("Not implemented");
-    }
+        if ( game_state->getPhase() != server::GamePhase::PLAYING_ACTION_CARD ) {
+            // ISSUE: 166
+            LOG(ERROR) << "tried to finish playing a card while not even playing a card!";
+            throw std::runtime_error("unreachable code in " + FUNC_NAME);
+        }
 
-    GameInterface::response_t
-    GameInterface::EndTurnDecision_response_handler(std::unique_ptr<shared::EndTurnDecision> /*action_decision*/,
-                                                    const Player::id_t & /*player_id*/,
-                                                    const std::string & /*in_response_to*/)
-    {
-        // TODO: Implement for MVP 3
-        LOG(ERROR) << "Not implemented";
-        throw std::runtime_error("Not implemented");
-    }
-
-    GameInterface::response_t GameInterface::ChooseNCardsFromHandDecision_response_handler(
-            std::unique_ptr<shared::ChooseNCardsFromHandDecision> /*action_decision*/,
-            const Player::id_t & /*player_id*/, const std::string & /*in_response_to*/)
-    {
-        // TODO: Implement for MVP 3
-        LOG(ERROR) << "Not implemented";
-        throw std::runtime_error("Not implemented");
+        game_state->setPhase(server::GamePhase::ACTION_PHASE);
+        return nextPhase();
     }
 
 } // namespace server

@@ -42,6 +42,8 @@ enum LogLevel
     ERROR // actual errors
 };
 
+std::ostream &operator<<(std::ostream &os, const LogLevel &level);
+
 namespace shared
 {
     namespace log_helpers
@@ -103,6 +105,11 @@ namespace shared
          * @param level The minimum LogLevel to log.
          */
         static void setLevel(LogLevel level);
+
+        /**
+         * @brief Returns the current minimum log level.
+         */
+        static LogLevel getLevel();
 
         /**
          * @brief Returns an instance to the logger.

@@ -26,7 +26,8 @@ namespace server
          *
          * @param game_master The player who created the lobby.
          */
-        Lobby(const Player::id_t &game_master, const std::string &lobby_id);
+        Lobby(const Player::id_t &game_master,
+              const std::string &lobby_id); // TODO: add message_interface shared_ptr here
 
         /**
          * @brief The lobby receives a generic message. It handles what it is responsible for and the rest gets passed
@@ -36,7 +37,8 @@ namespace server
          * @param message
          */
         void handleMessage(MessageInterface &message_interface,
-                           std::unique_ptr<shared::ClientToServerMessage> &message);
+                           std::unique_ptr<shared::ClientToServerMessage>
+                                   &message); // TODO: remove message_interface shared_ptr here
 
         /**
          * @brief Get the players in the lobby.
@@ -123,7 +125,7 @@ namespace server
          *
          * @param message_interface
          */
-        void broadcastGameState(MessageInterface &message_interface) const
+        inline void broadcastGameState(MessageInterface &message_interface) const
         {
             std::for_each(players.begin(), players.end(),
                           [&](const auto &player_id)
@@ -132,6 +134,22 @@ namespace server
                                         << " to Player ID: " << player_id;
                               message_interface.send<shared::GameStateMessage>(player_id, lobby_id,
                                                                                game_interface->getGameState(player_id));
+                          });
+        }
+
+        inline void broadcastOrders(MessageInterface &message_interface, OrderResponse &orders) const
+        {
+            std::for_each(players.begin(), players.end(),
+                          [&](const auto &player_id)
+                          {
+                              if ( orders.hasOrder(player_id) ) {
+                                  message_interface.send<shared::ActionOrderMessage>(
+                                          player_id, lobby_id, std::move(orders.getOrder(player_id)),
+                                          game_interface->getGameState(player_id));
+                              } else {
+                                  message_interface.send<shared::GameStateMessage>(
+                                          player_id, lobby_id, std::move(game_interface->getGameState(player_id)));
+                              }
                           });
         }
     };

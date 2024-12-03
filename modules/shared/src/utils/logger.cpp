@@ -1,3 +1,4 @@
+
 #include <shared/utils/logger.h>
 
 #include <chrono>
@@ -5,6 +6,12 @@
 #include <iomanip>
 #include <iostream>
 #include <stdexcept>
+
+std::ostream &operator<<(std::ostream &os, const LogLevel &level)
+{
+    os << shared::log_helpers::toString(level);
+    return os;
+}
 
 namespace shared
 {
@@ -106,7 +113,13 @@ namespace shared
         std::lock_guard<std::mutex> lock(init_mutex_);
         Logger &logger = getInstance();
         logger.min_log_level_ = level;
-        LOG(LogLevel::INFO) << "Minimum log level set to: " << log_helpers::toString(level);
+    }
+
+    LogLevel Logger::getLevel()
+    {
+        std::lock_guard<std::mutex> lock(init_mutex_);
+        Logger &logger = getInstance();
+        return logger.min_log_level_;
     }
 
     void Logger::writeLog(LogLevel level, const std::string &message)

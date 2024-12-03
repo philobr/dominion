@@ -148,13 +148,10 @@ namespace server
             BasicNetwork::addPlayerToAddress(req->player_id, peer_address.to_string());
             LOG(INFO) << "Handling request from player(" << req->player_id << "): " << msg;
 
-            // execute client request
-            // TODO Change to message handler
-            //_messageHandler->handleMessage(req);
             _lobby_manager.handleMessage(req);
 
         } catch ( const std::exception &e ) {
-            LOG(ERROR) << "Failed to execute client request. Content was :\n"
+            LOG(ERROR) << FUNC_NAME << ": Failed to execute client request. Content was :\n"
                        << msg << std::endl
                        << "Error was " << e.what();
         }

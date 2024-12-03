@@ -89,47 +89,6 @@ namespace server
                                                     std::move(reduced_enemies), active_player_id);
     }
 
-
-    void GameState::tryPlayFromHand(const Player::id_t &affected_player, const shared::CardBase::id_t &card_id)
-    {
-        /*
-        1. is phase correct?
-        2. enough actions?
-        3. is action card?
-        4. valid pile + does card exist?
-        5. play the card
-        6. adjust the phase
-        */
-
-        if ( getPhase() != GamePhase::ACTION_PHASE ) {
-            LOG(ERROR) << "player tried to play an action card out of phase";
-            throw std::runtime_error("what should happen here?");
-        }
-
-        auto &player = getPlayer(affected_player);
-        const auto &card = shared::CardFactory::getCard(card_id);
-
-        if ( player.getActions() == 0 ) {
-            LOG(ERROR) << "player tried to play an action card but he has no actions left";
-            throw std::runtime_error("unreachable code");
-        }
-
-        if ( !card.isAction() ) {
-            LOG(ERROR) << "tried to play a card that isn't an action card, card:" << card.getId();
-            throw exception::InvalidCardType("");
-        }
-
-        if ( !player.hasCardInHand(card_id) ) {
-            LOG(ERROR) << "tried to play card with id: " << card_id << " from hand, but card is not in hand";
-            throw exception::InvalidCardAccess("card is not in hand");
-        }
-
-        player.playCardFromHand(card_id);
-
-        board->getPlayedCards().push_back(card_id);
-        player.decActions();
-    }
-
     void GameState::endTurn()
     {
         getCurrentPlayer().endTurn();

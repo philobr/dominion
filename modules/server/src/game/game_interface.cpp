@@ -84,11 +84,11 @@ namespace server
 
     GameInterface::response_t
     GameInterface::EndTurnDecision_handler(std::unique_ptr<shared::EndTurnDecision> action_decision,
-                                           const Player::id_t &player_id)
+                                           const Player::id_t &requestor_id)
     {
         if ( game_state->getPhase() == GamePhase::PLAYING_ACTION_CARD ) {
             // ISSUE: 166
-            LOG(ERROR) << "Player is trying to end his turn while playing a card";
+            LOG(ERROR) << "Player " << requestor_id << " is trying to end his turn while playing a card";
             throw exception::OutOfPhase("");
         }
 
@@ -124,14 +124,14 @@ namespace server
 
     GameInterface::response_t
     GameInterface::EndActionPhaseDecision_handler(std::unique_ptr<shared::EndActionPhaseDecision> decision,
-                                                  const Player::id_t &affected_player_id)
+                                                  const Player::id_t &requestor_id)
     {
         if ( game_state->getPhase() != server::GamePhase::ACTION_PHASE ) {
             LOG(ERROR) << "Player tries to end ACTION_PHASE while not being in the action phase";
             throw exception::OutOfPhase("");
         }
 
-        game_state->endActionPhase();
+        game_state->tryEndActionPhase(requestor_id);
 
         return nextPhase();
     }

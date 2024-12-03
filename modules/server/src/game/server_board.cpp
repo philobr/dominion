@@ -34,8 +34,9 @@ namespace server
         {
             if ( pile.find(card_id) != pile.end() ) {
                 return pile.find(card_id)->count > 0;
+            } else {
+                return false;
             }
-            return false;
         };
 
         return (curse_card_pile.card_id == card_id && curse_card_pile.count > 0) || has_card(treasure_cards) ||
@@ -45,16 +46,16 @@ namespace server
     void ServerBoard::buy(const shared::CardBase::id_t &card_id)
     {
         // helper to search the card in each pile
-        auto buy_card = [card_id](auto &card_piles) -> bool
+        auto buy_if_found = [card_id](auto &card_piles)
         {
             if ( card_piles.find(card_id) != card_piles.end() ) {
                 --card_piles.find(card_id)->count;
             }
         };
 
-        buy_card(treasure_cards);
-        buy_card(victory_cards);
-        buy_card(kingdom_cards);
+        buy_if_found(treasure_cards);
+        buy_if_found(victory_cards);
+        buy_if_found(kingdom_cards);
     }
 
     void ServerBoard::trashCard(const shared::CardBase::id_t &card) { this->trash.push_back(card); }

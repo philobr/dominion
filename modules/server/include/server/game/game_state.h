@@ -23,7 +23,7 @@ namespace server
         PLAYING_ACTION_CARD,
     };
 
-    std::string toString(GamePhase phase)
+    inline std::string toString(GamePhase phase)
     {
         switch ( phase ) {
             case GamePhase::ACTION_PHASE:
@@ -78,24 +78,6 @@ namespace server
         void setPhase(GamePhase new_phase) { phase = new_phase; }
 
         bool isGameOver() const;
-
-        /**
-         * @brief As of now, this function tries to buy a card for the given player.
-         * It throws exception::InsufficientFunds or exception::CardNotAvailable accordingly.
-         *
-         * @param player_id
-         * @param card
-         * @return true
-         * @return false
-         */
-
-        /**
-         * @brief This function checks if the player is in Action phase, the card is an action card and if the
-         * player has actions left. If both conditions are met, the card is moved from the hand/staged cards to
-         * the played cards and the currently_playing_card (in Player) and the actions are decremented.
-         */
-        void tryBuy(const Player::id_t &player_id, const shared::CardBase::id_t &card);
-        void tryPlayFromHand(const Player::id_t &affected_player, const shared::CardBase::id_t &card_id);
 
         /**
          * @brief Switches phases if necessary, this means: if a player is out of buys or out of actions
@@ -181,13 +163,21 @@ namespace server
             }
 
             auto player = getPlayer(requestor_id);
+
+            if ( player.getActions() == 0 ) {
+                LOG(WARN) << requestor_id << " tried to play card: " << card_id
+                          << " from his hand cards, but he has no actions left";
+                throw exception::OutOfActions();
+            }
+
             if ( !player.hasCardInHand(card_id) ) {
                 LOG(WARN) << requestor_id << " tried to play card: " << card_id
                           << " from his hand cards, but he does not have it";
                 throw exception::CardNotAvailable();
             }
 
-            // tryPlay
+            player.playCardFromHand(card_id);
+            board->addToPlayedCards(card_id);
         }
 
         void tryPlayFromStaged(const shared::PlayerBase::id_t &requestor_id, const shared::CardBase::id_t &card_id)
@@ -196,6 +186,22 @@ namespace server
                 LOG(WARN) << requestor_id << " tried to call " << FUNC_NAME << ", but he is currently not playing!";
                 throw exception::InvalidRequest("It's not your turn!");
             }
+
+            if ( phase != GamePhase::PLAYING_ACTION_CARD ) {
+                LOG(WARN) << requestor_id << " tried to play a card with id: " << card_id
+                          << " from his staged cards, but he is not in " << toString(GamePhase::PLAYING_ACTION_CARD);
+                throw exception::OutOfPhase("Can't play a card from staged cards while beeing in " + toString(phase));
+            }
+
+            auto player = getPlayer(requestor_id);
+            if ( !player.hasCardStaged(card_id) ) {
+                LOG(WARN) << requestor_id << " tried to play card: " << card_id
+                          << " from his staged cards, but he does not have it";
+                throw exception::CardNotAvailable();
+            }
+
+            player.playCardFromStaged(card_id);
+            board->addToPlayedCards(card_id);
         }
 
     private:

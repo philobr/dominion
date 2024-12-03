@@ -24,7 +24,7 @@ namespace shared
         } else if ( type == "gain_card" ) {
             unsigned int max_cost;
             shared::CardType allowed_type;
-            return std::make_unique<GainFromBoard>(max_cost, allowed_type);
+            return std::make_unique<GainFromBoardOrder>(max_cost, allowed_type);
         } else if ( type == "choose_from_hand" || type == "choose_from_staged" ) {
             unsigned int min_cards;
             unsigned int max_cards;
@@ -56,10 +56,10 @@ namespace shared
             doc.AddMember("type", "action_phase", doc.GetAllocator());
         } else if ( typeid(*this) == typeid(BuyPhaseOrder) ) {
             doc.AddMember("type", "buy_phase", doc.GetAllocator());
-        } else if ( typeid(*this) == typeid(GainFromBoard) ) {
+        } else if ( typeid(*this) == typeid(GainFromBoardOrder) ) {
             doc.AddMember("type", "gain_card", doc.GetAllocator());
-            ADD_UINT_MEMBER(dynamic_cast<const GainFromBoard *>(this)->max_cost, max_cost);
-            ADD_ENUM_MEMBER(dynamic_cast<const GainFromBoard *>(this)->allowed_type, allowed_type);
+            ADD_UINT_MEMBER(dynamic_cast<const GainFromBoardOrder *>(this)->max_cost, max_cost);
+            ADD_ENUM_MEMBER(dynamic_cast<const GainFromBoardOrder *>(this)->allowed_type, allowed_type);
         } else if ( typeid(*this) == typeid(ChooseFromHandOrder) ) {
             doc.AddMember("type", "choose_from_hand", doc.GetAllocator());
             ADD_UINT_MEMBER(dynamic_cast<const ChooseFromHandOrder *>(this)->min_cards, min_cards);
@@ -105,14 +105,14 @@ namespace shared
         return *this == dynamic_cast<const EndTurnOrder &>(other);
     }
 
-    bool GainFromBoard::operator==(const GainFromBoard &other) const
+    bool GainFromBoardOrder::operator==(const GainFromBoardOrder &other) const
     {
         return max_cost == other.max_cost && allowed_type == other.allowed_type;
     }
 
-    bool GainFromBoard::equals(const ActionOrder &other) const
+    bool GainFromBoardOrder::equals(const ActionOrder &other) const
     {
-        return *this == dynamic_cast<const GainFromBoard &>(other);
+        return *this == dynamic_cast<const GainFromBoardOrder &>(other);
     }
 
     bool ChooseFromOrder::operator==(const ChooseFromOrder &other) const

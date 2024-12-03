@@ -96,14 +96,14 @@ namespace shared
         bool equals(const ActionOrder &other) const override;
     };
 
-    class GainFromBoard : public ActionOrder
+    class GainFromBoardOrder : public ActionOrder
     {
     public:
-        GainFromBoard(unsigned int max_cost, shared::CardType allowed_type) :
+        GainFromBoardOrder(unsigned int max_cost, shared::CardType allowed_type) :
             max_cost(max_cost), allowed_type(allowed_type)
         {}
-        bool operator==(const GainFromBoard &other) const;
-        bool operator!=(const GainFromBoard &other) const { return !(*this == other); }
+        bool operator==(const GainFromBoardOrder &other) const;
+        bool operator!=(const GainFromBoardOrder &other) const { return !(*this == other); }
 
         unsigned int max_cost;
         shared::CardType allowed_type;

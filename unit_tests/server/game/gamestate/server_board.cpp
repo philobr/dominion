@@ -36,7 +36,7 @@ public:
     {}
 
     // Expose protected methods as public for testing
-    using server::ServerBoard::buy;
+    using server::ServerBoard::take;
     using server::ServerBoard::trashCard;
 
     // Accessors for protected data members

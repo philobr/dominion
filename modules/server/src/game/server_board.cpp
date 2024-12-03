@@ -18,6 +18,8 @@ namespace server
         return std::static_pointer_cast<shared::Board>(shared_from_this());
     }
 
+    void ServerBoard::addToPlayedCards(const shared::CardBase::id_t &card_id) { played_cards.push_back(card_id); }
+
     void ServerBoard::tryTake(const shared::CardBase::id_t &card_id)
     {
         if ( !has(card_id) ) {
@@ -25,10 +27,10 @@ namespace server
             throw exception::CardNotAvailable();
         }
 
-        buy(card_id);
+        take(card_id);
     }
 
-    bool ServerBoard::has(const shared::CardBase::id_t &card_id)
+    bool ServerBoard::has(const shared::CardBase::id_t &card_id) const
     {
         auto has_card = [card_id](const auto &pile)
         {
@@ -43,7 +45,7 @@ namespace server
                 has_card(victory_cards) || has_card(kingdom_cards);
     }
 
-    void ServerBoard::buy(const shared::CardBase::id_t &card_id)
+    void ServerBoard::take(const shared::CardBase::id_t &card_id)
     {
         // helper to search the card in each pile
         auto buy_if_found = [card_id](auto &card_piles)

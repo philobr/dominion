@@ -36,14 +36,20 @@ namespace server
          */
         shared::Board::ptr_t getReduced();
 
-        void addToPlayedCards(const shared::CardBase::id_t &card_id) { played_cards.push_back(card_id); }
-
         /**
          * @brief Throws if the card_id one wants to buy is not available.
          */
         void tryTake(const shared::CardBase::id_t &card_id);
 
-        bool has(const shared::CardBase::id_t &card_id);
+        /**
+         * @brief Checks if the card exists on the board.
+         */
+        bool has(const shared::CardBase::id_t &card_id) const;
+
+        /**
+         * @brief Adds the given card to the played_cards vector
+         */
+        void addToPlayedCards(const shared::CardBase::id_t &card_id);
 
         /**
          * @brief Adds the card_id to the trash
@@ -63,7 +69,7 @@ namespace server
          * @return true successfully bought the card
          * @return false card_id can not be bought
          */
-        void buy(const shared::CardBase::id_t &card_id);
+        void take(const shared::CardBase::id_t &card_id);
     };
 
 } // namespace server

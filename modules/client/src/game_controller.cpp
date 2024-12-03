@@ -74,6 +74,12 @@ namespace client
 
     void GameController::startGame()
     {
+        if ( _numPlayers < shared::board_config::MIN_PLAYER_COUNT ||
+             _numPlayers > shared::board_config::MAX_PLAYER_COUNT ) {
+            LOG(WARN) << "Invalid number of players ( " << _numPlayers << " ) to start game";
+            _gui->showError("Error", "Invalid number of players");
+            return;
+        }
         LOG(DEBUG) << "Starting game";
         // TODO Implement card selection
         std::vector<shared::CardBase::id_t> selectedCards{"Estate",       "Smithy",      "Village",      "Laboratory",
@@ -164,6 +170,7 @@ namespace client
     {
         LOG(DEBUG) << "Successfully created lobby";
         std::vector<reduced::Player::id_t> players = {_playerName};
+        _numPlayers = 1;
         _gui->showLobbyScreen(players, true);
     }
 
@@ -172,6 +179,7 @@ namespace client
         LOG(DEBUG) << "Successfully joined lobby";
         LOG(DEBUG) << "Player " << msg->players.back() << " joined the lobby";
         _gui->showLobbyScreen(msg->players, false);
+        _numPlayers = msg->players.size();
         _clientState = ClientState::IN_LOBBY;
     }
 

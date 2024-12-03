@@ -83,6 +83,7 @@ namespace client
         ClientNetworkManager *_clientNetworkManager;
 
         ClientState _clientState;
+        size_t _numPlayers;
         std::unique_ptr<reduced::GameState> _gameState;
         shared::PlayerBase::id_t _playerName;
         std::string _gameName;

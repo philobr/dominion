@@ -1,9 +1,9 @@
 #pragma once
 
-#include <shared/game/reduced/player.h>
 #include <shared/game/game_state/reduced_game_state.h>
-#include <uiElements/text_panel.h>
+#include <shared/game/reduced/player.h>
 #include <uiElements/formatting_constants.h>
+#include <uiElements/text_panel.h>
 
 #include <vector>
 #include <wx/wx.h>
@@ -11,26 +11,27 @@
 namespace client
 {
     /**
-     * @brief The panel that displays the information about the player 
+     * @brief The panel that displays the information about the player
      * available actions buys etc, also includes the end turn button
      */
     class PhaseInfoPanel : public wxPanel
     {
     public:
-        PhaseInfoPanel(wxWindow* parent, wxSize size);
+        PhaseInfoPanel(wxWindow *parent, wxSize size);
 
-        void drawInfoPanel(const reduced::GameState& game_state);
+        void drawInfoPanel(const reduced::GameState &game_state);
+
     private:
-        TextPanel* drawPlayerInfo(const std::unique_ptr<reduced::Player>& player);
+        TextPanel *drawPlayerInfo(const std::unique_ptr<reduced::Player> &player);
 
-        wxPanel* drawPlayedPanel(std::vector<shared::CardBase::id_t> played_cards);
+        wxPanel *drawPlayedPanel(std::vector<shared::CardBase::id_t> played_cards);
 
-        wxPanel* drawPlayedPanelTest();
+        wxPanel *drawPlayedPanelTest();
 
-        wxPanel* drawButtonPanel();
+        wxPanel *drawButtonPanel();
 
-        wxButton* getEndActionButton();
-        wxButton* getEndTurnButton();
+        wxButton *getEndActionButton();
+        wxButton *getEndTurnButton();
     };
 
 } // namespace client

@@ -97,8 +97,14 @@ namespace server
         return nextPhase();
     }
 
+    /**
+     * @brief This function is used for ActionDecisionMessages that are not handled by other handlers. Those are assumed
+     * to be expected by an ongoing behaviour.
+     */
     GameInterface::response_t GameInterface::passToBehaviour(std::unique_ptr<shared::ActionDecisionMessage> &message)
     {
+        // we expect to be in this state because the behaviour chain needs to be initialised
+        // -> implying we are playing a card
         if ( game_state->getPhase() != server::GamePhase::PLAYING_ACTION_CARD ) {
             LOG(ERROR) << "Unexpected message type, player " << message->player_id
                        << " is currently not playing a card";

@@ -117,12 +117,7 @@ namespace client
 
         const size_t start_idx = cards_size - num_cards;
         // Add the cards to the hand
-        LOG(ERROR) << "start_idx: " << start_idx;
-        LOG(ERROR) << "cards_size: " << cards_size;
-        LOG(ERROR) << "num_cards: " << num_cards;
-        LOG(ERROR) << "max: " << std::max(num_cards, cards_size);
         for (size_t i = start_idx; i < std::max(num_cards, cards_size); i++) {
-            LOG(WARN) << "i: " << i;
             SingleCardPanel* card = new SingleCardPanel(hand, cards[i], formatting_constants::DEFAULT_PLAYED_CARD_SIZE);
 
             sizer->Add(card, 0, wxALL, 4);

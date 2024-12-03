@@ -13,16 +13,16 @@ namespace shared
 
         static void insert(const CardBase::id_t &card_id, CardType type, unsigned int cost)
         {
-            map_.emplace(card_id, std::make_unique<CardBase>(card_id, type, cost));
+            _map.emplace(card_id, std::make_unique<CardBase>(card_id, type, cost));
         }
 
-        static const CardBase &getCard(const CardBase::id_t &card_id) { return *map_.at(card_id).get(); }
-        static const map_t &getAll() { return map_; }
+        static const CardBase &getCard(const CardBase::id_t &card_id) { return *_map.at(card_id).get(); }
+        static const map_t &getAll() { return _map; }
 
-        static bool has(const CardBase::id_t &card_id) { return map_.count(card_id) > 0; }
+        static bool has(const CardBase::id_t &card_id) { return _map.count(card_id) > 0; }
 
     private:
-        static map_t map_;
+        static map_t _map;
     };
 
 } // namespace shared

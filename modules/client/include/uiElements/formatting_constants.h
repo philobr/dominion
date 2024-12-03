@@ -10,5 +10,6 @@ namespace client
 
         // Panel formatting constants
         const wxSize DEFAULT_BOARD_PILE_SIZE = wxSize(100, 150);
+        const wxSize DEFAULT_PLAYED_CARD_SIZE = wxSize(60, 90);
     } // namespace formatting_constants
 } // namespace client

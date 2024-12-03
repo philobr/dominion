@@ -63,6 +63,8 @@ namespace server
          */
         response_t finishedPlayingCard();
 
+        response_t passToBehaviour(std::unique_ptr<shared::ActionDecisionMessage> &message);
+
         // TODO: expand this macro when the messages are finally final. Makes no sense now as there will probably be
         // more messages in the future
 
@@ -73,6 +75,5 @@ namespace server
         HANDLER(PlayActionCardDecision);
         HANDLER(BuyCardDecision);
         HANDLER(EndTurnDecision);
-
     }; // namespace server
 } // namespace server

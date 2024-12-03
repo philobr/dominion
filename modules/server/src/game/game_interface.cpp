@@ -13,7 +13,9 @@ namespace server
 
     GameInterface::response_t GameInterface::handleMessage(std::unique_ptr<shared::ClientToServerMessage> &message)
     {
-        auto *casted_msg = dynamic_cast<shared::ActionDecisionMessage *>(message.get());
+        auto casted_msg = std::unique_ptr<shared::ActionDecisionMessage>(
+                static_cast<shared::ActionDecisionMessage *>(message.release()));
+
         if ( casted_msg == nullptr ) {
             // ISSUE: 166
             LOG(ERROR) << "Received a non shared::ActionDecisionMessage in " << FUNC_NAME;
@@ -31,8 +33,7 @@ namespace server
         HANDLE_ACTION(BuyCardDecision);
         HANDLE_ACTION(EndTurnDecision);
 
-        LOG(ERROR) << "Unreachable code: received some weird message type";
-        throw std::runtime_error("unreachable code in " + FUNC_NAME);
+        return passToBehaviour(casted_msg);
     }
 
     GameInterface::response_t
@@ -96,24 +97,30 @@ namespace server
         return nextPhase();
     }
 
-    /*
-        GameInterface::response_t GameInterface::ChooseNCardsFromHandDecision_handler(
-                std::unique_ptr<shared::ChooseNCardsFromHandDecision> action_decision, const Player::id_t &player_id)
-        {
-            // this will be implemented after ChooseNCardFromHandDecision is fixed
-
-            LOG(ERROR) << FUNC_NAME << " is not implemented yet!";
-            throw std::runtime_error("unrachable code");
-
-            // auto order_msg = behaviour_chain->continueChain(*game_state, action_decision);
-            if ( behaviour_chain->empty() ) {
-                return finishedPlayingCard();
-            } else {
-                // return empty order
-                return OrderResponse();
-            }
+    GameInterface::response_t GameInterface::passToBehaviour(std::unique_ptr<shared::ActionDecisionMessage> &message)
+    {
+        if ( game_state->getPhase() != server::GamePhase::PLAYING_ACTION_CARD ) {
+            LOG(ERROR) << "Unexpected message type, player " << message->player_id
+                       << " is currently not playing a card";
+            throw exception::OutOfPhase("");
         }
-    */
+
+        auto decision = std::move(message->decision);
+
+        if ( !dynamic_cast<shared::DeckChoiceDecision *>(decision.get()) &&
+             !dynamic_cast<shared::GainFromBoardDecision *>(decision.get()) ) {
+            LOG(ERROR) << "Unreachable code: received some unexpected decision type in: " << FUNC_NAME;
+            throw std::runtime_error("unreachable code in " + FUNC_NAME);
+        }
+
+        auto response = behaviour_chain->continueChain(*game_state, decision);
+
+        if ( behaviour_chain->empty() ) {
+            return finishedPlayingCard();
+        }
+
+        return response;
+    }
 
     GameInterface::response_t GameInterface::nextPhase()
     {

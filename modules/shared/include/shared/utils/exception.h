@@ -50,7 +50,7 @@ namespace exception
         {                                                                                                              \
         public:                                                                                                        \
             explicit class_name(const std::string &error_msg) : BaseExceptionType(error_msg) {}                        \
-                                                                                                                       \
+            explicit class_name() : BaseExceptionType("") {}                                                           \
             explicit class_name(std::string &&error_msg) : BaseExceptionType(std::move(error_msg)) {}                  \
         };                                                                                                             \
     }
@@ -65,7 +65,7 @@ namespace exception
         {                                                                                                              \
         public:                                                                                                        \
             explicit class_name(const std::string &error_msg) : base_class_name(error_msg) {}                          \
-                                                                                                                       \
+            explicit class_name() : base_class_name("") {}                                                             \
             explicit class_name(std::string &&error_msg) : base_class_name(std::move(error_msg)) {}                    \
         };                                                                                                             \
     }
@@ -94,6 +94,7 @@ NEW_INHERITED_EXCEPTION(OutOfPhase, GameState);
 NEW_INHERITED_EXCEPTION(OutOfActions, GameState);
 NEW_INHERITED_EXCEPTION(InvalidCardAccess, GameState);
 NEW_INHERITED_EXCEPTION(InvalidCardType, GameState);
+NEW_INHERITED_EXCEPTION(InvalidRequest, GameState);
 
 NEW_BASE_EXCEPTION(Client);
 NEW_INHERITED_EXCEPTION(UnreachableCode, Client);

@@ -126,7 +126,8 @@ TEST(SharedLibraryTest, ResultResponseMessageTwoWayConversion)
 
 TEST(SharedLibraryTest, ActionOrderMessageTwoWayConversion)
 {
-    std::unique_ptr<ActionOrder> order = std::make_unique<ChooseNCardsFromHandOrder>(1);
+    std::unique_ptr<ActionOrder> order = std::make_unique<ChooseFromStagedOrder>(
+            1, 1, shared::ChooseFromOrder::AllowedChoice::DISCARD, std::vector<shared::CardBase::id_t>(1, "a card"));
     ActionOrderMessage original_message("123", std::move(order), test_helper::getReducedGameStatePtr(4));
 
     std::string json = original_message.toJson();
@@ -276,8 +277,7 @@ TEST(SharedLibraryTest, ActionDecisionMessageTwoWayConversionEndTurn)
 
 TEST(SharedLibraryTest, ActionDecisionMessageTwoWayConversionChooseNCardsFromHand)
 {
-    std::vector<unsigned int> card_indices = {0, 2, 3};
-    std::unique_ptr<ActionDecision> decision = std::make_unique<ChooseNCardsFromHandDecision>(card_indices);
+    std::unique_ptr<ActionDecision> decision = std::make_unique<GainFromBoardDecision>("a_card");
     ActionDecisionMessage original_message("123", "player1", std::move(decision));
 
     std::string json = original_message.toJson();

@@ -8,13 +8,16 @@ namespace client
     std::ostream &operator<<(std::ostream &os, ControllerEventType type)
     {
         switch ( type ) {
+            case ControllerEventType::SHOW_STATUS:
+                os << "ShowStatus";
+                break;
             case ControllerEventType::SHOW_ERROR:
                 os << "ShowError";
                 break;
             case ControllerEventType::SHOW_LOBBY_SCREEN:
                 os << "ShowLobbyScreen";
                 break;
-            case ControllerEventType::SHOW_MAIN_GAME_SCREEN:
+            case ControllerEventType::SHOW_GAME_SCREEN:
                 os << "ShowMainGameScreen";
                 break;
             case ControllerEventType::SHOW_VICTORY_SCREEN:
@@ -28,12 +31,49 @@ namespace client
         return os;
     }
 
-    ShowErrorEventData::ShowErrorEventData(const std::string message) : message(message) {}
+    ShowStatusEventData::ShowStatusEventData(std::string message) : message(std::move(message)) {}
 
-    ControllerEvent ControllerEvent::showError(const std::string message)
+    ShowErrorEventData::ShowErrorEventData(std::string title, std::string message) :
+        title(std::move(title)), message(std::move(message))
+    {}
+
+    ShowLobbyScreenEventData::ShowLobbyScreenEventData(std::vector<reduced::Player::id_t> players,
+                                                       bool is_game_master) :
+        players(std::move(players)),
+        is_game_master(is_game_master)
+    {}
+
+    ShowGameScreenEventData::ShowGameScreenEventData(std::unique_ptr<reduced::GameState> game_state) :
+        game_state(std::move(game_state))
+    {}
+
+    ControllerEvent *ControllerEvent::showStatus(std::string status)
     {
-        ShowErrorEventData data(message);
-        return ControllerEvent(ControllerEventType::SHOW_ERROR, data);
+        ShowStatusEventData data(std::move(status));
+        return new ControllerEvent(ControllerEventType::SHOW_STATUS, data);
+    }
+
+    ControllerEvent *ControllerEvent::showError(std::string title, std::string message)
+    {
+        ShowErrorEventData data(std::move(title), std::move(message));
+        return new ControllerEvent(ControllerEventType::SHOW_ERROR, data);
+    }
+
+    ControllerEvent *ControllerEvent::showLobbyScreen(std::vector<reduced::Player::id_t> players, bool is_game_master)
+    {
+        ShowLobbyScreenEventData data(std::move(players), is_game_master);
+        return new ControllerEvent(ControllerEventType::SHOW_LOBBY_SCREEN, data);
+    }
+
+    ControllerEvent *ControllerEvent::showGameScreen(std::unique_ptr<reduced::GameState> game_state)
+    {
+        ShowGameScreenEventData data(std::move(game_state));
+        return new ControllerEvent(ControllerEventType::SHOW_GAME_SCREEN, data);
+    }
+
+    ControllerEvent *ControllerEvent::showVictoryScreen()
+    {
+        return new ControllerEvent(ControllerEventType::SHOW_VICTORY_SCREEN, std::any());
     }
 
     ControllerEvent::ControllerEvent(ControllerEventType type, std::any data) :

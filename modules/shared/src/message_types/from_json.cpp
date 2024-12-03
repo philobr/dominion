@@ -201,10 +201,17 @@ static std::unique_ptr<ActionDecisionMessage> parseActionDecision(const Document
         decision = new EndActionPhaseDecision();
     } else if ( action == "end_turn" ) {
         decision = new EndTurnDecision();
-    } else if ( action == "choose_n_cards_from_hand" ) {
-        std::vector<unsigned int> cards;
-        GET_UINT_ARRAY_MEMBER(cards, json, "cards");
-        decision = new ChooseNCardsFromHandDecision(cards);
+    } else if ( action == "deck_choice" ) {
+        std::vector<shared::CardBase::id_t> cards;
+        std::vector<shared::DeckChoiceDecision::AllowedChoice> choices;
+
+        GET_STRING_ARRAY_MEMBER(cards, json, "cards");
+        GET_ENUM_ARRAY_MEMBER(choices, json, "choices", shared::DeckChoiceDecision::AllowedChoice);
+        decision = new DeckChoiceDecision(cards, choices);
+    } else if ( action == "board_choice" ) {
+        shared::CardBase::id_t chosen_card;
+        GET_STRING_MEMBER(chosen_card, json, "chosen_card");
+        decision = new GainFromBoardDecision(chosen_card);
     } else {
         return nullptr;
     }

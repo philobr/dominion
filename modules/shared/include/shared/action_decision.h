@@ -70,15 +70,39 @@ namespace shared
         bool equals(const ActionDecision &other) const override;
     };
 
-    class ChooseNCardsFromHandDecision : public ActionDecision
+    class DeckChoiceDecision : public ActionDecision
     {
     public:
-        bool operator==(const ChooseNCardsFromHandDecision &other) const;
-        bool operator!=(const ChooseNCardsFromHandDecision &other) const;
-        ChooseNCardsFromHandDecision(std::vector<unsigned int> cards) : cards(cards) {}
-        // TODO: Where do we enforce that these indices are unique?
-        // why dont we just use CardBase::id_t here? would make life easier in game_state
-        std::vector<unsigned int> cards;
+        enum AllowedChoice
+        {
+            PLAY = 1,
+            TRASH = 2,
+            DISCARD = 4,
+            DRAW_PILE = 8,
+            HAND_CARDS = 16
+        };
+
+        std::vector<shared::CardBase::id_t> cards;
+        std::vector<AllowedChoice> choices;
+
+        DeckChoiceDecision(std::vector<shared::CardBase::id_t> cards, std::vector<AllowedChoice> choices) :
+            cards(cards), choices(choices)
+        {}
+
+        bool operator==(const DeckChoiceDecision &other) const;
+        bool operator!=(const DeckChoiceDecision &other) const;
+
+    protected:
+        bool equals(const ActionDecision &other) const override;
+    };
+
+    class GainFromBoardDecision : public ActionDecision
+    {
+    public:
+        shared::CardBase::id_t chosen_card;
+        GainFromBoardDecision(shared::CardBase::id_t chosen_card) : chosen_card(chosen_card) {}
+        bool operator==(const GainFromBoardDecision &other) const;
+        bool operator!=(const GainFromBoardDecision &other) const;
 
     protected:
         bool equals(const ActionDecision &other) const override;

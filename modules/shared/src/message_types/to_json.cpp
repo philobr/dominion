@@ -149,11 +149,16 @@ namespace shared
             ADD_STRING_MEMBER("end_action_phase", action);
         } else if ( dynamic_cast<EndTurnDecision *>(action_decision) != nullptr ) {
             ADD_STRING_MEMBER("end_turn", action);
-        } else if ( ChooseNCardsFromHandDecision *choose_n_cards =
-                            dynamic_cast<ChooseNCardsFromHandDecision *>(action_decision) ) {
-            ADD_STRING_MEMBER("choose_n_cards_from_hand", action);
-            ADD_ARRAY_OF_UINTS_MEMBER(choose_n_cards->cards, cards);
-        } else {
+        } else if ( DeckChoiceDecision *deck_choice = dynamic_cast<DeckChoiceDecision *>(action_decision) ) {
+            ADD_STRING_MEMBER("deck_choice", action);
+            ADD_ARRAY_OF_STRINGS_MEMBER(deck_choice->cards, cards);
+            ADD_ARRAY_OF_ENUMS_MEMBER(deck_choice->choices, choices, DeckChoiceDecision::AllowedChoice);
+        } else if ( GainFromBoardDecision *board_choice = dynamic_cast<GainFromBoardDecision *>(action_decision) ) {
+            ADD_STRING_MEMBER("board_choice", action);
+            ADD_STRING_MEMBER(board_choice->chosen_card.c_str(), chosen_card);
+        }
+
+        else {
             // This code should be unreachable
             _ASSERT_TRUE(false, "Unknown decision type");
         }

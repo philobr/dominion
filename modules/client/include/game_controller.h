@@ -2,7 +2,6 @@
 
 #include <client_network_manager.h>
 #include <gui_event_receiver.h>
-#include <shared/game/game_state/player_base.h>
 #include <windows/game_window.h>
 
 #include <shared/message_types.h>
@@ -68,12 +67,18 @@ namespace client
         // TODO: This is for testing purposes only and will be removed later
         void skipToGamePanel();
 
-        void showError(const std::string &title, const std::string &message)
-        {
-            _guiEventReceiver->getGui().showError(title, message);
-        }
+        /**
+         * @brief Show a message in the status bar
+         * @param message The message to show
+         */
+        void showStatus(std::string message);
 
-        void showStatus(const std::string &message) { _guiEventReceiver->getGui().showStatus(message); }
+        /**
+         * @brief Show an error message popup
+         * @param title The title of the popup
+         * @param message The content of the popup
+         */
+        void showError(std::string title, std::string message);
 
     private:
         void receiveActionOrderMessage(std::unique_ptr<shared::ActionOrderMessage> msg);
@@ -83,15 +88,17 @@ namespace client
         void receiveGameStateMessage(std::unique_ptr<shared::GameStateMessage> msg);
         void receiveStartGameBroadcastMessage(std::unique_ptr<shared::StartGameBroadcastMessage> msg);
 
-        shared::PlayerBase::id_t getPlayerName();
+        void showLobbyScreen(std::vector<reduced::Player::id_t> players, bool is_game_master);
+        void showGameScreen(std::unique_ptr<reduced::GameState> game_state);
+        void showVictoryScreen();
 
         std::unique_ptr<GuiEventReceiver> _guiEventReceiver;
 
         ClientNetworkManager *_clientNetworkManager;
 
         ClientState _clientState;
+
         size_t _numPlayers;
-        std::unique_ptr<reduced::GameState> _gameState;
         shared::PlayerBase::id_t _playerName;
         std::string _gameName;
     };

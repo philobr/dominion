@@ -94,8 +94,9 @@ namespace server
         getCurrentPlayer().endTurn();
         switchPlayer();
         resetPhase();
-
         board->resetPlayedCards();
+
+        maybeSwitchPhase(); // a player might not have any action cards at the beginning of the action phase
 
         if ( isGameOver() ) {
             endGame();
@@ -146,7 +147,7 @@ namespace server
         switch ( phase ) {
             case GamePhase::ACTION_PHASE:
                 {
-                    if ( player.getActions() == 0 ) {
+                    if ( player.getActions() == 0 || !player.hasActionCardsInHand() ) {
                         phase = GamePhase::BUY_PHASE;
                     }
                 }

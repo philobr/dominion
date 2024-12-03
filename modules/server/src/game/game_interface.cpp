@@ -150,7 +150,10 @@ namespace server
             case server::GamePhase::ACTION_PHASE:
                 return {game_state->getCurrentPlayerId(), std::make_unique<shared::ActionPhaseOrder>()};
             case server::GamePhase::BUY_PHASE:
-                return {game_state->getCurrentPlayerId(), std::make_unique<shared::BuyPhaseOrder>()};
+                {
+                    game_state->getCurrentPlayer().playAvailableTreasureCards();
+                    return {game_state->getCurrentPlayerId(), std::make_unique<shared::BuyPhaseOrder>()};
+                }
             case server::GamePhase::PLAYING_ACTION_CARD:
             default:
                 {

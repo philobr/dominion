@@ -50,6 +50,8 @@ namespace server
 
         // =====  NEW FUNCTIONS ====
 
+        void playAvailableTreasureCards();
+
         inline bool hasActionCardsInHand() const
         {
             auto hand = get<shared::HAND>();
@@ -178,6 +180,21 @@ namespace server
             const auto &cards = get<PILE>();
             return std::find_if(cards.begin(), cards.end(), [card_id](const auto &id) { return id == card_id; }) !=
                     cards.end();
+        }
+
+        auto getTreasureInHand() const
+        {
+            auto cards = get<shared::HAND>();
+            std::vector<shared::CardBase::id_t> treasure_cards;
+            std::for_each(cards.begin(), cards.end(),
+                          [&](const auto &card_id)
+                          {
+                              const auto card = shared::CardFactory::getCard(card_id);
+                              if ( card.isTreasure() && !card.isAction() ) {
+                                  treasure_cards.push_back(card_id);
+                              }
+                          });
+            return treasure_cards;
         }
 
         template <enum shared::CardAccess PILE>

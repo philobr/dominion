@@ -171,7 +171,7 @@ namespace client
     void GameController::receiveCreateLobbyResponseMessage(std::unique_ptr<shared::CreateLobbyResponseMessage> /*msg*/)
     {
         if ( _clientState != ClientState::CREATING_LOBBY ) {
-            LOG(EROOR) << "Received unexpected CreateLobbyResponseMessage";
+            LOG(ERROR) << "Received unexpected CreateLobbyResponseMessage";
             return;
         }
         LOG(DEBUG) << "Successfully created lobby";

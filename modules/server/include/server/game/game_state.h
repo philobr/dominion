@@ -79,7 +79,7 @@ namespace server
         void startTurn();
         void endTurn();
 
-        void setPhase(GamePhase new_phase) { phase = new_phase; }
+        inline void setPhase(GamePhase new_phase) { phase = new_phase; }
 
         bool isGameOver() const;
 
@@ -89,14 +89,35 @@ namespace server
          */
         void maybeSwitchPhase();
 
+        /**
+         * @brief Ends the action phase if possible
+         * @throws exception::InvalidRequest, exception::OutOfPhase
+         */
         void tryEndActionPhase(const shared::PlayerBase::id_t &requestor_id);
 
+        /**
+         * @brief Buys a card from the board and adds it to the players discard pile.
+         * @throws exception::InvalidRequest, exception::OutOfPhase, exception::InsufficientFunds
+         */
         void tryBuy(const shared::PlayerBase::id_t &requestor_id, const shared::CardBase::id_t &card_id);
 
+        /**
+         * @brief Takes a card from the board (without payment)
+         * @throws exception::OutOfPhase, exception::CardNotAvailable
+         */
         void tryGain(const shared::PlayerBase::id_t &requestor_id, const shared::CardBase::id_t &card_id);
 
+        /**
+         * @brief Plays a card from the hand cards. This involves moving the card from the hand to played cards.
+         * @throws exception::InvalidRequest, exception::OutOfPhase, exception::OutOfActions,
+         * exception::CardNotAvailable
+         */
         void tryPlayFromHand(const shared::PlayerBase::id_t &requestor_id, const shared::CardBase::id_t &card_id);
 
+        /**
+         * @brief Plays a card from the staged cards. This involves moving the card from staged to played cards.
+         * @throws exception::InvalidRequest, exception::OutOfPhase, exception::CardNotAvailable
+         */
         void tryPlayFromStaged(const shared::PlayerBase::id_t &requestor_id, const shared::CardBase::id_t &card_id);
 
     private:
@@ -105,8 +126,8 @@ namespace server
          */
         void forceSwitchPhase();
 
-        void resetPhase() { phase = GamePhase::ACTION_PHASE; }
-        void switchPlayer() { current_player_idx = (current_player_idx + 1) % player_map.size(); }
+        inline void resetPhase() { phase = GamePhase::ACTION_PHASE; }
+        inline void switchPlayer() { current_player_idx = (current_player_idx + 1) % player_map.size(); }
 
         /**
          * @brief Checks if all ids exist and if the CardType is one of:

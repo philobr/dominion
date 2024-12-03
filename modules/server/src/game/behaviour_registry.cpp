@@ -3,8 +3,8 @@
 std::vector<std::unique_ptr<server::base::Behaviour>>
 server::BehaviourRegistry::getBehaviours(const std::string &card_id)
 {
-    auto it = map_.find(card_id);
-    if ( it == map_.end() ) {
+    auto it = _map.find(card_id);
+    if ( it == _map.end() ) {
         throw std::runtime_error("card_id not found in the registry");
     }
     return it->second();
@@ -12,7 +12,7 @@ server::BehaviourRegistry::getBehaviours(const std::string &card_id)
 
 server::BehaviourRegistry::BehaviourRegistry()
 {
-    if ( is_initialised ) {
+    if ( _is_initialised ) {
         LOG(INFO) << "BehaviourRegistry is already initialised, skipping card registration";
         return;
     }
@@ -21,7 +21,7 @@ server::BehaviourRegistry::BehaviourRegistry()
 
     initialiseBehaviours();
 
-    is_initialised = true;
+    _is_initialised = true;
 }
 
 void server::BehaviourRegistry::initialiseBehaviours()

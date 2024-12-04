@@ -12,8 +12,9 @@ namespace client
         LOG(WARN) << "using hard coded game_state for testing";
         auto player = shared::PlayerBase("gigu");
         auto reduced = reduced::Player::make(player, {"Village", "Copper", "Copper"});
-        auto game_state = std::make_unique<reduced::GameState>(nullptr, std::move(reduced),
-                                                               std::vector<reduced::Enemy::ptr_t>(), "gigu");
+        auto game_state =
+                std::make_unique<reduced::GameState>(nullptr, std::move(reduced), std::vector<reduced::Enemy::ptr_t>(),
+                                                     "gigu", shared::GamePhase::ACTION_PHASE);
 
         // Set background color to light blue
         SetBackgroundColour(formatting_constants::PLAYER_INFO_BACKGROUND);

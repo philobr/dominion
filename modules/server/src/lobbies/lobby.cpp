@@ -49,17 +49,18 @@ namespace server
         }
 
         OrderResponse order_response;
+        const auto message_id = message->message_id;
         try {
             // ISSUE: 166
             order_response = game_interface->handleMessage(message);
         } catch ( std::exception &e ) {
             LOG(WARN) << "Caught an error in " << FUNC_NAME << ": " << e.what();
-            message_interface.send<shared::ResultResponseMessage>(requestor_id, lobby_id, false, message->message_id,
-                                                                  e.what());
+            message_interface.send<shared::ResultResponseMessage>(requestor_id, lobby_id, false, message_id, e.what());
             return;
         }
 
         broadcastOrders(message_interface, order_response);
+        broadcastGameState(message_interface);
     }
 
     void Lobby::getGameState(MessageInterface &message_interface,
@@ -159,8 +160,8 @@ namespace server
 
         LOG(INFO) << "Sending StartGameBroadcastMessage in Lobby ID: " << lobby_id;
         message_interface.broadcast<shared::StartGameBroadcastMessage>(players, lobby_id);
-        broadcastGameState(message_interface);
         auto start_orders = game_interface->startGame();
+        broadcastGameState(message_interface);
         broadcastOrders(message_interface, start_orders);
     }
 } // namespace server

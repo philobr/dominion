@@ -146,18 +146,16 @@ namespace server
     {
         // switches phase if: actions==0 OR (buys==0 -> end_turn + next player)
         game_state->maybeSwitchPhase();
+        const auto current_player = game_state->getCurrentPlayer();
         switch ( game_state->getPhase() ) {
             case server::GamePhase::ACTION_PHASE:
-                return {game_state->getCurrentPlayerId(), std::make_unique<shared::ActionPhaseOrder>()};
+                return {current_player.getId(), std::make_unique<shared::ActionPhaseOrder>()};
             case server::GamePhase::BUY_PHASE:
                 {
-                    for ( const auto &card_id : game_state->getCurrentPlayer().getType<shared::CardAccess::HAND>(
-                                  shared::CardType::TREASURE) ) {
+                    for ( const auto &card_id : game_state->playAllTreasures(current_player.getId()) ) {
                         behaviour_chain->loadBehaviours(card_id);
                         behaviour_chain->startChain(*game_state);
                     }
-
-                    game_state->getCurrentPlayer().playAvailableTreasureCards();
 
                     return {game_state->getCurrentPlayerId(), std::make_unique<shared::BuyPhaseOrder>()};
                 }

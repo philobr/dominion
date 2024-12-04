@@ -22,7 +22,8 @@ namespace client
 
         const std::string getCardName() const { return CardName; }
 
-        void setBorderColor(const wxColour& color);
+        void setBorderColor(const wxColour &color);
+
     private:
         std::string CardName;
         ImagePanel *Image;

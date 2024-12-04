@@ -3,6 +3,7 @@
 #include <vector>
 
 #include <shared/game/game_state/board_base.h>
+#include <shared/game/game_state/game_phase.h>
 #include <shared/game/reduced/player.h>
 
 namespace reduced
@@ -12,10 +13,11 @@ namespace reduced
     public:
         // Constructor to use on the server side
         GameState(shared::Board::ptr_t board, reduced::Player::ptr_t reduced_player,
-                  std::vector<reduced::Enemy::ptr_t> &&reduced_enemies, const shared::PlayerBase::id_t &active_player) :
+                  std::vector<reduced::Enemy::ptr_t> &&reduced_enemies, const shared::PlayerBase::id_t &active_player,
+                  shared::GamePhase game_phase) :
             board(std::move(board)),
             reduced_player(std::move(reduced_player)), reduced_enemies(std::move(reduced_enemies)),
-            active_player(active_player)
+            active_player(active_player), game_phase(game_phase)
         {}
 
         GameState(GameState &&other) :
@@ -39,5 +41,6 @@ namespace reduced
         reduced::Player::ptr_t reduced_player;
         std::vector<reduced::Enemy::ptr_t> reduced_enemies;
         shared::PlayerBase::id_t active_player;
+        shared::GamePhase game_phase;
     };
 } // namespace reduced

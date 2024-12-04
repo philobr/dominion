@@ -88,7 +88,8 @@ namespace server
         shared::Board::ptr_t reduced_board = board->getReduced();
 
         return std::make_unique<reduced::GameState>(reduced_board, std::move(reduced_player),
-                                                    std::move(reduced_enemies), active_player_id);
+                                                    std::move(reduced_enemies), active_player_id,
+                                                    GamePhase::ACTION_PHASE);
     }
 
     void GameState::endTurn()

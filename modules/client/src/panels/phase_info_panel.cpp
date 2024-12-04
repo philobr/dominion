@@ -12,8 +12,11 @@ namespace client
         LOG(WARN) << "using hard coded game_state for testing";
         auto player = shared::PlayerBase("gigu");
         auto reduced = reduced::Player::make(player, {"Village", "Copper", "Copper"});
+        auto board = shared::Board::make({"Moat",         "Smithy",      "Village",      "Laboratory",
+                                                          "Festival",     "Market",      "Placeholder1", "Placeholder2",
+                                                          "Placeholder3", "Placeholder4"}, 2);
         auto game_state =
-                std::make_unique<reduced::GameState>(nullptr, std::move(reduced), std::vector<reduced::Enemy::ptr_t>(),
+                std::make_unique<reduced::GameState>(board, std::move(reduced), std::vector<reduced::Enemy::ptr_t>(),
                                                      "gigu", shared::GamePhase::ACTION_PHASE);
 
         // Set background color to light blue
@@ -34,8 +37,8 @@ namespace client
 
         // Add played cards to the sizer
         // TODO: switch back to the real played cards
-        auto *playedPanel = drawPlayedPanelTest();
-        // auto* playedPanel = drawPlayedPanel(game_state.reduced_player->getPlayedCards());
+        //auto *playedPanel = drawPlayedPanelTest();
+        auto* playedPanel = drawPlayedPanel(game_state.board->getPlayedCards());
 
         // Add buttons to the sizer
         auto *buttonsPanel = drawButtonPanel();

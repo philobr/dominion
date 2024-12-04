@@ -6,7 +6,7 @@ stages:
 
 format:
   stage: format
-  image: ubuntu:22.04
+  image: amazzetta/dominion-env:latest
   script:
     - apt-get update && apt-get install -y clang clang-format cmake git libwxgtk3.0-gtk3-dev
     - mkdir -p build
@@ -22,7 +22,7 @@ format:
 
 lint:
   stage: lint
-  image: ubuntu:22.04
+  image: amazzetta/dominion-env:latest
   dependencies: 
     - format  # Reuse artifacts from the "format" stage
   script:
@@ -35,7 +35,7 @@ lint:
 
 test:
   stage: test
-  image: ubuntu:22.04
+  image: amazzetta/dominion-env:latest
   dependencies: 
     - lint  # Reuse artifacts from the "lint" stage
   script:
@@ -49,7 +49,7 @@ test:
 
 deploy:
   stage: deploy
-  image: ubuntu:22.04
+  image: amazzetta/dominion-env:latest
   dependencies:
     - test  # Ensure successful test completion before deploying
   script:

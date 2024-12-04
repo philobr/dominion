@@ -86,6 +86,28 @@ namespace server
 
         bool isGameOver() const;
 
+        std::vector<shared::CardBase::id_t> playAllTreasures(const shared::PlayerBase::id_t &affected_player_id)
+        {
+            auto cards_to_play =
+                    getPlayer(affected_player_id).getType<shared::CardAccess::HAND>(shared::CardType::TREASURE);
+            play(affected_player_id, cards_to_play);
+            return cards_to_play;
+        }
+
+        void play(const shared::PlayerBase::id_t &affected_player_id, const shared::CardBase::id_t &card_id)
+        {
+            getPlayer(affected_player_id).playCardFromHand(card_id);
+            board->addToPlayedCards(card_id);
+        }
+
+        void play(const shared::PlayerBase::id_t &affected_player_id,
+                  const std::vector<shared::CardBase::id_t> &card_ids)
+        {
+            for ( const auto &card_id : card_ids ) {
+                play(affected_player_id, card_id);
+            }
+        }
+
         /**
          * @brief Switches phases if necessary, this means: if a player is out of buys or out of actions
          * (im not happy with this name but i got nothing better rn)

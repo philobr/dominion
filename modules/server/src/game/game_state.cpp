@@ -257,6 +257,7 @@ namespace server
 
         player.playCardFromHand(card_id);
         board->addToPlayedCards(card_id);
+        player.decActions();
 
         LOG(INFO) << "Player " << requestor_id << " successfully played card " << card_id << " from their hand.";
     }

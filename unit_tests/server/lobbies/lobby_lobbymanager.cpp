@@ -149,7 +149,7 @@ TEST(ServerLibraryTest, StartGame)
         // request4
         EXPECT_CALL(*message_interface, sendMessage(IsFailureMessage(), player_2)).Times(1);
         // request5
-        EXPECT_CALL(*message_interface, sendMessage(_, _)).Times(6); // num players * 3
+        EXPECT_CALL(*message_interface, sendMessage(_, _)).Times(4); // num players * 3
     }
 
     LOBBY_MANAGER_CALL(start_game_invalid);

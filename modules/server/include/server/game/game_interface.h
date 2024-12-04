@@ -42,6 +42,8 @@ namespace server
             return game_state->getReducedState(player_id);
         }
 
+        response_t startGame() { return nextPhase(); }
+
     private:
         GameInterface(const std::string &game_id, const std::vector<shared::CardBase::id_t> &play_cards,
                       const std::vector<Player::id_t> &player_ids) :
@@ -50,7 +52,8 @@ namespace server
         {}
 
         /**
-         * @brief Tries if we have to switch phase and returns the phase transition for the corresponding player.
+         * @brief Tries if we have to switch phase and returns the phase transition for the corresponding
+         * player.
          *
          * @return response_t
          */

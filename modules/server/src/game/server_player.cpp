@@ -35,4 +35,11 @@ namespace server
         draw(5);
     }
 
+    void Player::playAvailableTreasureCards()
+    {
+        for ( const auto &card_id : getType<shared::CardAccess::HAND>(shared::CardType::TREASURE) ) {
+            playCardFromHand(card_id);
+        }
+    }
+
 } // namespace server

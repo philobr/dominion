@@ -144,12 +144,12 @@ TEST(ServerLibraryTest, StartGame)
     // All expected function calls of sendMessage
     {
         InSequence s;
-        // request3
+        // start_game_invalid
         EXPECT_CALL(*message_interface, sendMessage(IsFailureMessage(), player_1)).Times(1);
         // request4
         EXPECT_CALL(*message_interface, sendMessage(IsFailureMessage(), player_2)).Times(1);
         // request5
-        EXPECT_CALL(*message_interface, sendMessage(_, _)).Times(4);
+        EXPECT_CALL(*message_interface, sendMessage(_, _)).Times(4); // num players * 3
     }
 
     LOBBY_MANAGER_CALL(start_game_invalid);

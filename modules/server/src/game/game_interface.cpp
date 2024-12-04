@@ -32,17 +32,18 @@ namespace server
         HANDLE_ACTION(PlayActionCardDecision);
         HANDLE_ACTION(BuyCardDecision);
         HANDLE_ACTION(EndTurnDecision);
+        HANDLE_ACTION(EndActionPhaseDecision);
 
         return passToBehaviour(casted_msg);
     }
 
     GameInterface::response_t
     GameInterface::PlayActionCardDecision_handler(std::unique_ptr<shared::PlayActionCardDecision> action_decision,
-                                                  const Player::id_t &player_id)
+                                                  const Player::id_t &requestor_id)
     {
         try {
             // all checks are done here
-            game_state->tryPlayFromHand(player_id, action_decision->card_id);
+            game_state->tryPlayFromHand(requestor_id, action_decision->card_id);
             game_state->setPhase(GamePhase::PLAYING_ACTION_CARD); // phase is only set if we successfully played a card
         } catch ( std::exception &e ) {
             // we throw for now, but this should be a message
@@ -65,11 +66,11 @@ namespace server
 
     GameInterface::response_t
     GameInterface::BuyCardDecision_handler(std::unique_ptr<shared::BuyCardDecision> action_decision,
-                                           const Player::id_t &player_id)
+                                           const Player::id_t &requestor_id)
     {
         try {
             // all checks are done here
-            game_state->tryBuy(player_id, action_decision->card);
+            game_state->tryBuy(requestor_id, action_decision->card);
         } catch ( std::exception &e ) {
             // we throw for now, but this should be a message
             // discuss with gui guys or return shared::ResultResponseMessage(false)
@@ -86,6 +87,11 @@ namespace server
     GameInterface::EndTurnDecision_handler(std::unique_ptr<shared::EndTurnDecision> action_decision,
                                            const Player::id_t &requestor_id)
     {
+        if ( requestor_id != game_state->getCurrentPlayerId() ) {
+            LOG(ERROR) << "Player " << requestor_id << " is trying to end the turn but its not his turn!";
+            throw exception::NotYourTurn();
+        }
+
         if ( game_state->getPhase() == GamePhase::PLAYING_ACTION_CARD ) {
             // ISSUE: 166
             LOG(ERROR) << "Player " << requestor_id << " is trying to end his turn while playing a card";
@@ -132,12 +138,13 @@ namespace server
     GameInterface::EndActionPhaseDecision_handler(std::unique_ptr<shared::EndActionPhaseDecision> decision,
                                                   const Player::id_t &requestor_id)
     {
-        if ( game_state->getPhase() != server::GamePhase::ACTION_PHASE ) {
-            LOG(ERROR) << "Player tries to end ACTION_PHASE while not being in the action phase";
-            throw exception::OutOfPhase("");
+        try {
+            game_state->tryEndActionPhase(requestor_id);
+        } catch ( std::exception &e ) {
+            LOG(ERROR) << "failed to end action phase: " << e.what();
+            throw std::runtime_error("failed to buy in GameInterface::PlayActionCardDecision_handler, this needs to be "
+                                     "handled better");
         }
-
-        game_state->tryEndActionPhase(requestor_id);
 
         return nextPhase();
     }
@@ -146,11 +153,19 @@ namespace server
     {
         // switches phase if: actions==0 OR (buys==0 -> end_turn + next player)
         game_state->maybeSwitchPhase();
+        const auto current_player = game_state->getCurrentPlayer();
         switch ( game_state->getPhase() ) {
             case server::GamePhase::ACTION_PHASE:
-                return {game_state->getCurrentPlayerId(), std::make_unique<shared::ActionPhaseOrder>()};
+                return {current_player.getId(), std::make_unique<shared::ActionPhaseOrder>()};
             case server::GamePhase::BUY_PHASE:
-                return {game_state->getCurrentPlayerId(), std::make_unique<shared::BuyPhaseOrder>()};
+                {
+                    for ( const auto &card_id : game_state->playAllTreasures(current_player.getId()) ) {
+                        behaviour_chain->loadBehaviours(card_id);
+                        behaviour_chain->startChain(*game_state);
+                    }
+
+                    return {game_state->getCurrentPlayerId(), std::make_unique<shared::BuyPhaseOrder>()};
+                }
             case server::GamePhase::PLAYING_ACTION_CARD:
             default:
                 {

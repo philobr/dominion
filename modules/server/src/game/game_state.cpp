@@ -91,10 +91,7 @@ namespace server
 
     void GameState::endTurn()
     {
-        getCurrentPlayer().endTurn();
         switchPlayer();
-        resetPhase();
-        board->resetPlayedCards();
 
         maybeSwitchPhase(); // a player might not have any action cards at the beginning of the action phase
 

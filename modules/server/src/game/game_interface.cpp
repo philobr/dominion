@@ -164,7 +164,7 @@ namespace server
                         behaviour_chain->startChain(*game_state);
                     }
 
-                    return {game_state->getCurrentPlayerId(), std::make_unique<shared::BuyPhaseOrder>()};
+                    return {current_player.getId(), std::make_unique<shared::BuyPhaseOrder>()};
                 }
             case server::GamePhase::PLAYING_ACTION_CARD:
             default:

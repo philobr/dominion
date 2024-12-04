@@ -200,26 +200,32 @@ namespace client
 
         if ( typeid(msg) == typeid(ActionPhaseOrder) ) {
             // TODO
+            LOG(WARN) << "Received ActionPhaseOrder, but this does not do anything yet";
 
         } else if ( typeid(msg) == typeid(BuyPhaseOrder) ) {
             // TODO
+            LOG(WARN) << "Received BuyPhaseOrder, but this does not do anything yet";
 
         } else if ( typeid(msg) == typeid(EndTurnOrder) ) {
             // TODO
+            LOG(WARN) << "Received EndTurnOrder, but this does not do anything yet";
 
         } else if ( typeid(msg) == typeid(GainFromBoardOrder) ) {
             // TODO
+            LOG(WARN) << "Received GainFromBoardOrder, but this does not do anything yet";
 
         } else if ( typeid(msg) == typeid(ChooseFromOrder) ) {
             // TODO
+            LOG(WARN) << "Received ChooseFromOrder, but this does not do anything yet";
 
         } else if ( typeid(msg) == typeid(ChooseFromStagedOrder) ) {
             // TODO
+            LOG(WARN) << "Received ChooseFromStagedOrder, but this does not do anything yet";
 
         } else if ( typeid(msg) == typeid(ChooseFromHandOrder) ) {
+            // TODO
+            LOG(WARN) << "Received ChooseFromHandOrder, but this does not do anything yet";
         }
-
-        LOG(WARN) << "Received ActionOrderMessage, but this does not do anything yet";
     }
 
     void GameController::receiveCreateLobbyResponseMessage(std::unique_ptr<shared::CreateLobbyResponseMessage> /*msg*/)

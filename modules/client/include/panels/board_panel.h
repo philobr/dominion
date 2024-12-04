@@ -1,6 +1,8 @@
+
 #pragma once
 
 #include <shared/game/game_state/board_base.h>
+#include <shared/game/game_state/game_phase.h>
 
 #include <wx/wx.h>
 #include "../uiElements/pile_panel.h"
@@ -29,7 +31,8 @@ namespace client
          *
          * @param Board
          */
-        void drawBoard(std::shared_ptr<shared::Board> board, bool is_active, unsigned int treasure);
+        void drawBoard(std::shared_ptr<shared::Board> board, bool is_active, unsigned int treasure,
+                       shared::GamePhase phase);
 
     private:
         /**

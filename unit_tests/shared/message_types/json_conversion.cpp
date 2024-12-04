@@ -23,8 +23,10 @@ TEST(SharedLibraryTest, GameStateMessageTwoWayConversion)
 
     const std::string active_player = "Felix";
 
+    const GamePhase game_phase = GamePhase::ACTION_PHASE;
+
     std::unique_ptr<reduced::GameState> game_state = std::make_unique<reduced::GameState>(
-            std::move(board), std::move(player), std::move(enemies), active_player);
+            std::move(board), std::move(player), std::move(enemies), active_player, game_phase);
     GameStateMessage original_message("123", std::move(game_state), "789", "456");
 
     std::string json = original_message.toJson();

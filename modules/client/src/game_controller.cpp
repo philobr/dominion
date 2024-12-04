@@ -108,7 +108,7 @@ namespace client
             _guiEventReceiver->getGui().showError("Error", "Invalid number of players");
             return;
         }
-        LOG(DEBUG) << "Starting game";
+        LOG(DEBUG) << "Requesting to start game";
         // TODO Implement card selection
         std::vector<shared::CardBase::id_t> selectedCards{"Moat",         "Smithy",      "Village",      "Laboratory",
                                                           "Festival",     "Market",      "Placeholder1", "Placeholder2",
@@ -191,40 +191,42 @@ namespace client
 
     void GameController::receiveActionOrderMessage(std::unique_ptr<shared::ActionOrderMessage> msg)
     {
-        // TODO(#125) This is not implemented, and will probably be removed with #125
         if ( _clientState != ClientState::IN_GAME ) {
-            LOG(ERROR) << "Received unexpected ActionOrderMessage";
+            LOG(WARN) << "Received unexpected ActionOrderMessage while in state " << _clientState;
             return;
         }
-        showGameScreen(std::move(msg->game_state));
 
-        if ( typeid(msg) == typeid(ActionPhaseOrder) ) {
-            // TODO
+        ActionOrder &action_order = *msg->order;
+        if ( typeid(action_order) == typeid(ActionPhaseOrder) ) {
+            // TODO(#194) This will be combined with BuyPhaseOrder
             LOG(WARN) << "Received ActionPhaseOrder, but this does not do anything yet";
-
-        } else if ( typeid(msg) == typeid(BuyPhaseOrder) ) {
-            // TODO
+            showGameScreen(std::move(msg->game_state));
+        } else if ( typeid(action_order) == typeid(BuyPhaseOrder) ) {
+            // TODO(#194) This will be combined with ActionPhaseOrder
             LOG(WARN) << "Received BuyPhaseOrder, but this does not do anything yet";
-
-        } else if ( typeid(msg) == typeid(EndTurnOrder) ) {
-            // TODO
-            LOG(WARN) << "Received EndTurnOrder, but this does not do anything yet";
-
-        } else if ( typeid(msg) == typeid(GainFromBoardOrder) ) {
-            // TODO
+            showGameScreen(std::move(msg->game_state));
+        } else if ( typeid(action_order) == typeid(EndTurnOrder) ) {
+            // TODO(#194) Remove this
+            LOG(ERROR) << "Received EndTurnOrder, this is deprecated (see #194)";
+            return;
+        } else if ( typeid(action_order) == typeid(GainFromBoardOrder) ) {
+            // TODO(#195): Implement
             LOG(WARN) << "Received GainFromBoardOrder, but this does not do anything yet";
-
-        } else if ( typeid(msg) == typeid(ChooseFromOrder) ) {
-            // TODO
+            return;
+        } else if ( typeid(action_order) == typeid(ChooseFromOrder) ) {
+            // TODO(#195): Implement
             LOG(WARN) << "Received ChooseFromOrder, but this does not do anything yet";
-
-        } else if ( typeid(msg) == typeid(ChooseFromStagedOrder) ) {
-            // TODO
+            return;
+        } else if ( typeid(action_order) == typeid(ChooseFromStagedOrder) ) {
+            // TODO(#195): Implement
             LOG(WARN) << "Received ChooseFromStagedOrder, but this does not do anything yet";
-
-        } else if ( typeid(msg) == typeid(ChooseFromHandOrder) ) {
-            // TODO
+            return;
+        } else if ( typeid(action_order) == typeid(ChooseFromHandOrder) ) {
+            // TODO(#195): Implement
             LOG(WARN) << "Received ChooseFromHandOrder, but this does not do anything yet";
+            return;
+        } else {
+            LOG(ERROR) << "Received unknown ActionOrderMessage: " << typeid(action_order).name();
         }
     }
 
@@ -315,13 +317,15 @@ namespace client
 
     void GameController::receiveGameStateMessage(std::unique_ptr<shared::GameStateMessage> msg)
     {
-        LOG(INFO) << "Received GameStateMessage, updating game state";
+        // TODO(#125): Unfortunately, this is currently still used to update
+        // the game state of the players that are not the active player.
+        LOG(WARN) << "Received GameStateMessage, this is deprecated";
         showGameScreen(std::move(msg->game_state));
     }
 
     void GameController::receiveStartGameBroadcastMessage(std::unique_ptr<shared::StartGameBroadcastMessage> /*msg*/)
     {
-        LOG(DEBUG) << "Starting game";
+        LOG(DEBUG) << "Game starting soon (StartGameBroadcastMessage)";
         _clientState = ClientState::IN_GAME;
     }
 

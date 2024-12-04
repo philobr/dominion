@@ -50,6 +50,7 @@ namespace shared
         unsigned int getDrawPileSize() const { return draw_pile_size; }
         unsigned int getDiscardPileSize() const { return discard_pile.size(); }
         CardBase::id_t getTopDiscardCard() const { return discard_pile.empty() ? "" : discard_pile.back(); }
+        std::vector<CardBase::id_t> getPlayedCards() const { return played_cards; }
 
         /**
          * @brief Decrements actions by one, or keeps it at 0.

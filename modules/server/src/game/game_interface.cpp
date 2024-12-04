@@ -44,7 +44,8 @@ namespace server
         try {
             // all checks are done here
             game_state->tryPlayFromHand(requestor_id, action_decision->card_id);
-            game_state->setPhase(GamePhase::PLAYING_ACTION_CARD); // phase is only set if we successfully played a card
+            game_state->setPhase(
+                    shared::GamePhase::PLAYING_ACTION_CARD); // phase is only set if we successfully played a card
         } catch ( std::exception &e ) {
             // we throw for now, but this should be a message
             // discuss with gui guys or return shared::ResultResponseMessage(false)
@@ -92,7 +93,7 @@ namespace server
             throw exception::NotYourTurn();
         }
 
-        if ( game_state->getPhase() == GamePhase::PLAYING_ACTION_CARD ) {
+        if ( game_state->getPhase() == shared::GamePhase::PLAYING_ACTION_CARD ) {
             // ISSUE: 166
             LOG(ERROR) << "Player " << requestor_id << " is trying to end his turn while playing a card";
             throw exception::OutOfPhase("");
@@ -111,7 +112,7 @@ namespace server
     {
         // we expect to be in this state because the behaviour chain needs to be initialised
         // -> implying we are playing a card
-        if ( game_state->getPhase() != server::GamePhase::PLAYING_ACTION_CARD ) {
+        if ( game_state->getPhase() != shared::GamePhase::PLAYING_ACTION_CARD ) {
             LOG(ERROR) << "Unexpected message type, player " << message->player_id
                        << " is currently not playing a card";
             throw exception::OutOfPhase("");
@@ -155,9 +156,9 @@ namespace server
         game_state->maybeSwitchPhase();
         const auto current_player = game_state->getCurrentPlayer();
         switch ( game_state->getPhase() ) {
-            case server::GamePhase::ACTION_PHASE:
+            case shared::GamePhase::ACTION_PHASE:
                 return {current_player.getId(), std::make_unique<shared::ActionPhaseOrder>()};
-            case server::GamePhase::BUY_PHASE:
+            case shared::GamePhase::BUY_PHASE:
                 {
                     for ( const auto &card_id : game_state->playAllTreasures(current_player.getId()) ) {
                         behaviour_chain->loadBehaviours(card_id);
@@ -166,7 +167,7 @@ namespace server
 
                     return {current_player.getId(), std::make_unique<shared::BuyPhaseOrder>()};
                 }
-            case server::GamePhase::PLAYING_ACTION_CARD:
+            case shared::GamePhase::PLAYING_ACTION_CARD:
             default:
                 {
                     // ISSUE: 166
@@ -179,13 +180,13 @@ namespace server
 
     GameInterface::response_t GameInterface::finishedPlayingCard()
     {
-        if ( game_state->getPhase() != server::GamePhase::PLAYING_ACTION_CARD ) {
+        if ( game_state->getPhase() != shared::GamePhase::PLAYING_ACTION_CARD ) {
             // ISSUE: 166
             LOG(ERROR) << "tried to finish playing a card while not even playing a card!";
             throw std::runtime_error("unreachable code in " + FUNC_NAME);
         }
 
-        game_state->setPhase(server::GamePhase::ACTION_PHASE);
+        game_state->setPhase(shared::GamePhase::ACTION_PHASE);
         return nextPhase();
     }
 } // namespace server

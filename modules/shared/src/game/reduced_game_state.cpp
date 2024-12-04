@@ -42,6 +42,9 @@ namespace reduced
         }
         doc.AddMember("reduced_enemies", reduced_enemies_value, doc.GetAllocator());
 
+        std::string game_phase = shared::gamePhaseToString(this->game_phase);
+        ADD_STRING_MEMBER(game_phase.c_str(), game_phase);
+
         ADD_STRING_MEMBER(this->active_player.c_str(), active_player);
 
         return doc;
@@ -98,10 +101,15 @@ namespace reduced
             return nullptr;
         }
 
+        shared::GamePhase game_phase;
+        std::string game_phase_str;
+        GET_STRING_MEMBER(game_phase_str, json, "game_phase");
+        game_phase = shared::gamePhaseFromString(game_phase_str);
+
         shared::PlayerBase::id_t active_player;
         GET_STRING_MEMBER(active_player, json, "active_player");
 
         return std::make_unique<GameState>(std::move(board), std::move(reduced_player), std::move(reduced_enemies),
-                                           active_player);
+                                           active_player, game_phase);
     }
 } // namespace reduced

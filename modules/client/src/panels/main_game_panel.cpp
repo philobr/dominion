@@ -11,6 +11,12 @@ namespace client
     MainGamePanel::MainGamePanel(wxWindow *parent) : wxPanel(parent, wxID_ANY, wxDefaultPosition, PanelSize)
     {
         wxBoxSizer *mainLayout = new wxBoxSizer(wxVERTICAL);
+
+        // set size of the panel
+        // This seems to fix an issue on the side of wxWidgets where the
+        // panel size is left uninitialized
+        this->SetSize(PanelSize);
+        mainLayout->SetMinSize(PanelSize);
         Board = new BoardPanel(this, VerticalBaseSize);
         EnemyInfo = new EnemyInfoPanel(this, VerticalBaseSize);
         Player = new PlayerPanel(this, VerticalBaseSize);

@@ -144,8 +144,9 @@ namespace test_helper
         auto board = getBoard(n_players, kingdom_cards);
         auto reduced_player = getReducedPlayer(active_player, hand_cards);
         auto reduced_enemies = getReducedEnemies(n_players - 1, enemy_hand_cards);
+        shared::GamePhase game_phase = shared::GamePhase::ACTION_PHASE;
         return reduced::GameState(std::move(board), std::move(reduced_player), std::move(reduced_enemies),
-                                  active_player);
+                                  active_player, game_phase);
     }
 
     reduced::GameState getReducedGameState(size_t n_players)
@@ -163,8 +164,9 @@ namespace test_helper
         auto board = getBoard(n_players, kingdom_cards);
         auto reduced_player = getReducedPlayer(active_player, hand_cards);
         auto reduced_enemies = getReducedEnemies(n_players - 1, enemy_hand_cards);
+        shared::GamePhase game_phase = shared::GamePhase::ACTION_PHASE;
         return std::make_unique<reduced::GameState>(std::move(board), std::move(reduced_player),
-                                                    std::move(reduced_enemies), active_player);
+                                                    std::move(reduced_enemies), active_player, game_phase);
     }
 
     std::unique_ptr<reduced::GameState> getReducedGameStatePtr(size_t n_players)

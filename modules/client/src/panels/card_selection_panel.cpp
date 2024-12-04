@@ -31,6 +31,14 @@ namespace client
 
         VerticalSizer->Add(createCardSelection(), 0, wxALIGN_CENTER | wxALL, 5);
 
+        // make the start game button
+        wxButton *StartButton = new wxButton(this, wxID_ANY, "Start Game");
+
+        StartButton->Bind(wxEVT_BUTTON,
+                          [this](const wxCommandEvent &) { wxGetApp().getController().startGame(selectedCards); });
+
+        VerticalSizer->Add(StartButton, 0, wxALIGN_CENTER | wxALL, 5);
+
         this->SetSizerAndFit(VerticalSizer);
     }
 

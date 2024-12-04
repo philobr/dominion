@@ -252,6 +252,7 @@ namespace server
         }
 
         getPlayer(requestor_id).playCardFromHand(card_id);
+        getPlayer(requestor_id).decActions();
         board->addToPlayedCards(card_id);
 
         LOG(INFO) << "Player " << requestor_id << " successfully played card " << card_id << " from their hand.";

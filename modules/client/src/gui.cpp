@@ -109,7 +109,6 @@ namespace client
 
         if ( game_state == nullptr ) {
             LOG(WARN) << "Game state is null" << std::endl;
-            return;
         } else {
             _mainGamePanel->drawGameState(*game_state);
         }

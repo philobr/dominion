@@ -39,14 +39,14 @@ namespace server
         template <typename... BehaviourTypes>
         void insert(const std::string &card_id);
 
-        static std::unordered_map<std::string, std::function<std::vector<std::unique_ptr<base::Behaviour>>()>> map_;
-        static bool is_initialised;
+        static std::unordered_map<std::string, std::function<std::vector<std::unique_ptr<base::Behaviour>>()>> _map;
+        static bool _is_initialised;
     };
 
     // static member initialisation
     inline std::unordered_map<std::string, std::function<std::vector<std::unique_ptr<base::Behaviour>>()>>
-            BehaviourRegistry::map_;
-    inline bool BehaviourRegistry::is_initialised;
+            BehaviourRegistry::_map;
+    inline bool BehaviourRegistry::_is_initialised;
 
     template <typename... BehaviourType>
     inline void BehaviourRegistry::insert(const std::string &card_id)
@@ -54,7 +54,7 @@ namespace server
         LOG(INFO) << "Registering card: " << card_id;
         ((LOG(INFO) << "  Behaviour type: " << utils::demangle(typeid(BehaviourType).name())), ...);
 
-        map_[card_id] = []()
+        _map[card_id] = []()
         {
             std::vector<std::unique_ptr<base::Behaviour>> behaviours;
             (behaviours.emplace_back(std::make_unique<BehaviourType>()), ...);

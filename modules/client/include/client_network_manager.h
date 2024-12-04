@@ -25,6 +25,6 @@ private:
 
     static sockpp::tcp_connector *_connection;
 
-    static bool _connectionSuccess;
-    static bool _failedToConnect;
+    static bool _connection_success;
+    static bool _failed_to_connect;
 };

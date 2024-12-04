@@ -46,7 +46,7 @@ namespace server
         inline static sockpp::tcp_acceptor _acc;
 
         // message interface gets passes to lobby manager etc. for the to send to clients later
-        static std::shared_ptr<MessageInterface> _messageInterface;
+        static std::shared_ptr<MessageInterface> _message_interface;
 
         // connect new clients
         void connect(const std::string &url, const uint16_t port);

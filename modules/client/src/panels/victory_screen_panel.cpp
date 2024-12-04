@@ -80,7 +80,7 @@ namespace client
         victory_screen_sizer = new wxBoxSizer(wxVERTICAL);
 
         wxPanel *container = new wxPanel(this, wxID_ANY);
-        container->SetMinSize(wxSize(600, -1));
+        container->SetMinSize(wxSize(1200, -1));
 
         wxBoxSizer *container_sizer = new wxBoxSizer(wxVERTICAL);
 

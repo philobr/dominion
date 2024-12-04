@@ -3,7 +3,7 @@
 namespace shared
 {
     // static member declaration
-    CardFactory::map_t CardFactory::map_;
+    CardFactory::map_t CardFactory::_map;
 
     // idk if its actually called registrar, sounds coll though, just a helper struct
     struct CardRegistrar

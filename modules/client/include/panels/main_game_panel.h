@@ -1,8 +1,9 @@
 #pragma once
 
-#include "board_panel.h"
-#include "enemy_info_panel.h"
-#include "player_panel.h"
+#include <panels/board_panel.h>
+#include <panels/enemy_info_panel.h>
+#include <panels/phase_info_panel.h>
+#include <panels/player_panel.h>
 
 #include <shared/game/game_state/reduced_game_state.h>
 
@@ -32,7 +33,7 @@ namespace client
         BoardPanel *Board;
         PlayerPanel *Player;
         EnemyInfoPanel *EnemyInfo;
-
+        PhaseInfoPanel *PhaseInfo;
         // define key constant layout values
         const wxSize VerticalBaseSize = wxSize(1024, 100);
         const wxSize PanelSize = wxSize(1024, 1024);

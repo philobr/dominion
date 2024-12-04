@@ -84,6 +84,14 @@ namespace client
                                         [](const wxCommandEvent & /*event*/)
                                         { wxGetApp().getController().skipToVictoryScreen(); });
         VerticalLayout->Add(skipToVictoryScreenButton, 0, wxALIGN_RIGHT | wxALL, 10);
+
+        // TODO Remove this button before release
+        wxButton *skipToCardSelection =
+                new wxButton(this, wxID_ANY, "Card Selection", wxDefaultPosition, wxSize(100, 40));
+        skipToCardSelection->Bind(wxEVT_BUTTON,
+                                  [](const wxCommandEvent & /*event*/)
+                                  { wxGetApp().getController().skipToCardSelectionPanel(); });
+        VerticalLayout->Add(skipToCardSelection, 0, wxALIGN_RIGHT | wxALL, 10);
         this->SetSizerAndFit(VerticalLayout);
     }
 

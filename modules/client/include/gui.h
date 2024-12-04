@@ -6,6 +6,7 @@
 #include <panels/main_game_panel.h>
 #include <panels/victory_screen_panel.h>
 #include <windows/game_window.h>
+#include "panels/card_selection_panel.h"
 
 namespace client
 {
@@ -52,6 +53,8 @@ namespace client
 
         void showVictoryScreen();
 
+        void showCardSelectionScreen();
+
 
     private:
         GameWindow *_gameWindow;
@@ -59,5 +62,6 @@ namespace client
         MainGamePanel *_mainGamePanel;
         LobbyPanel *_lobbyPanel;
         VictoryScreenPanel *_victoryScreenPanel;
+        CardSelectionPanel *_cardSelectionPanel;
     };
 } // namespace client

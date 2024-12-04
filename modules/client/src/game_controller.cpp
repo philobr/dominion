@@ -38,6 +38,11 @@ namespace client
         wxQueueEvent(_guiEventReceiver.get(), ControllerEvent::showVictoryScreen());
     }
 
+    void GameController::showCardSelectionScreen()
+    {
+        wxQueueEvent(_guiEventReceiver.get(), ControllerEvent::showCardSelectionScreen());
+    }
+
     GameController::GameController(GuiEventReceiver *event_receiver) :
         _guiEventReceiver(event_receiver), _clientState(ClientState::LOGIN_SCREEN)
     {}
@@ -361,5 +366,13 @@ namespace client
         // We need a game state here, but we don't have one
         // We just pass nullptr for now
         showGameScreen(nullptr);
+    }
+
+    void GameController::skipToCardSelectionPanel()
+    {
+        LOG(WARN) << "Skipping to game panel, this is debug functionality";
+        // We need a game state here, but we don't have one
+        // We just pass nullptr for now
+        showCardSelectionScreen();
     }
 } // namespace client

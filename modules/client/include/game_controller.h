@@ -67,6 +67,9 @@ namespace client
         // TODO: This is for testing purposes only and will be removed later
         void skipToGamePanel();
 
+        // TODO: This is for testing purposes only and will be removed later
+        void skipToCardSelectionPanel();
+
         /**
          * @brief Show a message in the status bar
          * @param message The message to show
@@ -91,6 +94,7 @@ namespace client
         void showLobbyScreen(std::vector<reduced::Player::id_t> players, bool is_game_master);
         void showGameScreen(std::unique_ptr<reduced::GameState> game_state);
         void showVictoryScreen();
+        void showCardSelectionScreen();
 
         std::unique_ptr<GuiEventReceiver> _guiEventReceiver;
 

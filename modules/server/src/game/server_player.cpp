@@ -27,6 +27,11 @@ namespace server
 
     void Player::endTurn()
     {
+        if ( !staged_cards.empty() ) {
+            LOG(ERROR) << "staged cards should be empty when ending a turn";
+            throw std::runtime_error("tried to end a turn while staged cards were not empty");
+        }
+
         resetValues();
 
         move<shared::HAND, shared::DISCARD_PILE>();

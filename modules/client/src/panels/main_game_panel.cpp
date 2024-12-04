@@ -11,6 +11,12 @@ namespace client
     MainGamePanel::MainGamePanel(wxWindow *parent) : wxPanel(parent, wxID_ANY, wxDefaultPosition, PanelSize)
     {
         wxBoxSizer *mainLayout = new wxBoxSizer(wxVERTICAL);
+
+        // set size of the panel
+        // This seems to fix an issue on the side of wxWidgets where the
+        // panel size is left uninitialized
+        this->SetSize(PanelSize);
+        mainLayout->SetMinSize(PanelSize);
         Board = new BoardPanel(this, VerticalBaseSize);
         EnemyInfo = new EnemyInfoPanel(this, VerticalBaseSize);
         Player = new PlayerPanel(this, VerticalBaseSize);
@@ -24,17 +30,13 @@ namespace client
         this->SetSizerAndFit(mainLayout);
     }
 
-    std::mutex syncMutex;
-    std::condition_variable syncCv;
-    bool taskCompleted = false;
-
     void MainGamePanel::drawGameState(const reduced::GameState &game_state)
     {
         bool is_active = (game_state.active_player == game_state.reduced_player->getId());
         PhaseInfo->drawInfoPanel(game_state);
-        Board->drawBoard(game_state.board, is_active, game_state.reduced_player->getTreasure());
+        Board->drawBoard(game_state.board, is_active, game_state.reduced_player->getTreasure(), game_state.game_phase);
 
-        Player->drawPlayer(game_state.reduced_player, is_active);
+        Player->drawPlayer(game_state.reduced_player, is_active, game_state.game_phase);
         EnemyInfo->drawEnemies(game_state.reduced_enemies);
     }
 

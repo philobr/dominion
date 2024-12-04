@@ -32,7 +32,7 @@ namespace client
 
     void LobbyPanel::refreshPlayers(const std::vector<std::string> &players)
     {
-        NamesSizer->Clear(false);
+        NamesSizer->Clear(true);
         playerCount = 0;
         for ( auto player : players ) {
             this->addPlayer(player);

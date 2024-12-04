@@ -8,6 +8,7 @@ add_library(shared_lib STATIC
     src/message_types/other.cpp
     
     src/game/cards.cpp
+    src/game/game_phase.cpp
     src/game/player_base.cpp
     src/game/reduced_player.cpp
     src/game/board_base.cpp

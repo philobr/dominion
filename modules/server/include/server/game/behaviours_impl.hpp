@@ -176,23 +176,33 @@ namespace server
             auto apply_curse = [&](size_t player_index)
             {
                 const auto &player_id = all_player_ids[player_index];
-                try {
-                    game_state.getBoard()->tryTake(curse_card);
-                    game_state.getPlayer(player_id).gain(curse_card);
-                } catch ( const std::exception &e ) {
-                    LOG(DEBUG) << "Board ran out of curses, aborting: " << FUNC_NAME;
-                    BEHAVIOUR_DONE;
+
+                if ( game_state.getPlayer(player_id).canBlock() ) {
+                    return;
                 }
+
+                game_state.getBoard()->tryTake(curse_card);
+                game_state.getPlayer(player_id).gain(curse_card);
             };
 
             // apply clockwise, starting to the right of the cur player
             for ( size_t i = current_player_index + 1; i < player_count; ++i ) {
-                apply_curse(i);
+                try {
+                    apply_curse(i);
+                } catch ( const std::exception &e ) {
+                    LOG(DEBUG) << "Board ran out of curses, aborting: " << FUNC_NAME;
+                    BEHAVIOUR_DONE;
+                }
             }
 
             // continue applying curses
             for ( size_t i = 0; i < current_player_index; ++i ) {
-                apply_curse(i);
+                try {
+                    apply_curse(i);
+                } catch ( const std::exception &e ) {
+                    LOG(DEBUG) << "Board ran out of curses, aborting: " << FUNC_NAME;
+                    BEHAVIOUR_DONE;
+                }
             }
 
             BEHAVIOUR_DONE;

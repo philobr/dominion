@@ -1,5 +1,10 @@
 #include "server_player.h"
 
+/*
+FUNCTIONS IN THIS FILE ARE FINAL AND CAN BE TESTED
+*/
+
+
 #pragma region UTILS
 template <enum shared::CardAccess PILE>
 inline std::vector<shared::CardBase::id_t> &server::Player::getMutable()

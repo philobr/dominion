@@ -7,6 +7,7 @@
 #include <shared/message_types.h>
 #include <shared/utils/logger.h>
 #include <vector>
+#include "shared/action_order.h"
 
 using namespace shared;
 
@@ -196,6 +197,28 @@ namespace client
             return;
         }
         showGameScreen(std::move(msg->game_state));
+
+        if( typeid(msg) == typeid(ActionPhaseOrder) ) {
+            // TODO
+
+        } else if ( typeid(msg) == typeid(BuyPhaseOrder) ) {
+            //TODO
+            
+        } else if ( typeid(msg) == typeid(EndTurnOrder) ) {
+            //TODO
+            
+        } else if ( typeid(msg) == typeid(GainFromBoardOrder) ) {
+            //TODO
+            
+        } else if ( typeid(msg) == typeid(ChooseFromOrder) ) {
+            //TODO
+            
+        } else if ( typeid(msg) == typeid(ChooseFromStagedOrder) ) {
+            //TODO
+            
+        } else if ( typeid(msg) == typeid(ChooseFromHandOrder) ) {
+
+        }
 
         LOG(WARN) << "Received ActionOrderMessage, but this does not do anything yet";
     }

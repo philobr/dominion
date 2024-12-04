@@ -161,7 +161,6 @@ namespace server
         LOG(INFO) << "Sending StartGameBroadcastMessage in Lobby ID: " << lobby_id;
         message_interface.broadcast<shared::StartGameBroadcastMessage>(players, lobby_id);
         auto start_orders = game_interface->startGame();
-        broadcastGameState(message_interface);
         broadcastOrders(message_interface, start_orders);
     }
 } // namespace server

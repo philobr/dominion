@@ -25,7 +25,7 @@ namespace client
 
     void BoardPanel::drawBoard(std::shared_ptr<shared::Board> board, bool is_active, unsigned int treasure)
     {
-        // this->DestroyChildren();
+        this->DestroyChildren();
 
         // board_ = Board;
 

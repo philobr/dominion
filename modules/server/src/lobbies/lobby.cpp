@@ -31,7 +31,7 @@ namespace server
         HANDLE(StartGameRequestMessage, startGame);
         HANDLE(GameStateRequestMessage, getGameState);
 
-        const auto &requestor_id = message->player_id;
+        const auto requestor_id = message->player_id;
 
         if ( !playerInLobby(requestor_id) ) {
             LOG(DEBUG) << "Received Action and Player is not in the requested lobby. Lobby ID: " << lobby_id

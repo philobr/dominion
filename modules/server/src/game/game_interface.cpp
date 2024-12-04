@@ -72,7 +72,7 @@ namespace server
             // all checks are done here
             game_state->tryBuy(requestor_id, action_decision->card);
         } catch ( std::exception &e ) {
-            // we throw for now, but this should be a message
+            // TODO we throw for now, but this should be a message
             // discuss with gui guys or return shared::ResultResponseMessage(false)
             // ISSUE: 166
             LOG(ERROR) << "failed to buy card";

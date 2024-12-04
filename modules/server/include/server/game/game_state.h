@@ -152,14 +152,7 @@ namespace server
         void forceSwitchPhase();
 
         inline void resetPhase() { phase = GamePhase::ACTION_PHASE; }
-        inline void switchPlayer()
-        {
-            getCurrentPlayer().endTurn();
-            // switching player
-            current_player_idx = (current_player_idx + 1) % player_map.size();
-            resetPhase();
-            board->resetPlayedCards();
-        }
+        inline void switchPlayer();
 
         /**
          * @brief Checks if all ids exist and if the CardType is one of:

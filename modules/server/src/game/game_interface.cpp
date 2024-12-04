@@ -188,5 +188,4 @@ namespace server
         game_state->setPhase(server::GamePhase::ACTION_PHASE);
         return nextPhase();
     }
-
 } // namespace server

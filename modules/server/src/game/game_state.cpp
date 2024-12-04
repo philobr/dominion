@@ -89,6 +89,15 @@ namespace server
                                                     std::move(reduced_enemies), active_player_id);
     }
 
+    void GameState::switchPlayer()
+    {
+        getCurrentPlayer().endTurn();
+        board->resetPlayedCards();
+        // switching player
+        current_player_idx = (current_player_idx + 1) % player_map.size();
+        resetPhase();
+    }
+
     void GameState::endTurn()
     {
         switchPlayer();
@@ -284,5 +293,4 @@ namespace server
 
         LOG(INFO) << "Player " << requestor_id << " successfully played staged card " << card_id;
     }
-
 } // namespace server

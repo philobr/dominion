@@ -44,12 +44,7 @@ namespace client
             wxGBPosition position = wxGBPosition(counter, 0);
             wxGBSpan span = wxGBSpan(1, 1);
 
-            // TODO get this logic out of GUI maybe create some utils functions?
-            unsigned int price = shared::CardFactory::getCard(VictoryPile.card_id).getCost();
-            // check buyability
-            if ( is_active && price <= treasure ) {
-                makeBuyable(Pile);
-            }
+            checkIfBuyable(Pile, VictoryPile.card_id, is_active, treasure);
 
             // adding the grid bag sizer requires the panel to add as well as its
             // grid position and span meaning how many grid squares it should
@@ -64,12 +59,7 @@ namespace client
             wxGBPosition position = wxGBPosition(counter, 1);
             wxGBSpan span = wxGBSpan(1, 1);
 
-            // TODO get this logic out of GUI maybe create some utils functions?
-            unsigned int price = shared::CardFactory::getCard(TreasurePile.card_id).getCost();
-            // check buyability
-            if ( is_active && price <= treasure ) {
-                makeBuyable(Pile);
-            }
+            checkIfBuyable(Pile, TreasurePile.card_id, is_active, treasure);
 
             sizer->Add(Pile, position, span, wxALIGN_CENTER_HORIZONTAL);
             counter++;
@@ -82,12 +72,7 @@ namespace client
             wxGBPosition position = wxGBPosition(counter % 2, 2 + counter / 2);
             wxGBSpan span = wxGBSpan(1, 1);
 
-            // TODO get this logic out of GUI maybe create some utils functions?
-            unsigned int price = shared::CardFactory::getCard(KingdomPile.card_id).getCost();
-            // check buyability
-            if ( is_active && price <= treasure ) {
-                makeBuyable(Pile);
-            }
+            checkIfBuyable(Pile, KingdomPile.card_id, is_active, treasure);
 
             sizer->Add(Pile, position, span, wxALIGN_CENTER_HORIZONTAL);
             counter++;
@@ -97,6 +82,19 @@ namespace client
         // the panels
         this->SetSizer(sizer, true);
         sizer->Layout();
+    }
+
+    void BoardPanel::checkIfBuyable(PilePanel *pile, shared::CardBase::id_t card_id, bool is_active, unsigned int treasure)
+    {
+        unsigned int price = shared::CardFactory::getCard(card_id).getCost();
+        if (is_active && price <= treasure) {
+            LOG(INFO) << "Making buyable";
+            makeBuyable(pile);
+        } else {
+            LOG(INFO) << "Making not buyable";
+            pile->greyOut();
+        }
+
     }
 
     void BoardPanel::makeBuyable(PilePanel *pile)

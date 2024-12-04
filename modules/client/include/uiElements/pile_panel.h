@@ -28,9 +28,15 @@ namespace client
         template <typename Functor>
         void makeClickable(Functor f);
 
+        void greyOut();
+
+
     private:
         shared::Pile Pile;
         ImagePanel *Image;
+        bool m_isGreyedOut = false;
+
+        void OnPaint(wxPaintEvent& event);
     };
 
 

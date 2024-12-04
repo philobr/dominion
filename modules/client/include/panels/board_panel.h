@@ -33,6 +33,11 @@ namespace client
 
     private:
         /**
+         * @brief Check if a pile is buyable
+         */
+        void checkIfBuyable(PilePanel* pile, shared::CardBase::id_t card_id, bool is_active, unsigned int treasure);
+
+        /**
          * @brief Make a pile buyable
          * by making it clickable and attaching an Event handler that sends a buy request
          */

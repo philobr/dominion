@@ -21,6 +21,9 @@ namespace client
 
     void PlayerPanel::drawPlayer(const std::unique_ptr<reduced::Player> &player, bool is_active)
     {
+        // Remove old stuff
+        this->DestroyChildren();
+
         LOG(INFO) << "Drawing player " << player->getId();
         // Create a sizer to hold the player stuff
         wxBoxSizer *outersizer = new wxBoxSizer(wxHORIZONTAL);

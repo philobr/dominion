@@ -188,9 +188,15 @@ namespace client
         _clientNetworkManager->sendRequest(std::move(req));
     }
 
-    void GameController::receiveActionOrderMessage(std::unique_ptr<shared::ActionOrderMessage> /*msg*/)
+    void GameController::receiveActionOrderMessage(std::unique_ptr<shared::ActionOrderMessage> msg)
     {
         // TODO(#125) This is not implemented, and will probably be removed with #125
+        if( _clientState != ClientState::IN_GAME ) {
+            LOG(ERROR) << "Received unexpected ActionOrderMessage";
+            return;
+        }
+        showGameScreen(std::move(msg->game_state));
+
         LOG(WARN) << "Received ActionOrderMessage, but this does not do anything yet";
     }
 

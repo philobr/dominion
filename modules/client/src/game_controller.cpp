@@ -105,19 +105,37 @@ namespace client
         _clientState = ClientState::JOINING_LOBBY;
     }
 
-    void GameController::startGame()
+    void GameController::proceedToCardSelection()
     {
-        if ( _numPlayers < shared::board_config::MIN_PLAYER_COUNT ||
-             _numPlayers > shared::board_config::MAX_PLAYER_COUNT ) {
-            LOG(DEBUG) << "Invalid number of players ( " << _numPlayers << " ) to start game";
-            _guiEventReceiver->getGui().showError("Error", "Invalid number of players");
+        if ( !isLobbyValid() ) {
+            return;
+        }
+        LOG(DEBUG) << "Proceeding to card selection";
+        showCardSelectionScreen();
+    }
+
+    void GameController::startGame(std::unordered_map<shared::CardBase::id_t, bool> selected_cards)
+    {
+        if ( !isLobbyValid() ) {
             return;
         }
         LOG(DEBUG) << "Starting game";
-        // TODO Implement card selection
-        std::vector<shared::CardBase::id_t> selectedCards{"Estate",       "Smithy",      "Village",      "Laboratory",
-                                                          "Festival",     "Market",      "Placeholder1", "Placeholder2",
-                                                          "Placeholder3", "Placeholder4"};
+
+        // making a vector out of the selected cards
+        std::vector<shared::CardBase::id_t> selectedCards;
+        for ( const auto &card : selected_cards ) {
+            if ( card.second ) {
+                selectedCards.push_back(card.first);
+            }
+        }
+
+        if ( selectedCards.size() != shared::board_config::KINGDOM_CARD_COUNT ) {
+            showError("Error",
+                      "You need to select exactly " + std::to_string(shared::board_config::KINGDOM_CARD_COUNT) +
+                              " cards");
+            return;
+        }
+
         std::unique_ptr<shared::StartGameRequestMessage> msg =
                 std::make_unique<shared::StartGameRequestMessage>(_gameName, _playerName, selectedCards);
         sendRequest(std::move(msg));
@@ -374,5 +392,16 @@ namespace client
         // We need a game state here, but we don't have one
         // We just pass nullptr for now
         showCardSelectionScreen();
+    }
+
+    bool GameController::isLobbyValid()
+    {
+        if ( _numPlayers < shared::board_config::MIN_PLAYER_COUNT ||
+             _numPlayers > shared::board_config::MAX_PLAYER_COUNT ) {
+            LOG(DEBUG) << "Invalid number of players ( " << _numPlayers << " ) to start game";
+            _guiEventReceiver->getGui().showError("Error", "Invalid number of players");
+            return false;
+        }
+        return true;
     }
 } // namespace client

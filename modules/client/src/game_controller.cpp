@@ -192,32 +192,31 @@ namespace client
     void GameController::receiveActionOrderMessage(std::unique_ptr<shared::ActionOrderMessage> msg)
     {
         // TODO(#125) This is not implemented, and will probably be removed with #125
-        if( _clientState != ClientState::IN_GAME ) {
+        if ( _clientState != ClientState::IN_GAME ) {
             LOG(ERROR) << "Received unexpected ActionOrderMessage";
             return;
         }
         showGameScreen(std::move(msg->game_state));
 
-        if( typeid(msg) == typeid(ActionPhaseOrder) ) {
+        if ( typeid(msg) == typeid(ActionPhaseOrder) ) {
             // TODO
 
         } else if ( typeid(msg) == typeid(BuyPhaseOrder) ) {
-            //TODO
-            
-        } else if ( typeid(msg) == typeid(EndTurnOrder) ) {
-            //TODO
-            
-        } else if ( typeid(msg) == typeid(GainFromBoardOrder) ) {
-            //TODO
-            
-        } else if ( typeid(msg) == typeid(ChooseFromOrder) ) {
-            //TODO
-            
-        } else if ( typeid(msg) == typeid(ChooseFromStagedOrder) ) {
-            //TODO
-            
-        } else if ( typeid(msg) == typeid(ChooseFromHandOrder) ) {
+            // TODO
 
+        } else if ( typeid(msg) == typeid(EndTurnOrder) ) {
+            // TODO
+
+        } else if ( typeid(msg) == typeid(GainFromBoardOrder) ) {
+            // TODO
+
+        } else if ( typeid(msg) == typeid(ChooseFromOrder) ) {
+            // TODO
+
+        } else if ( typeid(msg) == typeid(ChooseFromStagedOrder) ) {
+            // TODO
+
+        } else if ( typeid(msg) == typeid(ChooseFromHandOrder) ) {
         }
 
         LOG(WARN) << "Received ActionOrderMessage, but this does not do anything yet";

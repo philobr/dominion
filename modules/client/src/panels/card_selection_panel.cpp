@@ -20,7 +20,7 @@ namespace client
     {
         TextPanel *Title = new TextPanel(this, wxID_ANY, "Card Selection", TextFormat::TITLE);
         wxBoxSizer *VerticalSizer = new wxBoxSizer(wxVERTICAL);
-        VerticalSizer->Add(Title, 0, wxALIGN_CENTER | wxALL, 5);
+        VerticalSizer->Add(Title, 0, wxSizerFlags().Align(wxALIGN_CENTER).Border(wxALL, 5));
 
         const shared::CardFactory::map_t &all_cards = shared::CardFactory::getAll();
         for ( const auto &card : all_cards ) {

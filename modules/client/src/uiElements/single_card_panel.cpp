@@ -12,7 +12,7 @@ namespace client
 
         Image = new ImagePanel(this, CardPath, wxBITMAP_TYPE_PNG, wxDefaultPosition,
                                wxSize(size.GetWidth() - 2 * padding, size.GetHeight() - 2 * padding));
-        sizer->Add(Image, 0, wxALIGN_CENTER_HORIZONTAL | wxALL, padding);
+        sizer->Add(Image, 0, wxSizerFlags().Align(wxALIGN_CENTER_HORIZONTAL).Border(wxALL, padding));
         this->SetSizer(sizer);
     }
 

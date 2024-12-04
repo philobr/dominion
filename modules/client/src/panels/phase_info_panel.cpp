@@ -16,7 +16,7 @@ namespace client
                                                                std::vector<reduced::Enemy::ptr_t>(), "gigu");
 
         // Set background color to light blue
-        SetBackgroundColour(wxColour(200, 220, 240));
+        SetBackgroundColour(formatting_constants::PLAYER_INFO_BACKGROUND);
 
         drawInfoPanel(*game_state);
     }
@@ -53,7 +53,7 @@ namespace client
 
     TextPanel *PhaseInfoPanel::drawPlayerInfo(const std::unique_ptr<reduced::Player> &player)
     {
-        wxString info = wxString::Format("%s\n\nGold: %d\n\nActions: %d\n\nBuys: %d", player->getId(),
+        wxString info = wxString::Format("%s\n\nTreasure: %d\n\nActions: %d\n\nBuys: %d", player->getId(),
                                          player->getTreasure(), player->getActions(), player->getBuys());
 
         return new TextPanel(this, wxID_ANY, info, TextFormat::BOLD);

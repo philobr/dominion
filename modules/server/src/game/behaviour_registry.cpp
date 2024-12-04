@@ -66,7 +66,7 @@ void server::BehaviourRegistry::initialiseBehaviours()
     insert<GainActions<1>, GainCoins<1>, GainBuys<1>, DrawCards<1>>("Market");
 
     // enemies get curse on discard pile
-    insert<DrawCards<2>, NOT_IMPLEMENTED_YET>("Witch");
+    insert<DrawCards<2>, CurseEnemy>("Witch");
 
     /*
     UNSURE

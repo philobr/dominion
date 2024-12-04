@@ -150,9 +150,58 @@ namespace server
         DEFINE_BEHAVIOUR(NOT_IMPLEMENTED_YET) { TODO_IMPLEMENT_ME; }
 
         // ================================
-        // TODO: add behaviours
+        // Behaviours
         // ================================
 
+        DEFINE_BEHAVIOUR(CurseEnemy)
+        {
+            /**
+             * curses are applied clockwise, starting from the player to the right of the cur player
+             */
+
+            LOG_CALL;
+            ASSERT_NO_DECISION;
+
+            auto current_player_id = game_state.getCurrentPlayerId();
+            auto all_player_ids = game_state.getAllPlayerIDs();
+            const size_t player_count = all_player_ids.size();
+
+            const std::string curse_card = "Curse";
+
+            // find the idx
+            auto current_player_it = std::find(all_player_ids.begin(), all_player_ids.end(), current_player_id);
+            size_t current_player_index = std::distance(all_player_ids.begin(), current_player_it);
+
+            // func to give a player a curse
+            auto apply_curse = [&](size_t player_index)
+            {
+                const auto &player_id = all_player_ids[player_index];
+                try {
+                    game_state.getBoard()->tryTake(curse_card);
+                    game_state.getPlayer(player_id).gain(curse_card);
+                } catch ( const std::exception &e ) {
+                    LOG(DEBUG) << "Board ran out of curses, aborting: " << FUNC_NAME;
+                    BEHAVIOUR_DONE;
+                }
+            };
+
+            // apply clockwise, starting to the right of the cur player
+            for ( size_t i = current_player_index + 1; i < player_count; ++i ) {
+                apply_curse(i);
+            }
+
+            // continue applying curses
+            for ( size_t i = 0; i < current_player_index; ++i ) {
+                apply_curse(i);
+            }
+
+            BEHAVIOUR_DONE;
+        }
+
+
+// ================================
+// UNDEF MACROS
+// ================================
 #undef DEFINE_BEHAVIOUR
 #undef BEHAVIOUR_DONE
 #undef DEFINE_TEMPLATED_BEHAVIOUR

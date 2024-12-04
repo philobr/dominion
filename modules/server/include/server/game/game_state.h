@@ -47,6 +47,7 @@ namespace server
         const std::vector<Player::id_t> &getAllPlayerIDs() const { return player_order; }
 
         shared::GamePhase getPhase() const { return phase; }
+        ServerBoard::ptr_t getBoard() { return board; }
 
         void startGame();
         void endGame()

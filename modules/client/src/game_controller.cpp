@@ -295,7 +295,11 @@ namespace client
                 LOG(WARN) << "Received unexpected ResultResponseMessage while in lobby screen";
                 break;
             case ClientState::IN_GAME:
-                LOG(WARN) << "Received unexpected ResultResponseMessage while in running game";
+                if ( msg->success ) {
+                    LOG(WARN) << "Received unexpected ResultResponseMessage while in running game";
+                } else {
+                    showError("Error", msg->additional_information.value_or("Unknown error"));
+                }
                 break;
             default:
                 LOG(WARN) << "Received ResultResponseMessage, but client is in unknown state";

@@ -39,7 +39,6 @@ void server::BehaviourRegistry::initialiseBehaviours()
     insert<GainCoins<1>>("Placeholder1");
     insert<GainCoins<1>>("Placeholder2");
     insert<GainCoins<1>>("Placeholder3");
-    insert<GainCoins<1>>("Placeholder4");
     // ================================
 
     /*

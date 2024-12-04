@@ -162,19 +162,12 @@ namespace server
             LOG_CALL;
             ASSERT_NO_DECISION;
 
-            auto current_player_id = game_state.getCurrentPlayerId();
             auto all_player_ids = game_state.getAllPlayerIDs();
-            const size_t player_count = all_player_ids.size();
-
-            const std::string curse_card = "Curse";
-
-            // find the idx
-            auto current_player_it = std::find(all_player_ids.begin(), all_player_ids.end(), current_player_id);
-            size_t current_player_index = std::distance(all_player_ids.begin(), current_player_it);
 
             // func to give a player a curse
             auto apply_curse = [&](size_t player_index)
             {
+                const std::string curse_card = "Curse";
                 const auto &player_id = all_player_ids[player_index];
 
                 if ( game_state.getPlayer(player_id).canBlock() ) {
@@ -185,7 +178,15 @@ namespace server
                 game_state.getPlayer(player_id).gain(curse_card);
             };
 
-            for ( size_t i = 0; i < player_count; ++i ) {
+            auto current_player_id = game_state.getCurrentPlayerId();
+            const size_t player_count = game_state.getAllPlayerIDs().size();
+
+            // find the idx
+            auto current_player_it = std::find(all_player_ids.begin(), all_player_ids.end(), current_player_id);
+            size_t current_player_index = std::distance(all_player_ids.begin(), current_player_it);
+
+            // starting at 1 to skip current player_id
+            for ( size_t i = 1; i < player_count; ++i ) {
                 try {
                     apply_curse((i + current_player_index) % player_count);
                 } catch ( const std::exception &e ) {

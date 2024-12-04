@@ -95,6 +95,7 @@ NEW_INHERITED_EXCEPTION(OutOfActions, GameState);
 NEW_INHERITED_EXCEPTION(InvalidCardAccess, GameState);
 NEW_INHERITED_EXCEPTION(InvalidCardType, GameState);
 NEW_INHERITED_EXCEPTION(InvalidRequest, GameState);
+NEW_INHERITED_EXCEPTION(NotYourTurn, GameState);
 
 NEW_BASE_EXCEPTION(Client);
 NEW_INHERITED_EXCEPTION(UnreachableCode, Client);

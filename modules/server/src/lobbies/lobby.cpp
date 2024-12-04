@@ -31,7 +31,7 @@ namespace server
         HANDLE(StartGameRequestMessage, startGame);
         HANDLE(GameStateRequestMessage, getGameState);
 
-        const auto &requestor_id = message->player_id;
+        const auto requestor_id = message->player_id;
 
         if ( !playerInLobby(requestor_id) ) {
             LOG(DEBUG) << "Received Action and Player is not in the requested lobby. Lobby ID: " << lobby_id
@@ -161,7 +161,6 @@ namespace server
         LOG(INFO) << "Sending StartGameBroadcastMessage in Lobby ID: " << lobby_id;
         message_interface.broadcast<shared::StartGameBroadcastMessage>(players, lobby_id);
         auto start_orders = game_interface->startGame();
-        broadcastGameState(message_interface);
         broadcastOrders(message_interface, start_orders);
     }
 } // namespace server

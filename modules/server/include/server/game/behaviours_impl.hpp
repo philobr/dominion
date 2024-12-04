@@ -185,20 +185,9 @@ namespace server
                 game_state.getPlayer(player_id).gain(curse_card);
             };
 
-            // apply clockwise, starting to the right of the cur player
-            for ( size_t i = current_player_index + 1; i < player_count; ++i ) {
+            for ( size_t i = 0; i < player_count; ++i ) {
                 try {
-                    apply_curse(i);
-                } catch ( const std::exception &e ) {
-                    LOG(DEBUG) << "Board ran out of curses, aborting: " << FUNC_NAME;
-                    BEHAVIOUR_DONE;
-                }
-            }
-
-            // continue applying curses
-            for ( size_t i = 0; i < current_player_index; ++i ) {
-                try {
-                    apply_curse(i);
+                    apply_curse((i + current_player_index) % player_count);
                 } catch ( const std::exception &e ) {
                     LOG(DEBUG) << "Board ran out of curses, aborting: " << FUNC_NAME;
                     BEHAVIOUR_DONE;

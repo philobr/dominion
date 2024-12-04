@@ -13,8 +13,8 @@
 // initialize static members
 sockpp::tcp_connector *ClientNetworkManager::_connection = nullptr;
 
-bool ClientNetworkManager::_connectionSuccess = false;
-bool ClientNetworkManager::_failedToConnect = false;
+bool ClientNetworkManager::_connection_success = false;
+bool ClientNetworkManager::_failed_to_connect = false;
 
 
 void ::ClientNetworkManager::init(const std::string &host, const uint16_t port)
@@ -24,8 +24,8 @@ void ::ClientNetworkManager::init(const std::string &host, const uint16_t port)
     sockpp::socket_initializer sockInit;
 
     // reset connection status
-    ClientNetworkManager::_connectionSuccess = false;
-    ClientNetworkManager::_failedToConnect = false;
+    ClientNetworkManager::_connection_success = false;
+    ClientNetworkManager::_failed_to_connect = false;
 
     // delete exiting connection and create new one
     if ( ClientNetworkManager::_connection != nullptr ) {
@@ -38,7 +38,7 @@ void ::ClientNetworkManager::init(const std::string &host, const uint16_t port)
     if ( ClientNetworkManager::connect(host, port) ) {
         LOG(INFO) << "Connected to " << host << ":" << std::to_string(port);
         wxGetApp().getController().showStatus("Connected to " + host + ":" + std::to_string(port));
-        ClientNetworkManager::_connectionSuccess = true;
+        ClientNetworkManager::_connection_success = true;
         // start network thread
         ClientListener *clientlistener = new ClientListener(ClientNetworkManager::_connection);
 
@@ -48,7 +48,7 @@ void ::ClientNetworkManager::init(const std::string &host, const uint16_t port)
         }
 
     } else {
-        ClientNetworkManager::_failedToConnect = true;
+        ClientNetworkManager::_failed_to_connect = true;
         LOG(ERROR) << "Failed to connect";
         wxGetApp().getController().showStatus("Not connected");
     }
@@ -83,19 +83,19 @@ void ClientNetworkManager::sendRequest(std::unique_ptr<shared::ClientToServerMes
 {
     // wait until network is connected (max. 5 seconds)
     int connectionCheckCounter = 0;
-    while ( !ClientNetworkManager::_connectionSuccess && !ClientNetworkManager::_failedToConnect &&
+    while ( !ClientNetworkManager::_connection_success && !ClientNetworkManager::_failed_to_connect &&
             connectionCheckCounter < 200 ) {
         wxMilliSleep(25);
         connectionCheckCounter++;
     }
 
     // do not continue if failed to connect to server
-    if ( ClientNetworkManager::_failedToConnect ) {
+    if ( ClientNetworkManager::_failed_to_connect ) {
         LOG(ERROR) << "Failed to connect to server";
         return;
     }
 
-    if ( ClientNetworkManager::_connectionSuccess && ClientNetworkManager::_connection->is_connected() ) {
+    if ( ClientNetworkManager::_connection_success && ClientNetworkManager::_connection->is_connected() ) {
         LOG(INFO) << "Connected to server";
 
         // convert message to json
@@ -144,5 +144,5 @@ void ClientNetworkManager::shutdown() { ClientNetworkManager::_connection->shutd
 
 bool ClientNetworkManager::failedToConnect()
 {
-    return !(ClientNetworkManager::_connectionSuccess && ClientNetworkManager::_connection->is_connected());
+    return !(ClientNetworkManager::_connection_success && ClientNetworkManager::_connection->is_connected());
 }

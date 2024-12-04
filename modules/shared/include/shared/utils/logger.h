@@ -123,8 +123,8 @@ namespace shared
         LogStream log(LogLevel level, const char *file, int line) { return LogStream(*this, level, file, line); }
 
     private:
-        inline static std::mutex init_mutex_;
-        inline static std::unique_ptr<Logger> instance_;
+        inline static std::mutex _init_mutex;
+        inline static std::unique_ptr<Logger> _instance;
 
         LogLevel min_log_level_;
 

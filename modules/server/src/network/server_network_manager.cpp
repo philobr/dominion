@@ -9,8 +9,8 @@ using handler = std::function<void(const std::string &, const sockpp::tcp_socket
 
 namespace server
 {
-    std::shared_ptr<MessageInterface> ServerNetworkManager::_messageInterface;
-    LobbyManager ServerNetworkManager::_lobby_manager(ServerNetworkManager::_messageInterface);
+    std::shared_ptr<MessageInterface> ServerNetworkManager::_message_interface;
+    LobbyManager ServerNetworkManager::_lobby_manager(ServerNetworkManager::_message_interface);
 
     ServerNetworkManager::ServerNetworkManager()
     {
@@ -18,8 +18,8 @@ namespace server
         if ( _instance == nullptr ) {
             _instance = this;
         }
-        _messageInterface = std::make_shared<ImplementedMessageInterface>();
-        _lobby_manager = LobbyManager(_messageInterface);
+        _message_interface = std::make_shared<ImplementedMessageInterface>();
+        _lobby_manager = LobbyManager(_message_interface);
     }
 
     void ServerNetworkManager::run(const std::string &host, uint16_t port)

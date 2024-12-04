@@ -62,9 +62,9 @@ namespace shared
 
     void Logger::initialize()
     {
-        std::lock_guard<std::mutex> lock(init_mutex_);
-        if ( !instance_ ) {
-            instance_ = std::unique_ptr<Logger>(new Logger());
+        std::lock_guard<std::mutex> lock(_init_mutex);
+        if ( !_instance ) {
+            _instance = std::unique_ptr<Logger>(new Logger());
             LOG(LogLevel::INFO) << "Logger initialized with default settings.";
         } else {
             throw exception::Logger("Logger has already been initialized.");
@@ -73,17 +73,17 @@ namespace shared
 
     Logger &Logger::getInstance()
     {
-        if ( !instance_ ) {
+        if ( !_instance ) {
             initialize(); // default init logs to console
             LOG(LogLevel::WARN) << "Logger not initialized; using default settings.";
         }
 
-        return *instance_;
+        return *_instance;
     }
 
     void Logger::writeTo(const std::string &file_path)
     {
-        std::lock_guard<std::mutex> lock(init_mutex_);
+        std::lock_guard<std::mutex> lock(_init_mutex);
         Logger &logger = getInstance();
 
         if ( logger.log_file_.is_open() ) {
@@ -110,14 +110,14 @@ namespace shared
 
     void Logger::setLevel(LogLevel level)
     {
-        std::lock_guard<std::mutex> lock(init_mutex_);
+        std::lock_guard<std::mutex> lock(_init_mutex);
         Logger &logger = getInstance();
         logger.min_log_level_ = level;
     }
 
     LogLevel Logger::getLevel()
     {
-        std::lock_guard<std::mutex> lock(init_mutex_);
+        std::lock_guard<std::mutex> lock(_init_mutex);
         Logger &logger = getInstance();
         return logger.min_log_level_;
     }

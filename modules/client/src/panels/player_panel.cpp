@@ -16,10 +16,11 @@ namespace client
         LOG(WARN) << "using hard coded player";
         auto player = shared::PlayerBase("gigu");
         auto reduced = reduced::Player::make(player, {"Village", "Copper", "Copper", "Copper", "Estate"});
-        this->drawPlayer(reduced, true);
+        this->drawPlayer(reduced, true, shared::GamePhase::ACTION_PHASE);
     }
 
-    void PlayerPanel::drawPlayer(const std::unique_ptr<reduced::Player> &player, bool is_active)
+    void PlayerPanel::drawPlayer(const std::unique_ptr<reduced::Player> &player, bool is_active,
+                                 shared::GamePhase phase)
     {
         // Remove old stuff
         this->DestroyChildren();
@@ -36,7 +37,7 @@ namespace client
         wxPanel *DrawPilePanel = createDrawPilePanel(player->getDrawPileSize());
 
         // Create the hand panel
-        wxPanel *hand = createHandPanel(player, card_width_borders, is_active);
+        wxPanel *hand = createHandPanel(player, card_width_borders, is_active, phase);
 
         // Create the discard pile panel
         wxPanel *DiscardPilePanel = createDiscardPilePanel(player->getDiscardPileSize(), player->getTopDiscardCard());
@@ -80,7 +81,8 @@ namespace client
     }
 
     wxPanel *PlayerPanel::createHandPanel(const std::unique_ptr<reduced::Player> &player,
-                                          const size_t card_width_borders, const bool is_active)
+                                          const size_t card_width_borders, const bool is_active,
+                                          shared::GamePhase phase)
     {
         // Get the hand cards
         const auto &cards = player->getHandCards();
@@ -110,7 +112,7 @@ namespace client
 
             bool is_action = shared::CardFactory::getCard(cards[i]).isAction();
 
-            if ( is_action && is_active && player->getActions() > 0 ) {
+            if ( is_action && (phase == shared::GamePhase::ACTION_PHASE) && is_active && player->getActions() > 0 ) {
                 makePlayable(card, cards[i]);
             }
 

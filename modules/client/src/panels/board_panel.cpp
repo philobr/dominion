@@ -1,3 +1,4 @@
+
 #include <panels/board_panel.h>
 
 #include <game_controller.h>
@@ -19,13 +20,15 @@ namespace client
 
         auto board = shared::Board::make(getValidKingdomCards(), 3);
 
-        this->drawBoard(board, true, 3);
+        this->drawBoard(board, true, 3, shared::GamePhase::ACTION_PHASE);
     }
 
-
-    void BoardPanel::drawBoard(std::shared_ptr<shared::Board> board, bool is_active, unsigned int treasure)
+    void BoardPanel::drawBoard(std::shared_ptr<shared::Board> board, bool is_active, unsigned int treasure,
+                               shared::GamePhase phase)
     {
         this->DestroyChildren();
+
+        bool buy_phase = phase == shared::GamePhase::BUY_PHASE;
 
         // board_ = Board;
 
@@ -47,7 +50,7 @@ namespace client
             // TODO get this logic out of GUI maybe create some utils functions?
             unsigned int price = shared::CardFactory::getCard(VictoryPile.card_id).getCost();
             // check buyability
-            if ( is_active && price <= treasure ) {
+            if ( is_active && buy_phase && price <= treasure ) {
                 makeBuyable(Pile);
             }
 
@@ -67,7 +70,7 @@ namespace client
             // TODO get this logic out of GUI maybe create some utils functions?
             unsigned int price = shared::CardFactory::getCard(TreasurePile.card_id).getCost();
             // check buyability
-            if ( is_active && price <= treasure ) {
+            if ( is_active && buy_phase && price <= treasure ) {
                 makeBuyable(Pile);
             }
 
@@ -85,7 +88,7 @@ namespace client
             // TODO get this logic out of GUI maybe create some utils functions?
             unsigned int price = shared::CardFactory::getCard(KingdomPile.card_id).getCost();
             // check buyability
-            if ( is_active && price <= treasure ) {
+            if ( is_active && buy_phase && price <= treasure ) {
                 makeBuyable(Pile);
             }
 

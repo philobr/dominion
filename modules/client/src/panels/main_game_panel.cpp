@@ -36,7 +36,7 @@ namespace client
         PhaseInfo->drawInfoPanel(game_state);
         Board->drawBoard(game_state.board, is_active, game_state.reduced_player->getTreasure(), game_state.game_phase);
 
-        Player->drawPlayer(game_state.reduced_player, is_active);
+        Player->drawPlayer(game_state.reduced_player, is_active, game_state.game_phase);
         EnemyInfo->drawEnemies(game_state.reduced_enemies);
     }
 

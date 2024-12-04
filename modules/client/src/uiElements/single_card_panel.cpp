@@ -1,6 +1,6 @@
 #include <uiElements/single_card_panel.h>
 
-
+// NOLINTBEGIN(bugprone-suspicious-enum-usage)
 namespace client
 {
     SingleCardPanel::SingleCardPanel(wxWindow *parent, const std::string &card_name, wxSize size, int padding) :
@@ -12,7 +12,7 @@ namespace client
 
         Image = new ImagePanel(this, CardPath, wxBITMAP_TYPE_PNG, wxDefaultPosition,
                                wxSize(size.GetWidth() - 2 * padding, size.GetHeight() - 2 * padding));
-        sizer->Add(Image, 0, wxSizerFlags().Align(wxALIGN_CENTER_HORIZONTAL).Border(wxALL, padding));
+        sizer->Add(Image, 0, wxALIGN_CENTER_HORIZONTAL | wxALL, padding);
         this->SetSizer(sizer);
     }
 
@@ -22,3 +22,4 @@ namespace client
         this->Refresh(); // Trigger a repaint
     }
 } // namespace client
+// NOLINTEND(bugprone-suspicious-enum-usage)

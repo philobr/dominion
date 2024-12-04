@@ -15,12 +15,13 @@
 
 namespace client
 {
+    // NOLINTBEGIN(bugprone-suspicious-enum-usage)
     CardSelectionPanel::CardSelectionPanel(wxWindow *parent) :
         wxPanel(parent, wxID_ANY, wxDefaultPosition, wxSize(1024, 1024))
     {
         TextPanel *Title = new TextPanel(this, wxID_ANY, "Card Selection", TextFormat::TITLE);
         wxBoxSizer *VerticalSizer = new wxBoxSizer(wxVERTICAL);
-        VerticalSizer->Add(Title, 0, wxSizerFlags().Align(wxALIGN_CENTER).Border(wxALL, 5));
+        VerticalSizer->Add(Title, 0, wxALIGN_CENTER | wxALL, 5);
 
         const shared::CardFactory::map_t &all_cards = shared::CardFactory::getAll();
         for ( const auto &card : all_cards ) {
@@ -41,6 +42,7 @@ namespace client
 
         this->SetSizerAndFit(VerticalSizer);
     }
+    // NOLINTEND(bugprone-suspicious-enum-usage)
 
     wxGridSizer *CardSelectionPanel::createCardSelection()
     {

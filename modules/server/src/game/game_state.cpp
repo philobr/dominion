@@ -89,18 +89,12 @@ namespace server
                                                     std::move(reduced_enemies), active_player_id);
     }
 
-    void GameState::switchPlayer()
-    {
-        getCurrentPlayer().endTurn();
-        board->resetPlayedCards();
-        // switching player
-        current_player_idx = (current_player_idx + 1) % player_map.size();
-        resetPhase();
-    }
-
     void GameState::endTurn()
     {
+        getCurrentPlayer().endTurn();
         switchPlayer();
+        resetPhase();
+        board->resetPlayedCards();
 
         maybeSwitchPhase(); // a player might not have any action cards at the beginning of the action phase
 
@@ -149,19 +143,18 @@ namespace server
 
     void GameState::maybeSwitchPhase()
     {
-        auto &player = getCurrentPlayer();
         switch ( phase ) {
             case GamePhase::ACTION_PHASE:
                 {
-                    if ( player.getActions() == 0 ||
-                         !player.hasType<shared::CardAccess::HAND>(shared::CardType::ACTION) ) {
+                    if ( getCurrentPlayer().getActions() == 0 ||
+                         !getCurrentPlayer().hasType<shared::CardAccess::HAND>(shared::CardType::ACTION) ) {
                         phase = GamePhase::BUY_PHASE;
                     }
                 }
                 break;
             case GamePhase::BUY_PHASE:
                 {
-                    if ( player.getBuys() == 0 ) {
+                    if ( getCurrentPlayer().getBuys() == 0 ) {
                         endTurn();
                     }
                 }
@@ -202,21 +195,20 @@ namespace server
             LOG(WARN) << "Player " << requestor_id << " attempted to buy a card during " << toString(phase);
             throw exception::OutOfPhase("Cannot buy cards while in " + toString(phase));
         }
-
-        auto player = getPlayer(requestor_id);
         const auto card_cost = shared::CardFactory::getCard(card_id).getCost();
 
-        if ( !player.canBuy(card_cost) ) {
+        if ( !getPlayer(requestor_id).canBuy(card_cost) ) {
             LOG(WARN) << "Player " << requestor_id << " cannot afford card " << card_id << " (cost: " << card_cost
-                      << ", treasure: " << player.getTreasure() << ", buys: " << player.getBuys() << ").";
+                      << ", treasure: " << getPlayer(requestor_id).getTreasure()
+                      << ", buys: " << getPlayer(requestor_id).getBuys() << ").";
             throw exception::InsufficientFunds();
         }
 
         board->tryTake(card_id);
 
-        player.decTreasure(card_cost);
-        player.decBuys();
-        player.gain(card_id);
+        getPlayer(requestor_id).decTreasure(card_cost);
+        getPlayer(requestor_id).decBuys();
+        getPlayer(requestor_id).gain(card_id);
 
         LOG(INFO) << "Player " << requestor_id << " successfully bought card " << card_id;
     }
@@ -230,8 +222,7 @@ namespace server
 
         board->tryTake(card_id);
 
-        auto player = getPlayer(requestor_id);
-        player.gain(card_id);
+        getPlayer(requestor_id).gain(card_id);
 
         LOG(INFO) << "Player " << requestor_id << " successfully gained card " << card_id;
     }
@@ -249,21 +240,19 @@ namespace server
             throw exception::OutOfPhase("Cannot play cards while in " + toString(phase));
         }
 
-        auto player = getPlayer(requestor_id);
 
-        if ( player.getActions() == 0 ) {
+        if ( getPlayer(requestor_id).getActions() == 0 ) {
             LOG(WARN) << "Player " << requestor_id << " attempted to play card " << card_id << " with no actions left.";
             throw exception::OutOfActions();
         }
 
-        if ( !player.hasCard<shared::CardAccess::HAND>(card_id) ) {
+        if ( !getPlayer(requestor_id).hasCard<shared::CardAccess::HAND>(card_id) ) {
             LOG(WARN) << "Player " << requestor_id << " attempted to play card " << card_id << " not in their hand.";
             throw exception::CardNotAvailable();
         }
 
-        player.playCardFromHand(card_id);
+        getPlayer(requestor_id).playCardFromHand(card_id);
         board->addToPlayedCards(card_id);
-        player.decActions();
 
         LOG(INFO) << "Player " << requestor_id << " successfully played card " << card_id << " from their hand.";
     }
@@ -282,15 +271,17 @@ namespace server
             throw exception::OutOfPhase("Cannot play staged cards while in " + toString(phase));
         }
 
-        auto player = getPlayer(requestor_id);
-        if ( !player.hasCard<shared::CardAccess::STAGED_CARDS>(card_id) ) {
+        if ( !getPlayer(requestor_id).hasCard<shared::CardAccess::STAGED_CARDS>(card_id) ) {
             LOG(WARN) << "Player " << requestor_id << " attempted to play card " << card_id << " not in staged cards.";
             throw exception::CardNotAvailable();
         }
 
-        player.playCardFromStaged(card_id);
+        getPlayer(requestor_id).playCardFromStaged(card_id);
         board->addToPlayedCards(card_id);
 
         LOG(INFO) << "Player " << requestor_id << " successfully played staged card " << card_id;
     }
+
+    void GameState::switchPlayer() { current_player_idx = (current_player_idx + 1) % player_map.size(); }
+
 } // namespace server

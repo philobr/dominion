@@ -110,7 +110,7 @@ namespace client
         }
         LOG(DEBUG) << "Starting game";
         // TODO Implement card selection
-        std::vector<shared::CardBase::id_t> selectedCards{"Moat",       "Smithy",      "Village",      "Laboratory",
+        std::vector<shared::CardBase::id_t> selectedCards{"Moat",         "Smithy",      "Village",      "Laboratory",
                                                           "Festival",     "Market",      "Placeholder1", "Placeholder2",
                                                           "Placeholder3", "Placeholder4"};
         std::unique_ptr<shared::StartGameRequestMessage> msg =

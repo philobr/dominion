@@ -41,60 +41,20 @@ namespace client
         // In the future this even allows for uneven sizes where some panels can
         // take up multiple grid spaces
         auto *sizer = new wxGridBagSizer(10, 10);
-        unsigned int counter = 0;
-        for ( const auto &VictoryPile : VictoryCards ) {
-            PilePanel *Pile = new PilePanel(this, VictoryPile, formatting_constants::DEFAULT_BOARD_PILE_SIZE);
-            wxGBPosition position = wxGBPosition(counter, 0);
-            wxGBSpan span = wxGBSpan(1, 1);
 
-            // TODO get this logic out of GUI maybe create some utils functions?
-            unsigned int price = shared::CardFactory::getCard(VictoryPile.card_id).getCost();
-            // check buyability
-            if ( is_active && buy_phase && price <= treasure ) {
-                makeBuyable(Pile);
-            }
+        // places the victory piles all the way to the left in one column
+        auto VictoryPositionRule = [](unsigned int counter) { return wxGBPosition(counter, 0); };
 
-            // adding the grid bag sizer requires the panel to add as well as its
-            // grid position and span meaning how many grid squares it should
-            // take up in x,y direction
-            sizer->Add(Pile, position, span, wxALIGN_CENTER_HORIZONTAL);
-            counter++;
-        }
+        // places the treasure piles next to the victory piles in one column
+        auto TreasurePositionRule = [](unsigned int counter) { return wxGBPosition(counter, 1); };
 
-        counter = 0;
-        for ( const auto &TreasurePile : TreasureCards ) {
-            PilePanel *Pile = new PilePanel(this, TreasurePile, formatting_constants::DEFAULT_BOARD_PILE_SIZE);
-            wxGBPosition position = wxGBPosition(counter, 1);
-            wxGBSpan span = wxGBSpan(1, 1);
+        // places the kingdom piles in a 2x5 grid
+        auto KingdomPositionRule = [](unsigned int counter) { return wxGBPosition(counter % 2, 2 + counter / 2); };
 
-            // TODO get this logic out of GUI maybe create some utils functions?
-            unsigned int price = shared::CardFactory::getCard(TreasurePile.card_id).getCost();
-            // check buyability
-            if ( is_active && buy_phase && price <= treasure ) {
-                makeBuyable(Pile);
-            }
-
-            sizer->Add(Pile, position, span, wxALIGN_CENTER_HORIZONTAL);
-            counter++;
-        }
-
-        counter = 0;
-        for ( const auto &KingdomPile : KingdomCards ) {
-            PilePanel *Pile = new PilePanel(this, KingdomPile, formatting_constants::DEFAULT_BOARD_PILE_SIZE);
-
-            wxGBPosition position = wxGBPosition(counter % 2, 2 + counter / 2);
-            wxGBSpan span = wxGBSpan(1, 1);
-
-            // TODO get this logic out of GUI maybe create some utils functions?
-            unsigned int price = shared::CardFactory::getCard(KingdomPile.card_id).getCost();
-            // check buyability
-            if ( is_active && buy_phase && price <= treasure ) {
-                makeBuyable(Pile);
-            }
-
-            sizer->Add(Pile, position, span, wxALIGN_CENTER_HORIZONTAL);
-            counter++;
-        }
+        bool canBuy = is_active && buy_phase;
+        addPiles(VictoryCards, sizer, VictoryPositionRule, canBuy, treasure, VictoryPiles_);
+        addPiles(TreasureCards, sizer, TreasurePositionRule, canBuy, treasure, TreasurePiles_);
+        addPiles(KingdomCards, sizer, KingdomPositionRule, canBuy, treasure, KingdomPiles_);
 
         // necessary command for the grid bag sizer to do it's thing and arrange
         // the panels

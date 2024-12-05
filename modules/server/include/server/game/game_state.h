@@ -44,8 +44,10 @@ namespace server
 
         Player &getPlayer(const Player::id_t &id) { return *player_map.at(id); }
         const Player &getPlayer(const Player::id_t &id) const { return *player_map.at(id); }
+        const std::vector<Player::id_t> &getAllPlayerIDs() const { return player_order; }
 
         shared::GamePhase getPhase() const { return phase; }
+        ServerBoard::ptr_t getBoard() { return board; }
 
         void startGame();
         void endGame()

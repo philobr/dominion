@@ -47,7 +47,9 @@ namespace client
          * @brief Show the main game panel
          *
          */
-        void startGame();
+        void startGame(std::unordered_map<shared::CardBase::id_t, bool> selected_cards);
+
+        void proceedToCardSelection();
 
         void buyCard(const std::string &card_id);
         void playCard(const std::string &card_id);
@@ -66,6 +68,9 @@ namespace client
 
         // TODO: This is for testing purposes only and will be removed later
         void skipToGamePanel();
+
+        // TODO: This is for testing purposes only and will be removed later
+        void skipToCardSelectionPanel();
 
         /**
          * @brief Show a message in the status bar
@@ -91,6 +96,9 @@ namespace client
         void showLobbyScreen(std::vector<reduced::Player::id_t> players, bool is_game_master);
         void showGameScreen(std::unique_ptr<reduced::GameState> game_state);
         void showVictoryScreen();
+        void showCardSelectionScreen();
+
+        bool isLobbyValid();
 
         std::unique_ptr<GuiEventReceiver> _guiEventReceiver;
 

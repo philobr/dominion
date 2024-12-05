@@ -17,7 +17,21 @@ namespace client
     public:
         SingleCardPanel(wxWindow *parent, const std::string &card_name, wxSize size = wxDefaultSize, int padding = 0);
 
+        template <typename Functor>
+        void makeClickable(Functor f);
+
+        const std::string getCardName() const { return CardName; }
+
+        void setBorderColor(const wxColour &color);
+
     private:
+        std::string CardName;
         ImagePanel *Image;
     };
+
+    template <typename Functor>
+    void SingleCardPanel::makeClickable(Functor f)
+    {
+        Image->Bind(wxEVT_LEFT_UP, f);
+    }
 } // namespace client

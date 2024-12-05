@@ -170,7 +170,7 @@ static std::unique_ptr<StartGameRequestMessage> parseStartGameRequest(const Docu
 {
     std::vector<CardBase::id_t> selected_cards;
     GET_STRING_ARRAY_MEMBER(selected_cards, json, "selected_cards");
-    if ( selected_cards.size() != 10 ) {
+    if ( selected_cards.size() != shared::board_config::KINGDOM_CARD_COUNT ) {
         return nullptr;
     }
 

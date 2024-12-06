@@ -116,7 +116,7 @@ namespace client
             if ( is_action && (phase == shared::GamePhase::ACTION_PHASE) && is_active && player->getActions() > 0 ) {
                 makePlayable(card, cards[i]);
             }
-            sizer->Add(card, 0, wxALIGN_CENTER | wxALL, 4);
+            sizer->Add(card, 0, wxALIGN_CENTER, 4);
         }
 
         // Set the sizer for the hand panel

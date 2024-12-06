@@ -82,6 +82,8 @@ namespace client
 
     void ImagePanel::makeGrey()
     {
+        // This is some hard github copilot magic
+        // it works:)
         if (_image.IsOk())
         {
             unsigned char* data = _image.GetData();

@@ -50,6 +50,8 @@ namespace reduced
         return doc;
     }
 
+    bool GameState::isPlayerActive() const { return active_player == reduced_player->getId(); }
+
     std::unique_ptr<GameState> GameState::fromJson(const rapidjson::Value &json)
     {
         if ( !json.IsObject() ) {

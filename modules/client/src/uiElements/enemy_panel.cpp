@@ -3,6 +3,7 @@
 #include <uiElements/formatting_constants.h>
 #include <uiElements/pile_panel.h>
 #include <uiElements/single_card_panel.h>
+#include <uiElements/text_panel.h>
 
 #include <wx/dcbuffer.h>
 #include <wx/gbsizer.h>
@@ -27,8 +28,7 @@ namespace client
         wxBoxSizer *drawPileSizer = new wxBoxSizer(wxVERTICAL);
 
         // Text for the title
-        wxStaticText *DrawPileText =
-                new wxStaticText(this, wxID_ANY, "Draw Pile", wxDefaultPosition, wxDefaultSize, wxALIGN_CENTER);
+        TextPanel *DrawPileText = new TextPanel(this, wxID_ANY, "Draw Pile", TextFormat::PLAIN);
 
         // The pile itself
         shared::Pile Draw_Pile("Card_back", enemy.getDrawPileSize());
@@ -46,8 +46,7 @@ namespace client
         auto *centerSizer = new wxGridSizer(2, 1, 1, 2);
 
         // TODO: display name in a bigger and bold font
-        wxStaticText *PlayerId =
-                new wxStaticText(this, wxID_ANY, enemy.getId(), wxDefaultPosition, wxDefaultSize, wxALIGN_CENTER);
+        TextPanel *PlayerId = new TextPanel(this, wxID_ANY, enemy.getId(), TextFormat::BOLD);
 
         // new sizer for the hand cards
         auto *handCardSizer = new wxGridSizer(1, enemy.getHandSize(), 1, 1);
@@ -67,8 +66,7 @@ namespace client
         wxBoxSizer *discardPileSizer = new wxBoxSizer(wxVERTICAL);
 
         // Text for the title
-        wxStaticText *discardPileText =
-                new wxStaticText(this, wxID_ANY, "Discard Pile", wxDefaultPosition, wxDefaultSize, wxALIGN_CENTER);
+        TextPanel *discardPileText = new TextPanel(this, wxID_ANY, "Discard Pile", TextFormat::PLAIN);
 
         // The pile itself
         shared::Pile Discard_Pile("Card_back", enemy.getDiscardPileSize());

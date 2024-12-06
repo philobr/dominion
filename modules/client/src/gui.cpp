@@ -21,7 +21,8 @@ namespace client
     Gui::Gui(GameWindow *game_window) :
         _gameWindow(game_window), _connectionPanel(new ConnectionPanel(game_window)),
         _mainGamePanel(new MainGamePanel(game_window)), _lobbyPanel(new LobbyPanel(game_window)),
-        _victoryScreenPanel(new VictoryScreenPanel(game_window))
+        _victoryScreenPanel(new VictoryScreenPanel(game_window)),
+        _cardSelectionPanel(new CardSelectionPanel(game_window))
     {
         ONLY_MAIN_THREAD();
 
@@ -30,6 +31,7 @@ namespace client
         _mainGamePanel->Show(false);
         _lobbyPanel->Show(false);
         _victoryScreenPanel->Show(false);
+        _cardSelectionPanel->Show(false);
 
         // Only show connection panel at the start of the game
         _gameWindow->showPanel(_connectionPanel);
@@ -123,5 +125,26 @@ namespace client
 
         _victoryScreenPanel->drawTestVictoryScreen();
         _gameWindow->showPanel(_victoryScreenPanel);
+    }
+
+    void Gui::showCardSelectionScreen()
+    {
+        ONLY_MAIN_THREAD();
+
+        LOG(INFO) << "Showing card selection screen";
+
+        _gameWindow->showPanel(_cardSelectionPanel);
+    }
+
+    void Gui::showGainFromBoardScreen(std::shared_ptr<reduced::GameState> game_state, shared::GainFromBoardOrder order)
+    {
+        ONLY_MAIN_THREAD();
+
+        LOG(INFO) << "Showing gain from board overlay";
+
+        shared::CardType type = order.allowed_type;
+        unsigned int max_cost = order.max_cost;
+
+        _mainGamePanel->drawGainFromBoard(*game_state, type, max_cost);
     }
 } // namespace client

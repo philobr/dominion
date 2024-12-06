@@ -26,13 +26,12 @@ namespace shared
     REGISTER_CARD(Placeholder1, CardType::ACTION, 2);
     REGISTER_CARD(Placeholder2, CardType::ACTION, 2);
     REGISTER_CARD(Placeholder3, CardType::ACTION, 2);
-    REGISTER_CARD(Placeholder4, CardType::ACTION, 2);
     // ================================
 
     // treasure
     REGISTER_CARD(Copper, CardType::TREASURE, 0);
-    REGISTER_CARD(Silver, CardType::TREASURE, 2);
-    REGISTER_CARD(Gold, CardType::TREASURE, 5);
+    REGISTER_CARD(Silver, CardType::TREASURE, 3);
+    REGISTER_CARD(Gold, CardType::TREASURE, 6);
 
     // victory
     REGISTER_CARD(Estate, CardType::VICTORY, 2);

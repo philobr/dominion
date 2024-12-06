@@ -8,12 +8,15 @@ namespace shared
     // Example: `ACTION | ATTACK` will create a card that is both an action and an attack.
     enum CardType
     {
-        ACTION = 0b000001,
-        ATTACK = 0b000010,
-        REACTION = 0b000100,
-        TREASURE = 0b001000,
-        VICTORY = 0b010000,
-        CURSE = 0b100000
+        KINGDOM = 1,
+        TREASURE = 2,
+        VICTORY = 4,
+        CURSE = 8 | VICTORY,
+
+
+        ACTION = 16 | KINGDOM,
+        ATTACK = 32 | ACTION,
+        REACTION = 64 | ACTION
     };
 
     class CardBase
@@ -28,12 +31,13 @@ namespace shared
         CardType getType() const { return type; }
         id_t getId() const { return id; }
 
-        bool isAction() const { return (type & ACTION) != 0; }
-        bool isAttack() const { return (type & ATTACK) != 0; }
-        bool isTreasure() const { return (type & TREASURE) != 0; }
-        bool isReaction() const { return (type & REACTION) != 0; }
-        bool isVictory() const { return (type & VICTORY) != 0; }
-        bool isCurse() const { return (type & CURSE) != 0; }
+        bool isAction() const { return (type & ACTION) == ACTION; }
+        bool isAttack() const { return (type & ATTACK) == ATTACK; }
+        bool isTreasure() const { return (type & TREASURE) == TREASURE; }
+        bool isReaction() const { return (type & REACTION) == REACTION; }
+        bool isVictory() const { return (type & VICTORY) == VICTORY; }
+        bool isCurse() const { return (type & CURSE) == CURSE; }
+        bool isKingdom() const { return (type & KINGDOM) == KINGDOM; }
 
     protected:
         id_t id;

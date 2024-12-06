@@ -1,5 +1,6 @@
 #pragma once
 
+#include <shared/game/game_state/game_phase.h>
 #include <shared/game/reduced/player.h>
 
 #include <wx/wx.h>
@@ -18,14 +19,7 @@ namespace client
     public:
         PlayerPanel(wxWindow *parent, wxSize size);
 
-        /**
-         * @brief Draw the player
-         *
-         * @param Player
-         * @param is_active
-         * @return void
-         */
-        void drawPlayer(const std::unique_ptr<reduced::Player> &player, bool is_active);
+        void drawPlayer(const std::unique_ptr<reduced::Player> &player, bool is_active, shared::GamePhase phase);
 
     private:
         void makePlayable(SingleCardPanel *image, const std::string &card_id);
@@ -50,7 +44,7 @@ namespace client
          * @return wxPanel*
          */
         wxPanel *createHandPanel(const std::unique_ptr<reduced::Player> &player, const size_t card_width_borders,
-                                 const bool is_active);
+                                 const bool is_active, shared::GamePhase phase);
 
         /**
          * @brief Create the discard pile panel

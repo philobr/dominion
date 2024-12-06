@@ -32,7 +32,7 @@ namespace client
 
     void LobbyPanel::refreshPlayers(const std::vector<std::string> &players)
     {
-        NamesSizer->Clear(false);
+        NamesSizer->Clear(true);
         playerCount = 0;
         for ( auto player : players ) {
             this->addPlayer(player);
@@ -41,9 +41,10 @@ namespace client
 
     void LobbyPanel::makeGameMaster()
     {
-        wxButton *StartButton = new wxButton(this, wxID_ANY, "Start Game");
+        wxButton *StartButton = new wxButton(this, wxID_ANY, "Proceed to card selection");
 
-        StartButton->Bind(wxEVT_BUTTON, [](const wxCommandEvent &) { wxGetApp().getController().startGame(); });
+        StartButton->Bind(wxEVT_BUTTON,
+                          [](const wxCommandEvent &) { wxGetApp().getController().proceedToCardSelection(); });
 
         this->GetSizer()->Add(StartButton, 0, wxALIGN_CENTER | wxALL, 5);
     }

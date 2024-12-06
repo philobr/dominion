@@ -11,34 +11,12 @@
 #include <shared/action_decision.h>
 
 #include <shared/game/cards/card_base.h>
+#include <shared/game/game_state/game_phase.h>
 #include <shared/game/game_state/player_base.h>
 #include <shared/game/game_state/reduced_game_state.h>
 
 namespace server
 {
-    enum class GamePhase
-    {
-        ACTION_PHASE,
-        BUY_PHASE,
-        PLAYING_ACTION_CARD,
-    };
-
-    inline std::string toString(GamePhase phase)
-    {
-        switch ( phase ) {
-            case GamePhase::ACTION_PHASE:
-                return "action phase";
-            case GamePhase::BUY_PHASE:
-                return "buy phase";
-            case GamePhase::PLAYING_ACTION_CARD:
-                return "currently playing phase";
-            default:
-                {
-                    LOG(ERROR) << "Received unexpected phase in " << FUNC_NAME << ": " << static_cast<int>(phase);
-                    return "INVALID PHASE";
-                }
-        }
-    }
 
     /**
      * @brief This holds the complete game stae on the server.
@@ -51,7 +29,7 @@ namespace server
         std::vector<Player::id_t> player_order;
         unsigned int current_player_idx;
         ServerBoard::ptr_t board;
-        GamePhase phase;
+        shared::GamePhase phase;
 
     public:
         GameState();
@@ -66,8 +44,10 @@ namespace server
 
         Player &getPlayer(const Player::id_t &id) { return *player_map.at(id); }
         const Player &getPlayer(const Player::id_t &id) const { return *player_map.at(id); }
+        const std::vector<Player::id_t> &getAllPlayerIDs() const { return player_order; }
 
-        GamePhase getPhase() const { return phase; }
+        shared::GamePhase getPhase() const { return phase; }
+        ServerBoard::ptr_t getBoard() { return board; }
 
         void startGame();
         void endGame()
@@ -82,7 +62,7 @@ namespace server
         void startTurn();
         void endTurn();
 
-        inline void setPhase(GamePhase new_phase) { phase = new_phase; }
+        inline void setPhase(shared::GamePhase new_phase) { phase = new_phase; }
 
         bool isGameOver() const;
 
@@ -151,7 +131,7 @@ namespace server
          */
         void forceSwitchPhase();
 
-        inline void resetPhase() { phase = GamePhase::ACTION_PHASE; }
+        inline void resetPhase() { phase = shared::GamePhase::ACTION_PHASE; }
         inline void switchPlayer() { current_player_idx = (current_player_idx + 1) % player_map.size(); }
 
         /**

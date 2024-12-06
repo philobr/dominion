@@ -23,6 +23,12 @@ namespace client
             case ControllerEventType::SHOW_VICTORY_SCREEN:
                 os << "ShowVictoryScreen";
                 break;
+            case ControllerEventType::SHOW_CARD_SELECTION_SCREEN:
+                os << "ShowCardSelectionScreen";
+                break;
+            case ControllerEventType::SHOW_GAIN_FROM_BOARD_SCREEN:
+                os << "ShowGainFromBoardScreen";
+                break;
             default:
                 LOG(ERROR) << "Unknown ControllerEventType: " << static_cast<int>(type);
                 os << "UnknownEventType";
@@ -45,6 +51,12 @@ namespace client
 
     ShowGameScreenEventData::ShowGameScreenEventData(std::unique_ptr<reduced::GameState> game_state) :
         game_state(std::move(game_state))
+    {}
+
+    ShowGainFromBoardScreenEventData::ShowGainFromBoardScreenEventData(std::unique_ptr<reduced::GameState> game_state,
+                                                                       shared::GainFromBoardOrder order) :
+        ShowGameScreenEventData(std::move(game_state)),
+        order(order)
     {}
 
     ControllerEvent *ControllerEvent::showStatus(std::string status)
@@ -74,6 +86,18 @@ namespace client
     ControllerEvent *ControllerEvent::showVictoryScreen()
     {
         return new ControllerEvent(ControllerEventType::SHOW_VICTORY_SCREEN, std::any());
+    }
+
+    ControllerEvent *ControllerEvent::showCardSelectionScreen()
+    {
+        return new ControllerEvent(ControllerEventType::SHOW_CARD_SELECTION_SCREEN, std::any());
+    }
+
+    ControllerEvent *ControllerEvent::showGainFromBoardScreen(std::unique_ptr<reduced::GameState> game_state,
+                                                              shared::GainFromBoardOrder order)
+    {
+        ShowGainFromBoardScreenEventData data(std::move(game_state), order);
+        return new ControllerEvent(ControllerEventType::SHOW_GAIN_FROM_BOARD_SCREEN, data);
     }
 
     ControllerEvent::ControllerEvent(ControllerEventType type, std::any data) :

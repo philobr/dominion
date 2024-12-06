@@ -39,7 +39,6 @@ void server::BehaviourRegistry::initialiseBehaviours()
     insert<GainCoins<1>>("Placeholder1");
     insert<GainCoins<1>>("Placeholder2");
     insert<GainCoins<1>>("Placeholder3");
-    insert<GainCoins<1>>("Placeholder4");
     // ================================
 
     /*
@@ -55,7 +54,7 @@ void server::BehaviourRegistry::initialiseBehaviours()
     insert<GainPoints<1>>("Estate");
     insert<GainPoints<3>>("Duchy");
     insert<GainPoints<6>>("Province");
-    insert<GainCoins<-1>>("Curse");
+    insert<GainPoints<-1>>("Curse");
 
     // kingdom cards
     insert<DrawCards<2>>("Moat");
@@ -64,6 +63,9 @@ void server::BehaviourRegistry::initialiseBehaviours()
     insert<GainActions<1>, DrawCards<2>>("Laboratory");
     insert<GainActions<2>, GainCoins<2>, GainBuys<1>>("Festival");
     insert<GainActions<1>, GainCoins<1>, GainBuys<1>, DrawCards<1>>("Market");
+
+    // enemies get curse on discard pile
+    insert<DrawCards<2>, CurseEnemy>("Witch");
 
     /*
     UNSURE
@@ -84,8 +86,6 @@ void server::BehaviourRegistry::initialiseBehaviours()
     insert<DrawCards<1>, GainActions<1>, NOT_IMPLEMENTED_YET>("Harbinger");
     // enemies draw a card
     insert<DrawCards<4>, GainBuys<1>, NOT_IMPLEMENTED_YET>("Council_Room");
-    // enemies get curse on discard pile
-    insert<DrawCards<2>, NOT_IMPLEMENTED_YET>("Witch");
     // gain as many cards as you have spent
     insert<GainActions<1>, NOT_IMPLEMENTED_YET>("Cellar");
     // discard a card per empty supply pile

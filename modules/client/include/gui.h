@@ -5,7 +5,9 @@
 #include <panels/lobby_panel.h>
 #include <panels/main_game_panel.h>
 #include <panels/victory_screen_panel.h>
+#include <shared/action_order.h>
 #include <windows/game_window.h>
+#include "panels/card_selection_panel.h"
 
 namespace client
 {
@@ -52,6 +54,19 @@ namespace client
 
         void showVictoryScreen();
 
+        void showCardSelectionScreen();
+
+
+        void showGainFromBoardScreen(std::shared_ptr<reduced::GameState> game_state, shared::GainFromBoardOrder order);
+
+        // TODO(#195): These next 3 methods are as of yet unimplemented
+        void showChooseFromScreen(std::shared_ptr<reduced::GameState> game_state, shared::ChooseFromOrder order);
+
+        void showChooseFromStagedScreen(std::shared_ptr<reduced::GameState> game_state,
+                                        shared::ChooseFromStagedOrder order);
+
+        void showChooseFromHandScreen(std::shared_ptr<reduced::GameState> game_state,
+                                      shared::ChooseFromHandOrder order);
 
     private:
         GameWindow *_gameWindow;
@@ -59,5 +74,6 @@ namespace client
         MainGamePanel *_mainGamePanel;
         LobbyPanel *_lobbyPanel;
         VictoryScreenPanel *_victoryScreenPanel;
+        CardSelectionPanel *_cardSelectionPanel;
     };
 } // namespace client

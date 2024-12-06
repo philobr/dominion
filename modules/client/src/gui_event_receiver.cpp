@@ -45,6 +45,17 @@ namespace client
                     _gui->showVictoryScreen();
                     break;
                 }
+            case ControllerEventType::SHOW_CARD_SELECTION_SCREEN:
+                {
+                    _gui->showCardSelectionScreen();
+                    break;
+                }
+            case ControllerEventType::SHOW_GAIN_FROM_BOARD_SCREEN:
+                {
+                    ShowGainFromBoardScreenEventData data = controllerEvent.getData<ShowGainFromBoardScreenEventData>();
+                    _gui->showGainFromBoardScreen(data.game_state, data.order);
+                    break;
+                }
             default:
                 {
                     LOG(ERROR) << "Unknown controller event type: " << static_cast<int>(controllerEvent.getType());

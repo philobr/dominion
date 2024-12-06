@@ -28,10 +28,10 @@ namespace client
 
         wxPanel *drawPlayedPanelTest();
 
-        wxPanel *drawButtonPanel();
+        wxPanel *drawButtonPanel(const reduced::GameState &game_state);
 
-        wxButton *getEndActionButton();
-        wxButton *getEndTurnButton();
+        wxButton *createEndActionButton(wxWindow *parent);
+        wxButton *createEndTurnButton(wxWindow *parent);
     };
 
 } // namespace client

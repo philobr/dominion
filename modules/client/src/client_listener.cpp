@@ -3,7 +3,8 @@
 #include "client_network_manager.h"
 
 
-ClientListener::ClientListener(sockpp::tcp_connector *connection) : _connection(connection) {}
+ClientListener::ClientListener(sockpp::tcp_connector *connection) : wxThread(wxTHREAD_DETACHED), _connection(connection)
+{}
 
 
 ClientListener::~ClientListener() { this->_connection->shutdown(); }

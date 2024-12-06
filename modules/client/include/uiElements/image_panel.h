@@ -43,7 +43,6 @@ namespace client
          *
          */
         void makeGrey();
-
     };
 
 } // namespace client

@@ -6,7 +6,7 @@ namespace client
     SingleCardPanel::SingleCardPanel(wxWindow *parent, const std::string &card_name, wxSize size, int padding) :
         wxPanel(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize), CardName(card_name)
     {
-        wxBoxSizer* sizer = new wxBoxSizer(wxVERTICAL);
+        wxBoxSizer *sizer = new wxBoxSizer(wxVERTICAL);
 
         std::string CardPath = "assets/" + card_name + ".png";
 

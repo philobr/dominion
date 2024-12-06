@@ -1,10 +1,10 @@
 
 #pragma once
 
+#include <shared/game/cards/card_base.h>
 #include <shared/game/cards/card_factory.h>
 #include <shared/game/game_state/board_base.h>
 #include <shared/game/game_state/game_phase.h>
-#include <shared/game/cards/card_base.h>
 
 
 #include <uiElements/formatting_constants.h>
@@ -50,7 +50,6 @@ namespace client
         void drawBoard(std::shared_ptr<shared::Board> board, unsigned int treasure, shared::CardType type);
 
     private:
-
         /**
          * @brief Make a pile buyable
          * by making it clickable and attaching an Event handler that sends a buy request
@@ -140,7 +139,6 @@ namespace client
                 Pile->SetToolTip("Too expensive");
                 Pile->makeGrey();
                 Pile->SetCursor(wxCursor(wxCURSOR_NO_ENTRY));
-                
             }
         }
     }

@@ -46,9 +46,9 @@ namespace client
         grid_sizer->AddGrowableCol(1);
 
         for ( const auto &player : players ) {
-            TextPanel* name_text = new TextPanel(container, wxID_ANY, player.first + ":", TextFormat::BOLD);
+            TextPanel *name_text = new TextPanel(container, wxID_ANY, player.first + ":", TextFormat::BOLD);
 
-            TextPanel* score_text = new TextPanel(container, wxID_ANY, std::to_string(player.second), TextFormat::BOLD);
+            TextPanel *score_text = new TextPanel(container, wxID_ANY, std::to_string(player.second), TextFormat::BOLD);
 
             grid_sizer->Add(name_text, wxSizerFlags().Right());
             grid_sizer->Add(score_text, wxSizerFlags().Left());
@@ -82,7 +82,8 @@ namespace client
 
         wxBoxSizer *title_sizer = new wxBoxSizer(wxHORIZONTAL);
 
-        TextPanel* title = new TextPanel(container, wxID_ANY, "https://www.youtube.com/watch?v=dQw4w9WgXcQ", TextFormat::TITLE);
+        TextPanel *title =
+                new TextPanel(container, wxID_ANY, "https://www.youtube.com/watch?v=dQw4w9WgXcQ", TextFormat::TITLE);
 
         title_sizer->Add(title, 1, wxALL, 20);
         container_sizer->Add(0, 20);

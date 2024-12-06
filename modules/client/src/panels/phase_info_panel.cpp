@@ -58,7 +58,7 @@ namespace client
         auto *playedPanel = drawPlayedPanel(game_state.board->getPlayedCards());
 
         // Add buttons to the sizer
-        auto *buttonsPanel = drawButtonPanel(game_state.active_player);
+        auto *buttonsPanel = drawButtonPanel();
 
         // Add the panels to the sizer
         sizer->Add(playedPanel, wxSizerFlags().Align(wxALIGN_CENTER).Border(wxALL, 5));
@@ -73,8 +73,8 @@ namespace client
 
     TextPanel *PhaseInfoPanel::drawPlayerInfo(const shared::PlayerBase &player)
     {
-        wxString info = wxString::Format("%s\n\nTreasure: %d\n\nActions: %d\n\nBuys: %d", player.getId(),
-                                         player.getTreasure(), player.getActions(), player.getBuys());
+        wxString info = wxString::Format("Currently playing: %s\n\nTreasure: %d\n\nActions: %d\n\nBuys: %d",
+                                         player.getId(), player.getTreasure(), player.getActions(), player.getBuys());
 
         return new TextPanel(this, wxID_ANY, info, TextFormat::BOLD);
     }
@@ -122,18 +122,13 @@ namespace client
         return endTurnButton;
     }
     // NOLINTBEGIN(bugprone-suspicious-enum-usage)
-    wxPanel *PhaseInfoPanel::drawButtonPanel(const shared::PlayerBase::id_t &currently_playing)
+    wxPanel *PhaseInfoPanel::drawButtonPanel()
     {
         // Create a container panel for the buttons
         wxPanel *buttonPanel = new wxPanel(this, wxID_ANY);
 
         // Create a vertical sizer for the buttons
         wxBoxSizer *verticalSizer = new wxBoxSizer(wxVERTICAL);
-
-        // Create a Text for the player currently playing
-        wxString info = wxString::Format("Currently playing: %s", currently_playing);
-        TextPanel *playing = new TextPanel(buttonPanel, wxID_ANY, info, TextFormat::BOLD);
-
 
         // Get the buttons using existing functions
         wxButton *endActionPhaseButton = getEndActionButton();
@@ -144,7 +139,6 @@ namespace client
         endTurnButton->Reparent(buttonPanel);
 
         //  Add buttons to the vertical sizer with some spacing
-        verticalSizer->Add(playing, 0, wxALIGN_CENTER_HORIZONTAL | wxALL, 5);
         verticalSizer->Add(endActionPhaseButton, 0, wxALIGN_CENTER_HORIZONTAL | wxALL, 5);
         verticalSizer->Add(endTurnButton, 0, wxALIGN_CENTER_HORIZONTAL | wxALL, 5);
 

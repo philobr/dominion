@@ -28,7 +28,7 @@ namespace client
 
         wxPanel *drawPlayedPanelTest();
 
-        wxPanel *drawButtonPanel(const shared::PlayerBase::id_t &currently_playing);
+        wxPanel *drawButtonPanel();
 
         wxButton *getEndActionButton();
         wxButton *getEndTurnButton();

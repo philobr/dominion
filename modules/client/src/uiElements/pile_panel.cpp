@@ -21,29 +21,9 @@ namespace client
         sizer->Add(PileSize, 0, wxALIGN_CENTER_HORIZONTAL);
 
         this->SetSizer(sizer);
-
-        Bind(wxEVT_PAINT, &PilePanel::OnPaint, this);
     }
 
-    void PilePanel::greyOut()
-    {
-        m_isGreyedOut = true;
-        Refresh();  // Request a repaint
-        Update();   // Force immediate repaint
-    }
 
-    void PilePanel::OnPaint(wxPaintEvent& event)
-    {
-        wxPaintDC dc(this);
-        event.Skip();  // Allow normal painting first
-
-        if (m_isGreyedOut) {
-            wxColour grayOverlay(128, 128, 128, 128);
-            dc.SetBrush(wxBrush(grayOverlay));
-            dc.SetPen(*wxTRANSPARENT_PEN);
-            dc.DrawRectangle(GetClientRect());
-        }
-    }
     shared::Pile PilePanel::getPile() const { return Pile; }
 
 } // namespace client

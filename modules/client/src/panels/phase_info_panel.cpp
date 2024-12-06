@@ -108,7 +108,7 @@ namespace client
                             [](const wxCommandEvent & /*event*/) { wxGetApp().getController().endTurn(); });
         return endTurnButton;
     }
-    // NOLINTBEGIN()
+    // NOLINTBEGIN(bugprone-suspicious-enum-usage)
     wxPanel *PhaseInfoPanel::drawButtonPanel(const shared::PlayerBase::id_t &currently_playing)
     {
         // Create a container panel for the buttons
@@ -140,6 +140,6 @@ namespace client
 
         return buttonPanel;
     }
-    // NOLINTEND()
+    // NOLINTEND(bugprone-suspicious-enum-usage)
 
 } // namespace client

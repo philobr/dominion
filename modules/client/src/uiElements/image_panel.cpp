@@ -2,7 +2,7 @@
 #include <uiElements/image_panel.h>
 #include <wx/image.h>
 
-// NOLINTBEGIN(suspicious-enum-usage)
+// NOLINTBEGIN(bugprone-suspicious-enum-usage)
 namespace client
 {
 
@@ -77,4 +77,4 @@ namespace client
     }
 
 } // namespace client
-  // NOLINTEND(suspicious-enum-usage)
+  // NOLINTEND(bugprone-suspicious-enum-usage)

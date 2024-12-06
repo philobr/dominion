@@ -41,6 +41,8 @@ namespace client
 
         void makeAutoSelection();
 
+        void clearSelection();
+
     private:
         std::unordered_map<shared::CardBase::id_t, bool> selectedCards;
         unsigned int selectedCardCount = 0;

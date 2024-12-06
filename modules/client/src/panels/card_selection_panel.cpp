@@ -32,7 +32,7 @@ namespace client
 
         VerticalSizer->Add(createCardSelection(), 0, wxALIGN_CENTER | wxTOP | wxBOTTOM, 20);
 
-        wxGridSizer *GridSizer = new wxGridSizer(1, 3, 0, 100);
+        wxGridSizer *GridSizer = new wxGridSizer(1, 4, 0, 100);
         // show number of selected cards
         SelectedCardCountPanel =
                 new TextPanel(this, wxID_ANY, "Selected Cards: " + std::to_string(selectedCardCount), TextFormat::BOLD);
@@ -45,6 +45,13 @@ namespace client
         AutoSelectButton->Bind(wxEVT_BUTTON, [this](const wxCommandEvent &) { makeAutoSelection(); });
 
         GridSizer->Add(AutoSelectButton, 0, wxALIGN_CENTER_HORIZONTAL | wxALL, 5);
+
+        // make the clear selection button
+        wxButton *ClearSelectionButton = new wxButton(this, wxID_ANY, "Clear selection");
+
+        ClearSelectionButton->Bind(wxEVT_BUTTON, [this](const wxCommandEvent &) { clearSelection(); });
+
+        GridSizer->Add(ClearSelectionButton, 0, wxALIGN_CENTER_HORIZONTAL | wxALL, 5);
 
         // make the start game button
         StartButton = new wxButton(this, wxID_ANY, "Start Game");
@@ -129,6 +136,15 @@ namespace client
                 }
                 clickOnSelectableCard(cardPanels.at(random_index));
                 break;
+            }
+        }
+    }
+
+    void CardSelectionPanel::clearSelection()
+    {
+        for ( auto *card : cardPanels ) {
+            if ( selectedCards[card->getCardName()] ) {
+                clickOnSelectableCard(card);
             }
         }
     }

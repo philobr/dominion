@@ -5,7 +5,7 @@
 
 #include <wx/wx.h>
 
-#include "../uiElements/image_panel.h"
+#include <uiElements/single_card_panel.h>
 
 namespace client
 {
@@ -22,7 +22,7 @@ namespace client
         void drawPlayer(const std::unique_ptr<reduced::Player> &player, bool is_active, shared::GamePhase phase);
 
     private:
-        void makePlayable(ImagePanel *image, const std::string &card_id);
+        void makePlayable(SingleCardPanel *image, const std::string &card_id);
 
         wxSize hand_card_size = wxSize(100, 125);
 

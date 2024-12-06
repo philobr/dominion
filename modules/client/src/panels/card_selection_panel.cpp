@@ -30,14 +30,14 @@ namespace client
             }
         }
 
-        VerticalSizer->Add(createCardSelection(), 0, wxALIGN_CENTER | wxALL, 20);
+        VerticalSizer->Add(createCardSelection(), 0, wxALIGN_CENTER | wxTOP | wxBOTTOM, 20);
 
         wxGridSizer *GridSizer = new wxGridSizer(1, 2, 0, 100);
         // show number of selected cards
         SelectedCardCountPanel =
                 new TextPanel(this, wxID_ANY, "Selected Cards: " + std::to_string(selectedCardCount), TextFormat::BOLD);
 
-        GridSizer->Add(SelectedCardCountPanel, 0, wxALIGN_CENTER | wxALL, 5);
+        GridSizer->Add(SelectedCardCountPanel, 0, wxALIGN_LEFT | wxALL, 5);
 
         // make the start game button
         StartButton = new wxButton(this, wxID_ANY, "Start Game");
@@ -48,9 +48,9 @@ namespace client
         // Disable the start button by default
         StartButton->Enable(false);
 
-        GridSizer->Add(StartButton, 0, wxALIGN_CENTER | wxALL, 5);
+        GridSizer->Add(StartButton, 0, wxALIGN_RIGHT | wxALL, 5);
 
-        VerticalSizer->Add(GridSizer, 0, wxALIGN_CENTER | wxALL, 5);
+        VerticalSizer->Add(GridSizer, 0, wxEXPAND | wxALL, 5);
         this->SetSizerAndFit(VerticalSizer);
     }
     // NOLINTEND(bugprone-suspicious-enum-usage)

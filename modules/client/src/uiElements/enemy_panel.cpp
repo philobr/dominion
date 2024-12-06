@@ -9,8 +9,8 @@
 
 namespace client
 {
-    EnemyPanel::EnemyPanel(wxWindow *parent, reduced::Enemy &enemy) :
-        wxPanel(parent, wxID_ANY, wxDefaultPosition, wxSize(-1, 80))
+    EnemyPanel::EnemyPanel(wxWindow *parent, reduced::Enemy &enemy, const bool is_active) :
+        wxPanel(parent, wxID_ANY, wxDefaultPosition, wxSize(-1, 80)), _is_active(is_active)
     {
         // Set a light red background color
         this->SetBackgroundStyle(wxBG_STYLE_PAINT);
@@ -96,7 +96,8 @@ namespace client
         wxSize size = this->GetSize();
 
         // Create a rounded rectangle
-        wxBrush brush(formatting_constants::ENEMY_BACKGROUND);
+        wxBrush brush(_is_active ? formatting_constants::ACTIVE_ENEMY_BACKGROUND
+                                 : formatting_constants::ENEMY_BACKGROUND);
         dc.SetBrush(brush);
         dc.SetPen(*wxTRANSPARENT_PEN); // No border
         dc.DrawRoundedRectangle(0, 0, size.GetWidth(), size.GetHeight(), 10); // Radius of 10 for rounded corners

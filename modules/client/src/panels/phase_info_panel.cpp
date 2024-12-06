@@ -20,15 +20,15 @@ namespace client
                                                      "gigu", shared::GamePhase::ACTION_PHASE);
 
         // TODO: remove when final testing is done
-        drawInfoPanel(*game_state, game_state->active_player == game_state->reduced_player->getId());
+        drawInfoPanel(*game_state);
     }
 
-    void PhaseInfoPanel::drawInfoPanel(const reduced::GameState &game_state, bool is_active)
+    void PhaseInfoPanel::drawInfoPanel(const reduced::GameState &game_state)
     {
         this->DestroyChildren();
 
         // Adjust background colour based on active player
-        if ( is_active ) {
+        if ( game_state.isPlayerActive() ) {
             SetBackgroundColour(formatting_constants::ACTIVE_PLAYER_INFO_BACKGROUND);
         } else {
             SetBackgroundColour(formatting_constants::PASSIVE_PLAYER_INFO_BACKGROUND);

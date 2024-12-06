@@ -19,7 +19,7 @@ namespace client
     public:
         PhaseInfoPanel(wxWindow *parent, wxSize size);
 
-        void drawInfoPanel(const reduced::GameState &game_state, bool is_active);
+        void drawInfoPanel(const reduced::GameState &game_state);
 
     private:
         TextPanel *drawPlayerInfo(const std::unique_ptr<reduced::Player> &player);

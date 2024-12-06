@@ -32,11 +32,11 @@ namespace client
 
     void MainGamePanel::drawGameState(const reduced::GameState &game_state)
     {
-        bool is_active = (game_state.active_player == game_state.reduced_player->getId());
-        PhaseInfo->drawInfoPanel(game_state, is_active);
-        Board->drawBoard(game_state.board, is_active, game_state.reduced_player->getTreasure(), game_state.game_phase);
+        PhaseInfo->drawInfoPanel(game_state);
+        Board->drawBoard(game_state.board, game_state.isPlayerActive(), game_state.reduced_player->getTreasure(),
+                         game_state.game_phase);
 
-        Player->drawPlayer(game_state.reduced_player, is_active, game_state.game_phase);
+        Player->drawPlayer(game_state.reduced_player, game_state.isPlayerActive(), game_state.game_phase);
         EnemyInfo->drawEnemies(game_state.reduced_enemies, game_state.active_player);
     }
 
@@ -49,7 +49,7 @@ namespace client
         // set is_active to false to avoid any issues with players trying to play cards
         // during this phase
         Player->drawPlayer(game_state.reduced_player, false, game_state.game_phase);
-        EnemyInfo->drawEnemies(game_state.reduced_enemies);
+        EnemyInfo->drawEnemies(game_state.reduced_enemies, game_state.active_player);
     }
 
 } // namespace client

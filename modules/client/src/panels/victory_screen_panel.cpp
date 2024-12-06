@@ -1,4 +1,5 @@
 #include <panels/victory_screen_panel.h>
+#include <uiElements/text_panel.h>
 
 namespace client
 {
@@ -22,12 +23,7 @@ namespace client
 
         wxBoxSizer *title_sizer = new wxBoxSizer(wxHORIZONTAL);
 
-        wxStaticText *title = new wxStaticText(container, wxID_ANY, "Score", wxDefaultPosition, wxDefaultSize,
-                                               wxALIGN_CENTER_HORIZONTAL);
-        wxFont title_font = title->GetFont();
-        title_font.SetPointSize(24);
-        title_font.SetWeight(wxFONTWEIGHT_BOLD);
-        title->SetFont(title_font);
+        TextPanel *title = new TextPanel(container, wxID_ANY, "Score", TextFormat::TITLE);
 
         title_sizer->Add(title, 1, wxALL, 20);
         container_sizer->Add(0, 20);
@@ -50,9 +46,9 @@ namespace client
         grid_sizer->AddGrowableCol(1);
 
         for ( const auto &player : players ) {
-            wxStaticText *name_text = new wxStaticText(container, wxID_ANY, player.first + ":");
+            TextPanel *name_text = new TextPanel(container, wxID_ANY, player.first + ":", TextFormat::BOLD);
 
-            wxStaticText *score_text = new wxStaticText(container, wxID_ANY, std::to_string(player.second));
+            TextPanel *score_text = new TextPanel(container, wxID_ANY, std::to_string(player.second), TextFormat::BOLD);
 
             grid_sizer->Add(name_text, wxSizerFlags().Right());
             grid_sizer->Add(score_text, wxSizerFlags().Left());
@@ -86,12 +82,8 @@ namespace client
 
         wxBoxSizer *title_sizer = new wxBoxSizer(wxHORIZONTAL);
 
-        wxStaticText *title = new wxStaticText(container, wxID_ANY, "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
-                                               wxDefaultPosition, wxDefaultSize, wxALIGN_CENTER_HORIZONTAL);
-        wxFont title_font = title->GetFont();
-        title_font.SetPointSize(24);
-        title_font.SetWeight(wxFONTWEIGHT_BOLD);
-        title->SetFont(title_font);
+        TextPanel *title =
+                new TextPanel(container, wxID_ANY, "https://www.youtube.com/watch?v=dQw4w9WgXcQ", TextFormat::TITLE);
 
         title_sizer->Add(title, 1, wxALL, 20);
         container_sizer->Add(0, 20);
@@ -106,9 +98,9 @@ namespace client
         grid_sizer->AddGrowableCol(1);
 
         for ( const auto &player : players ) {
-            wxStaticText *name_text = new wxStaticText(container, wxID_ANY, player.first + ":");
+            TextPanel *name_text = new TextPanel(container, wxID_ANY, player.first + ":", TextFormat::BOLD);
 
-            wxStaticText *score_text = new wxStaticText(container, wxID_ANY, std::to_string(player.second));
+            TextPanel *score_text = new TextPanel(container, wxID_ANY, std::to_string(player.second), TextFormat::BOLD);
 
             grid_sizer->Add(name_text, wxSizerFlags().Right());
             grid_sizer->Add(score_text, wxSizerFlags().Left());

@@ -46,10 +46,6 @@ namespace client
         void drawBoard(std::shared_ptr<shared::Board> board, unsigned int treasure, shared::CardType type);
 
     private:
-        /**
-         * @brief Check if a pile is buyable
-         */
-        void checkIfBuyable(PilePanel* pile, shared::CardBase::id_t card_id, bool is_active, unsigned int treasure);
 
         /**
          * @brief Make a pile buyable

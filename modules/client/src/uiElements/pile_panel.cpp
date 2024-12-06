@@ -14,7 +14,7 @@ namespace client
         Image = new ImagePanel(this, cardPath, wxBITMAP_TYPE_PNG, wxDefaultPosition,
                                wxSize(size.GetWidth(), size.GetHeight() - 2 * padding));
 
-        sizer->Add(Image, 0, wxALIGN_CENTER_HORIZONTAL | wxALL, 5);
+        sizer->Add(Image, 0, wxALIGN_CENTER_HORIZONTAL, 5);
 
         TextPanel *PileSize = new TextPanel(this, wxID_ANY, std::to_string(pile.count), TextFormat::PLAIN);
 

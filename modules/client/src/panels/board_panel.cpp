@@ -11,6 +11,7 @@
 #include <shared/game/cards/card_factory.h>
 #include <shared/utils/test_helpers.h>
 #include <uiElements/formatting_constants.h>
+#include "shared/game/cards/card_base.h"
 
 namespace client
 {
@@ -30,36 +31,18 @@ namespace client
 
         bool buy_phase = phase == shared::GamePhase::BUY_PHASE;
 
-        // board_ = Board;
+        auto can_buy = [buy_phase, is_active](const shared::CardType /*type*/) { return buy_phase && is_active; };
 
-        const auto &VictoryCards = board->getVictoryCards();
-        const auto &TreasureCards = board->getTreasureCards();
-        const auto &KingdomCards = board->getKingdomCards();
+        drawPiles(board, can_buy, treasure);
+    }
 
-        // use a grid bag sizer that allow us to place the cards in a grid
-        // and not fill all spaces
-        // In the future this even allows for uneven sizes where some panels can
-        // take up multiple grid spaces
-        auto *sizer = new wxGridBagSizer(10, 10);
+    void BoardPanel::drawBoard(std::shared_ptr<shared::Board> board, unsigned int treasure, shared::CardType type)
+    {
+        this->DestroyChildren();
 
-        // places the victory piles all the way to the left in one column
-        auto VictoryPositionRule = [](unsigned int counter) { return wxGBPosition(counter, 0); };
+        auto can_buy = [type](const shared::CardType pile_type) { return (pile_type & type) == pile_type; };
 
-        // places the treasure piles next to the victory piles in one column
-        auto TreasurePositionRule = [](unsigned int counter) { return wxGBPosition(counter, 1); };
-
-        // places the kingdom piles in a 2x5 grid
-        auto KingdomPositionRule = [](unsigned int counter) { return wxGBPosition(counter % 2, 2 + counter / 2); };
-
-        bool canBuy = is_active && buy_phase;
-        addPiles(VictoryCards, sizer, VictoryPositionRule, canBuy, treasure, VictoryPiles_);
-        addPiles(TreasureCards, sizer, TreasurePositionRule, canBuy, treasure, TreasurePiles_);
-        addPiles(KingdomCards, sizer, KingdomPositionRule, canBuy, treasure, KingdomPiles_);
-
-        // necessary command for the grid bag sizer to do it's thing and arrange
-        // the panels
-        this->SetSizer(sizer, true);
-        sizer->Layout();
+        drawPiles(board, can_buy, treasure);
     }
 
     void BoardPanel::makeBuyable(PilePanel *pile)

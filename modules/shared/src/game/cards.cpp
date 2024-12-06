@@ -30,7 +30,7 @@ namespace shared
 
     // treasure
     REGISTER_CARD(Copper, CardType::TREASURE, 0);
-    REGISTER_CARD(Silver, CardType::TREASURE, 2);
+    REGISTER_CARD(Silver, CardType::TREASURE, 3);
     REGISTER_CARD(Gold, CardType::TREASURE, 5);
 
     // victory

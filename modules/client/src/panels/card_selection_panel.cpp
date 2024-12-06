@@ -32,22 +32,25 @@ namespace client
 
         VerticalSizer->Add(createCardSelection(), 0, wxALIGN_CENTER | wxALL, 20);
 
-        wxBoxSizer *HorizontalSizer = new wxBoxSizer(wxHORIZONTAL);
+        wxGridSizer *GridSizer = new wxGridSizer(1, 2, 0, 100);
         // show number of selected cards
         SelectedCardCountPanel =
                 new TextPanel(this, wxID_ANY, "Selected Cards: " + std::to_string(selectedCardCount), TextFormat::BOLD);
 
-        HorizontalSizer->Add(SelectedCardCountPanel, 0, wxALIGN_LEFT | wxALL, 5);
+        GridSizer->Add(SelectedCardCountPanel, 0, wxALIGN_CENTER | wxALL, 5);
 
         // make the start game button
-        wxButton *StartButton = new wxButton(this, wxID_ANY, "Start Game");
+        StartButton = new wxButton(this, wxID_ANY, "Start Game");
 
         StartButton->Bind(wxEVT_BUTTON,
                           [this](const wxCommandEvent &) { wxGetApp().getController().startGame(selectedCards); });
 
-        HorizontalSizer->Add(StartButton, 0, wxALL, 5);
+        // Disable the start button by default
+        StartButton->Enable(false);
 
-        VerticalSizer->Add(HorizontalSizer, 0, wxALIGN_CENTER | wxALL, 5);
+        GridSizer->Add(StartButton, 0, wxALIGN_CENTER | wxALL, 5);
+
+        VerticalSizer->Add(GridSizer, 0, wxALIGN_CENTER | wxALL, 5);
         this->SetSizerAndFit(VerticalSizer);
     }
     // NOLINTEND(bugprone-suspicious-enum-usage)
@@ -115,12 +118,17 @@ namespace client
                     this->switchCardSelectionState(card_panel->getCardName());
                     LOG(INFO) << "Card " << card_panel->getCardName()
                               << " clicked, new selection state: " << selectedCards[card_panel->getCardName()];
+
                     // Change the border color of the card depending of the selection state
                     wxColour new_border_colour = selectedCards[card_panel->getCardName()] ? *wxYELLOW : wxNullColour;
                     card_panel->setBorderColor(new_border_colour);
 
+                    // Update the selected card count
                     SelectedCardCountPanel->SetLabel("Selected Cards: " + std::to_string(selectedCardCount));
                     SelectedCardCountPanel->GetParent()->Layout(); // Ensure the layout is updated
+
+                    // Update the start game button state
+                    StartButton->Enable(selectedCardCount == 10);
                 });
     }
 } // namespace client

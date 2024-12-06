@@ -43,6 +43,7 @@ namespace client
         std::unordered_map<shared::CardBase::id_t, bool> selectedCards;
         unsigned int selectedCardCount = 0;
         TextPanel *SelectedCardCountPanel;
+        wxButton *StartButton;
 
         void makeSelectable(SingleCardPanel *card_panel);
     };

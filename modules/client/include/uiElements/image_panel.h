@@ -37,6 +37,13 @@ namespace client
          * @param event
          */
         void onSize(wxSizeEvent &event);
+
+        /**
+         * @brief Make the image grey
+         *
+         */
+        void makeGrey();
+
     };
 
 } // namespace client

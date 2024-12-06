@@ -43,7 +43,7 @@ cd "$EXEC_DIR" || {
 }
 
 # Start the server in the background
-./server_exe -f server.log 2>&1 &
+./server_exe -l info -f server.log 2>&1 &
 SERVER_PID=$!
 
 # Check if server started successfully
@@ -56,11 +56,11 @@ fi
 sleep 1
 
 # Start first client in the background
-./client_exe -f client1.log 2>&1 &
+./client_exe -l info -f client1.log 2>&1 &
 CLIENT1_PID=$!
 
 # Start second client in the background
-./client_exe -f client2.log 2>&1 &
+./client_exe -l info -f client2.log 2>&1 &
 CLIENT2_PID=$!
 
 # Check if clients started successfully

@@ -40,6 +40,8 @@ namespace client
     private:
         wxGridSizer *NamesSizer;
 
+        wxButton *StartButton;
+
         unsigned int playerCount;
     };
 

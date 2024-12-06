@@ -40,4 +40,16 @@ namespace client
         EnemyInfo->drawEnemies(game_state.reduced_enemies, game_state.active_player);
     }
 
+    void MainGamePanel::drawGainFromBoard(const reduced::GameState &game_state, shared::CardType type,
+                                          unsigned int max_cost)
+    {
+        PhaseInfo->drawInfoPanel(game_state);
+        Board->drawBoard(game_state.board, max_cost, type);
+
+        // set is_active to false to avoid any issues with players trying to play cards
+        // during this phase
+        Player->drawPlayer(game_state.reduced_player, false, game_state.game_phase);
+        EnemyInfo->drawEnemies(game_state.reduced_enemies);
+    }
+
 } // namespace client

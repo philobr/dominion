@@ -5,6 +5,7 @@
 #include <vector>
 
 #include <shared/game/cards/card_base.h>
+#include <shared/game/cards/card_factory.h>
 #include <shared/utils/assert.h>
 
 #include <rapidjson/document.h>
@@ -75,9 +76,24 @@ namespace shared
         {
             using is_transparent = void; // enables heterogeneous lookup
 
-            bool operator()(const Pile &a, const Pile &b) const { return a.card_id < b.card_id; }
-            bool operator()(const Pile &a, const shared::CardBase::id_t &key) const { return a.card_id < key; }
-            bool operator()(const shared::CardBase::id_t &key, const Pile &b) const { return key < b.card_id; }
+            inline bool operator()(const Pile &a, const Pile &b) const
+            {
+                return (CardFactory::getCost(a.card_id) < CardFactory::getCost(b.card_id)) ||
+                        ((CardFactory::getCost(a.card_id) == CardFactory::getCost(b.card_id)) &&
+                         (a.card_id < b.card_id));
+            }
+
+            inline bool operator()(const Pile &a, const shared::CardBase::id_t &key) const
+            {
+                return (CardFactory::getCost(a.card_id) < CardFactory::getCost(key)) ||
+                        ((CardFactory::getCost(a.card_id) == CardFactory::getCost(key)) && (a.card_id < key));
+            }
+
+            inline bool operator()(const shared::CardBase::id_t &key, const Pile &b) const
+            {
+                return (CardFactory::getCost(key) < CardFactory::getCost(b.card_id)) ||
+                        ((CardFactory::getCost(key) == CardFactory::getCost(b.card_id)) && (key < b.card_id));
+            }
         };
     };
 

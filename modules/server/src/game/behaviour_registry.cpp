@@ -64,6 +64,9 @@ void server::BehaviourRegistry::initialiseBehaviours()
     insert<GainActions<2>, GainCoins<2>, GainBuys<1>>("Festival");
     insert<GainActions<1>, GainCoins<1>, GainBuys<1>, DrawCards<1>>("Market");
 
+    // enemies draw a card
+    insert<DrawCards<4>, GainBuys<1>, DrawCardsEnemies<1>>("Council_Room");
+
     // enemies get curse on discard pile
     insert<DrawCards<2>, CurseEnemy>("Witch");
 
@@ -84,8 +87,6 @@ void server::BehaviourRegistry::initialiseBehaviours()
     insert<NOT_IMPLEMENTED_YET>("Chapel");
     // look through discard pile, may put one card onto deck
     insert<DrawCards<1>, GainActions<1>, NOT_IMPLEMENTED_YET>("Harbinger");
-    // enemies draw a card
-    insert<DrawCards<4>, GainBuys<1>, NOT_IMPLEMENTED_YET>("Council_Room");
     // gain as many cards as you have spent
     insert<GainActions<1>, NOT_IMPLEMENTED_YET>("Cellar");
     // discard a card per empty supply pile

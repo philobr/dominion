@@ -130,11 +130,10 @@ namespace client
             while ( true ) {
                 // Generate random index between 0 and the number of cards
                 int random_index = rand() % cardPanels.size();
-                if ( selectedCards[cardPanels.at(random_index)->getCardName()] ) {
-                    continue;
+                if ( !selectedCards[cardPanels.at(random_index)->getCardName()] ) {
+                    clickOnSelectableCard(cardPanels.at(random_index));
+                    break;
                 }
-                clickOnSelectableCard(cardPanels.at(random_index));
-                break;
             }
         }
     }

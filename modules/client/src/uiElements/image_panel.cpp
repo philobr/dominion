@@ -2,6 +2,8 @@
 #include <uiElements/image_panel.h>
 #include <wx/image.h>
 
+#include <cstddef>
+
 // NOLINTBEGIN(suspicious-enum-usage)
 namespace client
 {
@@ -83,7 +85,7 @@ namespace client
         if (_image.IsOk())
         {
             unsigned char* data = _image.GetData();
-            if (data)
+            if (data != nullptr)
             {
                 int width = _image.GetWidth();
                 int height = _image.GetHeight();
@@ -91,11 +93,11 @@ namespace client
                 {
                     for (int x = 0; x < width; ++x)
                     {
-                        unsigned char r = data[(y * width + x) * 3];
+                        unsigned char r = data[static_cast<ptrdiff_t>((y * width + x) * 3)];
                         unsigned char g = data[(y * width + x) * 3 + 1];
                         unsigned char b = data[(y * width + x) * 3 + 2];
                         unsigned char grey = static_cast<unsigned char>(0.299 * r + 0.587 * g + 0.114 * b);
-                        data[(y * width + x) * 3] = grey;
+                        data[static_cast<ptrdiff_t>((y * width + x) * 3)] = grey;
                         data[(y * width + x) * 3 + 1] = grey;
                         data[(y * width + x) * 3 + 2] = grey;
                     }

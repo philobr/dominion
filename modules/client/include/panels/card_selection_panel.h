@@ -23,7 +23,7 @@ namespace client
          */
         explicit CardSelectionPanel(wxWindow *parent);
 
-        wxGridSizer *createCardSelection();
+        wxScrolledWindow *createCardSelection();
 
         void switchCardSelectionState(shared::CardBase::id_t card_id)
         {

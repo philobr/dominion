@@ -3,6 +3,7 @@
 
 #include <any>
 #include <memory>
+#include <shared/action_order.h>
 #include <shared/game/game_state/player_base.h>
 #include <shared/game/game_state/reduced_game_state.h>
 #include <shared/game/reduced/player.h>
@@ -22,7 +23,8 @@ namespace client
         SHOW_LOBBY_SCREEN,
         SHOW_GAME_SCREEN,
         SHOW_VICTORY_SCREEN,
-        SHOW_CARD_SELECTION_SCREEN
+        SHOW_CARD_SELECTION_SCREEN,
+        SHOW_GAIN_FROM_BOARD_SCREEN
     };
 
     std::ostream &operator<<(std::ostream &os, ControllerEventType type);
@@ -63,6 +65,15 @@ namespace client
         std::shared_ptr<reduced::GameState> game_state;
     };
 
+    struct ShowGainFromBoardScreenEventData : ShowGameScreenEventData
+    {
+    public:
+        ShowGainFromBoardScreenEventData(std::unique_ptr<reduced::GameState> game_state,
+                                         shared::GainFromBoardOrder order);
+
+        shared::GainFromBoardOrder order;
+    };
+
     class ControllerEvent : public wxThreadEvent
     {
     public:
@@ -72,6 +83,8 @@ namespace client
         static ControllerEvent *showGameScreen(std::unique_ptr<reduced::GameState> game_state);
         static ControllerEvent *showVictoryScreen();
         static ControllerEvent *showCardSelectionScreen();
+        static ControllerEvent *showGainFromBoardScreen(std::unique_ptr<reduced::GameState> game_state,
+                                                        shared::GainFromBoardOrder order);
 
         ControllerEvent(ControllerEventType type, std::any data = {});
 

@@ -135,4 +135,16 @@ namespace client
 
         _gameWindow->showPanel(_cardSelectionPanel);
     }
+
+    void Gui::showGainFromBoardScreen(std::shared_ptr<reduced::GameState> game_state, shared::GainFromBoardOrder order)
+    {
+        ONLY_MAIN_THREAD();
+
+        LOG(INFO) << "Showing gain from board overlay";
+
+        shared::CardType type = order.allowed_type;
+        unsigned int max_cost = order.max_cost;
+
+        _mainGamePanel->drawGainFromBoard(*game_state, type, max_cost);
+    }
 } // namespace client

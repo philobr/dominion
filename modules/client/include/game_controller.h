@@ -2,9 +2,11 @@
 
 #include <client_network_manager.h>
 #include <gui_event_receiver.h>
+#include <memory>
 #include <windows/game_window.h>
 
 #include <shared/message_types.h>
+#include "shared/game/game_state/reduced_game_state.h"
 
 namespace client
 {
@@ -97,6 +99,7 @@ namespace client
         void showGameScreen(std::unique_ptr<reduced::GameState> game_state);
         void showVictoryScreen();
         void showCardSelectionScreen();
+        void showGainFromBoard(std::unique_ptr<reduced::GameState> game_state, shared::GainFromBoardOrder order);
 
         bool isLobbyValid();
 

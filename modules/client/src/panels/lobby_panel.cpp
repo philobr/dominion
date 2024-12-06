@@ -16,7 +16,7 @@ namespace client
 {
     LobbyPanel::LobbyPanel(wxWindow *parent) :
         wxPanel(parent, wxID_ANY, wxDefaultPosition, wxSize(1024, 1024)), NamesSizer(new wxGridSizer(2, 2, 0, 0)),
-        playerCount(0)
+        StartButton(nullptr), playerCount(0)
     {
         TextPanel *Title = new TextPanel(this, wxID_ANY, "Lobby", TextFormat::TITLE);
         wxBoxSizer *VerticalSizer = new wxBoxSizer(wxVERTICAL);
@@ -41,10 +41,15 @@ namespace client
 
     void LobbyPanel::makeGameMaster()
     {
-        wxButton *StartButton = new wxButton(this, wxID_ANY, "Proceed to card selection");
+        StartButton = new wxButton(this, wxID_ANY, "Proceed to card selection");
 
         StartButton->Bind(wxEVT_BUTTON,
                           [](const wxCommandEvent &) { wxGetApp().getController().proceedToCardSelection(); });
+
+        if ( playerCount < shared::board_config::MIN_PLAYER_COUNT ||
+             playerCount > shared::board_config::MAX_PLAYER_COUNT ) {
+            StartButton->Enable(false);
+        }
 
         this->GetSizer()->Add(StartButton, 0, wxALIGN_CENTER | wxALL, 5);
     }
@@ -75,6 +80,15 @@ namespace client
         Player->GetSizer()->Add(Player_name, 0, wxALL | wxALIGN_CENTER, 5);
         NamesSizer->Add(Player, 1, wxALL | wxALIGN_CENTER);
         NamesSizer->Layout();
+
+        if ( StartButton != nullptr ) {
+            if ( playerCount < shared::board_config::MIN_PLAYER_COUNT ||
+                 playerCount > shared::board_config::MAX_PLAYER_COUNT ) {
+                StartButton->Enable(false);
+            } else {
+                StartButton->Enable(true);
+            }
+        }
     }
 } // namespace client
 // NOLINTEND(bugprone-suspicious-enum-usage)

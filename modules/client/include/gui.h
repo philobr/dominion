@@ -56,10 +56,10 @@ namespace client
 
         void showCardSelectionScreen();
 
-        // TODO(#195): These next 4 methods are as of yet unimplemented
 
         void showGainFromBoardScreen(std::shared_ptr<reduced::GameState> game_state, shared::GainFromBoardOrder order);
 
+        // TODO(#195): These next 3 methods are as of yet unimplemented
         void showChooseFromScreen(std::shared_ptr<reduced::GameState> game_state, shared::ChooseFromOrder order);
 
         void showChooseFromStagedScreen(std::shared_ptr<reduced::GameState> game_state,

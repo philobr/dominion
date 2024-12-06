@@ -37,8 +37,22 @@ namespace client
         // Create a grid sizer for the panel
         wxGridSizer *sizer = new wxGridSizer(1, 3, 0, 10);
 
+
         // Add player info to the sizer
-        auto *infoPanel = drawPlayerInfo(game_state.reduced_player);
+        if ( game_state.active_player == game_state.reduced_player->getId() ) {
+            // if the current player is the active player
+            sizer->Add(drawPlayerInfo(*game_state.reduced_player),
+                       wxSizerFlags().Align(wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL).Border(wxALL, 5));
+        } else {
+            // if the current player is not the active player, then the stats of the playing enemy are shown
+            for ( const auto &enemy : game_state.reduced_enemies ) {
+                if ( enemy->getId() == game_state.active_player ) {
+                    sizer->Add(drawPlayerInfo(*enemy),
+                               wxSizerFlags().Align(wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL).Border(wxALL, 5));
+                    break;
+                }
+            }
+        }
 
         // Add played cards to the sizer
         auto *playedPanel = drawPlayedPanel(game_state.board->getPlayedCards());
@@ -47,7 +61,6 @@ namespace client
         auto *buttonsPanel = drawButtonPanel(game_state.active_player);
 
         // Add the panels to the sizer
-        sizer->Add(infoPanel, wxSizerFlags().Align(wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL).Border(wxALL, 5));
         sizer->Add(playedPanel, wxSizerFlags().Align(wxALIGN_CENTER).Border(wxALL, 5));
         sizer->Add(buttonsPanel, wxSizerFlags().Align(wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL).Border(wxALL, 5));
 
@@ -58,10 +71,10 @@ namespace client
         this->Layout();
     }
 
-    TextPanel *PhaseInfoPanel::drawPlayerInfo(const std::unique_ptr<reduced::Player> &player)
+    TextPanel *PhaseInfoPanel::drawPlayerInfo(const shared::PlayerBase &player)
     {
-        wxString info = wxString::Format("%s\n\nTreasure: %d\n\nActions: %d\n\nBuys: %d", player->getId(),
-                                         player->getTreasure(), player->getActions(), player->getBuys());
+        wxString info = wxString::Format("%s\n\nTreasure: %d\n\nActions: %d\n\nBuys: %d", player.getId(),
+                                         player.getTreasure(), player.getActions(), player.getBuys());
 
         return new TextPanel(this, wxID_ANY, info, TextFormat::BOLD);
     }

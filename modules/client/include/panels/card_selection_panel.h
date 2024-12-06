@@ -33,7 +33,8 @@ namespace client
                 selectedCardCount++;
             } else {
                 if ( selectedCardCount == 0 ) {
-                    throw std::runtime_error("decrement unsigned int 0");
+                    LOG(ERROR) << "decrement unsigned int 0 in " << FUNC_NAME;
+                    throw std::runtime_error("unreachable code");
                 }
                 selectedCardCount--;
             }

@@ -10,7 +10,7 @@ namespace client
         const wxColour ENEMY_BACKGROUND = wxColour(255, 200, 200);
         const wxColour ACTIVE_ENEMY_BACKGROUND = wxColour(255, 200, 150);
         const wxColour ACTIVE_PLAYER_INFO_BACKGROUND = wxColour(200, 240, 200);
-        const wxColour PASSIVE_PLAYER_INFO_BACKGROUND = wxColour(200, 220, 240);
+        const wxColour PASSIVE_PLAYER_INFO_BACKGROUND = ENEMY_BACKGROUND; // wxColour(200, 220, 240);
 
         // Panel formatting constants
         const wxSize DEFAULT_BOARD_PILE_SIZE = wxSize(100, 150);

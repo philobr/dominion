@@ -25,7 +25,7 @@ namespace client
         void setBorderColor(const wxColour &color);
 
     private:
-        std::string CardName;
+        shared::CardBase::id_t CardName;
         ImagePanel *Image;
     };
 

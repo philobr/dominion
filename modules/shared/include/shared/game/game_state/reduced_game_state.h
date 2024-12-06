@@ -28,6 +28,8 @@ namespace reduced
         bool operator==(const GameState &other) const;
         bool operator!=(const GameState &other) const;
 
+        bool isPlayerActive() const;
+
         /**
          * @brief Serialize the GameState to a JSON object.
          */

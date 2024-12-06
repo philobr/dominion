@@ -1,8 +1,10 @@
+#include <cstddef>
 #include <shared/utils/logger.h>
 #include <uiElements/image_panel.h>
 #include <wx/image.h>
 
-// NOLINTBEGIN(suspicious-enum-usage)
+// NOLINTBEGIN(bugprone-suspicious-enum-usage)
+
 namespace client
 {
 
@@ -76,5 +78,30 @@ namespace client
         event.Skip();
     }
 
+    void ImagePanel::makeGrey()
+    {
+        // This is some hard github copilot magic
+        // it works:)
+        if ( _image.IsOk() ) {
+            unsigned char *data = _image.GetData();
+            if ( data != nullptr ) {
+                int width = _image.GetWidth();
+                int height = _image.GetHeight();
+                for ( int y = 0; y < height; ++y ) {
+                    for ( int x = 0; x < width; ++x ) {
+                        unsigned char r = data[static_cast<ptrdiff_t>((y * width + x) * 3)];
+                        unsigned char g = data[(y * width + x) * 3 + 1];
+                        unsigned char b = data[(y * width + x) * 3 + 2];
+                        unsigned char grey = static_cast<unsigned char>(0.299 * r + 0.587 * g + 0.114 * b);
+                        data[static_cast<ptrdiff_t>((y * width + x) * 3)] = grey;
+                        data[(y * width + x) * 3 + 1] = grey;
+                        data[(y * width + x) * 3 + 2] = grey;
+                    }
+                }
+                _bitmap = wxBitmap(_image);
+                Refresh();
+            }
+        }
+    }
 } // namespace client
-  // NOLINTEND(suspicious-enum-usage)
+  // NOLINTEND(bugprone-suspicious-enum-usage)

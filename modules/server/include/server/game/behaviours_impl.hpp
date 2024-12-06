@@ -137,6 +137,23 @@ namespace server
             BEHAVIOUR_DONE;
         }
 
+        DEFINE_TEMPLATED_BEHAVIOUR(DrawCardsEnemies, int, n_cards)
+        {
+            LOG_CALL;
+            ASSERT_NO_DECISION;
+
+            auto all_player_ids = game_state.getAllPlayerIDs();
+            for (auto &player_id : all_player_ids) {
+                if (player_id == game_state.getCurrentPlayerId()) {
+                    continue;
+                }
+                auto &affected_player = game_state.getPlayer(player_id);
+                affected_player.draw(n_cards);
+            }
+
+            BEHAVIOUR_DONE;
+        }
+
 #define TODO_IMPLEMENT_ME                                                                                              \
     SUPPRESS_UNUSED_VAR_WARNING(game_state);                                                                           \
     SUPPRESS_UNUSED_VAR_WARNING(action_decision);                                                                      \

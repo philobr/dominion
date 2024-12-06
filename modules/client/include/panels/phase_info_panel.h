@@ -22,16 +22,16 @@ namespace client
         void drawInfoPanel(const reduced::GameState &game_state);
 
     private:
-        TextPanel *drawPlayerInfo(const std::unique_ptr<reduced::Player> &player);
+        TextPanel *drawPlayerInfo(const shared::PlayerBase &player);
 
         wxPanel *drawPlayedPanel(std::vector<shared::CardBase::id_t> played_cards);
 
         wxPanel *drawPlayedPanelTest();
 
-        wxPanel *drawButtonPanel();
+        wxPanel *drawButtonPanel(const reduced::GameState &game_state);
 
-        wxButton *getEndActionButton();
-        wxButton *getEndTurnButton();
+        wxButton *createEndActionButton(wxWindow *parent);
+        wxButton *createEndTurnButton(wxWindow *parent);
     };
 
 } // namespace client

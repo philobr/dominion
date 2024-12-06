@@ -96,8 +96,26 @@ TEST(CardBaseTest, IsCurseMethod)
     EXPECT_FALSE(card.isAttack());
     EXPECT_FALSE(card.isTreasure());
     EXPECT_FALSE(card.isReaction());
-    EXPECT_FALSE(card.isVictory());
+    EXPECT_TRUE(card.isVictory());
     EXPECT_TRUE(card.isCurse());
+}
+
+TEST(CardBaseTest, isKingdomMethod)
+{
+    // create a Garden card
+    shared::CardBase::id_t card_id = "Garden";
+    shared::CardType card_type = static_cast<shared::CardType>(shared::KINGDOM | shared::VICTORY);
+    unsigned int card_cost = 4;
+
+    shared::CardBase card(card_id, card_type, card_cost);
+
+    EXPECT_TRUE(card.isKingdom());
+    EXPECT_FALSE(card.isAction());
+    EXPECT_FALSE(card.isAttack());
+    EXPECT_FALSE(card.isTreasure());
+    EXPECT_FALSE(card.isReaction());
+    EXPECT_TRUE(card.isVictory());
+    EXPECT_FALSE(card.isCurse());
 }
 
 TEST(CardBaseTest, MultipleTypes)

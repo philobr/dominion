@@ -8,6 +8,7 @@
 #include <shared/game/game_state/reduced_game_state.h>
 
 #include <wx/wx.h>
+#include "shared/game/cards/card_base.h"
 
 namespace client
 {
@@ -27,6 +28,13 @@ namespace client
          * @param GameState
          */
         void drawGameState(const reduced::GameState &game_state);
+
+        /**
+         * @brief Draw the game state in a GainFromBoardPhase
+         * e.g when Remodel is played type will be any type or if Mine is played type will be Treasure
+         *
+         */
+        void drawGainFromBoard(const reduced::GameState &game_state, shared::CardType type, unsigned int max_cost);
 
 
     private:

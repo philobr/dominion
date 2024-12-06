@@ -13,7 +13,7 @@ namespace client
         auto player = shared::PlayerBase("gigu");
         auto reduced = reduced::Player::make(player, {"Village", "Copper", "Copper"});
         auto board = shared::Board::make({"Moat", "Smithy", "Village", "Laboratory", "Festival", "Market",
-                                          "Placeholder1", "Placeholder2", "Placeholder3", "Placeholder4"},
+                                          "Placeholder1", "Placeholder2", "Placeholder3", "Witch"},
                                          2);
         auto game_state =
                 std::make_unique<reduced::GameState>(board, std::move(reduced), std::vector<reduced::Enemy::ptr_t>(),

@@ -11,8 +11,8 @@ using namespace shared;
 TEST(SharedLibraryTest, GameStateMessageTwoWayConversion)
 {
 
-    const std::vector<CardBase::id_t> kingdom_cards = {"Village",    "Smithy",  "Market", "Council Room", "Festival",
-                                                       "Laboratory", "Library", "Mine",   "Witch",        "Adventurer"};
+    const std::vector<CardBase::id_t> kingdom_cards = {"Village",    "Smithy",  "Market", "Council_Room", "Festival",
+                                                       "Laboratory", "Library", "Mine",   "Witch",        "Artisan"};
     const unsigned int num_players = 2;
     Board::ptr_t board = Board::make(kingdom_cards, num_players);
 
@@ -196,8 +196,8 @@ TEST(SharedLibraryTest, JoinLobbyRequestMessageTwoWayConversion)
 
 TEST(SharedLibraryTest, StartGameRequestMessageTwoWayConversion)
 {
-    std::vector<std::string> cards = {"village",    "smithy",  "market", "council_room", "festival",
-                                      "laboratory", "library", "mine",   "witch",        "adventurer"};
+    std::vector<std::string> cards = {"village",    "Smithy",  "Market", "Council_Room", "Festival",
+                                      "Laboratory", "Library", "Mine",   "Witch",        "Artisan"};
     StartGameRequestMessage original_message("123", "player1", cards);
 
     std::string json = original_message.toJson();

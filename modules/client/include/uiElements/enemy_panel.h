@@ -13,9 +13,11 @@ namespace client
     class EnemyPanel : public wxPanel
     {
     public:
-        EnemyPanel(wxWindow *parent, reduced::Enemy &enemy);
+        EnemyPanel(wxWindow *parent, reduced::Enemy &enemy, const bool is_active);
 
     private:
         void onPaint(wxPaintEvent &event);
+
+        bool _is_active;
     }; // namespace client
 } // namespace client

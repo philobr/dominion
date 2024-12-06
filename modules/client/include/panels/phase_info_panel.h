@@ -22,7 +22,7 @@ namespace client
         void drawInfoPanel(const reduced::GameState &game_state);
 
     private:
-        TextPanel *drawPlayerInfo(const std::unique_ptr<reduced::Player> &player);
+        TextPanel *drawPlayerInfo(const shared::PlayerBase &player);
 
         wxPanel *drawPlayedPanel(std::vector<shared::CardBase::id_t> played_cards);
 

@@ -3,14 +3,15 @@
 #include <uiElements/formatting_constants.h>
 #include <uiElements/pile_panel.h>
 #include <uiElements/single_card_panel.h>
+#include <uiElements/text_panel.h>
 
 #include <wx/dcbuffer.h>
 #include <wx/gbsizer.h>
 
 namespace client
 {
-    EnemyPanel::EnemyPanel(wxWindow *parent, reduced::Enemy &enemy) :
-        wxPanel(parent, wxID_ANY, wxDefaultPosition, wxSize(-1, 80))
+    EnemyPanel::EnemyPanel(wxWindow *parent, reduced::Enemy &enemy, const bool is_active) :
+        wxPanel(parent, wxID_ANY, wxDefaultPosition, wxSize(-1, 80)), _is_active(is_active)
     {
         // Set a light red background color
         this->SetBackgroundStyle(wxBG_STYLE_PAINT);
@@ -27,8 +28,7 @@ namespace client
         wxBoxSizer *drawPileSizer = new wxBoxSizer(wxVERTICAL);
 
         // Text for the title
-        wxStaticText *DrawPileText =
-                new wxStaticText(this, wxID_ANY, "Draw Pile", wxDefaultPosition, wxDefaultSize, wxALIGN_CENTER);
+        TextPanel *DrawPileText = new TextPanel(this, wxID_ANY, "Draw Pile", TextFormat::PLAIN);
 
         // The pile itself
         shared::Pile Draw_Pile("Card_back", enemy.getDrawPileSize());
@@ -46,8 +46,7 @@ namespace client
         auto *centerSizer = new wxGridSizer(2, 1, 1, 2);
 
         // TODO: display name in a bigger and bold font
-        wxStaticText *PlayerId =
-                new wxStaticText(this, wxID_ANY, enemy.getId(), wxDefaultPosition, wxDefaultSize, wxALIGN_CENTER);
+        TextPanel *PlayerId = new TextPanel(this, wxID_ANY, enemy.getId(), TextFormat::BOLD);
 
         // new sizer for the hand cards
         auto *handCardSizer = new wxGridSizer(1, enemy.getHandSize(), 1, 1);
@@ -67,8 +66,7 @@ namespace client
         wxBoxSizer *discardPileSizer = new wxBoxSizer(wxVERTICAL);
 
         // Text for the title
-        wxStaticText *discardPileText =
-                new wxStaticText(this, wxID_ANY, "Discard Pile", wxDefaultPosition, wxDefaultSize, wxALIGN_CENTER);
+        TextPanel *discardPileText = new TextPanel(this, wxID_ANY, "Discard Pile", TextFormat::PLAIN);
 
         // The pile itself
         shared::Pile Discard_Pile("Card_back", enemy.getDiscardPileSize());
@@ -96,7 +94,8 @@ namespace client
         wxSize size = this->GetSize();
 
         // Create a rounded rectangle
-        wxBrush brush(formatting_constants::ENEMY_BACKGROUND);
+        wxBrush brush(_is_active ? formatting_constants::ACTIVE_ENEMY_BACKGROUND
+                                 : formatting_constants::ENEMY_BACKGROUND);
         dc.SetBrush(brush);
         dc.SetPen(*wxTRANSPARENT_PEN); // No border
         dc.DrawRoundedRectangle(0, 0, size.GetWidth(), size.GetHeight(), 10); // Radius of 10 for rounded corners

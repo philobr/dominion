@@ -1,10 +1,10 @@
+#include <cstddef>
 #include <shared/utils/logger.h>
 #include <uiElements/image_panel.h>
 #include <wx/image.h>
 
-#include <cstddef>
+// NOLINTBEGIN(bugprone-suspicious-enum-usage)
 
-// NOLINTBEGIN(suspicious-enum-usage)
 namespace client
 {
 
@@ -104,4 +104,4 @@ namespace client
         }
     }
 } // namespace client
-  // NOLINTEND(suspicious-enum-usage)
+  // NOLINTEND(bugprone-suspicious-enum-usage)

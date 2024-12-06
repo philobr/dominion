@@ -23,6 +23,9 @@ namespace client
             case ControllerEventType::SHOW_VICTORY_SCREEN:
                 os << "ShowVictoryScreen";
                 break;
+            case ControllerEventType::SHOW_CARD_SELECTION_SCREEN:
+                os << "ShowCardSelectionScreen";
+                break;
             default:
                 LOG(ERROR) << "Unknown ControllerEventType: " << static_cast<int>(type);
                 os << "UnknownEventType";
@@ -74,6 +77,11 @@ namespace client
     ControllerEvent *ControllerEvent::showVictoryScreen()
     {
         return new ControllerEvent(ControllerEventType::SHOW_VICTORY_SCREEN, std::any());
+    }
+
+    ControllerEvent *ControllerEvent::showCardSelectionScreen()
+    {
+        return new ControllerEvent(ControllerEventType::SHOW_CARD_SELECTION_SCREEN, std::any());
     }
 
     ControllerEvent::ControllerEvent(ControllerEventType type, std::any data) :

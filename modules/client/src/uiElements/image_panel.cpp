@@ -1,6 +1,8 @@
 #include <shared/utils/logger.h>
 #include <uiElements/image_panel.h>
+#include <wx/image.h>
 
+// NOLINTBEGIN(suspicious-enum-usage)
 namespace client
 {
 
@@ -46,7 +48,7 @@ namespace client
             wxImage transformed;
 
             if ( this->_rotation == 0.0 ) {
-                transformed = this->_image.Scale(newWidth, newHeight, wxIMAGE_QUALITY_BILINEAR);
+                transformed = this->_image.Scale(newWidth, newHeight, wxIMAGE_QUALITY_HIGH);
 
             } else {
                 wxPoint centerOfRotation = wxPoint(this->_image.GetWidth() / 2, this->_image.GetHeight() / 2);
@@ -75,3 +77,4 @@ namespace client
     }
 
 } // namespace client
+  // NOLINTEND(suspicious-enum-usage)

@@ -45,6 +45,11 @@ namespace client
                     _gui->showVictoryScreen();
                     break;
                 }
+            case ControllerEventType::SHOW_CARD_SELECTION_SCREEN:
+                {
+                    _gui->showCardSelectionScreen();
+                    break;
+                }
             default:
                 {
                     LOG(ERROR) << "Unknown controller event type: " << static_cast<int>(controllerEvent.getType());

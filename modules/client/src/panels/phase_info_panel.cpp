@@ -108,7 +108,7 @@ namespace client
                             [](const wxCommandEvent & /*event*/) { wxGetApp().getController().endTurn(); });
         return endTurnButton;
     }
-
+    // NOLINTBEGIN()
     wxPanel *PhaseInfoPanel::drawButtonPanel(const shared::PlayerBase::id_t &currently_playing)
     {
         // Create a container panel for the buttons
@@ -130,17 +130,16 @@ namespace client
         endActionPhaseButton->Reparent(buttonPanel);
         endTurnButton->Reparent(buttonPanel);
 
-        // NOLINTBEGIN(suspicious-enum-usage)
         //  Add buttons to the vertical sizer with some spacing
         verticalSizer->Add(playing, 0, wxALIGN_CENTER_HORIZONTAL | wxALL, 5);
         verticalSizer->Add(endActionPhaseButton, 0, wxALIGN_CENTER_HORIZONTAL | wxALL, 5);
         verticalSizer->Add(endTurnButton, 0, wxALIGN_CENTER_HORIZONTAL | wxALL, 5);
-        // NOLINTEND(suspicious-enum-usage)
 
         // Set the sizer for the panel
         buttonPanel->SetSizer(verticalSizer);
 
         return buttonPanel;
     }
+    // NOLINTEND()
 
 } // namespace client

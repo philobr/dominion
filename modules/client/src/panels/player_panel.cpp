@@ -5,7 +5,7 @@
 #include <shared/game/cards/card_factory.h>
 #include <shared/utils/logger.h>
 #include <uiElements/formatting_constants.h>
-#include <uiElements/image_panel.h>
+#include <uiElements/single_card_panel.h>
 #include <wx/wx.h>
 
 namespace client
@@ -50,11 +50,13 @@ namespace client
         this->Layout();
     }
 
-    void PlayerPanel::makePlayable(ImagePanel *image, const std::string &card_id)
+    void PlayerPanel::makePlayable(SingleCardPanel *image, const std::string &card_id)
     {
         image->SetToolTip("Play card");
 
         image->SetCursor(wxCursor(wxCURSOR_HAND));
+
+        image->setBorderColor(wxColour(255, 255, 255));
 
         // Bind left click on the panel to the buyCard function
         image->Bind(wxEVT_LEFT_UP,
@@ -107,21 +109,18 @@ namespace client
 
         // Add the cards to the hand
         for ( size_t i = 0; i < hand_size; i++ ) {
-            ImagePanel *card = new ImagePanel(hand, "assets/" + cards[i] + ".png", wxBITMAP_TYPE_PNG, wxDefaultPosition,
-                                              hand_card_size, 0);
+            SingleCardPanel *card = new SingleCardPanel(hand, cards[i], hand_card_size, 5);
 
             bool is_action = shared::CardFactory::getCard(cards[i]).isAction();
 
             if ( is_action && (phase == shared::GamePhase::ACTION_PHASE) && is_active && player->getActions() > 0 ) {
                 makePlayable(card, cards[i]);
             }
-
             sizer->Add(card, 0, wxALIGN_CENTER, 4);
         }
 
         // Set the sizer for the hand panel
-        sizer->Layout();
-
+        hand->Layout();
         return hand;
     }
 

@@ -56,6 +56,8 @@ namespace client
 
         image->SetCursor(wxCursor(wxCURSOR_HAND));
 
+        image->setBorderColor(wxColour(255, 255, 255));
+
         // Bind left click on the panel to the buyCard function
         image->Bind(wxEVT_LEFT_UP,
             [card_id](wxMouseEvent& /*event*/) { wxGetApp().getController().playCard(card_id); });
@@ -107,7 +109,7 @@ namespace client
 
         // Add the cards to the hand
         for (size_t i = 0; i < hand_size; i++) {
-            SingleCardPanel* card = new SingleCardPanel(hand, cards[i], hand_card_size);
+            SingleCardPanel* card = new SingleCardPanel(hand, cards[i], hand_card_size, 5);
 
             bool is_action = shared::CardFactory::getCard(cards[i]).isAction();
 

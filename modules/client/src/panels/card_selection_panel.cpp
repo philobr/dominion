@@ -67,7 +67,6 @@ namespace client
         VerticalSizer->Add(GridSizer, 0, wxEXPAND | wxALL, 5);
         this->SetSizerAndFit(VerticalSizer);
     }
-    // NOLINTEND(bugprone-suspicious-enum-usage)
 
     wxScrolledWindow *CardSelectionPanel::createCardSelection()
     {
@@ -174,4 +173,5 @@ namespace client
         // Update the start game button state
         StartButton->Enable(selectedCardCount == 10);
     }
+    // NOLINTEND(bugprone-suspicious-enum-usage)
 } // namespace client

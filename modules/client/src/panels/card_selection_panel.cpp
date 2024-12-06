@@ -32,14 +32,22 @@ namespace client
 
         VerticalSizer->Add(createCardSelection(), 0, wxALIGN_CENTER | wxALL, 20);
 
+        wxBoxSizer *HorizontalSizer = new wxBoxSizer(wxHORIZONTAL);
+        // show number of selected cards
+        SelectedCardCountPanel =
+                new TextPanel(this, wxID_ANY, "Selected Cards: " + std::to_string(selectedCardCount), TextFormat::BOLD);
+
+        HorizontalSizer->Add(SelectedCardCountPanel, 0, wxALIGN_LEFT | wxALL, 5);
+
         // make the start game button
         wxButton *StartButton = new wxButton(this, wxID_ANY, "Start Game");
 
         StartButton->Bind(wxEVT_BUTTON,
                           [this](const wxCommandEvent &) { wxGetApp().getController().startGame(selectedCards); });
 
-        VerticalSizer->Add(StartButton, 0, wxALIGN_CENTER | wxALL, 5);
+        HorizontalSizer->Add(StartButton, 0, wxALL, 5);
 
+        VerticalSizer->Add(HorizontalSizer, 0, wxALIGN_CENTER | wxALL, 5);
         this->SetSizerAndFit(VerticalSizer);
     }
     // NOLINTEND(bugprone-suspicious-enum-usage)
@@ -110,6 +118,9 @@ namespace client
                     // Change the border color of the card depending of the selection state
                     wxColour new_border_colour = selectedCards[card_panel->getCardName()] ? *wxYELLOW : wxNullColour;
                     card_panel->setBorderColor(new_border_colour);
+
+                    SelectedCardCountPanel->SetLabel("Selected Cards: " + std::to_string(selectedCardCount));
+                    SelectedCardCountPanel->GetParent()->Layout(); // Ensure the layout is updated
                 });
     }
 } // namespace client

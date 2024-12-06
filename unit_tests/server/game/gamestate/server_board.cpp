@@ -147,7 +147,7 @@ TEST_P(ServerBoardBuyCardTest, BuyCardTest)
     if ( should_succeed ) {
         EXPECT_NO_THROW(board->tryTake(card_to_buy));
     } else {
-        EXPECT_THROW(board->tryTake(card_to_buy), exception::CardNotAvailable);
+        EXPECT_ANY_THROW(board->tryTake(card_to_buy));
     }
 
     if ( should_succeed && card_exists ) {

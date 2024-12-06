@@ -28,6 +28,12 @@ namespace client
         template <typename Functor>
         void makeClickable(Functor f);
 
+        /**
+         * @brief Make the pile grey
+         *
+         */
+        void makeGrey() { Image->makeGrey(); }
+
     private:
         shared::Pile Pile;
         ImagePanel *Image;

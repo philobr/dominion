@@ -1,15 +1,19 @@
 
 #pragma once
 
+#include <shared/game/cards/card_base.h>
 #include <shared/game/cards/card_factory.h>
 #include <shared/game/game_state/board_base.h>
 #include <shared/game/game_state/game_phase.h>
 
+
 #include <uiElements/formatting_constants.h>
 #include <uiElements/pile_panel.h>
 #include <wx/gbsizer.h>
+
+#include <shared/utils/logger.h>
+
 #include <wx/wx.h>
-#include "shared/game/cards/card_base.h"
 
 namespace client
 {
@@ -131,6 +135,10 @@ namespace client
             int price = shared::CardFactory::getCard(pile.card_id).getCost();
             if ( can_buy && price <= treasure ) {
                 makeBuyable(Pile);
+            } else {
+                Pile->SetToolTip("Too expensive");
+                Pile->makeGrey();
+                Pile->SetCursor(wxCursor(wxCURSOR_NO_ENTRY));
             }
         }
     }

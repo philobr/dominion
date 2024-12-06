@@ -6,7 +6,7 @@
 #include <vector>
 
 #include <server/game/game_state.h>
-
+#include <shared/utils/test_helpers.h>
 
 TEST(GameStateTest, DefaultConstructor)
 {
@@ -20,8 +20,7 @@ TEST(GameStateTest, DefaultConstructor)
 TEST(GameStateTest, ParameterizedConstructor)
 {
     // Initialize test data
-    std::vector<shared::CardBase::id_t> selected_cards = {"Smithy",  "Village",  "Market", "Mine",   "Moat",
-                                                          "Militia", "Workshop", "Cellar", "Chapel", "Woodcutter"};
+    std::vector<shared::CardBase::id_t> selected_cards = test_helper::getValidRandomKingdomCards(10);
 
     std::vector<server::Player::id_t> player_ids = {"player1", "player2", "player3"};
 
@@ -41,8 +40,7 @@ TEST(GameStateTest, ParameterizedConstructor)
 
 TEST(GameStateTest, GetCurrentPlayerId)
 {
-    std::vector<shared::CardBase::id_t> selected_cards = {"Village", "Market", "card3", "card4", "card5",
-                                                          "card6",   "card7",  "card8", "card9", "card10"};
+    std::vector<shared::CardBase::id_t> selected_cards = test_helper::getValidRandomKingdomCards(10);
     std::vector<server::Player::id_t> player_ids = {"player1", "player2"};
 
     server::GameState game_state(selected_cards, player_ids);
@@ -53,8 +51,7 @@ TEST(GameStateTest, GetCurrentPlayerId)
 
 TEST(GameStateTest, GetCurrentPlayer)
 {
-    std::vector<shared::CardBase::id_t> selected_cards = {"Village", "Market", "card3", "card4", "card5",
-                                                          "card6",   "card7",  "card8", "card9", "card10"};
+    std::vector<shared::CardBase::id_t> selected_cards = test_helper::getValidRandomKingdomCards(10);
     std::vector<server::Player::id_t> player_ids = {"player1", "player2"};
 
     server::GameState game_state(selected_cards, player_ids);
@@ -68,8 +65,7 @@ TEST(GameStateTest, GetCurrentPlayer)
 
 TEST(GameStateTest, GetPlayerById)
 {
-    std::vector<shared::CardBase::id_t> selected_cards = {"Village", "Market", "card3", "card4", "card5",
-                                                          "card6",   "card7",  "card8", "card9", "card10"};
+    std::vector<shared::CardBase::id_t> selected_cards = test_helper::getValidRandomKingdomCards(10);
     std::vector<server::Player::id_t> player_ids = {"player1", "player2", "player3"};
 
     server::GameState game_state(selected_cards, player_ids);
@@ -89,8 +85,7 @@ TEST(GameStateTest, StartTurn)
     // Since start_turn is a private method, we can't call it directly
     // However, we can test the effects of starting a turn by initializing a game and checking the state
 
-    std::vector<shared::CardBase::id_t> selected_cards = {"Village", "Market", "card3", "card4", "card5",
-                                                          "card6",   "card7",  "card8", "card9", "card10"};
+    std::vector<shared::CardBase::id_t> selected_cards = test_helper::getValidRandomKingdomCards(10);
     std::vector<server::Player::id_t> player_ids = {"player1", "player2"};
 
     server::GameState game_state(selected_cards, player_ids);

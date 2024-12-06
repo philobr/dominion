@@ -32,12 +32,19 @@ namespace client
 
         VerticalSizer->Add(createCardSelection(), 0, wxALIGN_CENTER | wxTOP | wxBOTTOM, 20);
 
-        wxGridSizer *GridSizer = new wxGridSizer(1, 2, 0, 100);
+        wxGridSizer *GridSizer = new wxGridSizer(1, 3, 0, 100);
         // show number of selected cards
         SelectedCardCountPanel =
                 new TextPanel(this, wxID_ANY, "Selected Cards: " + std::to_string(selectedCardCount), TextFormat::BOLD);
 
         GridSizer->Add(SelectedCardCountPanel, 0, wxALIGN_LEFT | wxALL, 5);
+
+        // make the auto selction fill button
+        wxButton *AutoSelectButton = new wxButton(this, wxID_ANY, "Select random");
+
+        AutoSelectButton->Bind(wxEVT_BUTTON, [this](const wxCommandEvent &) { makeAutoSelection(); });
+
+        GridSizer->Add(AutoSelectButton, 0, wxALIGN_CENTER_HORIZONTAL | wxALL, 5);
 
         // make the start game button
         StartButton = new wxButton(this, wxID_ANY, "Start Game");
@@ -91,12 +98,12 @@ namespace client
         wxGridSizer *CardSelection = new wxGridSizer(0, 4, 15, 15);
 
         // Add the cards to the sizer
-        SingleCardPanel *CardPanel;
         for ( auto card : selectedCards ) {
-            CardPanel = new SingleCardPanel(scrolledWindow, card.first,
-                                            formatting_constants::DEFAULT_CARD_SELECTION_SIZE, 5);
+            SingleCardPanel *CardPanel = new SingleCardPanel(scrolledWindow, card.first,
+                                                             formatting_constants::DEFAULT_CARD_SELECTION_SIZE, 5);
             CardPanel->setBorderColor(wxNullColour);
             makeSelectable(CardPanel);
+            cardPanels.push_back(CardPanel);
             CardSelection->Add(CardPanel, 0, wxALIGN_CENTER);
         }
 
@@ -107,28 +114,48 @@ namespace client
         return scrolledWindow;
     }
 
+    void CardSelectionPanel::makeAutoSelection()
+    {
+        // Select random action cards until 10 are selected
+        if ( selectedCardCount >= 10 ) {
+            return;
+        }
+        while ( selectedCardCount < 10 ) {
+            while ( true ) {
+                // Generate random index between 0 and the number of cards
+                int random_index = rand() % cardPanels.size();
+                if ( selectedCards[cardPanels.at(random_index)->getCardName()] ) {
+                    continue;
+                }
+                clickOnSelectableCard(cardPanels.at(random_index));
+                break;
+            }
+        }
+    }
+
     void CardSelectionPanel::makeSelectable(SingleCardPanel *card_panel)
     {
         // This display a little text box when hovering over the card
         card_panel->SetToolTip("Select card");
         card_panel->SetCursor(wxCursor(wxCURSOR_HAND));
-        card_panel->makeClickable(
-                [this, card_panel](wxMouseEvent & /*event*/)
-                {
-                    this->switchCardSelectionState(card_panel->getCardName());
-                    LOG(INFO) << "Card " << card_panel->getCardName()
-                              << " clicked, new selection state: " << selectedCards[card_panel->getCardName()];
+        card_panel->makeClickable([this, card_panel](wxMouseEvent & /*event*/) { clickOnSelectableCard(card_panel); });
+    }
 
-                    // Change the border color of the card depending of the selection state
-                    wxColour new_border_colour = selectedCards[card_panel->getCardName()] ? *wxYELLOW : wxNullColour;
-                    card_panel->setBorderColor(new_border_colour);
+    void CardSelectionPanel::clickOnSelectableCard(SingleCardPanel *card_panel)
+    {
+        this->switchCardSelectionState(card_panel->getCardName());
+        LOG(INFO) << "Card " << card_panel->getCardName()
+                  << " clicked, new selection state: " << selectedCards[card_panel->getCardName()];
 
-                    // Update the selected card count
-                    SelectedCardCountPanel->SetLabel("Selected Cards: " + std::to_string(selectedCardCount));
-                    SelectedCardCountPanel->GetParent()->Layout(); // Ensure the layout is updated
+        // Change the border color of the card depending of the selection state
+        wxColour new_border_colour = selectedCards[card_panel->getCardName()] ? *wxYELLOW : wxNullColour;
+        card_panel->setBorderColor(new_border_colour);
 
-                    // Update the start game button state
-                    StartButton->Enable(selectedCardCount == 10);
-                });
+        // Update the selected card count
+        SelectedCardCountPanel->SetLabel("Selected Cards: " + std::to_string(selectedCardCount));
+        SelectedCardCountPanel->GetParent()->Layout(); // Ensure the layout is updated
+
+        // Update the start game button state
+        StartButton->Enable(selectedCardCount == 10);
     }
 } // namespace client

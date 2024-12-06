@@ -39,13 +39,19 @@ namespace client
             }
         }
 
+        void makeAutoSelection();
+
     private:
         std::unordered_map<shared::CardBase::id_t, bool> selectedCards;
         unsigned int selectedCardCount = 0;
         TextPanel *SelectedCardCountPanel;
         wxButton *StartButton;
 
+        std::vector<SingleCardPanel *> cardPanels;
+
         void makeSelectable(SingleCardPanel *card_panel);
+
+        void clickOnSelectableCard(SingleCardPanel *card_panel);
     };
 
 } // namespace client

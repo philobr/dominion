@@ -132,6 +132,9 @@ namespace client
             int price = shared::CardFactory::getCard(pile.card_id).getCost();
             if ( can_buy && price <= treasure ) {
                 makeBuyable(Pile);
+            } else {
+                Pile->SetToolTip("Too expensive");
+                Pile->SetCursor(wxCursor(wxCURSOR_NO_ENTRY));
             }
         }
     }

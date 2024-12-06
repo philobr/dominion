@@ -19,15 +19,20 @@ namespace client
                 std::make_unique<reduced::GameState>(board, std::move(reduced), std::vector<reduced::Enemy::ptr_t>(),
                                                      "gigu", shared::GamePhase::ACTION_PHASE);
 
-        // Set background color to light blue
-        SetBackgroundColour(formatting_constants::PLAYER_INFO_BACKGROUND);
-
-        drawInfoPanel(*game_state);
+        // TODO: remove when final testing is done
+        drawInfoPanel(*game_state, game_state->active_player == game_state->reduced_player->getId());
     }
 
-    void PhaseInfoPanel::drawInfoPanel(const reduced::GameState &game_state)
+    void PhaseInfoPanel::drawInfoPanel(const reduced::GameState &game_state, bool is_active)
     {
         this->DestroyChildren();
+
+        // Adjust background colour based on active player
+        if ( is_active ) {
+            SetBackgroundColour(formatting_constants::ACTIVE_PLAYER_INFO_BACKGROUND);
+        } else {
+            SetBackgroundColour(formatting_constants::PASSIVE_PLAYER_INFO_BACKGROUND);
+        }
 
         // Create a grid sizer for the panel
         wxGridSizer *sizer = new wxGridSizer(1, 3, 0, 10);
@@ -39,7 +44,7 @@ namespace client
         auto *playedPanel = drawPlayedPanel(game_state.board->getPlayedCards());
 
         // Add buttons to the sizer
-        auto *buttonsPanel = drawButtonPanel();
+        auto *buttonsPanel = drawButtonPanel(game_state.active_player);
 
         // Add the panels to the sizer
         sizer->Add(infoPanel, wxSizerFlags().Align(wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL).Border(wxALL, 5));
@@ -104,13 +109,18 @@ namespace client
         return endTurnButton;
     }
 
-    wxPanel *PhaseInfoPanel::drawButtonPanel()
+    wxPanel *PhaseInfoPanel::drawButtonPanel(const shared::PlayerBase::id_t &currently_playing)
     {
         // Create a container panel for the buttons
         wxPanel *buttonPanel = new wxPanel(this, wxID_ANY);
 
         // Create a vertical sizer for the buttons
         wxBoxSizer *verticalSizer = new wxBoxSizer(wxVERTICAL);
+
+        // Create a Text for the player currently playing
+        wxString info = wxString::Format("Currently playing: %s", currently_playing);
+        TextPanel *playing = new TextPanel(buttonPanel, wxID_ANY, info, TextFormat::BOLD);
+
 
         // Get the buttons using existing functions
         wxButton *endActionPhaseButton = getEndActionButton();
@@ -120,9 +130,12 @@ namespace client
         endActionPhaseButton->Reparent(buttonPanel);
         endTurnButton->Reparent(buttonPanel);
 
-        // Add buttons to the vertical sizer with some spacing
-        verticalSizer->Add(endActionPhaseButton, 0, wxALL, 5);
-        verticalSizer->Add(endTurnButton, 0, wxALL, 5);
+        // NOLINTBEGIN(suspicious-enum-usage)
+        //  Add buttons to the vertical sizer with some spacing
+        verticalSizer->Add(playing, 0, wxALIGN_CENTER_HORIZONTAL | wxALL, 5);
+        verticalSizer->Add(endActionPhaseButton, 0, wxALIGN_CENTER_HORIZONTAL | wxALL, 5);
+        verticalSizer->Add(endTurnButton, 0, wxALIGN_CENTER_HORIZONTAL | wxALL, 5);
+        // NOLINTEND(suspicious-enum-usage)
 
         // Set the sizer for the panel
         buttonPanel->SetSizer(verticalSizer);

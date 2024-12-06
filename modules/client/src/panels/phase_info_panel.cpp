@@ -5,6 +5,8 @@
 
 #include <dominion.h>
 
+using shared::GamePhase;
+
 namespace client
 {
     PhaseInfoPanel::PhaseInfoPanel(wxWindow *parent, wxSize size) : wxPanel(parent, wxID_ANY, wxDefaultPosition, size)
@@ -15,9 +17,8 @@ namespace client
         auto board = shared::Board::make({"Moat", "Smithy", "Village", "Laboratory", "Festival", "Market",
                                           "Placeholder1", "Placeholder2", "Placeholder3", "Witch"},
                                          2);
-        auto game_state =
-                std::make_unique<reduced::GameState>(board, std::move(reduced), std::vector<reduced::Enemy::ptr_t>(),
-                                                     "gigu", shared::GamePhase::ACTION_PHASE);
+        auto game_state = std::make_unique<reduced::GameState>(
+                board, std::move(reduced), std::vector<reduced::Enemy::ptr_t>(), "gigu", GamePhase::ACTION_PHASE);
 
         // Set background color to light blue
         SetBackgroundColour(formatting_constants::PLAYER_INFO_BACKGROUND);
@@ -39,7 +40,7 @@ namespace client
         auto *playedPanel = drawPlayedPanel(game_state.board->getPlayedCards());
 
         // Add buttons to the sizer
-        auto *buttonsPanel = drawButtonPanel();
+        auto *buttonsPanel = drawButtonPanel(game_state);
 
         // Add the panels to the sizer
         sizer->Add(infoPanel, wxSizerFlags().Align(wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL).Border(wxALL, 5));
@@ -88,23 +89,24 @@ namespace client
         return hand;
     }
 
-    wxButton *PhaseInfoPanel::getEndActionButton()
+    wxButton *PhaseInfoPanel::createEndActionButton(wxWindow *parent)
     {
-        wxButton *endActionPhaseButton = new wxButton(this, wxID_ANY, "End Action", wxDefaultPosition, wxSize(100, 40));
+        wxButton *endActionPhaseButton =
+                new wxButton(parent, wxID_ANY, "End Action", wxDefaultPosition, wxSize(100, 40));
         endActionPhaseButton->Bind(
                 wxEVT_BUTTON, [](const wxCommandEvent & /*event*/) { wxGetApp().getController().endActionPhase(); });
         return endActionPhaseButton;
     }
 
-    wxButton *PhaseInfoPanel::getEndTurnButton()
+    wxButton *PhaseInfoPanel::createEndTurnButton(wxWindow *parent)
     {
-        wxButton *endTurnButton = new wxButton(this, wxID_ANY, "End Turn", wxDefaultPosition, wxSize(100, 40));
+        wxButton *endTurnButton = new wxButton(parent, wxID_ANY, "End Turn", wxDefaultPosition, wxSize(100, 40));
         endTurnButton->Bind(wxEVT_BUTTON,
                             [](const wxCommandEvent & /*event*/) { wxGetApp().getController().endTurn(); });
         return endTurnButton;
     }
 
-    wxPanel *PhaseInfoPanel::drawButtonPanel()
+    wxPanel *PhaseInfoPanel::drawButtonPanel(const reduced::GameState &game_state)
     {
         // Create a container panel for the buttons
         wxPanel *buttonPanel = new wxPanel(this, wxID_ANY);
@@ -112,17 +114,17 @@ namespace client
         // Create a vertical sizer for the buttons
         wxBoxSizer *verticalSizer = new wxBoxSizer(wxVERTICAL);
 
-        // Get the buttons using existing functions
-        wxButton *endActionPhaseButton = getEndActionButton();
-        wxButton *endTurnButton = getEndTurnButton();
+        if ( game_state.reduced_player->getId() == game_state.active_player ) {
+            if ( game_state.game_phase == GamePhase::ACTION_PHASE ) {
+                wxButton *endActionPhaseButton = createEndActionButton(buttonPanel);
+                verticalSizer->Add(endActionPhaseButton, 0, wxALL, 5);
+            }
 
-        // Reparent the buttons to the new panel
-        endActionPhaseButton->Reparent(buttonPanel);
-        endTurnButton->Reparent(buttonPanel);
-
-        // Add buttons to the vertical sizer with some spacing
-        verticalSizer->Add(endActionPhaseButton, 0, wxALL, 5);
-        verticalSizer->Add(endTurnButton, 0, wxALL, 5);
+            if ( game_state.game_phase == GamePhase::BUY_PHASE || game_state.game_phase == GamePhase::ACTION_PHASE ) {
+                wxButton *endTurnButton = createEndTurnButton(buttonPanel);
+                verticalSizer->Add(endTurnButton, 0, wxALL, 5);
+            }
+        }
 
         // Set the sizer for the panel
         buttonPanel->SetSizer(verticalSizer);

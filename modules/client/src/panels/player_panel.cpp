@@ -59,8 +59,7 @@ namespace client
         image->setBorderColor(wxColour(255, 255, 255));
 
         // Bind left click on the panel to the buyCard function
-        image->Bind(wxEVT_LEFT_UP,
-                    [card_id](wxMouseEvent & /*event*/) { wxGetApp().getController().playCard(card_id); });
+        image->makeClickable([card_id](wxMouseEvent & /*event*/) { wxGetApp().getController().playCard(card_id); });
     }
 
     wxPanel *PlayerPanel::createDrawPilePanel(const unsigned int draw_pile_size)

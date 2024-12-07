@@ -19,7 +19,7 @@ namespace client
     CardSelectionPanel::CardSelectionPanel(wxWindow *parent) :
         wxPanel(parent, wxID_ANY, wxDefaultPosition, wxSize(1024, 1024))
     {
-        TextPanel *Title = new TextPanel(this, wxID_ANY, "Card Selection", TextFormat::TITLE);
+        TextPanel *Title = new TextPanel(this, wxID_ANY, "Select 10 cards", TextFormat::TITLE);
         wxBoxSizer *VerticalSizer = new wxBoxSizer(wxVERTICAL);
         VerticalSizer->Add(Title, 0, wxALIGN_CENTER | wxALL, 5);
 
@@ -61,6 +61,7 @@ namespace client
 
         // Disable the start button by default
         StartButton->Enable(false);
+        StartButton->SetToolTip("Select 10 action cards to start the game");
 
         GridSizer->Add(StartButton, 0, wxALIGN_RIGHT | wxALL, 5);
 
@@ -171,6 +172,8 @@ namespace client
 
         // Update the start game button state
         StartButton->Enable(selectedCardCount == 10);
+        (selectedCardCount == 10) ? StartButton->SetToolTip("Start the game")
+                                  : StartButton->SetToolTip("Select 10 action cards to start the game");
     }
     // NOLINTEND(bugprone-suspicious-enum-usage)
 } // namespace client

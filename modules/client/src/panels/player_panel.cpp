@@ -56,11 +56,10 @@ namespace client
 
         image->SetCursor(wxCursor(wxCURSOR_HAND));
 
-        image->setBorderColor(wxColour(255, 255, 255));
+        image->setBorderColor(formatting_constants::PLAYABLE_HAND_CARD_BORDER);
 
         // Bind left click on the panel to the buyCard function
-        image->Bind(wxEVT_LEFT_UP,
-                    [card_id](wxMouseEvent & /*event*/) { wxGetApp().getController().playCard(card_id); });
+        image->makeClickable([card_id](wxMouseEvent & /*event*/) { wxGetApp().getController().playCard(card_id); });
     }
 
     wxPanel *PlayerPanel::createDrawPilePanel(const unsigned int draw_pile_size)

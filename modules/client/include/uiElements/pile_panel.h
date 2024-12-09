@@ -26,7 +26,7 @@ namespace client
          *
          */
         template <typename Functor>
-        void makeClickable(Functor f);
+        void makeClickable(const wxEventTypeTag<wxMouseEvent> click_type, Functor f);
 
         /**
          * @brief Make the pile grey
@@ -41,8 +41,8 @@ namespace client
 
 
     template <typename Functor>
-    void PilePanel::makeClickable(Functor f)
+    void PilePanel::makeClickable(const wxEventTypeTag<wxMouseEvent> click_type, Functor f)
     {
-        Image->Bind(wxEVT_LEFT_UP, f);
+        Image->Bind(click_type, f);
     }
 } // namespace client

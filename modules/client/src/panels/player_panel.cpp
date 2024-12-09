@@ -5,6 +5,7 @@
 #include <shared/game/cards/card_factory.h>
 #include <shared/utils/logger.h>
 #include <uiElements/formatting_constants.h>
+#include <uiElements/popup.h>
 #include <uiElements/single_card_panel.h>
 #include <wx/wx.h>
 
@@ -56,11 +57,11 @@ namespace client
 
         image->SetCursor(wxCursor(wxCURSOR_HAND));
 
-        image->setBorderColor(wxColour(255, 255, 255));
+        image->setBorderColor(formatting_constants::PLAYABLE_HAND_CARD_BORDER);
 
         // Bind left click on the panel to the buyCard function
-        image->Bind(wxEVT_LEFT_UP,
-                    [card_id](wxMouseEvent & /*event*/) { wxGetApp().getController().playCard(card_id); });
+        image->makeClickable(wxEVT_LEFT_UP,
+                             [card_id](wxMouseEvent & /*event*/) { wxGetApp().getController().playCard(card_id); });
     }
 
     wxPanel *PlayerPanel::createDrawPilePanel(const unsigned int draw_pile_size)
@@ -112,6 +113,10 @@ namespace client
             SingleCardPanel *card = new SingleCardPanel(hand, cards[i], hand_card_size, 5);
 
             bool is_action = shared::CardFactory::getCard(cards[i]).isAction();
+
+            // bind right click to show card preview
+            card->makeClickable(wxEVT_RIGHT_UP,
+                                [card](wxMouseEvent & /*event*/) { showCardPopup(card, card->getCardName()); });
 
             if ( is_action && (phase == shared::GamePhase::ACTION_PHASE) && is_active && player->getActions() > 0 ) {
                 makePlayable(card, cards[i]);

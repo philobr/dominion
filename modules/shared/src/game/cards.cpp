@@ -48,6 +48,9 @@ namespace shared
     REGISTER_CARD(Merchant, CardType::ACTION, 3); // conditional effect, how?
     REGISTER_CARD(Throne_Room, CardType::ACTION, 4); // how do we keep this active?
 
+    // God Mode (for testing only)
+    REGISTER_CARD(God_Mode, CardType::ACTION, 0);
+
     // non-interactive
     REGISTER_CARD(Moat, CardType::ACTION | CardType::REACTION, 2);
     REGISTER_CARD(Village, CardType::ACTION, 3);

@@ -11,6 +11,7 @@
 #include <shared/game/cards/card_factory.h>
 #include <shared/utils/test_helpers.h>
 #include <uiElements/formatting_constants.h>
+#include <uiElements/popup.h>
 #include "shared/game/cards/card_base.h"
 
 namespace client
@@ -53,9 +54,15 @@ namespace client
         pile->SetCursor(wxCursor(wxCURSOR_HAND));
 
         // Bind left click on the panel to the buyCard function
-        pile->makeClickable([pile](wxMouseEvent & /*event*/)
+        pile->makeClickable(wxEVT_LEFT_UP,
+                            [pile](wxMouseEvent & /*event*/)
                             { wxGetApp().getController().buyCard(pile->getPile().card_id); });
     }
 
+    void BoardPanel::makePreview(PilePanel *pile)
+    {
+        pile->makeClickable(wxEVT_RIGHT_UP,
+                            [pile](wxMouseEvent & /*event*/) { showCardPopup(pile, pile->getPile().card_id); });
+    }
 
 } // namespace client

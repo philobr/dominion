@@ -18,7 +18,7 @@ namespace client
         SingleCardPanel(wxWindow *parent, const std::string &card_name, wxSize size = wxDefaultSize, int padding = 0);
 
         template <typename Functor>
-        void makeClickable(Functor f);
+        void makeClickable(const wxEventTypeTag<wxMouseEvent> click_type, Functor f);
 
         const std::string getCardName() const { return CardName; }
 
@@ -30,8 +30,8 @@ namespace client
     };
 
     template <typename Functor>
-    void SingleCardPanel::makeClickable(Functor f)
+    void SingleCardPanel::makeClickable(const wxEventTypeTag<wxMouseEvent> click_type, Functor f)
     {
-        Image->Bind(wxEVT_LEFT_UP, f);
+        Image->Bind(click_type, f);
     }
 } // namespace client

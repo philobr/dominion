@@ -1,3 +1,4 @@
+#include <server/debug_mode.h>
 #include <server/game/behaviour_registry.h>
 #include <server/game/victory_card_behaviours.h>
 
@@ -52,6 +53,13 @@ void server::BehaviourRegistry::initialiseBehaviours()
     insert<GainCoins<1>>("Placeholder2");
     insert<GainCoins<1>>("Placeholder3");
     // ================================
+
+    /**
+     * If we are running in debug mode, we enable "God Mode".
+     */
+    if ( DEBUG_MODE ) {
+        insert<GainCoins<1000>, GainActions<1000>, GainBuys<1000>>("God_Mode");
+    }
 
     /*
     DONE

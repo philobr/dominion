@@ -41,7 +41,7 @@ namespace shared
 
     // ======= SERVER TO CLIENT MESSAGES ======= //
 
-    std::string GameStateMessage::toJson()
+    std::string GameStateMessage::toJson() const
     {
         Document doc = documentFromServerToClientMsg("game_state", *this);
 
@@ -54,7 +54,7 @@ namespace shared
         return documentToString(doc);
     }
 
-    std::string CreateLobbyResponseMessage::toJson()
+    std::string CreateLobbyResponseMessage::toJson() const
     {
         Document doc = documentFromServerToClientMsg("initiate_game_response", *this);
         ADD_OPTIONAL_STRING_MEMBER(this->in_response_to, in_response_to);
@@ -62,20 +62,20 @@ namespace shared
         return documentToString(doc);
     }
 
-    std::string JoinLobbyBroadcastMessage::toJson()
+    std::string JoinLobbyBroadcastMessage::toJson() const
     {
         Document doc = documentFromServerToClientMsg("join_game_broadcast", *this);
         ADD_ARRAY_OF_STRINGS_MEMBER(this->players, players);
         return documentToString(doc);
     }
 
-    std::string StartGameBroadcastMessage::toJson()
+    std::string StartGameBroadcastMessage::toJson() const
     {
         Document doc = documentFromServerToClientMsg("start_game_broadcast", *this);
         return documentToString(doc);
     }
 
-    std::string EndGameBroadcastMessage::toJson()
+    std::string EndGameBroadcastMessage::toJson() const
     {
         Document doc = documentFromServerToClientMsg("end_game_broadcast", *this);
 
@@ -92,7 +92,7 @@ namespace shared
         return documentToString(doc);
     }
 
-    std::string ResultResponseMessage::toJson()
+    std::string ResultResponseMessage::toJson() const
     {
         Document doc = documentFromServerToClientMsg("result_response", *this);
         ADD_OPTIONAL_STRING_MEMBER(this->in_response_to, in_response_to);
@@ -101,7 +101,7 @@ namespace shared
         return documentToString(doc);
     }
 
-    std::string ActionOrderMessage::toJson()
+    std::string ActionOrderMessage::toJson() const
     {
         Document doc = documentFromServerToClientMsg("action_order", *this);
 
@@ -117,32 +117,32 @@ namespace shared
 
     // ======= CLIENT TO SERVER MESSAGES ======= //
 
-    std::string GameStateRequestMessage::toJson()
+    std::string GameStateRequestMessage::toJson() const
     {
         Document doc = documentFromClientToServerMsg("game_state_request", *this);
         return documentToString(doc);
     }
 
-    std::string CreateLobbyRequestMessage::toJson()
+    std::string CreateLobbyRequestMessage::toJson() const
     {
         Document doc = documentFromClientToServerMsg("initiate_game_request", *this);
         return documentToString(doc);
     }
 
-    std::string JoinLobbyRequestMessage::toJson()
+    std::string JoinLobbyRequestMessage::toJson() const
     {
         Document doc = documentFromClientToServerMsg("join_game_request", *this);
         return documentToString(doc);
     }
 
-    std::string StartGameRequestMessage::toJson()
+    std::string StartGameRequestMessage::toJson() const
     {
         Document doc = documentFromClientToServerMsg("start_game_request", *this);
         ADD_ARRAY_OF_STRINGS_MEMBER(this->selected_cards, selected_cards);
         return documentToString(doc);
     }
 
-    std::string ActionDecisionMessage::toJson()
+    std::string ActionDecisionMessage::toJson() const
     {
         Document doc = documentFromClientToServerMsg("action_decision", *this);
 

@@ -19,7 +19,7 @@ namespace shared
     {
     public:
         virtual ~Message() = default;
-        virtual std::string toJson() = 0;
+        virtual std::string toJson() const = 0;
 
         std::string game_id;
         std::string message_id;
@@ -37,7 +37,7 @@ namespace shared
     {
     public:
         ~ClientToServerMessage() override = default;
-        std::string toJson() override = 0;
+        std::string toJson() const override = 0;
         static std::unique_ptr<ClientToServerMessage> fromJson(const std::string &json);
 
         PlayerBase::id_t player_id;
@@ -59,7 +59,7 @@ namespace shared
             ClientToServerMessage(game_id, player_id, message_id)
         {}
         ~GameStateRequestMessage() override = default;
-        std::string toJson() override;
+        std::string toJson() const override;
         bool operator==(const GameStateRequestMessage &other) const;
     };
 
@@ -71,7 +71,7 @@ namespace shared
             ClientToServerMessage(game_id, player_id, message_id)
         {}
         ~CreateLobbyRequestMessage() override = default;
-        std::string toJson() override;
+        std::string toJson() const override;
         bool operator==(const CreateLobbyRequestMessage &other) const;
     };
 
@@ -83,7 +83,7 @@ namespace shared
                                 std::string message_id = UuidGenerator::generateUuidV4()) :
             ClientToServerMessage(game_id, player_id, message_id)
         {}
-        std::string toJson() override;
+        std::string toJson() const override;
         bool operator==(const JoinLobbyRequestMessage &other) const;
     };
 
@@ -98,7 +98,7 @@ namespace shared
         StartGameRequestMessage(std::string game_id, PlayerBase::id_t player_id,
                                 std::vector<CardBase::id_t> selected_cards,
                                 std::string message_id = UuidGenerator::generateUuidV4());
-        std::string toJson() override;
+        std::string toJson() const override;
         bool operator==(const StartGameRequestMessage &other) const;
 
         std::vector<CardBase::id_t> selected_cards;
@@ -114,7 +114,7 @@ namespace shared
             ClientToServerMessage(game_id, player_id, message_id),
             decision(std::move(decision)), in_response_to(in_response_to)
         {}
-        std::string toJson() override;
+        std::string toJson() const override;
         bool operator==(const ActionDecisionMessage &other) const;
 
         std::unique_ptr<ActionDecision> decision;
@@ -132,7 +132,7 @@ namespace shared
          *
          * Returns nullptr if the JSON is invalid.
          */
-        std::string toJson() override = 0;
+        std::string toJson() const override = 0;
         static std::unique_ptr<ServerToClientMessage> fromJson(const std::string &json);
 
     protected:
@@ -153,7 +153,7 @@ namespace shared
             ServerToClientMessage(game_id, message_id),
             game_state(std::move(game_state)), in_response_to(in_response_to)
         {}
-        std::string toJson() override;
+        std::string toJson() const override;
         bool operator==(const GameStateMessage &other) const;
 
         std::unique_ptr<reduced::GameState> game_state;
@@ -170,7 +170,7 @@ namespace shared
             ServerToClientMessage(game_id, message_id),
             available_cards(available_cards), in_response_to(in_response_to)
         {}
-        std::string toJson() override;
+        std::string toJson() const override;
         bool operator==(const CreateLobbyResponseMessage &other) const;
 
         std::vector<CardBase::id_t> available_cards;
@@ -186,7 +186,7 @@ namespace shared
             ServerToClientMessage(game_id, message_id),
             players(players)
         {}
-        std::string toJson() override;
+        std::string toJson() const override;
         bool operator==(const JoinLobbyBroadcastMessage &other) const;
         std::vector<shared::PlayerBase::id_t> players;
     };
@@ -198,7 +198,7 @@ namespace shared
         StartGameBroadcastMessage(std::string game_id, std::string message_id = UuidGenerator::generateUuidV4()) :
             ServerToClientMessage(game_id, message_id)
         {}
-        std::string toJson() override;
+        std::string toJson() const override;
         bool operator==(const StartGameBroadcastMessage &other) const;
     };
 
@@ -211,7 +211,7 @@ namespace shared
             ServerToClientMessage(game_id, message_id),
             results(results)
         {}
-        std::string toJson() override;
+        std::string toJson() const override;
         bool operator==(const EndGameBroadcastMessage &other) const;
 
         /**
@@ -231,7 +231,7 @@ namespace shared
             ServerToClientMessage(game_id, message_id),
             success(success), in_response_to(in_response_to), additional_information(additional_information)
         {}
-        std::string toJson() override;
+        std::string toJson() const override;
         bool operator==(const ResultResponseMessage &other) const;
 
         bool success;
@@ -259,7 +259,7 @@ namespace shared
                                std::move(description), std::move(message_id))
         {}
 
-        std::string toJson() override;
+        std::string toJson() const override;
         bool operator==(const ActionOrderMessage &other) const;
 
         std::unique_ptr<ActionOrder> order;

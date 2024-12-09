@@ -136,7 +136,11 @@ namespace client
             if ( can_buy && price <= treasure ) {
                 makeBuyable(Pile);
             } else {
-                Pile->SetToolTip("Too expensive");
+                if ( !can_buy ) {
+                    Pile->SetToolTip("Not your turn");
+                } else {
+                    Pile->SetToolTip("Too expensive");
+                }
                 Pile->makeGrey();
                 Pile->SetCursor(wxCursor(wxCURSOR_NO_ENTRY));
             }

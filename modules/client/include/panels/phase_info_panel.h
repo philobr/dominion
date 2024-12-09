@@ -28,6 +28,8 @@ namespace client
 
         wxPanel *drawPlayedPanelTest();
 
+        TextPanel *drawPhaseInfo(wxWindow *parent, const std::string &game_phase);
+
         wxPanel *drawButtonPanel(const reduced::GameState &game_state);
 
         wxButton *createEndActionButton(wxWindow *parent);

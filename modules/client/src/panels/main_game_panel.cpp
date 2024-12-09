@@ -23,7 +23,7 @@ namespace client
         PhaseInfo = new PhaseInfoPanel(this, VerticalBaseSize);
 
         mainLayout->Add(EnemyInfo, 1, wxEXPAND, 10);
-        mainLayout->Add(Board, 6, wxEXPAND, 10);
+        mainLayout->Add(Board, 8, wxEXPAND, 10);
         mainLayout->Add(PhaseInfo, 1, wxEXPAND, 10);
         mainLayout->Add(Player, 3, wxEXPAND, 10);
 

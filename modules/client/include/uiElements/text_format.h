@@ -6,6 +6,7 @@ namespace client
     {
         PLAIN,
         BOLD,
+        BOLD_SMALL,
         ITALIC,
         TITLE
     };

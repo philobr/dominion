@@ -18,6 +18,20 @@ namespace shared
         }
     }
 
+    std::string gamePhaseToDisplayedString(GamePhase game_phase)
+    {
+        switch ( game_phase ) {
+            case GamePhase::ACTION_PHASE:
+                return "Action phase";
+            case GamePhase::BUY_PHASE:
+                return "Buy phase";
+            case GamePhase::PLAYING_ACTION_CARD:
+                return "Playing an action card";
+            default:
+                throw std::invalid_argument("Invalid game phase");
+        }
+    }
+
     GamePhase gamePhaseFromString(const std::string &game_phase)
     {
         if ( game_phase == "action_phase" ) {
@@ -30,4 +44,6 @@ namespace shared
             throw std::invalid_argument("Invalid game phase");
         }
     }
+
+
 } // namespace shared

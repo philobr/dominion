@@ -83,7 +83,7 @@ namespace client
         if ( wxFileExists(background_file) ) {
             backgroundBitmap = wxBitmap(background_file, wxBITMAP_TYPE_ANY);
         } else {
-            LOG(DEBUG) << "Could not load background image: " << background_file;
+            LOG(WARN) << "Could not load background image: " << background_file;
 
             wxImage brownImage(800, 600); // Size of the fallback image
             brownImage.SetRGB(wxRect(0, 0, 800, 600), 230, 155, 0); // RGB for brown (139, 69, 19)

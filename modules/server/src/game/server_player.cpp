@@ -21,10 +21,10 @@ namespace server
     std::vector<shared::CardBase::id_t> Player::getDeck() const
     {
         std::vector<shared::CardBase::id_t> deck;
-        deck.reserve(hand_cards.size() + discard_pile.size() + deck.size());
-        deck.insert(deck.end(), hand_cards.begin(), hand_cards.end());
+        deck.reserve(draw_pile.size() + discard_pile.size() + hand_cards.size());
+        deck.insert(deck.end(), draw_pile.begin(), draw_pile.end());
         deck.insert(deck.end(), discard_pile.begin(), discard_pile.end());
-        deck.insert(deck.end(), deck.begin(), deck.end());
+        deck.insert(deck.end(), hand_cards.begin(), hand_cards.end());
         if ( !staged_cards.empty() ) {
             LOG(ERROR) << "staged cards should be empty when getting deck";
             throw std::runtime_error("tried to get deck while staged cards were not empty");

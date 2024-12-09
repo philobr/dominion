@@ -102,6 +102,7 @@ namespace server
         game_state->endTurn();
 
         if ( game_state->isGameOver() ) {
+            LOG(DEBUG) << "Game is over, sending results";
             GameInterface::response_t response;
             std::vector<shared::PlayerResult> results = game_state->getResults();
             response.setGameOver(std::move(results));

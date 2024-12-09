@@ -117,13 +117,13 @@ namespace client
         _gameWindow->showPanel(_mainGamePanel);
     }
 
-    void Gui::showVictoryScreen()
+    void Gui::showVictoryScreen(const std::vector<shared::PlayerResult> &results)
     {
         ONLY_MAIN_THREAD();
 
         LOG(INFO) << "Showing victory screen";
 
-        _victoryScreenPanel->drawTestVictoryScreen();
+        _victoryScreenPanel->drawVictoryScreen(results);
         _gameWindow->showPanel(_victoryScreenPanel);
     }
 

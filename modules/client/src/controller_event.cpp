@@ -1,5 +1,6 @@
 
 #include <controller_event.h>
+#include <shared/player_result.h>
 
 namespace client
 {
@@ -83,9 +84,9 @@ namespace client
         return new ControllerEvent(ControllerEventType::SHOW_GAME_SCREEN, data);
     }
 
-    ControllerEvent *ControllerEvent::showVictoryScreen()
+    ControllerEvent *ControllerEvent::showVictoryScreen(std::vector<shared::PlayerResult> results)
     {
-        return new ControllerEvent(ControllerEventType::SHOW_VICTORY_SCREEN, std::any());
+        return new ControllerEvent(ControllerEventType::SHOW_VICTORY_SCREEN, std::move(results));
     }
 
     ControllerEvent *ControllerEvent::showCardSelectionScreen()

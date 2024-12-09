@@ -6,7 +6,7 @@ server::BehaviourRegistry::getBehaviours(const std::string &card_id)
 {
     auto it = _map.find(card_id);
     if ( it == _map.end() ) {
-        throw std::runtime_error("card_id not found in the registry");
+        throw std::runtime_error("card not found in the behaviour registry: " + card_id);
     }
     return it->second();
 }
@@ -17,7 +17,7 @@ server::BehaviourRegistry::getVictoryBehaviour(const shared::CardBase::id_t &car
 {
     auto it = _victory_map.find(card_id);
     if ( it == _victory_map.end() ) {
-        throw std::runtime_error("card_id not found in the registry");
+        throw std::runtime_error("card not found in the victory card registry: " + card_id);
     }
     return *it->second;
 }

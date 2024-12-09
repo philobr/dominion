@@ -5,8 +5,9 @@
 #include <memory>
 #include <windows/game_window.h>
 
+#include <shared/game/game_state/reduced_game_state.h>
 #include <shared/message_types.h>
-#include "shared/game/game_state/reduced_game_state.h"
+#include <shared/player_result.h>
 
 namespace client
 {
@@ -18,7 +19,8 @@ namespace client
         JOINING_LOBBY,
         IN_LOBBY,
         STARTING_GAME,
-        IN_GAME
+        IN_GAME,
+        VICTORY_SCREEN,
     };
 
     class GameController
@@ -94,10 +96,11 @@ namespace client
         void receiveResultResponseMessage(std::unique_ptr<shared::ResultResponseMessage> msg);
         void receiveGameStateMessage(std::unique_ptr<shared::GameStateMessage> msg);
         void receiveStartGameBroadcastMessage(std::unique_ptr<shared::StartGameBroadcastMessage> msg);
+        void receiveEndGameBroadcastMessage(std::unique_ptr<shared::EndGameBroadcastMessage> msg);
 
         void showLobbyScreen(std::vector<reduced::Player::id_t> players, bool is_game_master);
         void showGameScreen(std::unique_ptr<reduced::GameState> game_state);
-        void showVictoryScreen();
+        void showVictoryScreen(std::vector<shared::PlayerResult> results);
         void showCardSelectionScreen();
         void showGainFromBoard(std::unique_ptr<reduced::GameState> game_state, shared::GainFromBoardOrder order);
 

@@ -2,12 +2,12 @@
 #include <controller_event.h>
 #include <game_controller.h>
 #include <memory>
+#include <shared/action_order.h>
 #include <shared/game/cards/card_base.h>
 #include <shared/game/game_state/player_base.h>
 #include <shared/message_types.h>
 #include <shared/utils/logger.h>
 #include <vector>
-#include "shared/action_order.h"
 
 using namespace shared;
 
@@ -33,9 +33,9 @@ namespace client
         wxQueueEvent(_guiEventReceiver.get(), ControllerEvent::showGameScreen(std::move(game_state)));
     }
 
-    void GameController::showVictoryScreen()
+    void GameController::showVictoryScreen(std::vector<shared::PlayerResult> results)
     {
-        wxQueueEvent(_guiEventReceiver.get(), ControllerEvent::showVictoryScreen());
+        wxQueueEvent(_guiEventReceiver.get(), ControllerEvent::showVictoryScreen(std::move(results)));
     }
 
     void GameController::showCardSelectionScreen()
@@ -331,6 +331,9 @@ namespace client
                     showError("Error", msg->additional_information.value_or("Unknown error"));
                 }
                 break;
+            case ClientState::VICTORY_SCREEN:
+                LOG(WARN) << "Received unexpected ResultResponseMessage while in victory screen";
+                break;
             default:
                 LOG(WARN) << "Received ResultResponseMessage, but client is in unknown state";
                 break;
@@ -351,6 +354,17 @@ namespace client
         _clientState = ClientState::IN_GAME;
     }
 
+    void GameController::receiveEndGameBroadcastMessage(std::unique_ptr<shared::EndGameBroadcastMessage> msg)
+    {
+        if ( _clientState != ClientState::IN_GAME ) {
+            LOG(WARN) << "Received unexpected EndGameBroadcastMessage while not in game";
+            return;
+        }
+        LOG(DEBUG) << "Game ended (EndGameBroadcastMessage)";
+        showVictoryScreen(std::move(msg->results));
+        _clientState = ClientState::VICTORY_SCREEN;
+    }
+
     void GameController::receiveMessage(std::unique_ptr<shared::ServerToClientMessage> msg)
     {
 // NOLINTBEGIN(bugprone-macro-parentheses)
@@ -369,6 +383,7 @@ namespace client
         HANDLE_MESSAGE(ResultResponseMessage);
         HANDLE_MESSAGE(GameStateMessage);
         HANDLE_MESSAGE(StartGameBroadcastMessage);
+        HANDLE_MESSAGE(EndGameBroadcastMessage);
 #undef HANDLE_MESSAGE
 
         LOG(ERROR) << "Unknown message type";
@@ -378,7 +393,7 @@ namespace client
     void GameController::skipToVictoryScreen()
     {
         LOG(WARN) << "Skipping to victory screen, this is debug functionality";
-        showVictoryScreen();
+        LOG(ERROR) << "Skipping to victory screen is not implemented";
     }
 
     void GameController::skipToGamePanel()

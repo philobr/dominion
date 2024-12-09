@@ -52,7 +52,7 @@ namespace client
         // TODO(#169): This should be a reference instead of a shared_ptr
         void showGameScreen(std::shared_ptr<reduced::GameState> game_state);
 
-        void showVictoryScreen();
+        void showVictoryScreen(const std::vector<shared::PlayerResult> &results);
 
         void showCardSelectionScreen();
 

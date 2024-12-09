@@ -61,7 +61,7 @@ namespace client
 
         // Disable the start button by default
         StartButton->Enable(false);
-        StartButton->SetToolTip("Select 10 action cards to start the game");
+        StartButton->SetToolTip("Select 10 kingdom cards to start the game");
 
         GridSizer->Add(StartButton, 0, wxALIGN_RIGHT | wxALL, 5);
 
@@ -173,7 +173,7 @@ namespace client
         // Update the start game button state
         StartButton->Enable(selectedCardCount == 10);
         (selectedCardCount == 10) ? StartButton->SetToolTip("Start the game")
-                                  : StartButton->SetToolTip("Select 10 action cards to start the game");
+                                  : StartButton->SetToolTip("Select 10 kingdom cards to start the game");
     }
     // NOLINTEND(bugprone-suspicious-enum-usage)
 } // namespace client

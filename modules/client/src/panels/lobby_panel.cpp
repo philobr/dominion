@@ -49,7 +49,7 @@ namespace client
         if ( playerCount < shared::board_config::MIN_PLAYER_COUNT ||
              playerCount > shared::board_config::MAX_PLAYER_COUNT ) {
             StartButton->Enable(false);
-            StartButton->SetToolTip("Number of players invalid!");
+            StartButton->SetToolTip("There must be between 2 and 4 players to start the game");
         }
 
         this->GetSizer()->Add(StartButton, 0, wxALIGN_CENTER | wxALL, 5);
@@ -86,7 +86,7 @@ namespace client
             if ( playerCount < shared::board_config::MIN_PLAYER_COUNT ||
                  playerCount > shared::board_config::MAX_PLAYER_COUNT ) {
                 StartButton->Enable(false);
-                StartButton->SetToolTip("Number of players invalid!");
+                StartButton->SetToolTip("There must be between 2 and 4 players to start the game");
             } else {
                 StartButton->Enable(true);
                 StartButton->SetToolTip("Proceed to card selection");

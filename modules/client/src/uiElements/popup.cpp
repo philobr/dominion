@@ -11,7 +11,7 @@ namespace client
     {
         LOG(INFO) << "Showing card preview for card " << card_id;
         // Create a dialog
-        wxDialog *dialog = new wxDialog(parent, wxID_ANY, "Card Preview", wxDefaultPosition, wxSize(400, 600));
+        wxDialog *dialog = new wxDialog(parent, wxID_ANY, "Card Preview", wxDefaultPosition, wxSize(500, 750));
 
         // Load the card image
         std::string cardPath = "assets/" + card_id + ".png";

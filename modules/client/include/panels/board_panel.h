@@ -57,6 +57,11 @@ namespace client
         void makeBuyable(PilePanel *pile);
 
         /**
+         * @brief Make the card clickable and show a preview of the card
+         */
+        void makePreview(PilePanel *pile);
+
+        /**
          * @brief Draw the piles of the board
          * @param board The board to draw
          * @param can_select A function that takes a CardType and returns whether the player can select that type of
@@ -132,11 +137,18 @@ namespace client
             sizer->Add(Pile, position, span, wxALIGN_CENTER_HORIZONTAL);
             counter++;
 
+            // make the preview for all piles available
+            makePreview(Pile);
+
             int price = shared::CardFactory::getCard(pile.card_id).getCost();
             if ( can_buy && price <= treasure ) {
                 makeBuyable(Pile);
             } else {
-                Pile->SetToolTip("Too expensive");
+                if ( !can_buy ) {
+                    Pile->SetToolTip("Not your turn");
+                } else {
+                    Pile->SetToolTip("Too expensive");
+                }
                 Pile->makeGrey();
                 Pile->SetCursor(wxCursor(wxCURSOR_NO_ENTRY));
             }

@@ -1,4 +1,5 @@
 #include <panels/card_selection_panel.h>
+#include <uiElements/popup.h>
 
 #include <game_controller.h>
 #include <uiElements/formatting_constants.h>
@@ -153,7 +154,11 @@ namespace client
         // This display a little text box when hovering over the card
         card_panel->SetToolTip("Select card");
         card_panel->SetCursor(wxCursor(wxCURSOR_HAND));
-        card_panel->makeClickable([this, card_panel](wxMouseEvent & /*event*/) { clickOnSelectableCard(card_panel); });
+        card_panel->makeClickable(wxEVT_LEFT_UP,
+                                  [this, card_panel](wxMouseEvent & /*event*/) { clickOnSelectableCard(card_panel); });
+        card_panel->makeClickable(wxEVT_RIGHT_UP,
+                                  [card_panel](wxMouseEvent & /*event*/)
+                                  { showCardPopup(card_panel, card_panel->getCardName()); });
     }
 
     void CardSelectionPanel::clickOnSelectableCard(SingleCardPanel *card_panel)

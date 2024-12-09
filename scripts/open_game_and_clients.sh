@@ -43,7 +43,7 @@ cd "$EXEC_DIR" || {
 rm -f server.log client1.log client2.log
 
 # Start the server in the background
-./server_exe -l info -f server.log &
+./server_exe -l info -f server.log --debug &
 SERVER_PID=$!
 
 # Check if server started successfully

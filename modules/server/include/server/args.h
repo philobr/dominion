@@ -11,10 +11,12 @@ namespace server
         std::string getLogFile();
         LogLevel getLogLevel();
         uint16_t getPort();
+        bool isDebug();
 
     private:
         std::string _logFile;
         LogLevel _logLevel;
         uint16_t _port;
+        bool _debug;
     };
 } // namespace server

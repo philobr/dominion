@@ -4,6 +4,7 @@
 
 namespace client
 {
+    // NOLINTBEGIN(bugprone-suspicious-enum-usage)
     PilePanel::PilePanel(wxWindow *parent, shared::Pile pile, wxSize size, int padding) :
         wxPanel(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize), Pile(pile)
     {
@@ -29,5 +30,5 @@ namespace client
 
 
     shared::Pile PilePanel::getPile() const { return Pile; }
-
+    // NOLINTEND(bugprone-suspicious-enum-usage)
 } // namespace client

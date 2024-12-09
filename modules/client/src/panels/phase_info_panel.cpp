@@ -36,20 +36,20 @@ namespace client
         }
 
         // Create a grid sizer for the panel
-        wxGridSizer *sizer = new wxGridSizer(1, 3, 0, 10);
+        wxGridSizer *sizer = new wxGridSizer(1, 3, 0, 0);
 
 
         // Add player info to the sizer
         if ( game_state.active_player == game_state.reduced_player->getId() ) {
             // if the current player is the active player
             sizer->Add(drawPlayerInfo(*game_state.reduced_player),
-                       wxSizerFlags().Align(wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL).Border(wxALL, 5));
+                       wxSizerFlags().Align(wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL).Border(wxALL, 2));
         } else {
             // if the current player is not the active player, then the stats of the playing enemy are shown
             for ( const auto &enemy : game_state.reduced_enemies ) {
                 if ( enemy->getId() == game_state.active_player ) {
                     sizer->Add(drawPlayerInfo(*enemy),
-                               wxSizerFlags().Align(wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL).Border(wxALL, 5));
+                               wxSizerFlags().Align(wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL).Border(wxALL, 2));
                     break;
                 }
             }
@@ -75,10 +75,14 @@ namespace client
 
     TextPanel *PhaseInfoPanel::drawPlayerInfo(const shared::PlayerBase &player)
     {
+#ifdef __APPLE__
         wxString info = wxString::Format("Currently playing: %s\n\nTreasure: %d\n\nActions: %d\n\nBuys: %d",
                                          player.getId(), player.getTreasure(), player.getActions(), player.getBuys());
-
-        return new TextPanel(this, wxID_ANY, info, TextFormat::BOLD);
+#else
+        wxString info = wxString::Format("Currently playing: %s\nTreasure: %d\nActions: %d\nBuys: %d", player.getId(),
+                                         player.getTreasure(), player.getActions(), player.getBuys());
+#endif
+        return new TextPanel(this, wxID_ANY, info, TextFormat::BOLD_SMALL);
     }
 
     wxPanel *PhaseInfoPanel::drawPlayedPanel(const std::vector<shared::CardBase::id_t> cards)
@@ -129,7 +133,7 @@ namespace client
     {
         wxString info = wxString::Format("Current phase: %s", game_phase);
 
-        return new TextPanel(parent, wxID_ANY, info, TextFormat::BOLD);
+        return new TextPanel(parent, wxID_ANY, info, TextFormat::BOLD_SMALL);
     }
 
     // NOLINTBEGIN(bugprone-suspicious-enum-usage)
@@ -147,11 +151,11 @@ namespace client
         if ( game_state.reduced_player->getId() == game_state.active_player ) {
             if ( game_state.game_phase == GamePhase::ACTION_PHASE ) {
                 wxButton *endActionPhaseButton = createEndActionButton(buttonPanel);
-                verticalSizer->Add(endActionPhaseButton, 0, wxCENTER | wxRIGHT | wxLEFT, 5);
+                verticalSizer->Add(endActionPhaseButton, 0, wxCENTER | wxALL, 5);
             }
             if ( game_state.game_phase == GamePhase::BUY_PHASE || game_state.game_phase == GamePhase::ACTION_PHASE ) {
                 wxButton *endTurnButton = createEndTurnButton(buttonPanel);
-                verticalSizer->Add(endTurnButton, 0, wxCENTER | wxRIGHT | wxLEFT, 5);
+                verticalSizer->Add(endTurnButton, 0, wxCENTER | wxALL, 5);
             }
         }
 

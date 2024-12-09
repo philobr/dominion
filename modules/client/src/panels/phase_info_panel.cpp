@@ -42,13 +42,13 @@ namespace client
         // Add player info to the sizer
         if ( game_state.active_player == game_state.reduced_player->getId() ) {
             // if the current player is the active player
-            sizer->Add(drawPlayerInfo(*game_state.reduced_player),
+            sizer->Add(drawPlayerInfo(*game_state.reduced_player, game_state.game_phase),
                        wxSizerFlags().Align(wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL).Border(wxALL, 5));
         } else {
             // if the current player is not the active player, then the stats of the playing enemy are shown
             for ( const auto &enemy : game_state.reduced_enemies ) {
                 if ( enemy->getId() == game_state.active_player ) {
-                    sizer->Add(drawPlayerInfo(*enemy),
+                    sizer->Add(drawPlayerInfo(*enemy, game_state.game_phase),
                                wxSizerFlags().Align(wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL).Border(wxALL, 5));
                     break;
                 }
@@ -72,10 +72,12 @@ namespace client
         this->Layout();
     }
 
-    TextPanel *PhaseInfoPanel::drawPlayerInfo(const shared::PlayerBase &player)
+    TextPanel *PhaseInfoPanel::drawPlayerInfo(const shared::PlayerBase &player, const shared::GamePhase &game_phase)
     {
-        wxString info = wxString::Format("Currently playing: %s\n\nTreasure: %d\n\nActions: %d\n\nBuys: %d",
-                                         player.getId(), player.getTreasure(), player.getActions(), player.getBuys());
+        std::string game_phase_str = shared::gamePhaseToDisplayedString(game_phase);
+        wxString info = wxString::Format(
+                "Currently playing: %s\n\nCurrent phase: %s\n\nTreasure: %d\n\nActions: %d\n\nBuys: %d", player.getId(),
+                game_phase_str, player.getTreasure(), player.getActions(), player.getBuys());
 
         return new TextPanel(this, wxID_ANY, info, TextFormat::BOLD);
     }

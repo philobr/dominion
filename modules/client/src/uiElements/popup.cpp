@@ -6,6 +6,7 @@
 
 namespace client
 {
+    // NOLINTBEGIN(bugprone-suspicious-enum-usage)
     void showCardPopup(wxWindow *parent, const std::string &card_id)
     {
         LOG(INFO) << "Showing card preview for card " << card_id;
@@ -44,5 +45,5 @@ namespace client
         dialog->ShowModal();
         dialog->Destroy();
     }
-
+    // NOLINTEND(bugprone-suspicious-enum-usage)
 } // namespace client

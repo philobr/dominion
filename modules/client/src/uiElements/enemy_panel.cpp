@@ -11,7 +11,7 @@
 namespace client
 {
     EnemyPanel::EnemyPanel(wxWindow *parent, reduced::Enemy &enemy, const bool is_active) :
-        wxPanel(parent, wxID_ANY, wxDefaultPosition, wxSize(-1, 80)), _is_active(is_active)
+        wxPanel(parent, wxID_ANY, wxDefaultPosition, wxSize(-1, 100)), _is_active(is_active)
     {
         // Set a light red background color
         this->SetBackgroundStyle(wxBG_STYLE_PAINT);

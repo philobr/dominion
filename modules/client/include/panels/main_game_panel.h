@@ -43,7 +43,7 @@ namespace client
         EnemyInfoPanel *EnemyInfo;
         PhaseInfoPanel *PhaseInfo;
         // define key constant layout values
-        const wxSize VerticalBaseSize = wxSize(1024, 100);
+        const wxSize VerticalBaseSize = wxSize(1024, 120);
         const wxSize PanelSize = wxSize(1024, 1024);
     };
 

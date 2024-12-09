@@ -16,11 +16,15 @@ namespace client
 
         switch ( format ) {
             case TextFormat::PLAIN:
-                SetFont(wxFont(12, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
+                SetFont(wxFont(10, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
                 SetForegroundColour(wxColor(0, 0, 0));
                 break;
             case TextFormat::BOLD:
                 SetFont(wxFont(12, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD));
+                SetForegroundColour(wxColor(0, 0, 0));
+                break;
+            case TextFormat::BOLD_SMALL:
+            	SetFont(wxFont(10, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD));
                 SetForegroundColour(wxColor(0, 0, 0));
                 break;
             case TextFormat::ITALIC:

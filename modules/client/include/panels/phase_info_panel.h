@@ -22,11 +22,13 @@ namespace client
         void drawInfoPanel(const reduced::GameState &game_state);
 
     private:
-        TextPanel *drawPlayerInfo(const shared::PlayerBase &player, const shared::GamePhase &game_phase);
+        TextPanel *drawPlayerInfo(const shared::PlayerBase &player);
 
         wxPanel *drawPlayedPanel(std::vector<shared::CardBase::id_t> played_cards);
 
         wxPanel *drawPlayedPanelTest();
+
+        TextPanel *drawPhaseInfo(wxWindow *parent, const std::string &game_phase);
 
         wxPanel *drawButtonPanel(const reduced::GameState &game_state);
 

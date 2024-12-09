@@ -11,6 +11,7 @@ namespace server
         std::string logFile = option("log-file", 'f', "Log file") = "";
         std::string logLevel = option("log-level", 'l', "Log level") = "debug";
         uint16_t port = option("port", 'p', "Port") = DEFAULT_PORT;
+        bool debug = (option("debug", 'D', "Enable debug mode") = false);
     };
 
     void die(const std::string &message)
@@ -31,6 +32,7 @@ namespace server
                 die("Invalid log level");
             }
             _port = impl.port;
+            _debug = impl.debug;
         } catch ( const QuickArgParserInternals::ArgumentError &e ) {
             die(e.what());
         }
@@ -41,4 +43,6 @@ namespace server
     LogLevel ServerArgs::getLogLevel() { return _logLevel; }
 
     uint16_t ServerArgs::getPort() { return _port; }
+
+    bool ServerArgs::isDebug() { return _debug; }
 } // namespace server

@@ -2,6 +2,7 @@
 #include <random>
 #include <ranges>
 
+#include <server/game/behaviour_registry.h>
 #include <server/game/server_player.h>
 #include <shared/utils/assert.h>
 
@@ -17,12 +18,29 @@ namespace server
         return reduced::Enemy::make(static_cast<shared::PlayerBase>(*this), hand_cards.size());
     }
 
+    std::vector<shared::CardBase::id_t> Player::getDeck() const
+    {
+        std::vector<shared::CardBase::id_t> deck;
+        deck.reserve(hand_cards.size() + discard_pile.size() + deck.size());
+        deck.insert(deck.end(), hand_cards.begin(), hand_cards.end());
+        deck.insert(deck.end(), discard_pile.begin(), discard_pile.end());
+        deck.insert(deck.end(), deck.begin(), deck.end());
+        if ( !staged_cards.empty() ) {
+            LOG(ERROR) << "staged cards should be empty when getting deck";
+            throw std::runtime_error("tried to get deck while staged cards were not empty");
+        }
+        if ( !played_cards.empty() ) {
+            LOG(ERROR) << "played cards should be empty when getting deck";
+            throw std::runtime_error("tried to get deck while played cards were not empty");
+        }
+        return deck;
+    }
+
     void Player::resetValues()
     {
         actions = 1;
         buys = 1;
         treasure = 0;
-        victory_points = 0;
     }
 
     void Player::endTurn()
@@ -45,6 +63,17 @@ namespace server
         for ( const auto &card_id : getType<shared::CardAccess::HAND>(shared::CardType::TREASURE) ) {
             playCardFromHand(card_id);
         }
+    }
+
+    int Player::getVictoryPoints() const
+    {
+        std::vector<shared::CardBase::id_t> deck = getDeck();
+        int victory_points = 0;
+        for ( const auto &card_id : deck ) {
+            VictoryCardBehaviour &behaviour = BehaviourRegistry().getVictoryBehaviour(card_id);
+            victory_points += behaviour.getVictoryPoints(deck);
+        }
+        return victory_points;
     }
 
 } // namespace server

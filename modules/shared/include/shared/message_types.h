@@ -9,6 +9,7 @@
 #include <shared/action_order.h>
 #include <shared/game/game_state/player_base.h>
 #include <shared/game/game_state/reduced_game_state.h>
+#include <shared/player_result.h>
 #include <shared/utils/uuid_generator.h>
 
 namespace shared
@@ -205,12 +206,18 @@ namespace shared
     {
     public:
         ~EndGameBroadcastMessage() override = default;
-        EndGameBroadcastMessage(std::string game_id, std::string message_id = UuidGenerator::generateUuidV4()) :
-            ServerToClientMessage(game_id, message_id)
+        EndGameBroadcastMessage(std::string game_id, std::vector<PlayerResult> results,
+                                std::string message_id = UuidGenerator::generateUuidV4()) :
+            ServerToClientMessage(game_id, message_id),
+            results(results)
         {}
         std::string toJson() override;
         bool operator==(const EndGameBroadcastMessage &other) const;
-        // TODO add player_scores
+
+        /**
+         * @brief A list of players and their results ordered by their final score.
+         */
+        std::vector<PlayerResult> results;
     };
 
     class ResultResponseMessage final : public ServerToClientMessage

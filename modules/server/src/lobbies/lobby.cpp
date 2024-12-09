@@ -59,8 +59,14 @@ namespace server
             return;
         }
 
-        broadcastOrders(message_interface, order_response);
-        broadcastGameState(message_interface);
+        if ( order_response.isGameOver() ) {
+            LOG(DEBUG) << "Game is over in Lobby ID: " << lobby_id;
+            message_interface.broadcast<shared::EndGameBroadcastMessage>(players, lobby_id,
+                                                                         order_response.getResults());
+        } else {
+            broadcastOrders(message_interface, order_response);
+            broadcastGameState(message_interface);
+        }
     }
 
     void Lobby::getGameState(MessageInterface &message_interface,

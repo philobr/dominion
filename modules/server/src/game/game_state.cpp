@@ -41,6 +41,22 @@ namespace server
         }
     }
 
+    std::vector<shared::PlayerResult> GameState::getResults() const
+    {
+        std::vector<shared::PlayerResult> results;
+        // Get results of each player
+        for ( const auto &pair : player_map ) {
+            const auto &player = pair.second;
+            int victory_points = player->getVictoryPoints();
+            shared::PlayerResult result(player->getId(), victory_points);
+            results.emplace_back(result);
+        }
+        // and sort them by score
+        std::sort(results.begin(), results.end(),
+                  [](const auto &lhs, const auto &rhs) { return lhs.score() > rhs.score(); });
+        return results;
+    }
+
     void GameState::initialisePlayers(const std::vector<Player::id_t> &player_ids)
     {
         player_order = player_ids;
@@ -99,10 +115,6 @@ namespace server
         board->resetPlayedCards();
 
         maybeSwitchPhase(); // a player might not have any action cards at the beginning of the action phase
-
-        if ( isGameOver() ) {
-            endGame();
-        }
     }
 
     bool GameState::isGameOver() const { return board->isGameOver(); }

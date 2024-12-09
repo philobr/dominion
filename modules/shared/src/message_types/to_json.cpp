@@ -78,6 +78,17 @@ namespace shared
     std::string EndGameBroadcastMessage::toJson()
     {
         Document doc = documentFromServerToClientMsg("end_game_broadcast", *this);
+
+        Value results(kArrayType);
+        for ( const auto &result : this->results ) {
+            Value result_json(kObjectType);
+            result_json.AddMember("player_id", Value().SetString(result.playerName().c_str(), doc.GetAllocator()),
+                                  doc.GetAllocator());
+            result_json.AddMember("score", Value().SetInt(result.score()), doc.GetAllocator());
+            results.PushBack(result_json, doc.GetAllocator());
+        }
+        doc.AddMember("results", results, doc.GetAllocator());
+
         return documentToString(doc);
     }
 

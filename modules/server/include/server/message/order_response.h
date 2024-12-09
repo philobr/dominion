@@ -4,6 +4,7 @@
 
 #include <shared/action_order.h>
 #include <shared/game/game_state/player_base.h>
+#include <shared/player_result.h>
 
 /**
  * @brief This is just a wrapper for a map<player_id, action_order>
@@ -13,6 +14,22 @@
  */
 class OrderResponse
 {
+    bool _game_over = false;
+
+    /**
+     * @brief Stores the results of the players if the game is over.
+     *
+     * If `game_over` is true, this vector will be filled with the results of the players.
+     * If `game_over` is false, this vector will be empty.
+     */
+    std::vector<shared::PlayerResult> _player_results;
+
+    /**
+     * @brief Stores the orders for each player.
+     *
+     * If `game_over` is true, this map will be empty.
+     * If `game_over` is false, this map will be filled with the orders for each player.
+     */
     std::unordered_map<shared::PlayerBase::id_t, std::unique_ptr<shared::ActionOrder>> response_map;
 
 public:
@@ -29,6 +46,26 @@ public:
     OrderResponse &operator=(const OrderResponse &) = default;
     OrderResponse &operator=(OrderResponse &&) noexcept = default;
     ~OrderResponse() = default;
+
+    /**
+     * @brief Check if the game is over.
+     *
+     * If this returns true, the game is over and the results can be retrieved with `getResults()`.
+     * If this returns false, the game is not over and the orders can be retrieved with `getOrder()`.
+     */
+    bool isGameOver() const;
+
+    /**
+     * @brief Get the results of the players if the game is over.
+     *
+     * This should only be called if `isGameOver()` returns true.
+     */
+    std::vector<shared::PlayerResult> getResults() const;
+
+    /**
+     * @brief Set the game over flag and store the results of the players.
+     */
+    void setGameOver(std::vector<shared::PlayerResult> results);
 
     bool empty() const { return response_map.empty(); }
     bool hasOrder(const shared::PlayerBase::id_t &player_id) const { return response_map.count(player_id) != 0; }

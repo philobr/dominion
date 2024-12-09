@@ -101,7 +101,14 @@ namespace server
 
         game_state->endTurn();
 
-        return nextPhase();
+        if ( game_state->isGameOver() ) {
+            GameInterface::response_t response;
+            std::vector<shared::PlayerResult> results = game_state->getResults();
+            response.setGameOver(std::move(results));
+            return response;
+        } else {
+            return nextPhase();
+        }
     }
 
     /**

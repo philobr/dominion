@@ -115,17 +115,6 @@ namespace server
             BEHAVIOUR_DONE;
         }
 
-        DEFINE_TEMPLATED_BEHAVIOUR(GainPoints, int, points)
-        {
-            LOG_CALL;
-            ASSERT_NO_DECISION;
-
-            auto &affected_player = game_state.getCurrentPlayer();
-            affected_player.addPoints(points);
-
-            BEHAVIOUR_DONE;
-        }
-
         DEFINE_TEMPLATED_BEHAVIOUR(DrawCards, int, n_cards)
         {
             LOG_CALL;

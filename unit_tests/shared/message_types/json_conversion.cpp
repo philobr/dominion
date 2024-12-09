@@ -2,6 +2,7 @@
 #include <shared/utils/logger.h>
 
 #include <shared/message_types.h>
+#include <shared/player_result.h>
 #include <shared/utils/test_helpers.h>
 
 using namespace shared;
@@ -92,7 +93,9 @@ TEST(SharedLibraryTest, StartGameBroadcastMessageTwoWayConversion)
 
 TEST(SharedLibraryTest, EndGameBroadcastMessageTwoWayConversion)
 {
-    EndGameBroadcastMessage original_message("123");
+
+    std::vector<PlayerResult> results = {{"player1", 10}, {"player2", 20}, {"player3", 30}};
+    EndGameBroadcastMessage original_message("123", results);
 
     std::string json = original_message.toJson();
 

@@ -40,8 +40,6 @@ namespace server
         reduced::Player::ptr_t getReducedPlayer();
         reduced::Enemy::ptr_t getReducedEnemy();
 
-        // =====  NEW FUNCTIONS ====
-
         void playAvailableTreasureCards();
 
         template <enum shared::CardAccess PILE>
@@ -105,7 +103,6 @@ namespace server
         void addActions(unsigned int n) { actions += n; }
         void addBuys(unsigned int n) { buys += n; }
         void addTreasure(unsigned int n) { treasure += n; }
-        void addPoints(unsigned int n) { victory_points += n; }
 
         /**
          * @brief Moves the played_cards & hand_cards to the discard_pile, then draws 5 cards again.
@@ -127,13 +124,28 @@ namespace server
         template <enum shared::CardAccess FROM, enum shared::CardAccess TO>
         inline void move(const shared::CardBase::id_t &card_id);
 
+        /**
+         * @brief Get the victory points of the player.
+         *
+         * This includes the draw_pile, discard_pile and hand_cards.
+         * This should only be called when played_cards and staged_cards are empty.
+         */
+        int getVictoryPoints() const;
+
     protected:
+        /**
+         * @brief Get all cards in the deck of the player.
+         *
+         * This includes the draw_pile, discard_pile and hand_cards.
+         * This should only be called when played_cards and staged_cards are empty.
+         */
+        std::vector<shared::CardBase::id_t> getDeck() const;
+
         /**
          * @brief Resets the 'stats' to:
          * - actions            1
          * - buys               1
          * - treasure           0
-         * - victory_points     0
          */
         void resetValues();
 
@@ -193,10 +205,6 @@ namespace server
         /**
          * @brief Moves cards from pile FROM to pile TO (push_back, except for draw_pile top).
          * if FROM is TRASH we throw, if TO is TRASH we just delete the cards
-         *
-         * @tparam FROM
-         * @tparam TO
-         * @param n number of cards to move
          */
         template <enum shared::CardAccess FROM, enum shared::CardAccess TO>
         inline void move(unsigned int n = 0);
@@ -205,10 +213,6 @@ namespace server
          * @brief Moves the card at the index form FROM to TO (push_back, except for draw_pile top).
          * We throw if index is out of bounds.
          * We throw if we try to move from trash.
-         *
-         * @tparam FROM
-         * @tparam TO
-         * @param indices
          */
         template <enum shared::CardAccess FROM, enum shared::CardAccess TO>
         inline void moveIndices(const size_t &index);
@@ -217,10 +221,6 @@ namespace server
          * @brief Moves the cards at the indices form FROM to TO (push_back, except for draw_pile top).
          * We throw if indices are out of bounds.
          * We throw if we try to move from trash.
-         *
-         * @tparam FROM
-         * @tparam TO
-         * @param indices
          */
         template <enum shared::CardAccess FROM, enum shared::CardAccess TO>
         inline void moveIndices(const std::vector<unsigned int> &indices);

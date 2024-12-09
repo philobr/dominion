@@ -1,5 +1,6 @@
 
 #include <server/args.h>
+#include <server/debug_mode.h>
 #include <server/network/server_network_manager.h>
 
 #include <shared/utils/logger.h>
@@ -13,6 +14,11 @@ int main(int argc, char *argv[])
     shared::Logger::writeTo(args.getLogFile());
 
     LOG(DEBUG) << "Initialized logger, log level: " << shared::Logger::getLevel();
+
+    DEBUG_MODE = args.isDebug();
+    if ( DEBUG_MODE ) {
+        LOG(WARN) << "Running server in debug mode";
+    }
 
     // In case the server crashes, we simply restart it
     // The server is completely reset, so all clients will be disconnected

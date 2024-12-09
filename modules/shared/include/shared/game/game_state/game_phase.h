@@ -13,5 +13,6 @@ namespace shared
     };
 
     std::string gamePhaseToString(GamePhase game_phase);
+    std::string gamePhaseToDisplayedString(GamePhase game_phase);
     GamePhase gamePhaseFromString(const std::string &game_phase);
 } // namespace shared

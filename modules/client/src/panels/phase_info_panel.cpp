@@ -83,28 +83,31 @@ namespace client
     wxPanel *PhaseInfoPanel::drawPlayedPanel(const std::vector<shared::CardBase::id_t> cards)
     {
         // Get the hand cards
-        size_t cards_size = cards.size();
+        size_t num_cards = cards.size();
         size_t card_width_borders = formatting_constants::DEFAULT_PLAYED_CARD_SIZE.GetWidth() + 8;
-        const size_t num_cards = std::min(cards_size, (size_t)5);
 
-        // Create the hand panel
-        wxPanel *hand = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDefaultSize);
+        wxScrolledWindow *scrolledWindow =
+                new wxScrolledWindow(this, wxID_ANY, wxDefaultPosition, wxSize(5 * card_width_borders, 150), wxHSCROLL);
+        scrolledWindow->SetScrollRate(10, 10); // Set scroll rate in pixels
 
         // Create the sizer for the hand
+        // wxBoxSizer *parent_sizer = new wxBoxSizer(wxVERTICAL);
         wxGridSizer *sizer = new wxGridSizer(1, num_cards, 5, 5);
-        sizer->SetMinSize(wxSize(5 * card_width_borders, 150));
+        sizer->SetMinSize(wxSize(num_cards * card_width_borders, 150));
 
-        const size_t start_idx = cards_size - num_cards;
         // Add the cards to the hand
-        for ( size_t i = start_idx; i < std::max(num_cards, cards_size); i++ ) {
-            SingleCardPanel *card = new SingleCardPanel(hand, cards[i], formatting_constants::DEFAULT_PLAYED_CARD_SIZE);
+        for ( size_t i = 1; i < num_cards; i++ ) {
+            SingleCardPanel *card =
+                    new SingleCardPanel(scrolledWindow, cards[i], formatting_constants::DEFAULT_PLAYED_CARD_SIZE);
 
             sizer->Add(card, 0, wxALL, 4);
         }
 
         // Set the sizer for the hand panel
-        hand->SetSizer(sizer);
-        return hand;
+        // parent_sizer->Add(sizer, 0, wxEXPAND);
+        scrolledWindow->SetSizer(sizer);
+        scrolledWindow->FitInside();
+        return scrolledWindow;
     }
 
     wxButton *PhaseInfoPanel::createEndActionButton(wxWindow *parent)

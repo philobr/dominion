@@ -15,13 +15,18 @@ namespace client
 
         // Load the card image
         std::string cardPath = "assets/" + card_id + ".png";
-        wxBitmap cardBitmap(cardPath, wxBITMAP_TYPE_PNG);
+        wxImage cardImage(cardPath, wxBITMAP_TYPE_PNG);
 
-        // Add the image to the dialog
         wxBoxSizer *dialogSizer = new wxBoxSizer(wxVERTICAL);
-        wxStaticBitmap *cardImage = new wxStaticBitmap(dialog, wxID_ANY, cardBitmap);
-        dialogSizer->Add(cardImage, 1, wxALIGN_CENTER | wxALL, 10);
+        if ( cardImage.IsOk() ) {
+            cardImage = cardImage.Scale(400, 600, wxIMAGE_QUALITY_HIGH);
+            wxBitmap cardBitmap(cardImage);
 
+            // Add the image to the dialog
+
+            wxStaticBitmap *cardDisplay = new wxStaticBitmap(dialog, wxID_ANY, cardBitmap);
+            dialogSizer->Add(cardDisplay, 1, wxALIGN_CENTER | wxALL, 10);
+        }
         // Set the sizer and show the dialog
         dialog->SetSizer(dialogSizer);
 

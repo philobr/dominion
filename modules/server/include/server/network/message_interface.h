@@ -48,8 +48,8 @@ namespace server
             static_assert(std::is_base_of<shared::ServerToClientMessage, T>::value,
                           "T must derive from shared::ServerToClientMessage");
 
+            const T message(std::forward<Args>(args)...);
             for ( const auto &player_id : players ) {
-                T message(std::forward<Args>(args)...);
                 sendMessage(message, player_id);
             }
         }

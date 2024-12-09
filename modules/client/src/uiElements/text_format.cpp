@@ -16,7 +16,11 @@ namespace client
 
         switch ( format ) {
             case TextFormat::PLAIN:
+#ifdef __APPLE__
+                SetFont(wxFont(12, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
+#else
                 SetFont(wxFont(10, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
+#endif
                 SetForegroundColour(wxColor(0, 0, 0));
                 break;
             case TextFormat::BOLD:
@@ -24,7 +28,7 @@ namespace client
                 SetForegroundColour(wxColor(0, 0, 0));
                 break;
             case TextFormat::BOLD_SMALL:
-            	SetFont(wxFont(10, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD));
+                SetFont(wxFont(10, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD));
                 SetForegroundColour(wxColor(0, 0, 0));
                 break;
             case TextFormat::ITALIC:

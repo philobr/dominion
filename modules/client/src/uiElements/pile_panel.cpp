@@ -14,7 +14,11 @@ namespace client
         Image = new ImagePanel(this, cardPath, wxBITMAP_TYPE_PNG, wxDefaultPosition,
                                wxSize(size.GetWidth(), size.GetHeight() - 2 * padding));
 
-        sizer->Add(Image, 0, wxALIGN_CENTER_HORIZONTAL, 5);
+#ifdef __APPLE__
+        sizer->Add(Image, 0, wxALIGN_CENTER_HORIZONTAL | wxBOTTOM, 5);
+#else
+        sizer->Add(Image, 0, wxALIGN_CENTER_HORIZONTAL | wxBOTTOM, 0);
+#endif
 
         TextPanel *PileSize = new TextPanel(this, wxID_ANY, std::to_string(pile.count), TextFormat::PLAIN);
 

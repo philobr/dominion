@@ -78,11 +78,12 @@ namespace client
 #ifdef __APPLE__
         wxString info = wxString::Format("Currently playing: %s\n\nTreasure: %d\n\nActions: %d\n\nBuys: %d",
                                          player.getId(), player.getTreasure(), player.getActions(), player.getBuys());
+        return new TextPanel(this, wxID_ANY, info, TextFormat::BOLD);
 #else
         wxString info = wxString::Format("Currently playing: %s\nTreasure: %d\nActions: %d\nBuys: %d", player.getId(),
                                          player.getTreasure(), player.getActions(), player.getBuys());
-#endif
         return new TextPanel(this, wxID_ANY, info, TextFormat::BOLD_SMALL);
+#endif
     }
 
     wxPanel *PhaseInfoPanel::drawPlayedPanel(const std::vector<shared::CardBase::id_t> cards)
@@ -132,8 +133,11 @@ namespace client
     TextPanel *PhaseInfoPanel::drawPhaseInfo(wxWindow *parent, const std::string &game_phase)
     {
         wxString info = wxString::Format("Current phase: %s", game_phase);
-
+#ifdef __APPLE__
+        return new TextPanel(parent, wxID_ANY, info, TextFormat::BOLD);
+#else
         return new TextPanel(parent, wxID_ANY, info, TextFormat::BOLD_SMALL);
+#endif
     }
 
     // NOLINTBEGIN(bugprone-suspicious-enum-usage)

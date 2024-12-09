@@ -17,13 +17,18 @@ set(SAN_FLAG "-fsanitize=address,signed-integer-overflow,undefined")
 
 # Enable sanitizers
 if(APPLE)
-    # Check if the compiler supports sanitizers
-    set(SANITIZER_FLAGS "${SAN_FLAG}") # Exclude 'leak' (ASan handles it on macOS)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${SANITIZER_FLAGS} -g") # Add debug symbols
-    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${SANITIZER_FLAGS}")
+    # Basic sanitizer flags
+    set(SANITIZER_FLAGS "-fsanitize=address,undefined")
     
-    # Optional: Suppress certain warnings for better output readability
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-omit-frame-pointer")
+    # Debug build flags
+    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} ${SANITIZER_FLAGS}")
+    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -fno-omit-frame-pointer -g2 -ggdb")
+    
+    # Linker flags
+    set(CMAKE_EXE_LINKER_FLAGS_DEBUG "${CMAKE_EXE_LINKER_FLAGS_DEBUG} ${SANITIZER_FLAGS}")
+    
+    # Symbolization support
+    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -fno-common")
 else()
     # Non-Apple platform configuration (e.g., Linux)
     set(SANITIZER_FLAGS "${SAN_FLAG},leak")

@@ -214,17 +214,23 @@ TEST(SharedLibraryTest, StartGameBroadcastMessageEquality)
 
 TEST(SharedLibraryTest, EndGameBroadcastMessageEquality)
 {
-    EndGameBroadcastMessage message1("game1", "message1");
+    std::vector<PlayerResult> results1 = {{"Alice", 12}, {"Bob", 8}, {"Charlie", -2}};
+
+    EndGameBroadcastMessage message1("game1", results1, "message1");
     ASSERT_EQ(message1, message1);
 
-    EndGameBroadcastMessage message2("game1", "message1");
+    EndGameBroadcastMessage message2("game1", results1, "message1");
     ASSERT_EQ(message1, message2);
 
-    EndGameBroadcastMessage message3("game2", "message1");
+    EndGameBroadcastMessage message3("game2", results1, "message1");
     ASSERT_NE(message1, message3);
 
-    EndGameBroadcastMessage message4("game1", "message2");
+    std::vector<PlayerResult> results2 = {{"Alice", 12}, {"Bob", 8}, {"Charlie", -3}};
+    EndGameBroadcastMessage message4("game1", results2, "message1");
     ASSERT_NE(message1, message4);
+
+    EndGameBroadcastMessage message5("game1", results1, "message2");
+    ASSERT_NE(message1, message5);
 }
 
 TEST(SharedLibraryTest, ResultResponseMessageEquality)

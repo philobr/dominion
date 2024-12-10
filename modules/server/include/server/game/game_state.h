@@ -49,12 +49,14 @@ namespace server
         shared::GamePhase getPhase() const { return phase; }
         ServerBoard::ptr_t getBoard() { return board; }
 
-        void startGame();
-        void endGame()
-        {
-            LOG(ERROR) << FUNC_NAME << " is not implemented lol";
-            return;
-        }
+        /**
+         * @brief If the game has ended, this will return the results of the game.
+         *
+         * The results are sorted by the amount of victory points each player has.
+         *
+         * This should not be called before the game has ended.
+         */
+        std::vector<shared::PlayerResult> getResults() const;
 
         void initialisePlayers(const std::vector<Player::id_t> &player_ids);
         void initialiseBoard(const std::vector<shared::CardBase::id_t> &selected_cards);
@@ -89,10 +91,16 @@ namespace server
         }
 
         /**
-         * @brief Switches phases if necessary, this means: if a player is out of buys or out of actions
+         * @brief Switches phases if necessary, this means: if a player is out
+         * of buys or out of actions
          * (im not happy with this name but i got nothing better rn)
+         *
+         * Note that this function might also switch the player if the current
+         * player has ended their turn.
+         *
+         * @return true if the player's turn has ended.
          */
-        void maybeSwitchPhase();
+        bool maybeSwitchPhase();
 
         /**
          * @brief Ends the action phase if possible

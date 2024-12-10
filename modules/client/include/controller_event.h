@@ -7,6 +7,7 @@
 #include <shared/game/game_state/player_base.h>
 #include <shared/game/game_state/reduced_game_state.h>
 #include <shared/game/reduced/player.h>
+#include <shared/player_result.h>
 #include <shared/utils/logger.h>
 #include <string>
 #include <vector>
@@ -81,7 +82,7 @@ namespace client
         static ControllerEvent *showError(const std::string title, const std::string message);
         static ControllerEvent *showLobbyScreen(const std::vector<std::string> players, const bool is_game_master);
         static ControllerEvent *showGameScreen(std::unique_ptr<reduced::GameState> game_state);
-        static ControllerEvent *showVictoryScreen();
+        static ControllerEvent *showVictoryScreen(std::vector<shared::PlayerResult> results);
         static ControllerEvent *showCardSelectionScreen();
         static ControllerEvent *showGainFromBoardScreen(std::unique_ptr<reduced::GameState> game_state,
                                                         shared::GainFromBoardOrder order);

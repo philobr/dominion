@@ -22,7 +22,6 @@ TEST(PlayerTest, DefaultConstructor)
     TestPlayer player("player");
 
     EXPECT_EQ(player.getId(), "player");
-    EXPECT_EQ(player.getVictoryPoints(), 0);
     EXPECT_EQ(player.getActions(), 1);
     EXPECT_EQ(player.getBuys(), 1);
     EXPECT_EQ(player.getTreasure(), 0);
@@ -48,7 +47,6 @@ TEST(PlayerTest, CopyConstructor)
     player.addActions(2);
     player.addBuys(1);
     player.addTreasure(3);
-    player.addPoints(5);
 
     TestPlayer copy_player(player);
 
@@ -57,7 +55,6 @@ TEST(PlayerTest, CopyConstructor)
     EXPECT_EQ(copy_player.getActions(), player.getActions());
     EXPECT_EQ(copy_player.getBuys(), player.getBuys());
     EXPECT_EQ(copy_player.getTreasure(), player.getTreasure());
-    EXPECT_EQ(copy_player.getVictoryPoints(), player.getVictoryPoints());
 }
 
 TEST(PlayerTest, DrawCards)
@@ -169,15 +166,6 @@ TEST(PlayerTest, IncreaseTreasure)
     EXPECT_EQ(player.getTreasure(), 5);
 }
 
-TEST(PlayerTest, AddPoints)
-{
-    TestPlayer player("player");
-    EXPECT_EQ(player.getVictoryPoints(), 0);
-
-    player.addPoints(7);
-    EXPECT_EQ(player.getVictoryPoints(), 7);
-}
-
 TEST(PlayerTest, EndTurn)
 {
     TestPlayer player("player");
@@ -185,7 +173,6 @@ TEST(PlayerTest, EndTurn)
     player.addActions(2);
     player.addBuys(1);
     player.addTreasure(3);
-    player.addPoints(5);
     player.getMutable<shared::CardAccess::HAND>() = {"Card1", "Card2"};
     player.getMutable<shared::CardAccess::PLAYED_CARDS>() = {"Card3"};
     player.getMutable<shared::CardAccess::DISCARD_PILE>() = {"Card4"};

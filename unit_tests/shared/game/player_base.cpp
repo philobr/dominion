@@ -34,7 +34,6 @@ public:
     unsigned int getDrawPileSize() const { return draw_pile_size; }
     const std::vector<shared::CardBase::id_t> getPlayedCards() const { return played_cards; }
 
-    void setVictoryPoints(unsigned int points) { victory_points = points; }
     void setActions(unsigned int action_count) { actions = action_count; }
     void setBuys(unsigned int buy_count) { buys = buy_count; }
     void setTreasure(unsigned int treasure_count) { treasure = treasure_count; }
@@ -47,7 +46,6 @@ TEST(PlayerBaseTest, Constructor)
 
     EXPECT_EQ(player.getId(), player_id);
 
-    EXPECT_EQ(player.getVictoryPoints(), 0);
     EXPECT_EQ(player.getActions(), 1);
     EXPECT_EQ(player.getBuys(), 1);
     EXPECT_EQ(player.getTreasure(), 0);
@@ -129,7 +127,6 @@ TEST(ReducedEnemyTest, Initialization)
 {
     // Set up a PlayerBase object
     TestablePlayerBase base_player("test_player");
-    base_player.setVictoryPoints(10);
     base_player.setActions(2);
     base_player.setBuys(1);
     base_player.setTreasure(5);
@@ -140,7 +137,6 @@ TEST(ReducedEnemyTest, Initialization)
 
     // Check that ReducedEnemy inherited PlayerBase attributes correctly
     EXPECT_EQ(reduced_enemy->getId(), "test_player");
-    EXPECT_EQ(reduced_enemy->getVictoryPoints(), 10);
     EXPECT_EQ(reduced_enemy->getActions(), 2);
     EXPECT_EQ(reduced_enemy->getBuys(), 1);
     EXPECT_EQ(reduced_enemy->getTreasure(), 5);
@@ -153,7 +149,6 @@ TEST(ReducedPlayerTest, Initialization)
 {
     // Set up a PlayerBase object
     TestablePlayerBase base_player("test_player_2");
-    base_player.setVictoryPoints(15);
     base_player.setActions(3);
     base_player.setBuys(2);
     base_player.setTreasure(8);
@@ -166,7 +161,6 @@ TEST(ReducedPlayerTest, Initialization)
 
     // Check that ReducedPlayer inherited PlayerBase attributes correctly
     EXPECT_EQ(reduced_player->getId(), "test_player_2");
-    EXPECT_EQ(reduced_player->getVictoryPoints(), 15);
     EXPECT_EQ(reduced_player->getActions(), 3);
     EXPECT_EQ(reduced_player->getBuys(), 2);
     EXPECT_EQ(reduced_player->getTreasure(), 8);

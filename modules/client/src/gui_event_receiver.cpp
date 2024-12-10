@@ -42,7 +42,9 @@ namespace client
                 }
             case ControllerEventType::SHOW_VICTORY_SCREEN:
                 {
-                    _gui->showVictoryScreen();
+                    std::vector<shared::PlayerResult> results =
+                            controllerEvent.getData<std::vector<shared::PlayerResult>>();
+                    _gui->showVictoryScreen(results);
                     break;
                 }
             case ControllerEventType::SHOW_CARD_SELECTION_SCREEN:

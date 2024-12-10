@@ -22,6 +22,13 @@
     }                                                                                                                  \
     (var) = (document)[member].GetUint();
 
+#define GET_INT_MEMBER(var, document, member)                                                                          \
+    if ( !(document).HasMember(member) || !(document)[member].IsInt() ) {                                              \
+        LOG(WARN) << "Missing or invalid member: " << (member);                                                        \
+        return nullptr;                                                                                                \
+    }                                                                                                                  \
+    (var) = (document)[member].GetInt();
+
 #define GET_ENUM_MEMBER(var, document, member, enum_type)                                                              \
     if ( !(document).HasMember(member) || !(document)[member].IsUint() ) {                                             \
         LOG(WARN) << "Missing or invalid member: " << (member);                                                        \

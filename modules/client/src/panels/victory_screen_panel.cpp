@@ -7,7 +7,7 @@ namespace client
         wxPanel(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize), victory_screen_sizer(new wxBoxSizer(wxVERTICAL))
     {}
 
-    void VictoryScreenPanel::drawVictoryScreen(reduced::GameState &game_state)
+    void VictoryScreenPanel::drawVictoryScreen(const std::vector<shared::PlayerResult> &player_results)
     {
         DestroyChildren();
         if ( victory_screen_sizer != nullptr ) {
@@ -29,26 +29,14 @@ namespace client
         container_sizer->Add(0, 20);
         container_sizer->Add(title_sizer, 0, wxCENTER);
 
-        std::vector<std::pair<std::string, unsigned int>> players;
-        if ( game_state.reduced_player != nullptr ) {
-            players.push_back({game_state.reduced_player->getId(), game_state.reduced_player->getVictoryPoints()});
-        }
-
-        for ( const auto &enemy : game_state.reduced_enemies ) {
-            if ( enemy != nullptr ) {
-                players.push_back({enemy->getId(), enemy->getVictoryPoints()});
-            }
-        }
-
-        std::sort(players.begin(), players.end(), [](const auto &a, const auto &b) { return a.second > b.second; });
-
         wxFlexGridSizer *grid_sizer = new wxFlexGridSizer(0, 2, 10, 20);
         grid_sizer->AddGrowableCol(1);
 
-        for ( const auto &player : players ) {
-            TextPanel *name_text = new TextPanel(container, wxID_ANY, player.first + ":", TextFormat::BOLD);
+        for ( const auto &player : player_results ) {
+            TextPanel *name_text = new TextPanel(container, wxID_ANY, player.playerName() + ":", TextFormat::BOLD);
 
-            TextPanel *score_text = new TextPanel(container, wxID_ANY, std::to_string(player.second), TextFormat::BOLD);
+            TextPanel *score_text =
+                    new TextPanel(container, wxID_ANY, std::to_string(player.score()), TextFormat::BOLD);
 
             grid_sizer->Add(name_text, wxSizerFlags().Right());
             grid_sizer->Add(score_text, wxSizerFlags().Left());
@@ -89,18 +77,17 @@ namespace client
         container_sizer->Add(0, 20);
         container_sizer->Add(title_sizer, 0, wxCENTER);
 
-        std::vector<std::pair<std::string, unsigned int>> players = {
+        std::vector<shared::PlayerResult> players = {
                 {"E löl", 69}, {"E blöde siech", 42}, {"E glünggi", 9}, {"E sürmel", 6}};
-
-        std::sort(players.begin(), players.end(), [](const auto &a, const auto &b) { return a.second > b.second; });
 
         wxFlexGridSizer *grid_sizer = new wxFlexGridSizer(0, 2, 10, 20);
         grid_sizer->AddGrowableCol(1);
 
         for ( const auto &player : players ) {
-            TextPanel *name_text = new TextPanel(container, wxID_ANY, player.first + ":", TextFormat::BOLD);
+            TextPanel *name_text = new TextPanel(container, wxID_ANY, player.playerName() + ":", TextFormat::BOLD);
 
-            TextPanel *score_text = new TextPanel(container, wxID_ANY, std::to_string(player.second), TextFormat::BOLD);
+            TextPanel *score_text =
+                    new TextPanel(container, wxID_ANY, std::to_string(player.score()), TextFormat::BOLD);
 
             grid_sizer->Add(name_text, wxSizerFlags().Right());
             grid_sizer->Add(score_text, wxSizerFlags().Left());

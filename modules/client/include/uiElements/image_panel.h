@@ -26,21 +26,16 @@ namespace client
 
         /**
          * @brief Callback to repaint the image
-         *
-         * @param event
          */
         void paintEvent(const wxPaintEvent &event);
 
         /**
          * @brief Callback to resize the image
-         *
-         * @param event
          */
         void onSize(wxSizeEvent &event);
 
         /**
          * @brief Make the image grey
-         *
          */
         void makeGrey();
     };

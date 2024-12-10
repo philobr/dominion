@@ -58,6 +58,7 @@ namespace client
 
         void buyCard(const std::string &card_id);
         void playCard(const std::string &card_id);
+        void gainCardFromBoard(const std::string &card_id);
         void confirmSelectionFromHand(std::vector<shared::CardBase::id_t> selected_cards,
                                       std::vector<shared::ChooseFromOrder::AllowedChoice> choices);
         void endActionPhase();

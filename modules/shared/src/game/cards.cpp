@@ -55,14 +55,16 @@ namespace shared
     REGISTER_CARD(Moat, CardType::ACTION | CardType::REACTION, 2);
     REGISTER_CARD(Village, CardType::ACTION, 3);
     REGISTER_CARD(Smithy, CardType::ACTION, 4);
-    REGISTER_CARD(Gardens, CardType::ACTION | CardType::VICTORY, 4);
-    REGISTER_CARD(Duke, CardType::ACTION | CardType::VICTORY, 5);
-    REGISTER_CARD(Silk_Road, CardType::ACTION | CardType::VICTORY, 4);
     REGISTER_CARD(Festival, CardType::ACTION, 5);
     REGISTER_CARD(Market, CardType::ACTION, 5);
     REGISTER_CARD(Laboratory, CardType::ACTION, 5);
     REGISTER_CARD(Council_Room, CardType::ACTION, 5);
     REGISTER_CARD(Witch, CardType::ACTION | CardType::ATTACK, 5);
+
+    // victory cards
+    REGISTER_CARD(Gardens, CardType::KINGDOM | CardType::VICTORY, 4);
+    REGISTER_CARD(Duke, CardType::KINGDOM | CardType::VICTORY, 5);
+    REGISTER_CARD(Silk_Road, CardType::KINGDOM | CardType::VICTORY, 4);
 
     // interactive
     REGISTER_CARD(Cellar, CardType::ACTION, 2);

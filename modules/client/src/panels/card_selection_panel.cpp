@@ -9,9 +9,9 @@
 #include <wx/sizer.h>
 #include <wx/wx.h>
 #include "dominion.h"
-#include "shared/game/cards/card_base.h"
-#include "shared/game/cards/card_factory.h"
-#include "shared/utils/logger.h"
+#include <shared/game/cards/card_base.h>
+#include <shared/game/cards/card_factory.h>
+#include <shared/utils/logger.h>
 #include "uiElements/text_panel.h"
 
 namespace client
@@ -26,7 +26,7 @@ namespace client
 
         const shared::CardFactory::map_t &all_cards = shared::CardFactory::getAll();
         for ( const auto &card : all_cards ) {
-            if ( card.second->isAction() ) {
+            if ( card.second->isKingdom() ) {
                 selectedCards[card.first] = false;
             }
         }

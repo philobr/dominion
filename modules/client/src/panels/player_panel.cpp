@@ -8,6 +8,7 @@
 #include <uiElements/popup.h>
 #include <uiElements/single_card_panel.h>
 #include <wx/wx.h>
+#include "shared/action_order.h"
 
 namespace client
 {
@@ -143,7 +144,8 @@ namespace client
     }
 
     wxPanel *PlayerPanel::createDiscardPilePanel(const unsigned int discard_pile_size,
-                                                 const std::string &top_discard_card, bool confirm_button)
+                                                 const std::string &top_discard_card, bool confirm_button,
+                                                 shared::ChooseFromHandOrder::AllowedChoice allowed_choices)
     {
         LOG(INFO) << "Creating discard pile panel";
         // Create the discard pile panel
@@ -163,13 +165,15 @@ namespace client
         if ( confirm_button ) {
             confirmButton = new wxButton(DiscardPilePanel, wxID_ANY, "Confirm", wxDefaultPosition, wxDefaultSize);
             confirmButton->Bind(wxEVT_BUTTON,
-                                [this](wxCommandEvent & /*event*/)
+                                [this, allowed_choices](wxCommandEvent & /*event*/)
                                 {
                                     std::vector<shared::CardBase::id_t> selectedCardIds;
+                                    std::vector<shared::ChooseFromOrder::AllowedChoice> allowedChoices(
+                                            selectedCards.size(), allowed_choices);
                                     for ( auto &card : selectedCards ) {
                                         selectedCardIds.push_back(card->getCardName());
                                     }
-                                    wxGetApp().getController().confirmSelection(selectedCardIds);
+                                    wxGetApp().getController().confirmSelection(selectedCardIds, allowedChoices);
                                     selectedCards.clear();
                                 });
             confirmButton->Enable(false);

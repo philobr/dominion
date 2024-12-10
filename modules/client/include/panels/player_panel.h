@@ -61,7 +61,9 @@ namespace client
          * @return wxPanel*
          */
         wxPanel *createDiscardPilePanel(const unsigned int discard_pile_size, const std::string &top_discard_card,
-                                        bool confirm_button = false);
+                                        bool confirm_button = false,
+                                        shared::ChooseFromHandOrder::AllowedChoice allowed_choices =
+                                                shared::ChooseFromHandOrder::AllowedChoice::HAND_CARDS);
 
         /**
          * @brief make a card panel selectable

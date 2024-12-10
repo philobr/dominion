@@ -8,6 +8,7 @@
 #include <shared/message_types.h>
 #include <shared/utils/assert.h>
 #include <shared/utils/json.h>
+#include "shared/action_order.h"
 
 using namespace rapidjson;
 
@@ -163,7 +164,7 @@ namespace shared
         } else if ( DeckChoiceDecision *deck_choice = dynamic_cast<DeckChoiceDecision *>(action_decision) ) {
             ADD_STRING_MEMBER("deck_choice", action);
             ADD_ARRAY_OF_STRINGS_MEMBER(deck_choice->cards, cards);
-            ADD_ARRAY_OF_ENUMS_MEMBER(deck_choice->choices, choices, DeckChoiceDecision::AllowedChoice);
+            ADD_ARRAY_OF_ENUMS_MEMBER(deck_choice->choices, choices, ChooseFromHandOrder::AllowedChoice);
         } else if ( GainFromBoardDecision *board_choice = dynamic_cast<GainFromBoardDecision *>(action_decision) ) {
             ADD_STRING_MEMBER("board_choice", action);
             ADD_STRING_MEMBER(board_choice->chosen_card.c_str(), chosen_card);

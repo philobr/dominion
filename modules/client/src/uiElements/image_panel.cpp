@@ -1,6 +1,7 @@
 #include <cstddef>
 #include <shared/utils/logger.h>
 #include <uiElements/image_panel.h>
+#include <wx/filename.h>
 #include <wx/image.h>
 
 // NOLINTBEGIN(bugprone-suspicious-enum-usage)
@@ -8,10 +9,12 @@
 namespace client
 {
 
-    ImagePanel::ImagePanel(wxWindow *parent, wxString file, wxBitmapType format, wxPoint position, wxSize size,
+    ImagePanel::ImagePanel(wxWindow *parent, wxString asset_name, wxBitmapType format, wxPoint position, wxSize size,
                            double rotation) :
         wxPanel(parent, wxID_ANY, position, size)
     {
+        wxString file = wxString("assets") + wxFileName::GetPathSeparator() + "color" + wxFileName::GetPathSeparator() +
+                asset_name;
         if ( !wxFileExists(file) ) {
             wxMessageBox("Could not find file: " + file, "File error", wxICON_ERROR);
             LOG(ERROR) << "Could not find file: " << file;

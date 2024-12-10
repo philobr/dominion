@@ -67,10 +67,10 @@ namespace client
         wxPanel *Player = new wxPanel(NamesSizer->GetContainingWindow(), wxID_ANY, wxDefaultPosition, wxSize(256, 256));
         Player->SetSizer(new wxBoxSizer(wxVERTICAL));
 
-        std::string SpritePath = "assets/Minion" + std::to_string(this->playerCount) + ".png";
+        std::string asset_name = "Minion" + std::to_string(this->playerCount) + ".png";
 
         ImagePanel *LogoPanel = new ImagePanel(Player, // parent element
-                                               SpritePath, // path to image
+                                               asset_name, // path to image
                                                wxBITMAP_TYPE_PNG, // format of image
                                                wxDefaultPosition, // position
                                                wxSize(100, 100), // size

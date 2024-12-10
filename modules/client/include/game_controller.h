@@ -8,6 +8,7 @@
 #include <shared/game/game_state/reduced_game_state.h>
 #include <shared/message_types.h>
 #include <shared/player_result.h>
+#include "shared/action_order.h"
 
 namespace client
 {
@@ -105,6 +106,7 @@ namespace client
         void showVictoryScreen(std::vector<shared::PlayerResult> results);
         void showCardSelectionScreen();
         void showGainFromBoard(std::unique_ptr<reduced::GameState> game_state, shared::GainFromBoardOrder order);
+        void showChooseFromHandOrder(std::unique_ptr<reduced::GameState> game_state, shared::ChooseFromHandOrder order);
 
         bool isLobbyValid();
 

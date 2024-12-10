@@ -1,6 +1,7 @@
 
 #include <gui.h>
 #include <shared/utils/logger.h>
+#include "shared/game/cards/card_base.h"
 
 /**
  * Macro to check if the current thread is the main thread.
@@ -146,5 +147,20 @@ namespace client
         unsigned int max_cost = order.max_cost;
 
         _mainGamePanel->drawGainFromBoard(*game_state, type, max_cost);
+    }
+
+    void Gui::showChooseFromHandScreen(std::shared_ptr<reduced::GameState> game_state,
+                                       shared::ChooseFromHandOrder order)
+    {
+        ONLY_MAIN_THREAD();
+
+        LOG(INFO) << "Showing choose from hand overlay";
+
+        shared::CardType type = shared::CardType::KINGDOM;
+        unsigned int min_count = order.min_cards;
+        unsigned int max_count = order.max_cards;
+        shared::ChooseFromOrder::AllowedChoice allowed_choices = order.allowed_choices;
+
+        _mainGamePanel->drawSelectFromHand(*game_state, type, min_count, max_count, allowed_choices);
     }
 } // namespace client

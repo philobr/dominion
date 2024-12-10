@@ -8,6 +8,7 @@
 #include <shared/message_types.h>
 #include <shared/utils/logger.h>
 #include <vector>
+#include "shared/action_decision.h"
 
 using namespace shared;
 
@@ -48,6 +49,11 @@ namespace client
     {
         wxQueueEvent(_guiEventReceiver.get(),
                      ControllerEvent::showGainFromBoardScreen(std::move(game_state), std::move(order)));
+    }
+    void GameController::showChooseFromHandOrder(std::unique_ptr<reduced::GameState> game_state,
+                                                 shared::ChooseFromHandOrder order)
+    {
+        wxQueueEvent(_guiEventReceiver.get(), ControllerEvent::showChooseFromHandScreen(std::move(game_state), order));
     }
 
     GameController::GameController(GuiEventReceiver *event_receiver) :
@@ -193,7 +199,20 @@ namespace client
         std::unique_ptr<shared::ActionDecisionMessage> action_decision_message =
                 std::make_unique<shared::ActionDecisionMessage>(_gameName, _playerName, std::move(decision),
                                                                 in_response_to);
+        _clientNetworkManager->sendRequest(std::move(action_decision_message));
+    }
+    void GameController::confirmSelectionFromHand(std::vector<shared::CardBase::id_t> selected_cards,
+                                                  std::vector<shared::ChooseFromOrder::AllowedChoice> choices)
+    {
+        LOG(DEBUG) << "Confirming selection";
+        std::unique_ptr<shared::ActionDecision> decision(new shared::DeckChoiceDecision(selected_cards, choices));
 
+        // TODO (#120) Implement in_response_to
+        std::optional<std::string> in_response_to = std::nullopt;
+
+        std::unique_ptr<shared::ActionDecisionMessage> action_decision_message =
+                std::make_unique<shared::ActionDecisionMessage>(_gameName, _playerName, std::move(decision),
+                                                                in_response_to);
         _clientNetworkManager->sendRequest(std::move(action_decision_message));
     }
 

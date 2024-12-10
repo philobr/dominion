@@ -8,6 +8,7 @@
 #include <shared/player_result.h>
 #include <shared/utils/assert.h>
 #include <shared/utils/json.h>
+#include "shared/action_order.h"
 
 using namespace shared;
 using namespace rapidjson;
@@ -216,10 +217,10 @@ static std::unique_ptr<ActionDecisionMessage> parseActionDecision(const Document
         decision = new EndTurnDecision();
     } else if ( action == "deck_choice" ) {
         std::vector<shared::CardBase::id_t> cards;
-        std::vector<shared::DeckChoiceDecision::AllowedChoice> choices;
+        std::vector<shared::ChooseFromOrder::AllowedChoice> choices;
 
         GET_STRING_ARRAY_MEMBER(cards, json, "cards");
-        GET_ENUM_ARRAY_MEMBER(choices, json, "choices", shared::DeckChoiceDecision::AllowedChoice);
+        GET_ENUM_ARRAY_MEMBER(choices, json, "choices", shared::ChooseFromOrder::AllowedChoice);
         decision = new DeckChoiceDecision(cards, choices);
     } else if ( action == "board_choice" ) {
         shared::CardBase::id_t chosen_card;

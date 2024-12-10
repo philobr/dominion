@@ -91,10 +91,16 @@ namespace server
         }
 
         /**
-         * @brief Switches phases if necessary, this means: if a player is out of buys or out of actions
+         * @brief Switches phases if necessary, this means: if a player is out
+         * of buys or out of actions
          * (im not happy with this name but i got nothing better rn)
+         *
+         * Note that this function might also switch the player if the current
+         * player has ended their turn.
+         *
+         * @return true if the player's turn has ended.
          */
-        void maybeSwitchPhase();
+        bool maybeSwitchPhase();
 
         /**
          * @brief Ends the action phase if possible

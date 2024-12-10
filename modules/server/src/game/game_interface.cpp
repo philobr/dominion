@@ -99,17 +99,8 @@ namespace server
             throw exception::OutOfPhase("");
         }
 
-        game_state->endTurn();
-
-        if ( game_state->isGameOver() ) {
-            LOG(DEBUG) << "Game is over, sending results";
-            GameInterface::response_t response;
-            std::vector<shared::PlayerResult> results = game_state->getResults();
-            response.setGameOver(std::move(results));
-            return response;
-        } else {
-            return nextPhase();
-        }
+        bool end_turn = true;
+        return nextPhase(end_turn);
     }
 
     /**
@@ -158,10 +149,29 @@ namespace server
         return nextPhase();
     }
 
-    GameInterface::response_t GameInterface::nextPhase()
+    GameInterface::response_t GameInterface::endGame()
     {
+        GameInterface::response_t response;
+        LOG(DEBUG) << "Game is over, sending results";
+        std::vector<shared::PlayerResult> results = game_state->getResults();
+        response.setGameOver(std::move(results));
+        return response;
+    }
+
+    GameInterface::response_t GameInterface::nextPhase(bool end_turn)
+    {
+        bool turn_ended = false;
+        if ( end_turn ) {
+            game_state->endTurn();
+            turn_ended = true;
+        }
         // switches phase if: actions==0 OR (buys==0 -> end_turn + next player)
-        game_state->maybeSwitchPhase();
+        turn_ended |= game_state->maybeSwitchPhase();
+
+        if ( turn_ended && game_state->isGameOver() ) {
+            return endGame();
+        }
+
         const auto current_player = game_state->getCurrentPlayer();
         switch ( game_state->getPhase() ) {
             case shared::GamePhase::ACTION_PHASE:

@@ -52,17 +52,18 @@ namespace server
         {}
 
         /**
+         * @brief Ends the game and returns the corresponding message.
+         */
+        response_t endGame();
+
+        /**
          * @brief Tries if we have to switch phase and returns the phase transition for the corresponding
          * player.
-         *
-         * @return response_t
          */
-        response_t nextPhase();
+        response_t nextPhase(bool end_turn = false);
 
         /**
          * @brief Resets the phase from CURRENTLY_PLAYING_CARD to ACTION_PHASE and then returns the next phase.
-         *
-         * @return response_t
          */
         response_t finishedPlayingCard();
 

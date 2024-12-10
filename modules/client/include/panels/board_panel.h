@@ -88,6 +88,8 @@ namespace client
         std::vector<PilePanel *> VictoryPiles_;
         std::vector<PilePanel *> TreasurePiles_;
         std::vector<PilePanel *> KingdomPiles_;
+
+        bool isGainFromBoardPhase_ = false;
     };
 
     template <typename TypeRule>

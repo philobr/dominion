@@ -57,6 +57,7 @@ namespace client
 
         void buyCard(const std::string &card_id);
         void playCard(const std::string &card_id);
+        void gainCardFromBoard(const std::string &card_id);
         void endActionPhase();
         void endTurn();
         void sendRequest(std::unique_ptr<shared::ClientToServerMessage> req);

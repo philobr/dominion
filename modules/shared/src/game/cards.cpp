@@ -56,6 +56,8 @@ namespace shared
     REGISTER_CARD(Village, CardType::ACTION, 3);
     REGISTER_CARD(Smithy, CardType::ACTION, 4);
     REGISTER_CARD(Gardens, CardType::ACTION | CardType::VICTORY, 4);
+    REGISTER_CARD(Duke, CardType::ACTION | CardType::VICTORY, 5);
+    REGISTER_CARD(Silk_Road, CardType::ACTION | CardType::VICTORY, 4);
     REGISTER_CARD(Festival, CardType::ACTION, 5);
     REGISTER_CARD(Market, CardType::ACTION, 5);
     REGISTER_CARD(Laboratory, CardType::ACTION, 5);

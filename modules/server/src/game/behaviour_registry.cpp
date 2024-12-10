@@ -1,6 +1,8 @@
+
 #include <server/debug_mode.h>
 #include <server/game/behaviour_registry.h>
 #include <server/game/victory_card_behaviours.h>
+#include <shared/game/cards/card_factory.h>
 
 std::vector<std::unique_ptr<server::base::Behaviour>>
 server::BehaviourRegistry::getBehaviours(const std::string &card_id)
@@ -11,7 +13,6 @@ server::BehaviourRegistry::getBehaviours(const std::string &card_id)
     }
     return it->second();
 }
-
 
 server::VictoryCardBehaviour &
 server::BehaviourRegistry::getVictoryBehaviour(const shared::CardBase::id_t &card_id) const
@@ -90,9 +91,15 @@ void server::BehaviourRegistry::initialiseBehaviours()
     // enemies get curse on discard pile
     insert<DrawCards<2>, CurseEnemy>("Witch");
 
-    // count points, only if game is over!
     auto gardens_filter = [](const shared::CardBase::id_t & /*card*/) -> bool { return true; };
     insertVictory<VictoryPointsPerNCards<1, 10, gardens_filter>>("Gardens");
+
+    auto duke_filter = [](const shared::CardBase::id_t &card) -> bool { return card == "Duchy"; };
+    insertVictory<VictoryPointsPerNCards<1, 1, duke_filter>>("Duke");
+
+    auto silk_road_filter = [](const shared::CardBase::id_t &card) -> bool
+    { return shared::CardFactory::isVictory(card); };
+    insertVictory<VictoryPointsPerNCards<1, 4, silk_road_filter>>("Silk_Road");
 
     /*
     UNSURE

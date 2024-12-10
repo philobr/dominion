@@ -42,7 +42,7 @@ namespace client
          * e.g when Chapel is played
          *
          */
-        void drawSelectFromHand(const reduced::GameState &game_state, shared::CardType type, unsigned min_count,
+        void drawSelectFromHand(const reduced::GameState &game_state, shared::CardType /*type*/, unsigned min_count,
                                 unsigned max_count, shared::ChooseFromOrder::AllowedChoice allowed_choices);
 
 

@@ -22,7 +22,8 @@ namespace client
     }
 
     void PlayerPanel::drawPlayer(const std::unique_ptr<reduced::Player> &player, bool is_active,
-                                 shared::GamePhase phase, bool confirm_button)
+                                 shared::GamePhase phase, bool confirm_button,
+                                 shared::ChooseFromOrder::AllowedChoice allowed_choices)
     {
         // Remove old stuff
         this->DestroyChildren();
@@ -42,8 +43,8 @@ namespace client
         wxPanel *hand = createHandPanel(player, card_width_borders, is_active, phase);
 
         // Create the discard pile panel
-        wxPanel *DiscardPilePanel =
-                createDiscardPilePanel(player->getDiscardPileSize(), player->getTopDiscardCard(), confirm_button);
+        wxPanel *DiscardPilePanel = createDiscardPilePanel(player->getDiscardPileSize(), player->getTopDiscardCard(),
+                                                           confirm_button, allowed_choices);
 
         outersizer->Add(DrawPilePanel, 0, wxTOP, 5);
         outersizer->Add(hand, 1, wxTOP, 5);
@@ -59,7 +60,7 @@ namespace client
     {
         minCount = min_count;
         maxCount = max_count;
-        drawPlayer(player, false, shared::GamePhase::ACTION_PHASE, true);
+        drawPlayer(player, false, shared::GamePhase::ACTION_PHASE, true, allowed_choices);
         for ( auto &card : handPanels ) {
             makeSelectable(card);
         }

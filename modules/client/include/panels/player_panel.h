@@ -25,7 +25,9 @@ namespace client
         PlayerPanel(wxWindow *parent, wxSize size);
 
         void drawPlayer(const std::unique_ptr<reduced::Player> &player, bool is_active, shared::GamePhase phase,
-                        bool confirm_button = false);
+                        bool confirm_button = false,
+                        shared::ChooseFromHandOrder::AllowedChoice allowed_choices =
+                                shared::ChooseFromHandOrder::AllowedChoice::HAND_CARDS);
         void drawSelectFromHandPlayer(const std::unique_ptr<reduced::Player> &player, unsigned min_count,
                                       unsigned max_count, shared::ChooseFromOrder::AllowedChoice allowed_choices);
 

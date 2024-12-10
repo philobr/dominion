@@ -44,6 +44,12 @@ namespace client
         wxQueueEvent(_guiEventReceiver.get(), ControllerEvent::showCardSelectionScreen());
     }
 
+    void GameController::showChooseFromHandOrder(std::unique_ptr<reduced::GameState> game_state,
+                                                 shared::ChooseFromHandOrder order)
+    {
+        wxQueueEvent(_guiEventReceiver.get(), ControllerEvent::showChooseFromHandScreen(std::move(game_state), order));
+    }
+
     GameController::GameController(GuiEventReceiver *event_receiver) :
         _guiEventReceiver(event_receiver), _clientState(ClientState::LOGIN_SCREEN)
     {}

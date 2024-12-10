@@ -51,7 +51,7 @@ namespace client
         EnemyInfo->drawEnemies(game_state.reduced_enemies, game_state.active_player);
     }
 
-    void MainGamePanel::drawSelectFromHand(const reduced::GameState &game_state, shared::CardType type,
+    void MainGamePanel::drawSelectFromHand(const reduced::GameState &game_state, shared::CardType /*type*/,
                                            unsigned min_count, unsigned max_count,
                                            shared::ChooseFromOrder::AllowedChoice allowed_choices)
     {

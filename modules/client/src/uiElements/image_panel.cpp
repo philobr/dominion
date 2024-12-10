@@ -11,8 +11,7 @@ namespace client
                            double rotation) :
         wxPanel(parent, wxID_ANY, position, size)
     {
-        wxString file = wxString("assets") + wxFileName::GetPathSeparator() + "color" + wxFileName::GetPathSeparator() +
-                asset_name;
+        wxString file = wxString("assets") + wxFileName::GetPathSeparator() + asset_name;
         if ( !wxFileExists(file) ) {
             wxMessageBox("Could not find file: " + file, "File error", wxICON_ERROR);
             LOG(ERROR) << "Could not find file: " << file;

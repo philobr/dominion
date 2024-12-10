@@ -5,6 +5,7 @@
 
 #include <shared/game/game_state/reduced_game_state.h>
 #include <shared/message_types.h>
+#include <shared/player_result.h>
 #include <shared/utils/assert.h>
 #include <shared/utils/json.h>
 
@@ -60,10 +61,22 @@ parseStartGameMessage(const Document & /*json*/, const std::string &game_id, con
     return std::make_unique<StartGameBroadcastMessage>(game_id, message_id);
 }
 
-static std::unique_ptr<EndGameBroadcastMessage>
-parseEndGameBroadcast(const Document & /*json*/, const std::string &game_id, const std::string &message_id)
+static std::unique_ptr<EndGameBroadcastMessage> parseEndGameBroadcast(const Document &json, const std::string &game_id,
+                                                                      const std::string &message_id)
 {
-    return std::make_unique<EndGameBroadcastMessage>(game_id, message_id);
+    std::vector<PlayerResult> results;
+    if ( !json.HasMember("results") || !json["results"].IsArray() ) {
+        return nullptr;
+    }
+    for ( const auto &result : json["results"].GetArray() ) {
+        shared::PlayerBase::id_t player_id;
+        GET_STRING_MEMBER(player_id, result, "player_id");
+        int score;
+        GET_INT_MEMBER(score, result, "score");
+        results.emplace_back(player_id, score);
+    }
+
+    return std::make_unique<EndGameBroadcastMessage>(game_id, results, message_id);
 }
 
 static std::unique_ptr<ResultResponseMessage> parseResultResponse(const Document &json, const std::string &game_id,

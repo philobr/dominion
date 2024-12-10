@@ -1,9 +1,8 @@
 #pragma once
 
-
 #include <shared/game/game_state/reduced_game_state.h>
+#include <shared/player_result.h>
 #include <wx/wx.h>
-
 
 namespace client
 {
@@ -17,15 +16,11 @@ namespace client
 
         /**
          * @brief Draw the victory screen
-         *
-         * @param std::vector<std::string> player_names
-         * @param std::vector<unsigned int> player_scores
          */
-        void drawVictoryScreen(reduced::GameState &game_state);
+        void drawVictoryScreen(const std::vector<shared::PlayerResult> &player_results);
 
         /**
          * @brief Draw the victory screen for testing purposes
-         *
          */
         void drawTestVictoryScreen();
 

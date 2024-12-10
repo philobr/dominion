@@ -89,7 +89,7 @@ namespace shared
 
     bool EndGameBroadcastMessage::operator==(const EndGameBroadcastMessage &other) const
     {
-        return ServerToClientMessage::operator==(other);
+        return ServerToClientMessage::operator==(other) && this->results == other.results;
     }
 
     bool ResultResponseMessage::operator==(const ResultResponseMessage &other) const

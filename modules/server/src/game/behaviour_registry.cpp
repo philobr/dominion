@@ -1,14 +1,26 @@
 #include <server/debug_mode.h>
 #include <server/game/behaviour_registry.h>
+#include <server/game/victory_card_behaviours.h>
 
 std::vector<std::unique_ptr<server::base::Behaviour>>
 server::BehaviourRegistry::getBehaviours(const std::string &card_id)
 {
     auto it = _map.find(card_id);
     if ( it == _map.end() ) {
-        throw std::runtime_error("card_id not found in the registry");
+        throw std::runtime_error("card not found in the behaviour registry: " + card_id);
     }
     return it->second();
+}
+
+
+server::VictoryCardBehaviour &
+server::BehaviourRegistry::getVictoryBehaviour(const shared::CardBase::id_t &card_id) const
+{
+    auto it = _victory_map.find(card_id);
+    if ( it == _victory_map.end() ) {
+        throw std::runtime_error("card not found in the victory card registry: " + card_id);
+    }
+    return *it->second;
 }
 
 server::BehaviourRegistry::BehaviourRegistry()
@@ -59,10 +71,10 @@ void server::BehaviourRegistry::initialiseBehaviours()
     insert<GainCoins<3>>("Gold");
 
     // victory cards
-    insert<GainPoints<1>>("Estate");
-    insert<GainPoints<3>>("Duchy");
-    insert<GainPoints<6>>("Province");
-    insert<GainPoints<-1>>("Curse");
+    insertVictory<ConstantVictoryPoints<1>>("Estate");
+    insertVictory<ConstantVictoryPoints<3>>("Duchy");
+    insertVictory<ConstantVictoryPoints<6>>("Province");
+    insertVictory<ConstantVictoryPoints<-1>>("Curse");
 
     // kingdom cards
     insert<DrawCards<2>>("Moat");
@@ -78,6 +90,10 @@ void server::BehaviourRegistry::initialiseBehaviours()
     // enemies get curse on discard pile
     insert<DrawCards<2>, CurseEnemy>("Witch");
 
+    // count points, only if game is over!
+    auto gardens_filter = [](const shared::CardBase::id_t & /*card*/) -> bool { return true; };
+    insertVictory<VictoryPointsPerNCards<1, 10, gardens_filter>>("Gardens");
+
     /*
     UNSURE
      */
@@ -89,8 +105,6 @@ void server::BehaviourRegistry::initialiseBehaviours()
     /*
     TODO:
     */
-    // count points, only if game is over!
-    insert<NOT_IMPLEMENTED_YET>("Gardens");
     // order to trash card, then actually trash the cards
     insert<NOT_IMPLEMENTED_YET>("Chapel");
     // look through discard pile, may put one card onto deck

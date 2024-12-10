@@ -19,7 +19,7 @@ namespace server
         /**
          * @brief gets a response that has to be sent to a client and passes it to the network manager as json string
          */
-        virtual void sendMessage(std::unique_ptr<shared::ServerToClientMessage> message,
+        virtual void sendMessage(const shared::ServerToClientMessage &message,
                                  const shared::PlayerBase::id_t &player_id) = 0;
 
         /**
@@ -35,16 +35,12 @@ namespace server
         {
             static_assert(std::is_base_of<shared::ServerToClientMessage, T>::value,
                           "T must derive from shared::ServerToClientMessage");
-            sendMessage(std::make_unique<T>(std::forward<Args>(args)...), player_id);
+            T message(std::forward<Args>(args)...);
+            sendMessage(message, player_id);
         }
 
         /**
          * @brief Broadcasts a message of given type to the given players
-         *
-         * @tparam T
-         * @tparam Args
-         * @param players
-         * @param args
          */
         template <typename T, typename... Args>
         void broadcast(const std::vector<shared::PlayerBase::id_t> &players, Args &&...args)
@@ -52,9 +48,10 @@ namespace server
             static_assert(std::is_base_of<shared::ServerToClientMessage, T>::value,
                           "T must derive from shared::ServerToClientMessage");
 
-            std::for_each(players.begin(), players.end(),
-                          [&](const auto &player_id)
-                          { sendMessage(std::make_unique<T>(std::forward<Args>(args)...), player_id); });
+            const T message(std::forward<Args>(args)...);
+            for ( const auto &player_id : players ) {
+                sendMessage(message, player_id);
+            }
         }
     };
 
@@ -63,7 +60,7 @@ namespace server
     public:
         ImplementedMessageInterface() = default;
         ~ImplementedMessageInterface() override = default;
-        void sendMessage(std::unique_ptr<shared::ServerToClientMessage> message,
+        void sendMessage(const shared::ServerToClientMessage &message,
                          const shared::PlayerBase::id_t &player_id) override;
     };
 

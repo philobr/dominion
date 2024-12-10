@@ -41,6 +41,22 @@ namespace server
         }
     }
 
+    std::vector<shared::PlayerResult> GameState::getResults() const
+    {
+        std::vector<shared::PlayerResult> results;
+        // Get results of each player
+        for ( const auto &pair : player_map ) {
+            const auto &player = pair.second;
+            int victory_points = player->getVictoryPoints();
+            shared::PlayerResult result(player->getId(), victory_points);
+            results.emplace_back(result);
+        }
+        // and sort them by score
+        std::sort(results.begin(), results.end(),
+                  [](const auto &lhs, const auto &rhs) { return lhs.score() > rhs.score(); });
+        return results;
+    }
+
     void GameState::initialisePlayers(const std::vector<Player::id_t> &player_ids)
     {
         player_order = player_ids;
@@ -98,10 +114,10 @@ namespace server
         resetPhase();
         board->resetPlayedCards();
 
-        maybeSwitchPhase(); // a player might not have any action cards at the beginning of the action phase
-
-        if ( isGameOver() ) {
-            endGame();
+        bool turn_ended =
+                maybeSwitchPhase(); // a player might not have any action cards at the beginning of the action phase
+        if ( turn_ended ) {
+            throw std::runtime_error("Tried to end turn twice, this should never happen.");
         }
     }
 
@@ -143,7 +159,7 @@ namespace server
         }
     }
 
-    void GameState::maybeSwitchPhase()
+    bool GameState::maybeSwitchPhase()
     {
         switch ( phase ) {
             case GamePhase::ACTION_PHASE:
@@ -152,20 +168,22 @@ namespace server
                          !getCurrentPlayer().hasType<shared::CardAccess::HAND>(shared::CardType::ACTION) ) {
                         phase = GamePhase::BUY_PHASE;
                     }
+                    return false;
                 }
-                break;
             case GamePhase::BUY_PHASE:
                 {
                     if ( getCurrentPlayer().getBuys() == 0 ) {
                         endTurn();
+                        return true;
+                    } else {
+                        return false;
                     }
                 }
-                break;
             case GamePhase::PLAYING_ACTION_CARD:
             default:
                 {
                     LOG(ERROR) << "Invalid game phase: " << static_cast<int>(phase);
-                    throw std::runtime_error("Unreachable code.");
+                    throw std::runtime_error("Invalid game phase in maybeSwitchPhase");
                 }
         }
     }

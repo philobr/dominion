@@ -43,7 +43,6 @@ namespace shared
 
         id_t getId() const { return player_id; }
 
-        unsigned int getVictoryPoints() const { return victory_points; }
         unsigned int getActions() const { return actions; }
         unsigned int getBuys() const { return buys; }
         unsigned int getTreasure() const { return treasure; }
@@ -72,7 +71,6 @@ namespace shared
     protected:
         id_t player_id;
 
-        unsigned int victory_points;
         unsigned int actions;
         unsigned int buys;
         unsigned int treasure;

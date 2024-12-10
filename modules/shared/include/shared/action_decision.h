@@ -5,6 +5,7 @@
 
 #include <shared/game/cards/card_base.h>
 #include <shared/game/game_state/player_base.h>
+#include "shared/action_order.h"
 namespace shared
 {
     class ActionDecision
@@ -73,20 +74,13 @@ namespace shared
     class DeckChoiceDecision : public ActionDecision
     {
     public:
-        enum AllowedChoice
-        {
-            PLAY = 1,
-            TRASH = 2,
-            DISCARD = 4,
-            DRAW_PILE = 8,
-            HAND_CARDS = 16
-        };
-
         std::vector<shared::CardBase::id_t> cards;
-        std::vector<AllowedChoice> choices;
+        std::vector<ChooseFromOrder::AllowedChoice> choices;
 
-        DeckChoiceDecision(std::vector<shared::CardBase::id_t> cards, std::vector<AllowedChoice> choices) :
-            cards(cards), choices(choices)
+        DeckChoiceDecision(std::vector<shared::CardBase::id_t> cards,
+                           std::vector<ChooseFromOrder::AllowedChoice> choices) :
+            cards(cards),
+            choices(choices)
         {}
 
         bool operator==(const DeckChoiceDecision &other) const;

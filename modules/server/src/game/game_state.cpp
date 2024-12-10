@@ -123,16 +123,6 @@ namespace server
 
     bool GameState::isGameOver() const { return board->isGameOver(); }
 
-    bool GameState::validateKingdomCardTypes(const std::vector<shared::CardBase::id_t> &kingdom_cards)
-    {
-        return std::all_of(kingdom_cards.begin(), kingdom_cards.end(),
-                           [](const auto &card_id)
-                           {
-                               const auto &card = shared::CardFactory::getCard(card_id);
-                               return card.isAction() || card.isAttack() || card.isReaction();
-                           });
-    }
-
     void GameState::forceSwitchPhase()
     {
         switch ( phase ) {

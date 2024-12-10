@@ -4,8 +4,8 @@
 
 std::vector<shared::CardBase::id_t> getValidKingdomCards()
 {
-    return {"Village", "Smithy", "Market",  "Festival",    "Laboratory",
-            "Moat",    "Chapel", "Artisan", "Moneylender", "Remodel"};
+    return {"Village", "Smithy", "Market", "Festival", "Laboratory",
+            "Silk_Road", "Council_Room", "Witch", "Gardens", "Duke"};
 }
 
 void setNPilesToEmpty(shared::Board::pile_container_t &pile_container, size_t n)

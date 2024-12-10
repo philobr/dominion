@@ -48,13 +48,6 @@ void server::BehaviourRegistry::initialiseBehaviours()
      * insert can take multiple types as template param
      */
 
-    // ================================
-    // TO BE DELETED: issue #165
-    insert<GainCoins<1>>("Placeholder1");
-    insert<GainCoins<1>>("Placeholder2");
-    insert<GainCoins<1>>("Placeholder3");
-    // ================================
-
     /**
      * If we are running in debug mode, we enable "God Mode".
      */
@@ -78,7 +71,6 @@ void server::BehaviourRegistry::initialiseBehaviours()
     insertVictory<ConstantVictoryPoints<-1>>("Curse");
 
     // kingdom cards
-    insert<DrawCards<2>>("Moat");
     insert<DrawCards<3>>("Smithy");
     insert<GainActions<2>, DrawCards<1>>("Village");
     insert<GainActions<1>, DrawCards<2>>("Laboratory");
@@ -124,6 +116,7 @@ void server::BehaviourRegistry::initialiseBehaviours()
     insert<GainCoins<2>, NOT_IMPLEMENTED_YET>("Militia");
     // peek top 2 from deck, trash (and/or) discard any. return rest to draw pile in any order
     insert<DrawCards<1>, GainActions<1>, NOT_IMPLEMENTED_YET>("Sentry");
+    insert<DrawCards<2>, NOT_IMPLEMENTED_YET>("Moat");
 
     // gain any card costing up to 4
     insert<NOT_IMPLEMENTED_YET>("Workshop");

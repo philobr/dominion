@@ -14,8 +14,8 @@ namespace client
         LOG(WARN) << "using hard coded game_state for testing";
         auto player = shared::PlayerBase("gigu");
         auto reduced = reduced::Player::make(player, {"Village", "Copper", "Copper"});
-        auto board = shared::Board::make({"Moat", "Smithy", "Village", "Laboratory", "Festival", "Market",
-                                          "Placeholder1", "Placeholder2", "Placeholder3", "Witch"},
+        auto board = shared::Board::make({"Council_Room", "Smithy", "Village", "Laboratory", "Festival", "Market",
+                                          "Gardens", "Duke", "Silk_Road", "Witch"},
                                          2);
         auto game_state = std::make_unique<reduced::GameState>(
                 board, std::move(reduced), std::vector<reduced::Enemy::ptr_t>(), "gigu", GamePhase::ACTION_PHASE);

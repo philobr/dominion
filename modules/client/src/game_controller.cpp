@@ -181,8 +181,8 @@ namespace client
         _clientNetworkManager->sendRequest(std::move(action_decision_message));
     }
 
-    void GameController::confirmSelection(std::vector<shared::CardBase::id_t> selected_cards,
-                                          std::vector<shared::ChooseFromOrder::AllowedChoice> choices)
+    void GameController::confirmSelectionFromHand(std::vector<shared::CardBase::id_t> selected_cards,
+                                                  std::vector<shared::ChooseFromOrder::AllowedChoice> choices)
     {
         LOG(DEBUG) << "Confirming selection";
         std::unique_ptr<shared::ActionDecision> decision(new shared::DeckChoiceDecision(selected_cards, choices));

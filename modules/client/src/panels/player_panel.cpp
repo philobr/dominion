@@ -61,7 +61,10 @@ namespace client
         minCount = min_count;
         maxCount = max_count;
         drawPlayer(player, false, shared::GamePhase::ACTION_PHASE, true, allowed_choices);
+
         for ( auto &card : handPanels ) {
+            // currently making every card selectable
+            // we can change this as soon as we have the types of cards
             makeSelectable(card);
         }
     }
@@ -168,13 +171,16 @@ namespace client
             confirmButton->Bind(wxEVT_BUTTON,
                                 [this, allowed_choices](wxCommandEvent & /*event*/)
                                 {
+                                    // get the relevant data for the request from the SingleCardPanels
                                     std::vector<shared::CardBase::id_t> selectedCardIds;
                                     std::vector<shared::ChooseFromOrder::AllowedChoice> allowedChoices(
                                             selectedCards.size(), allowed_choices);
                                     for ( auto &card : selectedCards ) {
                                         selectedCardIds.push_back(card->getCardName());
                                     }
-                                    wxGetApp().getController().confirmSelection(selectedCardIds, allowedChoices);
+                                    wxGetApp().getController().confirmSelectionFromHand(selectedCardIds,
+                                                                                        allowedChoices);
+                                    // clear the selected cards to be ready for the next selection
                                     selectedCards.clear();
                                 });
             confirmButton->Enable(false);
@@ -207,6 +213,8 @@ namespace client
 
     void PlayerPanel::switchCardSelectionState(SingleCardPanel *card_panel)
     {
+        // if the card is already selected remove it from the list and
+        // thereby deselecting the card
         if ( std::ranges::count(selectedCards, card_panel) > 0 ) {
             auto it = std::ranges::find(selectedCards, card_panel);
             selectedCards.erase(it);
@@ -227,6 +235,7 @@ namespace client
         wxColour new_border_colour = is_selected ? formatting_constants::SELECTED_CARD_BACKGROUND : wxNullColour;
         card_panel->setBorderColor(new_border_colour);
 
+        // check if we should activate the confirm button
         if ( number_selected >= minCount && number_selected <= maxCount ) {
             confirmButton->Enable(true);
         } else {

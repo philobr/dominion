@@ -28,6 +28,14 @@ namespace client
                         bool confirm_button = false,
                         shared::ChooseFromHandOrder::AllowedChoice allowed_choices =
                                 shared::ChooseFromHandOrder::AllowedChoice::HAND_CARDS);
+        /**
+         * @brief Draw the player panel in a SelectFromHandPhase
+         * This means that the player has to select a certain amount of cards from their hand
+         * @param player
+         * @param min_count the minimal number of cards to select
+         * @param max_count the maximal number of cards to select
+         * @param allowed_choices tha possible choices where selected cards go
+         */
         void drawSelectFromHandPlayer(const std::unique_ptr<reduced::Player> &player, unsigned min_count,
                                       unsigned max_count, shared::ChooseFromOrder::AllowedChoice allowed_choices);
 
@@ -60,6 +68,10 @@ namespace client
          * @brief Create the discard pile panel
          * @param  discard_pile_size
          * @param  top_discard_card
+         * @param  confirm_button = false if set true a confirm choice button will be drawn for the select from hands
+         * mode
+         * @param  allowed_choices the possible destinations for the selected cards used to get the right callback on
+         * the button
          * @return wxPanel*
          */
         wxPanel *createDiscardPilePanel(const unsigned int discard_pile_size, const std::string &top_discard_card,
@@ -77,6 +89,9 @@ namespace client
          */
         void switchCardSelectionState(SingleCardPanel *card_panel);
 
+        /**
+         * @brief click on a selectable card switch the background color and check if confirm should be activated
+         */
         void clickOnSelectableCard(SingleCardPanel *card_panel);
 
         // vector that is used when we are in SelectFromHand Phase

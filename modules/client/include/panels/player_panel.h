@@ -7,6 +7,9 @@
 
 #include <uiElements/single_card_panel.h>
 
+#include <algorithm>
+#include <ranges>
+
 namespace client
 {
     /**
@@ -53,6 +56,19 @@ namespace client
          * @return wxPanel*
          */
         wxPanel *createDiscardPilePanel(const unsigned int discard_pile_size, const std::string &top_discard_card);
+
+        /**
+         * @brief make a card panel selectable
+         */
+        void makeSelectable(SingleCardPanel *card_panel);
+
+        /**
+         * @brief togle the seleced state by erasing or adding to the list of selected cards
+         */
+        void switchCardSelectionState(shared::CardBase::id_t card_id);
+
+        // vector that is used when we are in SelectFromHand Phase
+        std::vector<shared::CardBase::id_t> selectedCards;
     };
 
 } // namespace client

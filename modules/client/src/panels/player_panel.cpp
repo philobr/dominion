@@ -160,4 +160,26 @@ namespace client
         return DiscardPilePanel;
     }
 
+    void PlayerPanel::makeSelectable(SingleCardPanel *image)
+    {
+        image->SetToolTip("Select card");
+
+        image->SetCursor(wxCursor(wxCURSOR_HAND));
+
+        shared::CardBase::id_t card_id = image->getCardName();
+        // Bind left click on the panel to the buyCard function
+        image->makeClickable(wxEVT_LEFT_UP,
+                             [card_id, this](wxMouseEvent & /*event*/) { switchCardSelectionState(card_id); });
+    }
+
+    void PlayerPanel::switchCardSelectionState(shared::CardBase::id_t card_id)
+    {
+        if ( std::ranges::count(selectedCards, card_id) > 0 ) {
+            auto it = std::ranges::find(selectedCards, card_id);
+            selectedCards.erase(it);
+        } else {
+            selectedCards.push_back(card_id);
+        }
+    }
+
 } // namespace client

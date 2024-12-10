@@ -95,14 +95,19 @@ namespace client
         LOG(DEBUG) << "Joining lobby " << input.lobby_name;
 
         _clientNetworkManager->init(input.host, input.port);
+        if ( _clientNetworkManager->failedToConnect() ) {
+            _clientState = ClientState::LOGIN_SCREEN;
+            LOG(INFO) << "Reverted to ClientState::LOGIN_SCREEN";
+        } else {
 
-        std::unique_ptr<shared::JoinLobbyRequestMessage> request =
-                std::make_unique<shared::JoinLobbyRequestMessage>(input.lobby_name, input.player_name);
-        sendRequest(std::move(request));
+            std::unique_ptr<shared::JoinLobbyRequestMessage> request =
+                    std::make_unique<shared::JoinLobbyRequestMessage>(input.lobby_name, input.player_name);
+            sendRequest(std::move(request));
 
-        _gameName = input.lobby_name;
-        _playerName = input.player_name;
-        _clientState = ClientState::JOINING_LOBBY;
+            _gameName = input.lobby_name;
+            _playerName = input.player_name;
+            _clientState = ClientState::JOINING_LOBBY;
+        }
     }
 
     void GameController::proceedToCardSelection()

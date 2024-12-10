@@ -25,7 +25,8 @@ namespace client
         SHOW_GAME_SCREEN,
         SHOW_VICTORY_SCREEN,
         SHOW_CARD_SELECTION_SCREEN,
-        SHOW_GAIN_FROM_BOARD_SCREEN
+        SHOW_GAIN_FROM_BOARD_SCREEN,
+        SHOW_CHOOSE_FROM_HAND_SCREEN
     };
 
     std::ostream &operator<<(std::ostream &os, ControllerEventType type);
@@ -75,6 +76,15 @@ namespace client
         shared::GainFromBoardOrder order;
     };
 
+    struct ShowChooseFromHandScreenEventData : ShowGameScreenEventData
+    {
+    public:
+        ShowChooseFromHandScreenEventData(std::unique_ptr<reduced::GameState> game_state,
+                                          shared::ChooseFromHandOrder order);
+
+        shared::ChooseFromHandOrder order;
+    };
+
     class ControllerEvent : public wxThreadEvent
     {
     public:
@@ -86,6 +96,8 @@ namespace client
         static ControllerEvent *showCardSelectionScreen();
         static ControllerEvent *showGainFromBoardScreen(std::unique_ptr<reduced::GameState> game_state,
                                                         shared::GainFromBoardOrder order);
+        static ControllerEvent *showChooseFromHandScreen(std::unique_ptr<reduced::GameState> game_state,
+                                                         shared::ChooseFromHandOrder order);
 
         ControllerEvent(ControllerEventType type, std::any data = {});
 

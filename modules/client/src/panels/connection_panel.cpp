@@ -19,7 +19,7 @@ namespace client
         wxBoxSizer *VerticalLayout = new wxBoxSizer(wxVERTICAL);
 
         ImagePanel *LogoPanel = new ImagePanel(this, // parent element
-                                               "assets/DominionLogo.png", // path to image
+                                               "DominionLogo.png", // asset name
                                                wxBITMAP_TYPE_PNG, // format of image
                                                wxDefaultPosition, // position
                                                wxSize(605, 229), // size

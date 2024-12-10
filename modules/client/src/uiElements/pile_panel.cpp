@@ -10,9 +10,9 @@ namespace client
     {
         wxBoxSizer *sizer = new wxBoxSizer(wxVERTICAL);
 
-        std::string cardPath = "assets/" + pile.card_id + ".png";
+        std::string asset_name = pile.card_id + ".png";
 
-        Image = new ImagePanel(this, cardPath, wxBITMAP_TYPE_PNG, wxDefaultPosition,
+        Image = new ImagePanel(this, asset_name, wxBITMAP_TYPE_PNG, wxDefaultPosition,
                                wxSize(size.GetWidth(), size.GetHeight() - 2 * padding));
 
 #ifdef __APPLE__

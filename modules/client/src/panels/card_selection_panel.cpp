@@ -2,6 +2,9 @@
 #include <uiElements/popup.h>
 
 #include <game_controller.h>
+#include <shared/game/cards/card_base.h>
+#include <shared/game/cards/card_factory.h>
+#include <shared/utils/logger.h>
 #include <uiElements/formatting_constants.h>
 #include <uiElements/image_panel.h>
 #include <wx/event.h>
@@ -9,9 +12,6 @@
 #include <wx/sizer.h>
 #include <wx/wx.h>
 #include "dominion.h"
-#include <shared/game/cards/card_base.h>
-#include <shared/game/cards/card_factory.h>
-#include <shared/utils/logger.h>
 #include "uiElements/text_panel.h"
 
 namespace client

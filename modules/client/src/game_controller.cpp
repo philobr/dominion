@@ -174,6 +174,11 @@ namespace client
         _clientNetworkManager->sendRequest(std::move(action_decision_message));
     }
 
+    void GameController::confirmSelection(std::vector<shared::CardBase::id_t> selected_cards)
+    {
+        LOG(DEBUG) << "Confirming selection";
+    }
+
     void GameController::endActionPhase()
     {
         LOG(INFO) << "Ending action phase";

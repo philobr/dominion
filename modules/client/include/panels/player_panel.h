@@ -5,10 +5,12 @@
 
 #include <wx/wx.h>
 
+#include <shared/action_order.h>
 #include <uiElements/single_card_panel.h>
 
 #include <algorithm>
 #include <ranges>
+#include <shared/game/cards/card_base.h>
 
 namespace client
 {
@@ -22,7 +24,10 @@ namespace client
     public:
         PlayerPanel(wxWindow *parent, wxSize size);
 
-        void drawPlayer(const std::unique_ptr<reduced::Player> &player, bool is_active, shared::GamePhase phase);
+        void drawPlayer(const std::unique_ptr<reduced::Player> &player, bool is_active, shared::GamePhase phase,
+                        bool confirm_button = false);
+        void drawSelectFromHandPlayer(const std::unique_ptr<reduced::Player> &player, unsigned min_count,
+                                      unsigned max_count, shared::ChooseFromOrder::AllowedChoice allowed_choices);
 
     private:
         void makePlayable(SingleCardPanel *image, const std::string &card_id);
@@ -55,7 +60,8 @@ namespace client
          * @param  top_discard_card
          * @return wxPanel*
          */
-        wxPanel *createDiscardPilePanel(const unsigned int discard_pile_size, const std::string &top_discard_card);
+        wxPanel *createDiscardPilePanel(const unsigned int discard_pile_size, const std::string &top_discard_card,
+                                        bool confirm_button = false);
 
         /**
          * @brief make a card panel selectable
@@ -65,10 +71,17 @@ namespace client
         /**
          * @brief togle the seleced state by erasing or adding to the list of selected cards
          */
-        void switchCardSelectionState(shared::CardBase::id_t card_id);
+        void switchCardSelectionState(SingleCardPanel *card_panel);
+
+        void clickOnSelectableCard(SingleCardPanel *card_panel);
 
         // vector that is used when we are in SelectFromHand Phase
-        std::vector<shared::CardBase::id_t> selectedCards;
+        wxButton *confirmButton;
+        std::vector<SingleCardPanel *> selectedCards;
+        std::vector<SingleCardPanel *> handPanels;
+
+        unsigned int minCount = 0;
+        unsigned int maxCount = 0;
     };
 
 } // namespace client

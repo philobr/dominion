@@ -17,11 +17,11 @@ namespace client
         LOG(WARN) << "using hard coded player";
         auto player = shared::PlayerBase("gigu");
         auto reduced = reduced::Player::make(player, {"Village", "Copper", "Copper", "Copper", "Estate"});
-        this->drawPlayer(reduced, true, shared::GamePhase::ACTION_PHASE);
+        this->drawSelectFromHandPlayer(reduced, 2, 3, shared::ChooseFromOrder::AllowedChoice::HAND_CARDS);
     }
 
     void PlayerPanel::drawPlayer(const std::unique_ptr<reduced::Player> &player, bool is_active,
-                                 shared::GamePhase phase)
+                                 shared::GamePhase phase, bool confirm_button)
     {
         // Remove old stuff
         this->DestroyChildren();
@@ -41,7 +41,8 @@ namespace client
         wxPanel *hand = createHandPanel(player, card_width_borders, is_active, phase);
 
         // Create the discard pile panel
-        wxPanel *DiscardPilePanel = createDiscardPilePanel(player->getDiscardPileSize(), player->getTopDiscardCard());
+        wxPanel *DiscardPilePanel =
+                createDiscardPilePanel(player->getDiscardPileSize(), player->getTopDiscardCard(), confirm_button);
 
         outersizer->Add(DrawPilePanel, 0, wxTOP, 5);
         outersizer->Add(hand, 1, wxTOP, 5);
@@ -49,6 +50,18 @@ namespace client
 
         this->SetSizer(outersizer);
         this->Layout();
+    }
+
+    void PlayerPanel::drawSelectFromHandPlayer(const std::unique_ptr<reduced::Player> &player, unsigned min_count,
+                                               unsigned max_count,
+                                               shared::ChooseFromOrder::AllowedChoice allowed_choices)
+    {
+        minCount = min_count;
+        maxCount = max_count;
+        drawPlayer(player, false, shared::GamePhase::ACTION_PHASE, true);
+        for ( auto &card : handPanels ) {
+            makeSelectable(card);
+        }
     }
 
     void PlayerPanel::makePlayable(SingleCardPanel *image, const std::string &card_id)
@@ -111,7 +124,7 @@ namespace client
         // Add the cards to the hand
         for ( size_t i = 0; i < hand_size; i++ ) {
             SingleCardPanel *card = new SingleCardPanel(hand, cards[i], hand_card_size, 5);
-
+            handPanels.push_back(card);
             bool is_action = shared::CardFactory::getCard(cards[i]).isAction();
 
             // bind right click to show card preview
@@ -130,7 +143,7 @@ namespace client
     }
 
     wxPanel *PlayerPanel::createDiscardPilePanel(const unsigned int discard_pile_size,
-                                                 const std::string &top_discard_card)
+                                                 const std::string &top_discard_card, bool confirm_button)
     {
         LOG(INFO) << "Creating discard pile panel";
         // Create the discard pile panel
@@ -147,10 +160,26 @@ namespace client
             DiscardPile = new PilePanel(DiscardPilePanel, shared::Pile(top_discard_card, discard_pile_size));
         }
 
+        if ( confirm_button ) {
+            confirmButton = new wxButton(DiscardPilePanel, wxID_ANY, "Confirm", wxDefaultPosition, wxDefaultSize);
+            confirmButton->Bind(wxEVT_BUTTON,
+                                [this](wxCommandEvent & /*event*/)
+                                {
+                                    std::vector<shared::CardBase::id_t> selectedCardIds;
+                                    for ( auto &card : selectedCards ) {
+                                        selectedCardIds.push_back(card->getCardName());
+                                    }
+                                    wxGetApp().getController().confirmSelection(selectedCardIds);
+                                    selectedCards.clear();
+                                });
+            confirmButton->Enable(false);
+        }
+
         // Create the sizer for the discard pile
         wxBoxSizer *DiscardPileSizer = new wxBoxSizer(wxVERTICAL);
         DiscardPileSizer->SetMinSize(wxSize(1 * hand_card_size.GetWidth(), 150));
 
+        DiscardPileSizer->Add(confirmButton, 0, wxALIGN_CENTER, 4);
         // Add the discard pile to the sizer
         DiscardPileSizer->Add(DiscardPile, 0, wxALIGN_CENTER, 4);
 
@@ -168,17 +197,35 @@ namespace client
 
         shared::CardBase::id_t card_id = image->getCardName();
         // Bind left click on the panel to the buyCard function
-        image->makeClickable(wxEVT_LEFT_UP,
-                             [card_id, this](wxMouseEvent & /*event*/) { switchCardSelectionState(card_id); });
+        image->makeClickable(wxEVT_LEFT_UP, [this, image](wxMouseEvent & /*event*/) { clickOnSelectableCard(image); });
     }
 
-    void PlayerPanel::switchCardSelectionState(shared::CardBase::id_t card_id)
+    void PlayerPanel::switchCardSelectionState(SingleCardPanel *card_panel)
     {
-        if ( std::ranges::count(selectedCards, card_id) > 0 ) {
-            auto it = std::ranges::find(selectedCards, card_id);
+        if ( std::ranges::count(selectedCards, card_panel) > 0 ) {
+            auto it = std::ranges::find(selectedCards, card_panel);
             selectedCards.erase(it);
         } else {
-            selectedCards.push_back(card_id);
+            selectedCards.push_back(card_panel);
+        }
+    }
+
+    void PlayerPanel::clickOnSelectableCard(SingleCardPanel *card_panel)
+    {
+        this->switchCardSelectionState(card_panel);
+        LOG(INFO) << "Card " << card_panel->getCardName();
+
+        bool is_selected = std::ranges::count(selectedCards, card_panel) > 0;
+        unsigned int number_selected = selectedCards.size();
+
+        // Change the border color of the card depending of the selection state
+        wxColour new_border_colour = is_selected ? formatting_constants::SELECTED_CARD_BACKGROUND : wxNullColour;
+        card_panel->setBorderColor(new_border_colour);
+
+        if ( number_selected >= minCount && number_selected <= maxCount ) {
+            confirmButton->Enable(true);
+        } else {
+            confirmButton->Enable(false);
         }
     }
 

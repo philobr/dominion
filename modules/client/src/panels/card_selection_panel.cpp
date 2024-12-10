@@ -178,7 +178,9 @@ namespace client
                   << " clicked, new selection state: " << selectedCards[card_panel->getCardName()];
 
         // Change the border color of the card depending of the selection state
-        wxColour new_border_colour = selectedCards[card_panel->getCardName()] ? *wxYELLOW : wxNullColour;
+        wxColour new_border_colour = selectedCards[card_panel->getCardName()]
+                ? formatting_constants::SELECTED_CARD_BACKGROUND
+                : wxNullColour;
         card_panel->setBorderColor(new_border_colour);
 
         // Update the selected card count

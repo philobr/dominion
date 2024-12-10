@@ -5,6 +5,7 @@
 #include <panels/phase_info_panel.h>
 #include <panels/player_panel.h>
 
+#include <shared/action_order.h>
 #include <shared/game/game_state/reduced_game_state.h>
 
 #include <wx/wx.h>
@@ -35,6 +36,14 @@ namespace client
          *
          */
         void drawGainFromBoard(const reduced::GameState &game_state, shared::CardType type, unsigned int max_cost);
+
+        /**
+         * @brief Draw the game state in a SelectFromHandPhase
+         * e.g when Chapel is played
+         *
+         */
+        void drawSelectFromHand(const reduced::GameState &game_state, shared::CardType type, unsigned min_count,
+                                unsigned max_count, shared::ChooseFromOrder::AllowedChoice allowed_choices);
 
 
     private:

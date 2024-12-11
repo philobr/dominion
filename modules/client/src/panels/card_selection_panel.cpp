@@ -146,7 +146,7 @@ namespace client
             return;
         }
         // Little bug that i found bc my map doesnt work yet:)
-        while ( selectedCardCount < 10  && selectedCardCount < cardPanels.size() ) {
+        while ( selectedCardCount < 10 && selectedCardCount < cardPanels.size() ) {
             while ( true ) {
                 // Generate random index between 0 and the number of cards
                 int random_index = rand() % cardPanels.size();

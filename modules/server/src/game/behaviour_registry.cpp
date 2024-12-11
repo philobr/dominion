@@ -103,7 +103,7 @@ void server::BehaviourRegistry::initialiseBehaviours()
     insert<DrawCards<2>>("Moat");
     // gain any card costing up to 4
     insert<GainCardMaxCost<4>>("Workshop");
-    
+
     auto gardens_filter = [](const shared::CardBase::id_t & /*card*/) -> bool { return true; };
     insertVictory<VictoryPointsPerNCards<1, 10, gardens_filter>>("Gardens");
 
@@ -113,7 +113,6 @@ void server::BehaviourRegistry::initialiseBehaviours()
     auto silk_road_filter = [](const shared::CardBase::id_t &card) -> bool
     { return shared::CardFactory::isVictory(card); };
     insertVictory<VictoryPointsPerNCards<1, 4, silk_road_filter>>("Silk_Road");
-
 
 
     /*

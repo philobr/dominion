@@ -138,7 +138,7 @@ namespace shared
     inline const shared::CardFactory::sorted_t shared::CardFactory::getAllSortedByCost()
     {
         shared::CardFactory::sorted_t sorted_map;
-        for (const auto& card : _map) {
+        for ( const auto &card : _map ) {
             sorted_map.emplace(card.second->getCost(), card.second.get());
         }
         return sorted_map;

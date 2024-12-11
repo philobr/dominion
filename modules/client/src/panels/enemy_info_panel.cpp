@@ -2,19 +2,22 @@
 #include <shared/utils/logger.h>
 #include <uiElements/enemy_panel.h>
 #include <wx/wx.h>
+#include <dominion.h>
 
 namespace client
 {
     EnemyInfoPanel::EnemyInfoPanel(wxWindow *parent, wxSize size) : wxPanel(parent, wxID_ANY, wxDefaultPosition, size)
     {
-        // create a dummy enemy for testing
-        auto player = shared::PlayerBase("gigu");
-        auto enemy = reduced::Enemy::make(player, 5);
-        std::vector<std::unique_ptr<reduced::Enemy>> enemies;
-        auto enemy2 = reduced::Enemy::make(player, 5);
-        enemies.push_back(std::move(enemy2));
-        enemies.push_back(std::move(enemy));
-        drawEnemies(enemies, "gigu");
+        if ( wxGetApp().isDebugMode() ) {
+            LOG(WARN) << "Using hardcoded enemy for testing";
+            auto player = shared::PlayerBase("gigu");
+            auto enemy = reduced::Enemy::make(player, 5);
+            std::vector<std::unique_ptr<reduced::Enemy>> enemies;
+            auto enemy2 = reduced::Enemy::make(player, 5);
+            enemies.push_back(std::move(enemy2));
+            enemies.push_back(std::move(enemy));
+            drawEnemies(enemies, "gigu");
+        }
     }
 
     void EnemyInfoPanel::drawEnemies(const std::vector<std::unique_ptr<reduced::Enemy>> &enemies,

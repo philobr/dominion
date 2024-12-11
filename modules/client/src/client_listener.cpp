@@ -8,74 +8,68 @@ ClientListener::ClientListener(sockpp::tcp_connector *connection) :
     wxThread(wxTHREAD_DETACHED), _connection(connection), _isActive(true)
 {}
 
-
 ClientListener::~ClientListener() = default;
 
 void ClientListener::shutdown() { this->_isActive = false; }
 
 wxThread::ExitCode ClientListener::Entry()
 {
+    // fixed by chatgpt
     try {
-        char buffer[512]; // 512 bytes
+        char buffer[512];
+        std::string leftover; // To store incomplete messages across reads
         ssize_t count = 0;
 
         this->_connection->set_non_blocking();
 
-        while ( this->isActive() &&
-                ((count = this->_connection->read(buffer, sizeof(buffer))) > 0 ||
-                 this->_connection->last_error() == EWOULDBLOCK) ) {
-            try {
-                int pos = 0;
+        while ( this->isActive() ) {
+            count = this->_connection->read(buffer, sizeof(buffer));
 
-                // extract length of message in bytes (which is sent at the start of the message, and is separated by a
-                // ":")
-                std::stringstream messageLengthStream;
-                while ( pos < count && buffer[pos] != ':' ) {
-                    messageLengthStream << buffer[pos];
-                    pos++;
+            if ( count > 0 ) {
+                // Append new data to leftover string
+                leftover.append(buffer, count);
+
+                while ( !leftover.empty() ) {
+
+                    size_t colonPos = leftover.find(':');
+                    if ( colonPos == std::string::npos ) {
+                        // Wait for more data if ':' is not yet available
+                        break;
+                    }
+
+                    try {
+                        ssize_t messageLength = std::stoi(leftover.substr(0, colonPos));
+                        size_t totalMessageSize = colonPos + 1 + messageLength;
+
+                        // Check if the full message is available
+                        if ( leftover.size() < totalMessageSize ) {
+                            // Wait for more data
+                            break;
+                        }
+
+                        std::string message = leftover.substr(colonPos + 1, messageLength);
+                        leftover = leftover.substr(totalMessageSize);
+
+                        ClientNetworkManager::receiveMessage(message);
+
+                    } catch ( const std::exception &e ) {
+                        LOG(ERROR) << "Network error. Error while reading message: " << e.what();
+                        leftover.clear(); // Reset leftover to avoid infinite errors
+                        break;
+                    }
                 }
-                ssize_t messageLength = std::stoi(messageLengthStream.str());
-
-                // initialize a stream for the message
-                std::stringstream messageStream;
-
-                // copy everything following the message length declaration into a stringstream
-                messageStream.write(&buffer[pos + 1], count - (pos + 1));
-                ssize_t bytesReadSoFar = count - (pos + 1);
-
-                // read remaining packages until full message length is reached
-                while ( bytesReadSoFar < messageLength && count != 0 ) {
-                    count = this->_connection->read(buffer, sizeof(buffer));
-                    messageStream.write(buffer, count);
-                    bytesReadSoFar += count;
-                }
-
-                // process message (if we've received entire message)
-                if ( bytesReadSoFar == messageLength ) {
-                    std::string message = messageStream.str();
-                    // GameController::getMainThreadEventHandler()->CallAfter([message]{
-                    ClientNetworkManager::receiveMessage(message);
-                    //});
-
-                } else {
-                    LOG(ERROR) << "Network error. Could not read entire message. TCP stream ended early. Difference is "
-                               << std::to_string(messageLength - bytesReadSoFar) << " bytes";
-                }
-
-            } catch ( std::exception &e ) {
-                // Make sure the connection isn't terminated only because of a read error
-                LOG(ERROR) << "Network error. Error while reading message: " << std::string(e.what());
+            } else if ( this->_connection->last_error() != EWOULDBLOCK ) {
+                LOG(ERROR) << "Network error: Read error, shutting down Listener";
+                break;
             }
         }
-
-        LOG(ERROR) << "Network error. Read error, shutting down Listener";
-
     } catch ( const std::exception &e ) {
-        LOG(ERROR) << "Network error. Error in listener thread: " << std::string(e.what());
+        LOG(ERROR) << "Network error: " << e.what();
     }
 
     LOG(INFO) << "Exited Listener";
-    return (wxThread::ExitCode)0; // everything okay
+    return (wxThread::ExitCode)0;
 }
+
 
 bool ClientListener::isActive() { return this->_isActive; }

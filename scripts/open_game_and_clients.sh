@@ -1,5 +1,64 @@
 #!/bin/bash
 
+# This script starts the server and two clients in the background.
+# The server and clients are started with the "info" log level and log to separate files.
+# All processes will be terminated when the script receives a SIGINT or SIGTERM signal.
+#
+# Usage: ./open_game_and_clients.sh [options]
+# Options:
+# -h, --help:      Display help message
+# -D, --debug:     Enable debug mode for client and server
+# -l, --log-level: Set log level for client and server
+
+# Print help message
+print_help() {
+    echo "Usage: $0 [options]" 1>&2
+    echo "Options:" 1>&2
+    echo "  -h, --help:      Display this help message" 1>&2
+    echo "  -D, --debug:     Enable debug mode for client and server" 1>&2
+    echo "  -l, --log-level: Set log level for client and server" 1>&2
+}
+
+# Parse command line arguments
+while [ "$#" -gt 0 ]; do
+    case "$1" in
+        -h|--help)
+            print_help
+            exit 0
+            ;;
+        -D|--debug)
+            export DEBUG_OPTIONS="--debug"
+            shift
+            ;;
+        -l|--log-level)
+            if [ -z "$2" ]; then
+                echo "Error: Missing argument for option $1" 1>&2
+                print_help
+                exit 1
+            fi
+            export LOG_LEVEL="--log-level $2"
+            shift 2
+            ;;
+        *)
+            echo "Error: Unrecognized option: $1" 1>&2
+            print_help
+            exit 1
+            ;;
+    esac
+done
+
+# Set log level
+#
+# If LOG_LEVEL is set, it overrides the default log level.
+# If DEBUG_OPTIONS is set, log level is set to "debug" by default.
+# Otherwise, log level is set to "warn" by default.
+if [ -z "$DEBUG_OPTIONS" ]; then
+    DEFAULT_LOG_LEVEL="debug"
+else
+    DEFAULT_LOG_LEVEL="warn"
+fi
+LOG_LEVEL=${LOG_LEVEL:-"--log-level $DEFAULT_LOG_LEVEL"}
+
 # Flag to prevent double cleanup
 CLEANUP_DONE=0
 
@@ -43,7 +102,7 @@ cd "$EXEC_DIR" || {
 rm -f server.log client1.log client2.log
 
 # Start the server in the background
-./server_exe -l info -f server.log --debug &
+./server_exe -f server.log ${LOG_LEVEL} ${DEBUG_OPTIONS} &
 SERVER_PID=$!
 
 # Check if server started successfully
@@ -53,11 +112,11 @@ if ! ps -p $SERVER_PID > /dev/null; then
 fi
 
 # Start first client in the background
-./client_exe -l info -f client1.log &
+./client_exe -f client1.log ${LOG_LEVEL} ${DEBUG_OPTIONS} &
 CLIENT1_PID=$!
 
 # Start second client in the background
-./client_exe -l info -f client2.log &
+./client_exe -f client2.log ${LOG_LEVEL} ${DEBUG_OPTIONS} &
 CLIENT2_PID=$!
 
 # Check if clients started successfully

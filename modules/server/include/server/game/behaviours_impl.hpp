@@ -161,6 +161,21 @@ namespace server
             BEHAVIOUR_DONE;
         }
 
+        DEFINE_BEHAVIOUR(Moneylender)
+        {
+            LOG_CALL;
+            ASSERT_NO_DECISION;
+
+            auto &affected_player = game_state.getCurrentPlayer();
+            if (affected_player.hasCard<shared::HAND>("Copper")) {
+                // Discard the copper
+                affected_player.move<shared::HAND, shared::TRASH>("Copper");
+                affected_player.addTreasure(3);
+            }
+
+            BEHAVIOUR_DONE;
+        }
+
         DEFINE_BEHAVIOUR(TreasureTrove)
         {
             LOG_CALL;

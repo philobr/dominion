@@ -87,6 +87,9 @@ void server::BehaviourRegistry::initialiseBehaviours()
     // enemies draw a card
     insert<DrawCards<4>, GainBuys<1>, DrawCardsEnemies<1>>("Council_Room");
 
+    // may trash copper and gain +3
+    insert<Moneylender>("Moneylender");
+
     // enemies get curse on discard pile
     insert<DrawCards<2>, CurseEnemy>("Witch");
 
@@ -129,8 +132,6 @@ void server::BehaviourRegistry::initialiseBehaviours()
     insert<NOT_IMPLEMENTED_YET>("Workshop");
     // discard top of draw pile, if action you may play it
     insert<NOT_IMPLEMENTED_YET>("Vassal");
-    // may trash copper and gain +3
-    insert<NOT_IMPLEMENTED_YET>("Moneylender");
     // compilcated, google it
     insert<NOT_IMPLEMENTED_YET>("Bureaucrat");
     // trash card from hand, gain card (to discard pile), costing 2 more than it

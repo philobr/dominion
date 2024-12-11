@@ -21,13 +21,6 @@ namespace shared
     SUPPLY CARDS
      */
 
-    // ================================
-    // TO BE DELETED: issue #165
-    REGISTER_CARD(Placeholder1, CardType::ACTION, 2);
-    REGISTER_CARD(Placeholder2, CardType::ACTION, 2);
-    REGISTER_CARD(Placeholder3, CardType::ACTION, 2);
-    // ================================
-
     // treasure
     REGISTER_CARD(Copper, CardType::TREASURE, 0);
     REGISTER_CARD(Silver, CardType::TREASURE, 3);
@@ -45,39 +38,48 @@ namespace shared
     KINGDOM CARDS
     */
 
-    REGISTER_CARD(Merchant, CardType::ACTION, 3); // conditional effect, how?
-    REGISTER_CARD(Throne_Room, CardType::ACTION, 4); // how do we keep this active?
+    // REGISTER_CARD(Merchant, CardType::ACTION, 3); // conditional effect, how?
+    // REGISTER_CARD(Throne_Room, CardType::ACTION, 4); // how do we keep this active?
 
     // God Mode (for testing only)
     REGISTER_CARD(God_Mode, CardType::ACTION, 0);
 
     // non-interactive
-    REGISTER_CARD(Moat, CardType::ACTION | CardType::REACTION, 2);
     REGISTER_CARD(Village, CardType::ACTION, 3);
     REGISTER_CARD(Smithy, CardType::ACTION, 4);
-    REGISTER_CARD(Gardens, CardType::ACTION | CardType::VICTORY, 4);
     REGISTER_CARD(Festival, CardType::ACTION, 5);
     REGISTER_CARD(Market, CardType::ACTION, 5);
     REGISTER_CARD(Laboratory, CardType::ACTION, 5);
     REGISTER_CARD(Council_Room, CardType::ACTION, 5);
     REGISTER_CARD(Witch, CardType::ACTION | CardType::ATTACK, 5);
+    REGISTER_CARD(Workers_Village, CardType::ACTION, 4);
+    REGISTER_CARD(Great_Hall, CardType::ACTION | CardType::VICTORY, 3);
+
+    // victory cards
+    REGISTER_CARD(Gardens, CardType::KINGDOM | CardType::VICTORY, 4);
+    REGISTER_CARD(Duke, CardType::KINGDOM | CardType::VICTORY, 5);
+    REGISTER_CARD(Silk_Road, CardType::KINGDOM | CardType::VICTORY, 4);
+
+    // treasure cards
+    REGISTER_CARD(Treasure_Trove, CardType::KINGDOM | CardType::TREASURE, 5);
 
     // interactive
-    REGISTER_CARD(Cellar, CardType::ACTION, 2);
-    REGISTER_CARD(Chapel, CardType::ACTION, 2);
-    REGISTER_CARD(Workshop, CardType::ACTION, 3);
-    REGISTER_CARD(Vassal, CardType::ACTION, 3);
-    REGISTER_CARD(Harbinger, CardType::ACTION, 3);
-    REGISTER_CARD(Poacher, CardType::ACTION, 4);
-    REGISTER_CARD(Moneylender, CardType::ACTION, 4);
-    REGISTER_CARD(Militia, CardType::ACTION | CardType::ATTACK, 4);
-    REGISTER_CARD(Bureaucrat, CardType::ACTION | CardType::ATTACK, 4);
-    REGISTER_CARD(Remodel, CardType::ACTION, 4);
-    REGISTER_CARD(Sentry, CardType::ACTION, 5);
-    REGISTER_CARD(Library, CardType::ACTION, 5);
-    REGISTER_CARD(Bandit, CardType::ACTION | CardType::ATTACK, 5);
-    REGISTER_CARD(Mine, CardType::ACTION, 5);
-    REGISTER_CARD(Artisan, CardType::ACTION, 6);
+    // REGISTER_CARD(Cellar, CardType::ACTION, 2);
+    // REGISTER_CARD(Chapel, CardType::ACTION, 2);
+    // REGISTER_CARD(Workshop, CardType::ACTION, 3);
+    // REGISTER_CARD(Vassal, CardType::ACTION, 3);
+    // REGISTER_CARD(Harbinger, CardType::ACTION, 3);
+    // REGISTER_CARD(Poacher, CardType::ACTION, 4);
+    // REGISTER_CARD(Moneylender, CardType::ACTION, 4);
+    // REGISTER_CARD(Militia, CardType::ACTION | CardType::ATTACK, 4);
+    // REGISTER_CARD(Bureaucrat, CardType::ACTION | CardType::ATTACK, 4);
+    // REGISTER_CARD(Remodel, CardType::ACTION, 4);
+    // REGISTER_CARD(Sentry, CardType::ACTION, 5);
+    // REGISTER_CARD(Library, CardType::ACTION, 5);
+    // REGISTER_CARD(Bandit, CardType::ACTION | CardType::ATTACK, 5);
+    // REGISTER_CARD(Mine, CardType::ACTION, 5);
+    // REGISTER_CARD(Artisan, CardType::ACTION, 6);
+    // REGISTER_CARD(Moat, CardType::ACTION | CardType::REACTION, 2);
 
 #undef REGISTER_CARD
 } // namespace shared

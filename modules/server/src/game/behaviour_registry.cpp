@@ -1,6 +1,8 @@
+
 #include <server/debug_mode.h>
 #include <server/game/behaviour_registry.h>
 #include <server/game/victory_card_behaviours.h>
+#include <shared/game/cards/card_factory.h>
 
 std::vector<std::unique_ptr<server::base::Behaviour>>
 server::BehaviourRegistry::getBehaviours(const std::string &card_id)
@@ -11,7 +13,6 @@ server::BehaviourRegistry::getBehaviours(const std::string &card_id)
     }
     return it->second();
 }
-
 
 server::VictoryCardBehaviour &
 server::BehaviourRegistry::getVictoryBehaviour(const shared::CardBase::id_t &card_id) const
@@ -47,13 +48,6 @@ void server::BehaviourRegistry::initialiseBehaviours()
      * insert can take multiple types as template param
      */
 
-    // ================================
-    // TO BE DELETED: issue #165
-    insert<GainCoins<1>>("Placeholder1");
-    insert<GainCoins<1>>("Placeholder2");
-    insert<GainCoins<1>>("Placeholder3");
-    // ================================
-
     /**
      * If we are running in debug mode, we enable "God Mode".
      */
@@ -77,12 +71,17 @@ void server::BehaviourRegistry::initialiseBehaviours()
     insertVictory<ConstantVictoryPoints<-1>>("Curse");
 
     // kingdom cards
-    insert<DrawCards<2>>("Moat");
     insert<DrawCards<3>>("Smithy");
     insert<GainActions<2>, DrawCards<1>>("Village");
     insert<GainActions<1>, DrawCards<2>>("Laboratory");
     insert<GainActions<2>, GainCoins<2>, GainBuys<1>>("Festival");
     insert<GainActions<1>, GainCoins<1>, GainBuys<1>, DrawCards<1>>("Market");
+
+    insert<DrawCards<1>, GainActions<2>, GainBuys<1>>("Workers_Village");
+    insertVictory<ConstantVictoryPoints<1>, DrawCards<1>, GainActions<1>>("Great_Hall");
+
+    // money cards
+    insert<GainCoins<2>, TreasureTrove>("Treasure_Trove");
 
     // enemies draw a card
     insert<DrawCards<4>, GainBuys<1>, DrawCardsEnemies<1>>("Council_Room");
@@ -93,9 +92,15 @@ void server::BehaviourRegistry::initialiseBehaviours()
     // may trash treasure from hand, gain treasure costing 3 more than it
     insert<Mine>("Mine");
 
-    // count points, only if game is over!
     auto gardens_filter = [](const shared::CardBase::id_t & /*card*/) -> bool { return true; };
     insertVictory<VictoryPointsPerNCards<1, 10, gardens_filter>>("Gardens");
+
+    auto duke_filter = [](const shared::CardBase::id_t &card) -> bool { return card == "Duchy"; };
+    insertVictory<VictoryPointsPerNCards<1, 1, duke_filter>>("Duke");
+
+    auto silk_road_filter = [](const shared::CardBase::id_t &card) -> bool
+    { return shared::CardFactory::isVictory(card); };
+    insertVictory<VictoryPointsPerNCards<1, 4, silk_road_filter>>("Silk_Road");
 
     /*
     UNSURE
@@ -120,6 +125,7 @@ void server::BehaviourRegistry::initialiseBehaviours()
     insert<GainCoins<2>, NOT_IMPLEMENTED_YET>("Militia");
     // peek top 2 from deck, trash (and/or) discard any. return rest to draw pile in any order
     insert<DrawCards<1>, GainActions<1>, NOT_IMPLEMENTED_YET>("Sentry");
+    insert<DrawCards<2>, NOT_IMPLEMENTED_YET>("Moat");
 
     // gain any card costing up to 4
     insert<NOT_IMPLEMENTED_YET>("Workshop");

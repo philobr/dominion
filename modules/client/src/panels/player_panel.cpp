@@ -164,7 +164,8 @@ namespace client
             DiscardPile = new PilePanel(DiscardPilePanel, shared::Pile("logo", 0),
                                         formatting_constants::DEFAULT_BOARD_PILE_SIZE);
         } else {
-            DiscardPile = new PilePanel(DiscardPilePanel, shared::Pile(top_discard_card, discard_pile_size));
+            DiscardPile = new PilePanel(DiscardPilePanel, shared::Pile(top_discard_card, discard_pile_size),
+                                        formatting_constants::DEFAULT_BOARD_PILE_SIZE);
         }
 
         // Create the sizer for the discard pile

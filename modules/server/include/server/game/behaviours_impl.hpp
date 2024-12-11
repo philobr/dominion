@@ -144,6 +144,18 @@ namespace server
             BEHAVIOUR_DONE;
         }
 
+        DEFINE_BEHAVIOUR(TreasureTrove)
+        {
+            LOG_CALL;
+            ASSERT_NO_DECISION;
+
+            auto &affected_player = game_state.getCurrentPlayer();
+            affected_player.gain("Copper");
+            affected_player.gain("Gold");
+
+            BEHAVIOUR_DONE;
+        }
+
 #define TODO_IMPLEMENT_ME                                                                                              \
     SUPPRESS_UNUSED_VAR_WARNING(game_state);                                                                           \
     SUPPRESS_UNUSED_VAR_WARNING(action_decision);                                                                      \

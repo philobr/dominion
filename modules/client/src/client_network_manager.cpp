@@ -12,6 +12,7 @@
 
 // initialize static members
 sockpp::tcp_connector *ClientNetworkManager::_connection = nullptr;
+ClientListener *ClientNetworkManager::_listener = nullptr;
 
 bool ClientNetworkManager::_connection_success = false;
 bool ClientNetworkManager::_failed_to_connect = false;
@@ -29,6 +30,8 @@ void ::ClientNetworkManager::init(const std::string &host, const uint16_t port)
 
     // delete exiting connection and create new one
     if ( ClientNetworkManager::_connection != nullptr ) {
+        ClientNetworkManager::_listener->shutdown();
+        ClientNetworkManager::_listener = nullptr;
         ClientNetworkManager::_connection->shutdown();
         delete ClientNetworkManager::_connection;
         LOG(INFO) << "Removed old connection";
@@ -41,9 +44,9 @@ void ::ClientNetworkManager::init(const std::string &host, const uint16_t port)
         wxGetApp().getController().showStatus("Connected to " + host + ":" + std::to_string(port));
         ClientNetworkManager::_connection_success = true;
         // start network thread
-        ClientListener *clientlistener = new ClientListener(ClientNetworkManager::_connection);
+        ClientNetworkManager::_listener = new ClientListener(ClientNetworkManager::_connection);
 
-        if ( clientlistener->Run() != wxTHREAD_NO_ERROR ) {
+        if ( ClientNetworkManager::_listener->Run() != wxTHREAD_NO_ERROR ) {
             LOG(ERROR) << "Could not create client network thread";
             wxGetApp().getController().showError("Connection error", "Could not create client network thread");
         }

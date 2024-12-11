@@ -2,6 +2,7 @@
 
 #include <cstdint>
 #include <string>
+#include "client_listener.h"
 #include "shared/message_types.h"
 #include "sockpp/tcp_connector.h"
 
@@ -24,6 +25,7 @@ private:
 
 
     static sockpp::tcp_connector *_connection;
+    static ClientListener *_listener;
 
     static bool _connection_success;
     static bool _failed_to_connect;

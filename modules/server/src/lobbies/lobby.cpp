@@ -65,7 +65,6 @@ namespace server
                                                                          order_response.getResults());
         } else {
             broadcastOrders(message_interface, order_response);
-            broadcastGameState(message_interface);
         }
     }
 

@@ -19,10 +19,8 @@ namespace server
     class Player : public shared::PlayerBase
     {
         std::vector<shared::CardBase::id_t> draw_pile;
-        std::vector<shared::CardBase::id_t> discard_pile;
         std::vector<shared::CardBase::id_t> hand_cards;
 
-        std::vector<shared::CardBase::id_t> played_cards;
         std::vector<shared::CardBase::id_t> staged_cards;
 
     public:
@@ -33,8 +31,7 @@ namespace server
         explicit Player(shared::PlayerBase::id_t id) : shared::PlayerBase(id){};
 
         Player(const Player &other) :
-            shared::PlayerBase(other), draw_pile(other.draw_pile), discard_pile(other.discard_pile),
-            hand_cards(other.hand_cards), played_cards(other.played_cards)
+            shared::PlayerBase(other), draw_pile(other.draw_pile), hand_cards(other.hand_cards)
         {}
 
         reduced::Player::ptr_t getReducedPlayer();
@@ -131,6 +128,7 @@ namespace server
          * This should only be called when played_cards and staged_cards are empty.
          */
         int getVictoryPoints() const;
+
 
     protected:
         /**

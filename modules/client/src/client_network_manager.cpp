@@ -31,6 +31,7 @@ void ::ClientNetworkManager::init(const std::string &host, const uint16_t port)
     if ( ClientNetworkManager::_connection != nullptr ) {
         ClientNetworkManager::_connection->shutdown();
         delete ClientNetworkManager::_connection;
+        LOG(INFO) << "Removed old connection";
     }
     ClientNetworkManager::_connection = new sockpp::tcp_connector();
 

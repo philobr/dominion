@@ -88,6 +88,7 @@ namespace client
         std::vector<PilePanel *> VictoryPiles_;
         std::vector<PilePanel *> TreasurePiles_;
         std::vector<PilePanel *> KingdomPiles_;
+        std::vector<PilePanel *> CursePiles_;
 
         bool isGainFromBoardPhase_ = false;
     };
@@ -96,9 +97,15 @@ namespace client
     void BoardPanel::drawPiles(std::shared_ptr<shared::Board> board, TypeRule can_buy, int treasure)
     {
 
+        VictoryPiles_.clear();
+        TreasurePiles_.clear();
+        KingdomPiles_.clear();
+        CursePiles_.clear();
+
         const auto &VictoryCards = board->getVictoryCards();
         const auto &TreasureCards = board->getTreasureCards();
         const auto &KingdomCards = board->getKingdomCards();
+        const auto CurseCards = shared::Board::pile_container_t({board->getCurseCardPile()});
 
         // use a grid bag sizer that allow us to place the cards in a grid
         // and not fill all spaces
@@ -115,11 +122,14 @@ namespace client
         // places the kingdom piles in a 2x5 grid
         auto KingdomPositionRule = [](unsigned int counter) { return wxGBPosition(counter % 2, 2 + counter / 2); };
 
+        auto CursePositionRule = [](unsigned int counter) { return wxGBPosition(counter, 7); };
+
 
         addPiles(VictoryCards, sizer, VictoryPositionRule, can_buy(shared::CardType::VICTORY), treasure, VictoryPiles_);
         addPiles(TreasureCards, sizer, TreasurePositionRule, can_buy(shared::CardType::TREASURE), treasure,
                  TreasurePiles_);
         addPiles(KingdomCards, sizer, KingdomPositionRule, can_buy(shared::CardType::KINGDOM), treasure, KingdomPiles_);
+        addPiles(CurseCards, sizer, CursePositionRule, can_buy(shared::CardType::CURSE), treasure, CursePiles_);
 
         // necessary command for the grid bag sizer to do it's thing and arrange
         // the panels

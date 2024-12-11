@@ -4,6 +4,7 @@
 
 namespace client
 {
+    // NOLINTBEGIN(bugprone-suspicious-enum-usage)
     VictoryScreenPanel::VictoryScreenPanel(wxWindow *parent) :
         wxPanel(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize), victory_screen_sizer(new wxBoxSizer(wxVERTICAL))
     {}
@@ -30,7 +31,7 @@ namespace client
         winner_sizer->Add(winner_score_text, 0, wxALIGN_CENTER_VERTICAL);
 
         // Add a spacer for top padding
-        victory_screen_sizer->Add(0, 20, 0, wxEXPAND); // 20 pixels tall spacer
+        victory_screen_sizer->Add(0, 30, 0, wxEXPAND); // 20 pixels tall spacer
 
         // Add the winner sizer to the main victory screen sizer
         victory_screen_sizer->Add(winner_sizer, 0, wxALIGN_CENTER | wxALL, 10);
@@ -76,13 +77,13 @@ namespace client
         victory_screen_sizer->Add(close_button, 0, wxALIGN_CENTER | wxALL, 20);
 
         // Bind the button click event to a handler
-        close_button->Bind(wxEVT_BUTTON, &VictoryScreenPanel::OnCloseButtonClicked, this);
+        close_button->Bind(wxEVT_BUTTON, &VictoryScreenPanel::onCloseButtonClicked, this);
 
         SetSizerAndFit(victory_screen_sizer);
     }
 
-
-    void VictoryScreenPanel::OnCloseButtonClicked(wxCommandEvent& /*event*/)
+    //NOLINTEND(bugprone-suspicious-enum-usage)
+    void VictoryScreenPanel::onCloseButtonClicked(wxCommandEvent& /*event*/)
     {
         // Assuming this panel is part of the main frame or you have a way to access it
         wxWindow* mainFrame = wxTheApp->GetTopWindow();

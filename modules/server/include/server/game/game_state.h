@@ -118,7 +118,13 @@ namespace server
          * @brief Takes a card from the board (without payment)
          * @throws exception::OutOfPhase, exception::CardNotAvailable
          */
-        void tryGain(const shared::PlayerBase::id_t &requestor_id, const shared::CardBase::id_t &card_id);
+        void tryGainToDiscard(const shared::PlayerBase::id_t &requestor_id, const shared::CardBase::id_t &card_id);
+
+        /**
+         * @brief Takes a card from the board (without payment)
+         * @throws exception::OutOfPhase, exception::CardNotAvailable
+         */
+        void tryGainToHand(const shared::PlayerBase::id_t &requestor_id, const shared::CardBase::id_t &card_id);
 
         /**
          * @brief Plays a card from the hand cards. This involves moving the card from the hand to played cards.

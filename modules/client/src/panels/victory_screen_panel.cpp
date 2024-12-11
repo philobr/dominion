@@ -91,21 +91,22 @@ namespace client
 
         // Create a grid sizer for the player results
         wxFlexGridSizer* grid_sizer = new wxFlexGridSizer(0, 2, 10, 20);
-        grid_sizer->AddGrowableCol(1);
+        grid_sizer->AddGrowableCol(0, 1); // Make the first column (names) growable
+        grid_sizer->AddGrowableCol(1, 1); // Make the second column (scores) growable
 
         for (const auto& player : player_results) {
             TextPanel* name_text = new TextPanel(this, wxID_ANY, player.playerName() + ":", TextFormat::BOLD);
             TextPanel* score_text = new TextPanel(this, wxID_ANY, std::to_string(player.score()), TextFormat::BOLD);
 
-            grid_sizer->Add(name_text, wxSizerFlags().Right());
-            grid_sizer->Add(score_text, wxSizerFlags().Left());
+            grid_sizer->Add(name_text, wxSizerFlags().Expand().Right());
+            grid_sizer->Add(score_text, wxSizerFlags().Expand().Left());
         }
 
         // Add the grid sizer to the horizontal sizer
         horizontal_sizer->Add(grid_sizer, 1, wxALIGN_CENTER_VERTICAL | wxLEFT, 20);
 
         // Add the horizontal sizer to the main vertical sizer
-        victory_screen_sizer->Add(horizontal_sizer, 0, wxALIGN_CENTER | wxALL, 20);
+        victory_screen_sizer->Add(horizontal_sizer, 1, wxALIGN_CENTER | wxALL, 20);
 
         // Create the close button
         wxButton* close_button = new wxButton(this, wxID_ANY, "Close Game", wxDefaultPosition, wxSize(100, 40));
@@ -114,12 +115,9 @@ namespace client
         // Bind the button click event to a handler
         close_button->Bind(wxEVT_BUTTON, &VictoryScreenPanel::OnCloseButtonClicked, this);
 
-        // skipToVictoryScreenButton->Bind(wxEVT_BUTTON,
-        //     [](const wxCommandEvent& /*event*/)
-        //     { wxGetApp().getController().skipToVictoryScreen(); });
-            
         SetSizerAndFit(victory_screen_sizer);
     }
+
 
     void VictoryScreenPanel::OnCloseButtonClicked(wxCommandEvent& /*event*/)
     {

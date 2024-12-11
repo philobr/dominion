@@ -90,6 +90,8 @@ void server::BehaviourRegistry::initialiseBehaviours()
     insert<DrawCards<2>, CurseEnemy>("Witch");
     // gain card costing up to 5. put card from hand onto deck
     insert<GainCardMaxCost<5>, CardToDrawPile>("Artisan");
+    // may trash treasure from hand, gain treasure costing 3 more than it
+    insert<Mine>("Mine");
 
     // count points, only if game is over!
     auto gardens_filter = [](const shared::CardBase::id_t & /*card*/) -> bool { return true; };
@@ -133,6 +135,4 @@ void server::BehaviourRegistry::initialiseBehaviours()
     insert<NOT_IMPLEMENTED_YET>("Library");
     // gain a gold, enemies reveal top two card from deck trash any treasure except copper, discard rest
     insert<NOT_IMPLEMENTED_YET>("Bandit");
-    // may trash treasure from hand, gain treasure costing 3 more than it
-    insert<NOT_IMPLEMENTED_YET>("Mine");
 }

@@ -213,13 +213,20 @@ namespace server
             const auto cur_player_id = game_state.getCurrentPlayerId();
 
             if ( !has_action_decision ) {
-                // send out gain card oder
+                // choose any card
                 return {cur_player_id, std::make_unique<shared::GainFromBoardOrder>(max_cost)};
             }
 
             auto *gain_decision = dynamic_cast<shared::GainFromBoardDecision *>(action_decision.value().get());
             if ( gain_decision == nullptr ) {
-                LOG(ERROR) << FUNC_NAME << " got a wrong decision type! Expected: shared::GainFromBoardDecision";
+                const auto *decision_ptr = action_decision.value().get();
+                if ( decision_ptr != nullptr ) {
+                    LOG(ERROR) << FUNC_NAME
+                               << " got a wrong decision type! expected: shared::GainFromBoardDecision, got: "
+                               << typeid(*decision_ptr).name();
+                } else {
+                    LOG(ERROR) << FUNC_NAME << " got a null pointer for action decision!";
+                }
                 throw std::runtime_error("Decision type is not allowed!");
             }
 
@@ -249,11 +256,6 @@ namespace server
                 throw std::runtime_error("Decision type is not allowed!");
             }
 
-            if ( deck_choice->cards.size() != deck_choice->choices.size() ) {
-                LOG(ERROR) << FUNC_NAME << " Size mismatch: each card needs a choice!";
-                throw std::runtime_error("Message is ill formed");
-            }
-
             if ( deck_choice->cards.size() != 1 ) {
                 LOG(ERROR) << FUNC_NAME << "Expects exactly one choice!";
                 throw std::runtime_error("Only one choice is allowed!");
@@ -261,7 +263,7 @@ namespace server
 
             auto &player = game_state.getCurrentPlayer();
             auto move_card_id = deck_choice->cards.at(0);
-            if ( player.hasCard<shared::CardAccess::HAND>(move_card_id) ) {
+            if ( !player.hasCard<shared::CardAccess::HAND>(move_card_id) ) {
                 LOG(ERROR) << FUNC_NAME << "Player: " << player.getId() << " does not have card: " << move_card_id
                            << " in hand!";
                 throw std::runtime_error("Card not found!");
@@ -270,6 +272,69 @@ namespace server
             player.move<shared::CardAccess::HAND, shared::CardAccess::DRAW_PILE_TOP>(move_card_id);
             BEHAVIOUR_DONE;
         }
+
+        DEFINE_BEHAVIOUR(Mine)
+        {
+            LOG_CALL;
+
+            const bool has_action_decision = action_decision.has_value();
+            const auto player_id = game_state.getCurrentPlayerId();
+            auto &player = game_state.getCurrentPlayer();
+
+            if ( !has_action_decision ) {
+                if ( !player.hasType<shared::CardAccess::HAND>(shared::CardType::TREASURE) ) {
+                    LOG(INFO) << "Player: " << " has no treasure in hand, returning";
+                    BEHAVIOUR_DONE;
+                }
+
+                return {player_id,
+                        std::make_unique<shared::ChooseFromHandOrder>(
+                                1, 1, shared::ChooseFromOrder::AllowedChoice::DISCARD, shared::CardType::TREASURE)};
+            }
+
+            if ( auto *trash_decision = dynamic_cast<shared::DeckChoiceDecision *>(action_decision.value().get()) ) {
+                if ( trash_decision->cards.size() != 1 ) {
+                    LOG(ERROR) << FUNC_NAME << "Expects exactly one choice!";
+                    throw std::runtime_error("Only one choice is allowed!");
+                }
+
+                auto card_id = trash_decision->cards.at(0);
+                if ( !player.hasCard<shared::CardAccess::HAND>(card_id) ) {
+                    LOG(ERROR) << FUNC_NAME << "Player: " << player.getId() << " does not have card: " << card_id
+                               << " in hand!";
+                    throw std::runtime_error("Card not found!");
+                }
+
+                if ( !shared::CardFactory::isTreasure(card_id) ) {
+                    LOG(ERROR) << FUNC_NAME << "Player: " << player.getId() << " tried to select card: " << card_id
+                               << " which does not have type Treasure";
+                    throw std::runtime_error("CardType not allowed!");
+                }
+
+                player.move<shared::CardAccess::HAND, shared::CardAccess::TRASH>(card_id);
+                const auto max_cost = shared::CardFactory::getCost(card_id) + 3;
+                return {player_id, std::make_unique<shared::GainFromBoardOrder>(max_cost, shared::CardType::TREASURE)};
+            } else if ( auto *card_choice =
+                                dynamic_cast<shared::GainFromBoardDecision *>(action_decision.value().get()) ) {
+                auto card_id = card_choice->chosen_card;
+
+                if ( !shared::CardFactory::isTreasure(card_id) ) {
+                    LOG(ERROR) << FUNC_NAME << "Player: " << player.getId() << " tried to select card: " << card_id
+                               << " which does not have type Treasure";
+                    throw std::runtime_error("CardType not allowed!");
+                }
+
+                game_state.tryGain(player_id, card_id);
+                // gain adds to discard pile, i dont want to rewrite it now so we just move the card back:)
+                player.move<shared::CardAccess::DISCARD_PILE, shared::CardAccess::HAND>(card_id);
+            }
+            // assert chosen card
+            // move chosen card from hand to discard
+            // player can now gain from board, treasure with max cost
+
+            BEHAVIOUR_DONE;
+        }
+
 
 // ================================
 // UNDEF MACROS

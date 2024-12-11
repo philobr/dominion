@@ -223,7 +223,8 @@ namespace server
         LOG(INFO) << "Player " << requestor_id << " successfully bought card " << card_id;
     }
 
-    void GameState::tryGain(const shared::PlayerBase::id_t &requestor_id, const shared::CardBase::id_t &card_id)
+    void GameState::tryGainToDiscard(const shared::PlayerBase::id_t &requestor_id,
+                                     const shared::CardBase::id_t &card_id)
     {
         if ( phase != GamePhase::PLAYING_ACTION_CARD ) {
             LOG(WARN) << "Player " << requestor_id << " attempted to gain a card outside of the action card phase.";
@@ -232,7 +233,21 @@ namespace server
 
         board->tryTake(card_id);
 
-        getPlayer(requestor_id).gain(card_id);
+        getPlayer(requestor_id).add<shared::CardAccess::DISCARD_PILE>(card_id);
+
+        LOG(INFO) << "Player " << requestor_id << " successfully gained card " << card_id;
+    }
+
+    void GameState::tryGainToHand(const shared::PlayerBase::id_t &requestor_id, const shared::CardBase::id_t &card_id)
+    {
+        if ( phase != GamePhase::PLAYING_ACTION_CARD ) {
+            LOG(WARN) << "Player " << requestor_id << " attempted to gain a card outside of the action card phase.";
+            throw exception::OutOfPhase("Cannot gain a card while in " + gamePhaseToString(phase));
+        }
+
+        board->tryTake(card_id);
+
+        getPlayer(requestor_id).add<shared::CardAccess::HAND>(card_id);
 
         LOG(INFO) << "Player " << requestor_id << " successfully gained card " << card_id;
     }

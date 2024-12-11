@@ -24,18 +24,22 @@ namespace shared
         } else if ( type == "gain_card" ) {
             unsigned int max_cost;
             shared::CardType allowed_type;
+            GET_UINT_MEMBER(max_cost, json, "max_cost");
+            GET_ENUM_MEMBER(allowed_type, json, "allowed_type", shared::CardType);
             return std::make_unique<GainFromBoardOrder>(max_cost, allowed_type);
         } else if ( type == "choose_from_hand" || type == "choose_from_staged" ) {
             unsigned int min_cards;
             unsigned int max_cards;
             shared::ChooseFromOrder::AllowedChoice allowed_choices;
+            shared::CardType allowed_type;
 
             GET_UINT_MEMBER(min_cards, json, "min_cards");
             GET_UINT_MEMBER(max_cards, json, "max_cards");
             GET_ENUM_MEMBER(allowed_choices, json, "allowed_choices", shared::ChooseFromOrder::AllowedChoice);
+            GET_ENUM_MEMBER(allowed_type, json, "allowed_type", shared::CardType);
 
             if ( type == "choose_from_hand" ) {
-                return std::make_unique<ChooseFromHandOrder>(min_cards, max_cards, allowed_choices);
+                return std::make_unique<ChooseFromHandOrder>(min_cards, max_cards, allowed_choices, allowed_type);
             } else if ( type == "choose_from_staged" ) {
                 std::vector<shared::CardBase::id_t> cards;
                 GET_STRING_ARRAY_MEMBER(cards, json, "cards");
@@ -65,12 +69,14 @@ namespace shared
             ADD_UINT_MEMBER(dynamic_cast<const ChooseFromHandOrder *>(this)->min_cards, min_cards);
             ADD_UINT_MEMBER(dynamic_cast<const ChooseFromHandOrder *>(this)->max_cards, max_cards);
             ADD_ENUM_MEMBER(dynamic_cast<const ChooseFromHandOrder *>(this)->allowed_choices, allowed_choices);
+            ADD_ENUM_MEMBER(dynamic_cast<const ChooseFromHandOrder *>(this)->allowed_type, allowed_type);
         } else if ( typeid(*this) == typeid(ChooseFromStagedOrder) ) {
             doc.AddMember("type", "choose_from_staged", doc.GetAllocator());
             ADD_UINT_MEMBER(dynamic_cast<const ChooseFromStagedOrder *>(this)->min_cards, min_cards);
             ADD_UINT_MEMBER(dynamic_cast<const ChooseFromStagedOrder *>(this)->max_cards, max_cards);
             ADD_ENUM_MEMBER(dynamic_cast<const ChooseFromStagedOrder *>(this)->allowed_choices, allowed_choices);
             ADD_ARRAY_OF_STRINGS_MEMBER(dynamic_cast<const ChooseFromStagedOrder *>(this)->cards, cards);
+            ADD_ENUM_MEMBER(dynamic_cast<const ChooseFromStagedOrder *>(this)->allowed_type, allowed_type);
         }
         return doc;
     }

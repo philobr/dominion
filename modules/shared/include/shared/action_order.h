@@ -98,10 +98,16 @@ namespace shared
 
     class GainFromBoardOrder : public ActionOrder
     {
+        static constexpr shared::CardType _any_type = static_cast<shared::CardType>(
+                shared::CardType::ACTION | shared::CardType::ATTACK | shared::CardType::CURSE |
+                shared::CardType::KINGDOM | shared::CardType::REACTION | shared::CardType::TREASURE |
+                shared::CardType::VICTORY);
+
     public:
-        GainFromBoardOrder(unsigned int max_cost, shared::CardType allowed_type) :
+        GainFromBoardOrder(unsigned int max_cost, shared::CardType allowed_type = GainFromBoardOrder::_any_type) :
             max_cost(max_cost), allowed_type(allowed_type)
         {}
+
         bool operator==(const GainFromBoardOrder &other) const;
         bool operator!=(const GainFromBoardOrder &other) const { return !(*this == other); }
 
@@ -114,6 +120,11 @@ namespace shared
 
     class ChooseFromOrder : public ActionOrder
     {
+        static constexpr shared::CardType _any_type = static_cast<shared::CardType>(
+                shared::CardType::ACTION | shared::CardType::ATTACK | shared::CardType::CURSE |
+                shared::CardType::KINGDOM | shared::CardType::REACTION | shared::CardType::TREASURE |
+                shared::CardType::VICTORY);
+
     public:
         enum AllowedChoice
         {
@@ -124,9 +135,12 @@ namespace shared
             HAND_CARDS = 16
         };
 
-        ChooseFromOrder(unsigned int min_cards, unsigned int max_cards, AllowedChoice allowed_choices) :
-            min_cards(min_cards), max_cards(max_cards), allowed_choices(allowed_choices)
+        ChooseFromOrder(unsigned int min_cards, unsigned int max_cards, AllowedChoice allowed_choices,
+                        shared::CardType allowed_type = ChooseFromOrder::_any_type) :
+            min_cards(min_cards),
+            max_cards(max_cards), allowed_choices(allowed_choices), allowed_type(allowed_type)
         {}
+
         ~ChooseFromOrder() override = default;
 
         bool operator==(const ChooseFromOrder &other) const;
@@ -135,6 +149,7 @@ namespace shared
         unsigned int min_cards;
         unsigned int max_cards;
         AllowedChoice allowed_choices;
+        shared::CardType allowed_type;
 
     protected:
         bool equals(const ActionOrder &other) const override;
@@ -163,9 +178,15 @@ namespace shared
     class ChooseFromHandOrder : public ChooseFromOrder
     {
     public:
+        ChooseFromHandOrder(unsigned int min_cards, unsigned int max_cards, AllowedChoice choices,
+                            shared::CardType allowed_type) :
+            ChooseFromOrder(min_cards, max_cards, choices, allowed_type)
+        {}
+
         ChooseFromHandOrder(unsigned int min_cards, unsigned int max_cards, AllowedChoice choices) :
             ChooseFromOrder(min_cards, max_cards, choices)
         {}
+
         ~ChooseFromHandOrder() override = default;
 
         bool operator==(const ChooseFromHandOrder &other) const;

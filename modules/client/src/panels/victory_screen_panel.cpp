@@ -64,13 +64,8 @@ namespace client
 
         victory_screen_sizer = new wxBoxSizer(wxVERTICAL);
 
-        wxColor background_color = wxColor(255, 0, 255);
-
         // Set min size for victory screen
         SetMinSize(wxSize(900, -1));
-
-        // Set background color for victory screen
-        SetBackgroundColour(background_color);
 
         // Show the winner in a special line
         wxBoxSizer* winner_sizer = new wxBoxSizer(wxHORIZONTAL);
@@ -82,7 +77,7 @@ namespace client
 
         // Add a spacer for top padding
         victory_screen_sizer->Add(0, 20, 0, wxEXPAND); // 20 pixels tall spacer
-        
+
         // Add the winner sizer to the main victory screen sizer
         victory_screen_sizer->Add(winner_sizer, 0, wxALIGN_CENTER | wxALL, 10);
 
@@ -112,8 +107,26 @@ namespace client
         // Add the horizontal sizer to the main vertical sizer
         victory_screen_sizer->Add(horizontal_sizer, 0, wxALIGN_CENTER | wxALL, 20);
 
+        // Create the close button
+        wxButton* close_button = new wxButton(this, wxID_ANY, "Close Game");
+        victory_screen_sizer->Add(close_button, 0, wxALIGN_CENTER | wxALL, 20);
+
+        // Bind the button click event to a handler
+        close_button->Bind(wxEVT_BUTTON, &VictoryScreenPanel::OnCloseButtonClicked, this);
+
+        // skipToVictoryScreenButton->Bind(wxEVT_BUTTON,
+        //     [](const wxCommandEvent& /*event*/)
+        //     { wxGetApp().getController().skipToVictoryScreen(); });
+            
         SetSizerAndFit(victory_screen_sizer);
     }
 
-
+    void VictoryScreenPanel::OnCloseButtonClicked(wxCommandEvent& /*event*/)
+    {
+        // Assuming this panel is part of the main frame or you have a way to access it
+        wxWindow* mainFrame = wxTheApp->GetTopWindow();
+        if (mainFrame != nullptr) {
+            mainFrame->Close(true);  // Close the main frame, which should close the application
+        }
+    }
 } // namespace client

@@ -111,6 +111,12 @@ inline void server::Player::discard(const std::vector<unsigned int> &indices)
     moveIndices<PILE, shared::DISCARD_PILE>(indices);
 }
 
+template <enum shared::CardAccess FROM_PILE>
+inline void discard(const shared::CardBase::id_t &card_id)
+{
+    move<FROM_PILE, shared::DISCARD_PILE>(card_id);
+}
+
 template <enum shared::CardAccess PILE>
 inline void server::Player::stage(const std::vector<unsigned int> &indices)
 {

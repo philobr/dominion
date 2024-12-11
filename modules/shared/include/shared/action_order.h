@@ -137,7 +137,8 @@ namespace shared
 
         ChooseFromOrder(unsigned int min_cards, unsigned int max_cards, AllowedChoice allowed_choices,
                         shared::CardType allowed_type = ChooseFromOrder::_any_type) :
-            min_cards(min_cards), max_cards(max_cards), allowed_choices(allowed_choices), allowed_type(allowed_type)
+            min_cards(min_cards),
+            max_cards(max_cards), allowed_choices(allowed_choices), allowed_type(allowed_type)
         {}
 
         ~ChooseFromOrder() override = default;
@@ -159,7 +160,8 @@ namespace shared
     public:
         ChooseFromStagedOrder(unsigned int min_cards, unsigned int max_cards, AllowedChoice choices,
                               std::vector<shared::CardBase::id_t> cards) :
-            ChooseFromOrder(min_cards, max_cards, choices), cards(cards)
+            ChooseFromOrder(min_cards, max_cards, choices),
+            cards(cards)
         {}
 
         ~ChooseFromStagedOrder() override = default;

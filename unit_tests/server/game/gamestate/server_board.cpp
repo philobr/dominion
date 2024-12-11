@@ -170,7 +170,7 @@ INSTANTIATE_TEST_SUITE_P(BuyCardTests, ServerBoardBuyCardTest,
                                  BuyCardTestParam{2, "NonExistentCard", "", false, false},
 
                                  // Attempt to buy from an empty pile
-                                 BuyCardTestParam{2, "Moat", "Kingdom", false, true},
+                                 BuyCardTestParam{2, "Council_Room", "Kingdom", false, true},
                                  BuyCardTestParam{2, "Gold", "Treasure", false, true},
                                  BuyCardTestParam{2, "Duchy", "Victory", false, true}));
 

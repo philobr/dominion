@@ -12,8 +12,7 @@ using namespace shared;
 TEST(SharedLibraryTest, GameStateMessageTwoWayConversion)
 {
 
-    const std::vector<CardBase::id_t> kingdom_cards = {"Village",    "Smithy",  "Market", "Council_Room", "Festival",
-                                                       "Laboratory", "Library", "Mine",   "Witch",        "Artisan"};
+    const std::vector<CardBase::id_t> kingdom_cards = getValidKingdomCards();
     const unsigned int num_players = 2;
     Board::ptr_t board = Board::make(kingdom_cards, num_players);
 

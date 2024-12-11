@@ -58,33 +58,24 @@ wxThread::ExitCode ClientListener::Entry()
                     //});
 
                 } else {
-                    this->outputError("Network error",
-                                      "Could not read entire message. TCP stream ended early. Difference is " +
-                                              std::to_string(messageLength - bytesReadSoFar) + " bytes");
+                    LOG(ERROR) << "Network error. Could not read entire message. TCP stream ended early. Difference is "
+                               << std::to_string(messageLength - bytesReadSoFar) << " bytes";
                 }
 
             } catch ( std::exception &e ) {
                 // Make sure the connection isn't terminated only because of a read error
-                this->outputError("Network error", "Error while reading message: " + std::string(e.what()));
+                LOG(ERROR) << "Network error. Error while reading message: " << std::string(e.what());
             }
         }
 
-        this->outputError("Network error", "Read error, shutting down Listener");
+        LOG(ERROR) << "Network error. Read error, shutting down Listener";
 
     } catch ( const std::exception &e ) {
-        this->outputError("Network error", "Error in listener thread: " + std::string(e.what()));
+        LOG(ERROR) << "Network error. Error in listener thread: " << std::string(e.what());
     }
 
     LOG(INFO) << "Exited Listener";
     return (wxThread::ExitCode)0; // everything okay
-}
-
-// TODO get rid of this?
-void ClientListener::outputError(const std::string & /*title*/, const std::string & /*message*/)
-{
-    // GameController::getMainThreadEventHandler()->CallAfter([title, message]{
-    //     GameController::showError(title, message);
-    // });
 }
 
 bool ClientListener::isActive() { return this->_isActive; }

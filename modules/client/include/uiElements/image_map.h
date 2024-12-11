@@ -18,7 +18,7 @@ namespace client
         ~ImageMap() = default;
 
         /**
-         * @brief Get the Image object
+         * @brief Get the Image object and add it to the map if it hasn't been loaded before
          *
          * @param path
          * @return wxImage

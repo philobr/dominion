@@ -16,6 +16,8 @@ namespace client
     {
         wxString file = wxString("assets") + wxFileName::GetPathSeparator() + asset_name;
 
+        // this either gets the image from the map or loads it from the file system
+        // if it hasn't been used before
         this->_image = wxGetApp().getImageMap().getImage(file);
 
         this->Bind(wxEVT_PAINT, &ImagePanel::paintEvent, this);

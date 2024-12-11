@@ -98,13 +98,13 @@ namespace shared
 
     class GainFromBoardOrder : public ActionOrder
     {
-        static constexpr shared::CardType any_type = static_cast<shared::CardType>(
+        static constexpr shared::CardType _any_type = static_cast<shared::CardType>(
                 shared::CardType::ACTION | shared::CardType::ATTACK | shared::CardType::CURSE |
                 shared::CardType::KINGDOM | shared::CardType::REACTION | shared::CardType::TREASURE |
                 shared::CardType::VICTORY);
 
     public:
-        GainFromBoardOrder(unsigned int max_cost, shared::CardType allowed_type = GainFromBoardOrder::any_type) :
+        GainFromBoardOrder(unsigned int max_cost, shared::CardType allowed_type = GainFromBoardOrder::_any_type) :
             max_cost(max_cost), allowed_type(allowed_type)
         {}
 
@@ -120,7 +120,7 @@ namespace shared
 
     class ChooseFromOrder : public ActionOrder
     {
-        static constexpr shared::CardType any_type = static_cast<shared::CardType>(
+        static constexpr shared::CardType _any_type = static_cast<shared::CardType>(
                 shared::CardType::ACTION | shared::CardType::ATTACK | shared::CardType::CURSE |
                 shared::CardType::KINGDOM | shared::CardType::REACTION | shared::CardType::TREASURE |
                 shared::CardType::VICTORY);
@@ -136,7 +136,7 @@ namespace shared
         };
 
         ChooseFromOrder(unsigned int min_cards, unsigned int max_cards, AllowedChoice allowed_choices,
-                        shared::CardType allowed_type = ChooseFromOrder::any_type) :
+                        shared::CardType allowed_type = ChooseFromOrder::_any_type) :
             min_cards(min_cards), max_cards(max_cards), allowed_choices(allowed_choices), allowed_type(allowed_type)
         {}
 

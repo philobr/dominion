@@ -64,7 +64,7 @@ namespace server
             static inline auto
             validateResponse(GameState &game_state, std::unique_ptr<shared::ActionDecision> &action_decision,
                              unsigned int min_cards, unsigned int max_cards,
-                             shared::CardType TYPE = static_cast<shared::CardType>(
+                             shared::CardType type = static_cast<shared::CardType>(
                                      shared::CardType::ACTION | shared::CardType::ATTACK | shared::CardType::CURSE |
                                      shared::CardType::KINGDOM | shared::CardType::REACTION |
                                      shared::CardType::TREASURE | shared::CardType::VICTORY))
@@ -109,7 +109,7 @@ namespace server
                 for ( size_t i = 0; i < choice_size; ++i ) {
                     const auto card_id = deck_choice->cards.at(i);
                     const auto card_type = shared::CardFactory::getType(card_id);
-                    if ( (card_type & TYPE) != card_type ) {
+                    if ( (card_type & type) != card_type ) {
                         LOG(ERROR) << FUNC_NAME << "Player: " << player_id << " chose card: " << card_id
                                    << ", which has the wrong type!";
                         throw std::runtime_error("Card type not allowed!");

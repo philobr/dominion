@@ -11,17 +11,18 @@ namespace client
 {
     PhaseInfoPanel::PhaseInfoPanel(wxWindow *parent, wxSize size) : wxPanel(parent, wxID_ANY, wxDefaultPosition, size)
     {
-        LOG(WARN) << "using hard coded game_state for testing";
-        auto player = shared::PlayerBase("gigu");
-        auto reduced = reduced::Player::make(player, {"Village", "Copper", "Copper"});
-        auto board = shared::Board::make({"Moat", "Smithy", "Village", "Laboratory", "Festival", "Market",
-                                          "Placeholder1", "Placeholder2", "Placeholder3", "Witch"},
-                                         2);
-        auto game_state = std::make_unique<reduced::GameState>(
-                board, std::move(reduced), std::vector<reduced::Enemy::ptr_t>(), "gigu", GamePhase::ACTION_PHASE);
+        if ( wxGetApp().isDebugMode() ) {
+            LOG(WARN) << "using hard coded game_state for testing";
+            auto player = shared::PlayerBase("gigu");
+            auto reduced = reduced::Player::make(player, {"Village", "Copper", "Copper"});
+            auto board = shared::Board::make({"Council_Room", "Smithy", "Village", "Laboratory", "Festival", "Market",
+                                              "Gardens", "Duke", "Silk_Road", "Witch"},
+                                             2);
+            auto game_state = std::make_unique<reduced::GameState>(
+                    board, std::move(reduced), std::vector<reduced::Enemy::ptr_t>(), "gigu", GamePhase::ACTION_PHASE);
 
-        // TODO: remove when final testing is done
-        drawInfoPanel(*game_state);
+            drawInfoPanel(*game_state);
+        }
     }
 
     void PhaseInfoPanel::drawInfoPanel(const reduced::GameState &game_state)

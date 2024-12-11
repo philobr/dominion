@@ -4,8 +4,8 @@
 
 std::vector<shared::CardBase::id_t> getValidKingdomCards()
 {
-    return {"Village", "Smithy", "Market",  "Festival",    "Laboratory",
-            "Moat",    "Chapel", "Artisan", "Moneylender", "Remodel"};
+    return {"Village",   "Smithy",       "Market", "Festival", "Laboratory",
+            "Silk_Road", "Council_Room", "Witch",  "Gardens",  "Duke"};
 }
 
 void setNPilesToEmpty(shared::Board::pile_container_t &pile_container, size_t n)
@@ -24,11 +24,13 @@ namespace test_helper
 {
     std::vector<shared::CardBase::id_t> getValidRandomKingdomCards(size_t n_cards)
     {
-        std::vector<std::string> action_cards = {
-                "Moat",         "Village",     "Smithy",  "Gardens",    "Festival",   "Market", "Laboratory",
-                "Council_Room", "Witch",       "Cellar",  "Chapel",     "Workshop",   "Vassal", "Harbinger",
-                "Poacher",      "Moneylender", "Militia", "Bureaucrat", "Remodel",    "Sentry", "Library",
-                "Bandit",       "Mine",        "Artisan", "Merchant",   "Throne_Room"};
+        std::vector<std::string> action_cards;
+        for ( const auto &[card_name, card_info] : shared::CardFactory::getAll() ) {
+            if ( card_info->isKingdom() ) {
+                action_cards.push_back(card_name);
+            }
+        }
+
         std::set<std::string> cards;
 
         while ( cards.size() < n_cards ) {
@@ -81,7 +83,7 @@ namespace test_helper
     {
         auto random_cards = getRandomVictoryCards(n_victory);
         auto rand_treasure = getRandomTreasureCards(n_treasure);
-        auto rand_kingdom = getRandomKingdomCards(n_kingdom);
+        auto rand_kingdom = getValidRandomKingdomCards(n_kingdom);
 
         random_cards.insert(random_cards.end(), rand_treasure.begin(), rand_treasure.end());
         random_cards.insert(random_cards.end(), rand_kingdom.begin(), rand_kingdom.end());

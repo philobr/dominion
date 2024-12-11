@@ -13,6 +13,7 @@ static const wxCmdLineEntryDesc CMD_LINE_DESC[] = {
         {wxCMD_LINE_SWITCH, "h", "help", "show this help message", wxCMD_LINE_VAL_NONE, wxCMD_LINE_OPTION_HELP},
         {wxCMD_LINE_OPTION, "f", "log-file", "Log file", wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL},
         {wxCMD_LINE_OPTION, "l", "log-level", "Log level", wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL},
+        {wxCMD_LINE_SWITCH, "D", "debug", "Enable debug mode", wxCMD_LINE_VAL_NONE, wxCMD_LINE_PARAM_OPTIONAL},
         {wxCMD_LINE_NONE, nullptr, nullptr, nullptr, wxCMD_LINE_VAL_NONE, wxCMD_LINE_PARAM_OPTIONAL}};
 
 
@@ -71,6 +72,12 @@ namespace client
 
         LOG(DEBUG) << "Initialized logger, log level: " << shared::Logger::getLevel();
 
+        if ( parser.Found("debug") ) {
+            _debug_mode = true;
+        } else {
+            _debug_mode = false;
+        }
+
         // Allow loading of JPEG  and PNG image files
         wxImage::AddHandler(new wxJPEGHandler());
         wxImage::AddHandler(new wxPNGHandler());
@@ -90,5 +97,7 @@ namespace client
     }
 
     GameController &Dominion::getController() { return *_controller; }
+
+    bool Dominion::isDebugMode() const { return _debug_mode; }
 
 } // namespace client

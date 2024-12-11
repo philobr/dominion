@@ -1,3 +1,4 @@
+#include <dominion.h>
 #include <panels/victory_screen_panel.h>
 #include <uiElements/image_panel.h>
 #include <uiElements/text_panel.h>

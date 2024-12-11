@@ -27,7 +27,13 @@ namespace client
 
         const shared::CardFactory::map_t &all_cards = shared::CardFactory::getAll();
         for ( const auto &card : all_cards ) {
-            if ( card.second->isAction() ) {
+            if ( card.second->isKingdom() ) {
+                // This is a really hacky way of ignoring the God Mode card, but
+                // it is good enough for now
+                if ( wxGetApp().isDebugMode() && card.first == "God Mode" ) {
+                    continue;
+                }
+
                 selectedCards[card.first] = false;
             }
         }

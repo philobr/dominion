@@ -15,10 +15,12 @@ namespace client
 
     PlayerPanel::PlayerPanel(wxWindow *parent, wxSize size) : wxPanel(parent, wxID_ANY, wxDefaultPosition, size)
     {
-        LOG(WARN) << "using hard coded player";
-        auto player = shared::PlayerBase("gigu");
-        auto reduced = reduced::Player::make(player, {"Village", "Copper", "Copper", "Copper", "Estate"});
-        this->drawSelectFromHandPlayer(reduced, 2, 3, shared::ChooseFromOrder::AllowedChoice::HAND_CARDS);
+        if ( wxGetApp().isDebugMode() ) {
+            LOG(WARN) << "Using hard coded player";
+            auto player = shared::PlayerBase("gigu");
+            auto reduced = reduced::Player::make(player, {"Village", "Copper", "Copper", "Copper", "Estate"});
+            this->drawSelectFromHandPlayer(reduced, 2, 3, shared::ChooseFromOrder::AllowedChoice::HAND_CARDS);
+        }
     }
 
     void PlayerPanel::drawPlayer(const std::unique_ptr<reduced::Player> &player, bool is_active,
@@ -163,7 +165,8 @@ namespace client
             DiscardPile = new PilePanel(DiscardPilePanel, shared::Pile("logo", 0),
                                         formatting_constants::DEFAULT_BOARD_PILE_SIZE);
         } else {
-            DiscardPile = new PilePanel(DiscardPilePanel, shared::Pile(top_discard_card, discard_pile_size));
+            DiscardPile = new PilePanel(DiscardPilePanel, shared::Pile(top_discard_card, discard_pile_size),
+                                        formatting_constants::DEFAULT_BOARD_PILE_SIZE);
         }
 
         // Create the sizer for the discard pile

@@ -19,10 +19,8 @@ namespace server
     class Player : public shared::PlayerBase
     {
         std::vector<shared::CardBase::id_t> draw_pile;
-        std::vector<shared::CardBase::id_t> discard_pile;
         std::vector<shared::CardBase::id_t> hand_cards;
 
-        std::vector<shared::CardBase::id_t> played_cards;
         std::vector<shared::CardBase::id_t> staged_cards;
 
     public:
@@ -33,8 +31,7 @@ namespace server
         explicit Player(shared::PlayerBase::id_t id) : shared::PlayerBase(id){};
 
         Player(const Player &other) :
-            shared::PlayerBase(other), draw_pile(other.draw_pile), discard_pile(other.discard_pile),
-            hand_cards(other.hand_cards), played_cards(other.played_cards)
+            shared::PlayerBase(other), draw_pile(other.draw_pile), hand_cards(other.hand_cards)
         {}
 
         reduced::Player::ptr_t getReducedPlayer();
@@ -125,12 +122,20 @@ namespace server
         inline void move(const shared::CardBase::id_t &card_id);
 
         /**
+         * @brief Moves cards from pile FROM to pile TO (push_back, except for draw_pile top).
+         * if FROM is TRASH we throw, if TO is TRASH we just delete the cards
+         */
+        template <enum shared::CardAccess FROM, enum shared::CardAccess TO>
+        inline void move(unsigned int n = 0);
+
+        /**
          * @brief Get the victory points of the player.
          *
          * This includes the draw_pile, discard_pile and hand_cards.
          * This should only be called when played_cards and staged_cards are empty.
          */
         int getVictoryPoints() const;
+
 
     protected:
         /**
@@ -201,13 +206,6 @@ namespace server
 
         template <enum shared::CardAccess FROM>
         inline std::vector<shared::CardBase::id_t> takeIndices(const std::vector<unsigned int> &indices);
-
-        /**
-         * @brief Moves cards from pile FROM to pile TO (push_back, except for draw_pile top).
-         * if FROM is TRASH we throw, if TO is TRASH we just delete the cards
-         */
-        template <enum shared::CardAccess FROM, enum shared::CardAccess TO>
-        inline void move(unsigned int n = 0);
 
         /**
          * @brief Moves the card at the index form FROM to TO (push_back, except for draw_pile top).

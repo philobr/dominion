@@ -98,9 +98,7 @@ namespace client
         // Add the draw pile to the sizer
         DrawPileSizer->Add(DrawPile, 0, wxALIGN_CENTER, 4);
 
-        if ( formatting_constants::background_image ) {
-            SetBackgroundColour(formatting_constants::DEFAULT_PANEL_BACKGROUND);
-        }
+        SetBackgroundColour(formatting_constants::DEFAULT_PANEL_BACKGROUND);
 
         // Set the sizer for the draw pile panel
         DrawPilePanel->SetSizer(DrawPileSizer);

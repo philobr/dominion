@@ -31,7 +31,6 @@ namespace client
 
         // Window background iamge
         const wxString WINDOW_BACKGROUND_PATH = "assets/Background.jpg";
-        extern bool background_image;
         const wxColour DEFAULT_PANEL_BACKGROUND = wxColour(255, 200, 100); // light orange
     } // namespace formatting_constants
 } // namespace client

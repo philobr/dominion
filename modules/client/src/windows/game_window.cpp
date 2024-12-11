@@ -72,10 +72,8 @@ namespace client
         if ( backgroundImage.IsOk() ) {
             wxBitmap bitmap(backgroundImage.Scale(GetSize().GetWidth(), GetSize().GetHeight()));
             dc.DrawBitmap(bitmap, 0, 0, false);
-            formatting_constants::background_image = true;
         } else {
             // Fallback to a plain color if the image fails to load
-            formatting_constants::background_image = false;
             dc.SetBackground(wxBrush(formatting_constants::DEFAULT_WINDOW_BACKGROUND));
             dc.Clear();
         }

@@ -133,9 +133,7 @@ namespace client
         unsigned int counter = 0;
         for ( const auto &pile : piles ) {
             PilePanel *Pile = new PilePanel(this, pile, formatting_constants::DEFAULT_BOARD_PILE_SIZE);
-            if ( formatting_constants::background_image ) {
-                Pile->SetBackgroundColour(formatting_constants::DEFAULT_PANEL_BACKGROUND);
-            }
+            Pile->SetBackgroundColour(formatting_constants::DEFAULT_PANEL_BACKGROUND);
             panels.push_back(Pile);
             wxGBPosition position = p(counter);
             wxGBSpan span = wxGBSpan(1, 1);

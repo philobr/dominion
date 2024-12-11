@@ -64,13 +64,13 @@ namespace shared
     REGISTER_CARD(Treasure_Trove, CardType::KINGDOM | CardType::TREASURE, 5);
 
     // interactive
+    REGISTER_CARD(Moneylender, CardType::ACTION, 4);
     // REGISTER_CARD(Cellar, CardType::ACTION, 2);
     // REGISTER_CARD(Chapel, CardType::ACTION, 2);
     // REGISTER_CARD(Workshop, CardType::ACTION, 3);
     // REGISTER_CARD(Vassal, CardType::ACTION, 3);
     // REGISTER_CARD(Harbinger, CardType::ACTION, 3);
     // REGISTER_CARD(Poacher, CardType::ACTION, 4);
-    // REGISTER_CARD(Moneylender, CardType::ACTION, 4);
     // REGISTER_CARD(Militia, CardType::ACTION | CardType::ATTACK, 4);
     // REGISTER_CARD(Bureaucrat, CardType::ACTION | CardType::ATTACK, 4);
     // REGISTER_CARD(Remodel, CardType::ACTION, 4);

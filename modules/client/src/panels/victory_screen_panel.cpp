@@ -70,7 +70,8 @@ namespace client
         // Show the winner in a special line
         wxBoxSizer* winner_sizer = new wxBoxSizer(wxHORIZONTAL);
         TextPanel* winner_text = new TextPanel(this, wxID_ANY, "Winner:", TextFormat::TITLE);
-        TextPanel* winner_score_text = new TextPanel(this, wxID_ANY, player_results[0].playerName(), TextFormat::TITLE);
+        wxString winner_name = wxString::FromUTF8(player_results[0].playerName());
+        TextPanel* winner_score_text = new TextPanel(this, wxID_ANY, winner_name, TextFormat::TITLE);
 
         winner_sizer->Add(winner_text, 0, wxALIGN_CENTER_VERTICAL | wxRIGHT, 5);
         winner_sizer->Add(winner_score_text, 0, wxALIGN_CENTER_VERTICAL);
@@ -95,11 +96,20 @@ namespace client
         grid_sizer->AddGrowableCol(1, 1); // Make the second column (scores) growable
 
         for (const auto& player : player_results) {
-            TextPanel* name_text = new TextPanel(this, wxID_ANY, player.playerName() + ":", TextFormat::BOLD);
+            // Set explicit foreground color and ensure text is visible
+            wxString playerName = wxString::FromUTF8(player.playerName());
+            TextPanel* name_text = new TextPanel(this, wxID_ANY, playerName, TextFormat::BOLD);
             TextPanel* score_text = new TextPanel(this, wxID_ANY, std::to_string(player.score()), TextFormat::BOLD);
+
+            name_text->SetMinSize(wxSize(100, -1));  // Set a minimum width for the name text
+            score_text->SetMinSize(wxSize(100, -1));  // Set a minimum width for the score text
+
+            // Add background color to verify text area
+            name_text->SetBackgroundColour(wxColour(240, 240, 240));  // Light grey background
 
             grid_sizer->Add(name_text, wxSizerFlags().Expand().Right());
             grid_sizer->Add(score_text, wxSizerFlags().Expand().Left());
+            grid_sizer->Layout();
         }
 
         // Add the grid sizer to the horizontal sizer

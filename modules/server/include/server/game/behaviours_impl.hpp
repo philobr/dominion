@@ -59,7 +59,8 @@ namespace server
 
 /**
  * @brief can be used like:
- * auto casted_decision = TRY_CAST_DECISION(expected_type);
+ * auto casted_decision = CAST_DECISION(expected_type);
+ * @warning THIS WILL THROW
  */
 #define TRY_CAST_DECISION(decision_type)                                                                               \
     [](server::base::Behaviour::action_decision_t &action_decision) -> decision_type *                                 \
@@ -204,6 +205,71 @@ namespace server
             BEHAVIOUR_DONE;
         }
 
+        DEFINE_TEMPLATED_BEHAVIOUR(GainCardMaxCost, int, max_cost)
+        {
+            LOG_CALL;
+
+            const bool has_action_decision = action_decision.has_value();
+            const auto cur_player_id = game_state.getCurrentPlayerId();
+
+            if ( !has_action_decision ) {
+                // send out gain card oder
+                return {cur_player_id, std::make_unique<shared::GainFromBoardOrder>(max_cost)};
+            }
+
+            auto *gain_decision = dynamic_cast<shared::GainFromBoardDecision *>(action_decision.value().get());
+            if ( gain_decision == nullptr ) {
+                LOG(ERROR) << FUNC_NAME << " got a wrong decision type! Expected: shared::GainFromBoardDecision";
+                throw std::runtime_error("Decision type is not allowed!");
+            }
+
+            const auto chosen_card_id = gain_decision->chosen_card;
+            game_state.tryGain(cur_player_id, chosen_card_id);
+
+            BEHAVIOUR_DONE;
+        }
+
+        DEFINE_BEHAVIOUR(CardToDrawPile)
+        {
+            LOG_CALL;
+
+            const bool has_action_decision = action_decision.has_value();
+            const auto cur_player_id = game_state.getCurrentPlayerId();
+
+            if ( !has_action_decision ) {
+                // send out gain card oder
+                return {cur_player_id,
+                        std::make_unique<shared::ChooseFromHandOrder>(
+                                1, 1, shared::ChooseFromOrder::AllowedChoice::DRAW_PILE)};
+            }
+
+            auto *deck_choice = dynamic_cast<shared::DeckChoiceDecision *>(action_decision.value().get());
+            if ( deck_choice == nullptr ) {
+                LOG(ERROR) << FUNC_NAME << " got a wrong decision type! Expected: shared::GainFromBoardDecision";
+                throw std::runtime_error("Decision type is not allowed!");
+            }
+
+            if ( deck_choice->cards.size() != deck_choice->choices.size() ) {
+                LOG(ERROR) << FUNC_NAME << " Size mismatch: each card needs a choice!";
+                throw std::runtime_error("Message is ill formed");
+            }
+
+            if ( deck_choice->cards.size() != 1 ) {
+                LOG(ERROR) << FUNC_NAME << "Expects exactly one choice!";
+                throw std::runtime_error("Only one choice is allowed!");
+            }
+
+            auto &player = game_state.getCurrentPlayer();
+            auto move_card_id = deck_choice->cards.at(0);
+            if ( player.hasCard<shared::CardAccess::HAND>(move_card_id) ) {
+                LOG(ERROR) << FUNC_NAME << "Player: " << player.getId() << " does not have card: " << move_card_id
+                           << " in hand!";
+                throw std::runtime_error("Card not found!");
+            }
+
+            player.move<shared::CardAccess::HAND, shared::CardAccess::DRAW_PILE_TOP>(move_card_id);
+            BEHAVIOUR_DONE;
+        }
 
 // ================================
 // UNDEF MACROS

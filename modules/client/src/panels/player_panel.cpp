@@ -166,6 +166,10 @@ namespace client
             DiscardPile = new PilePanel(DiscardPilePanel, shared::Pile(top_discard_card, discard_pile_size));
         }
 
+        // Create the sizer for the discard pile
+        wxBoxSizer *DiscardPileSizer = new wxBoxSizer(wxVERTICAL);
+        DiscardPileSizer->SetMinSize(wxSize(1 * hand_card_size.GetWidth(), 150));
+
         if ( confirm_button ) {
             confirmButton = new wxButton(DiscardPilePanel, wxID_ANY, "Confirm", wxDefaultPosition, wxDefaultSize);
             confirmButton->Bind(wxEVT_BUTTON,
@@ -184,13 +188,10 @@ namespace client
                                     selectedCards.clear();
                                 });
             confirmButton->Enable(false);
+            DiscardPileSizer->Add(confirmButton, 0, wxALIGN_CENTER, 4);
         }
 
-        // Create the sizer for the discard pile
-        wxBoxSizer *DiscardPileSizer = new wxBoxSizer(wxVERTICAL);
-        DiscardPileSizer->SetMinSize(wxSize(1 * hand_card_size.GetWidth(), 150));
 
-        DiscardPileSizer->Add(confirmButton, 0, wxALIGN_CENTER, 4);
         // Add the discard pile to the sizer
         DiscardPileSizer->Add(DiscardPile, 0, wxALIGN_CENTER, 4);
 

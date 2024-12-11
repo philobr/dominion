@@ -81,14 +81,14 @@ namespace client
             LOG(INFO) << "Reverted to ClientState::LOGIN_SCREEN";
         } else {
 
+            _gameName = input.lobby_name;
+            _playerName = input.player_name;
+            _clientState = ClientState::CREATING_LOBBY;
+
             // send request to join game
             std::unique_ptr<shared::CreateLobbyRequestMessage> request =
                     std::make_unique<shared::CreateLobbyRequestMessage>(input.lobby_name, input.player_name);
             sendRequest(std::move(request));
-
-            _gameName = input.lobby_name;
-            _playerName = input.player_name;
-            _clientState = ClientState::CREATING_LOBBY;
         }
     }
 
@@ -109,13 +109,18 @@ namespace client
 
         _clientNetworkManager->init(input.host, input.port);
 
-        std::unique_ptr<shared::JoinLobbyRequestMessage> request =
-                std::make_unique<shared::JoinLobbyRequestMessage>(input.lobby_name, input.player_name);
-        sendRequest(std::move(request));
+        if ( _clientNetworkManager->failedToConnect() ) {
+            _clientState = ClientState::LOGIN_SCREEN;
+            LOG(INFO) << "Reverted to ClientState::LOGIN_SCREEN";
+        } else {
+            _gameName = input.lobby_name;
+            _playerName = input.player_name;
+            _clientState = ClientState::JOINING_LOBBY;
 
-        _gameName = input.lobby_name;
-        _playerName = input.player_name;
-        _clientState = ClientState::JOINING_LOBBY;
+            std::unique_ptr<shared::JoinLobbyRequestMessage> request =
+                    std::make_unique<shared::JoinLobbyRequestMessage>(input.lobby_name, input.player_name);
+            sendRequest(std::move(request));
+        }
     }
 
     void GameController::proceedToCardSelection()
@@ -274,21 +279,18 @@ namespace client
             LOG(ERROR) << "Received EndTurnOrder, this is deprecated (see #194)";
             return;
         } else if ( typeid(action_order) == typeid(GainFromBoardOrder) ) {
-            LOG(WARN) << "Received GainFromBoardOrder";
+            LOG(DEBUG) << "Received GainFromBoardOrder";
             showGainFromBoard(std::move(msg->game_state),
                               std::move(*dynamic_cast<GainFromBoardOrder *>(&action_order)));
-            return;
-        } else if ( typeid(action_order) == typeid(ChooseFromOrder) ) {
-            // TODO(#195): Implement
-            LOG(WARN) << "Received ChooseFromOrder, but this does not do anything yet";
             return;
         } else if ( typeid(action_order) == typeid(ChooseFromStagedOrder) ) {
             // TODO(#195): Implement
             LOG(WARN) << "Received ChooseFromStagedOrder, but this does not do anything yet";
             return;
         } else if ( typeid(action_order) == typeid(ChooseFromHandOrder) ) {
-            // TODO(#195): Implement
-            LOG(WARN) << "Received ChooseFromHandOrder, but this does not do anything yet";
+            LOG(DEBUG) << "Received a ChooseFromHandOrder";
+            showChooseFromHandOrder(std::move(msg->game_state),
+                                    std::move(*dynamic_cast<ChooseFromHandOrder *>(&action_order)));
             return;
         } else {
             LOG(ERROR) << "Received unknown ActionOrderMessage: " << typeid(action_order).name();

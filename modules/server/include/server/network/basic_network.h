@@ -16,12 +16,13 @@ namespace server
     {
         inline static std::unordered_map<player_id_t, std::string> _player_id_to_address;
         inline static std::unordered_map<std::string, sockpp::tcp_socket> _address_to_socket;
+        inline static std::unordered_map<std::string, player_id_t> _address_to_player_id;
 
         inline static std::shared_mutex _rw_lock;
 
     public:
         // TODO:
-        static void playerDisconnect(const player_id_t &player_id);
+        static void playerDisconnect(const std::string &address);
 
         /**
          * @brief Sends a message to the specified address.
@@ -42,8 +43,8 @@ namespace server
         /**
          * @brief Maps a player ID to a network address.
          *
+         * @param player_id
          * @param address
-         * @param socket
          */
         static void addPlayerToAddress(const player_id_t &player_id, const std::string &address);
 

@@ -52,6 +52,14 @@ namespace server
         void addToPlayedCards(const shared::CardBase::id_t &card_id);
 
         /**
+         * @brief Removes the given card from the played_cards vector
+         *
+         * @return true if the card was removed
+         * @return false if the card was not found
+         */
+        bool removeFromPlayedCards(const shared::CardBase::id_t &card_id);
+
+        /**
          * @brief Adds the card_id to the trash
          */
         void trashCard(const shared::CardBase::id_t &card_id);

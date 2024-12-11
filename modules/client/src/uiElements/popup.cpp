@@ -31,6 +31,26 @@ namespace client
         // Set the sizer and show the dialog
         dialog->SetSizer(dialogSizer);
 
+        // Bind the escape key to close the dialog
+        dialog->Bind(wxEVT_KEY_DOWN,
+                     [dialog](wxKeyEvent &event)
+                     {
+                         if ( event.GetKeyCode() == WXK_ESCAPE ) {
+                             dialog->EndModal(wxID_CANCEL); // Close the dialog
+                         } else {
+                             event.Skip(); // Pass the event to the default handler
+                         }
+                     });
+
+        // Bind right click to close the dialog
+        dialog->Bind(wxEVT_RIGHT_DOWN,
+                     [dialog](wxMouseEvent /*&event*/)
+                     {
+                         dialog->EndModal(wxID_CANCEL); // Close the dialog
+                     });
+
+        dialog->SetFocus(); // Ensure the dialog captures keyboard events
+
         // Manually center the dialog on the primary screen
         wxDisplay display(wxDisplay::GetFromWindow(parent));
         wxRect screenRect = display.GetClientArea(); // Get screen dimensions excluding taskbars

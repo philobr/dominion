@@ -80,18 +80,27 @@ void server::BehaviourRegistry::initialiseBehaviours()
     insert<DrawCards<1>, GainActions<2>, GainBuys<1>>("Workers_Village");
     insert<SeaHag>("Sea_Hag");
     insertVictory<ConstantVictoryPoints<1>, DrawCards<1>, GainActions<1>>("Great_Hall");
+    insert<TreasureMap>("Treasure_Map");
 
     // money cards
     insert<GainCoins<2>, TreasureTrove>("Treasure_Trove");
 
     // enemies draw a card
     insert<DrawCards<4>, GainBuys<1>, DrawCardsEnemies<1>>("Council_Room");
-
     // may trash copper and gain +3
     insert<Moneylender>("Moneylender");
-
     // enemies get curse on discard pile
     insert<DrawCards<2>, CurseEnemy>("Witch");
+    // gain card costing up to 5. put card from hand onto deck
+    insert<GainCardMaxCost<5>, CardToDrawPile>("Artisan");
+    // may trash treasure from hand, gain treasure costing 3 more than it
+    insert<Mine>("Mine");
+    // order to trash card, then actually trash the cards
+    insert<TrashCards<4>>("Chapel");
+    // gain as many cards as you have spent
+    insert<GainActions<1>, DiscardAndRedrawAnyAmount>("Cellar");
+    // draw to cards and you can block enemy attacks
+    insert<DrawCards<2>>("Moat");
 
     auto gardens_filter = [](const shared::CardBase::id_t & /*card*/) -> bool { return true; };
     insertVictory<VictoryPointsPerNCards<1, 10, gardens_filter>>("Gardens");
@@ -114,19 +123,15 @@ void server::BehaviourRegistry::initialiseBehaviours()
     /*
     TODO:
     */
-    // order to trash card, then actually trash the cards
-    insert<NOT_IMPLEMENTED_YET>("Chapel");
+
     // look through discard pile, may put one card onto deck
     insert<DrawCards<1>, GainActions<1>, NOT_IMPLEMENTED_YET>("Harbinger");
-    // gain as many cards as you have spent
-    insert<GainActions<1>, NOT_IMPLEMENTED_YET>("Cellar");
     // discard a card per empty supply pile
     insert<DrawCards<1>, GainActions<1>, GainCoins<1>, NOT_IMPLEMENTED_YET>("Poacher");
     // enemies discard down to three
     insert<GainCoins<2>, NOT_IMPLEMENTED_YET>("Militia");
     // peek top 2 from deck, trash (and/or) discard any. return rest to draw pile in any order
     insert<DrawCards<1>, GainActions<1>, NOT_IMPLEMENTED_YET>("Sentry");
-    insert<DrawCards<2>, NOT_IMPLEMENTED_YET>("Moat");
 
     // gain any card costing up to 4
     insert<NOT_IMPLEMENTED_YET>("Workshop");
@@ -140,8 +145,4 @@ void server::BehaviourRegistry::initialiseBehaviours()
     insert<NOT_IMPLEMENTED_YET>("Library");
     // gain a gold, enemies reveal top two card from deck trash any treasure except copper, discard rest
     insert<NOT_IMPLEMENTED_YET>("Bandit");
-    // may trash treasure from hand, gain treasure costing 3 more than it
-    insert<NOT_IMPLEMENTED_YET>("Mine");
-    // gain card costing up to 5. put card from hand onto deck
-    insert<NOT_IMPLEMENTED_YET>("Artisan");
 }

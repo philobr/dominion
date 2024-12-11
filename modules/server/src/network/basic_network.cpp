@@ -68,6 +68,7 @@ namespace server
             }
             LOG(INFO) << "Registering new client with ID: " << player_id;
             _player_id_to_address.emplace(player_id, address);
+            _address_to_player_id.emplace(address, player_id);
         }
     }
 
@@ -83,18 +84,18 @@ namespace server
         }
     }
 
-    void BasicNetwork::playerDisconnect(const player_id_t &player_id)
+    void BasicNetwork::playerDisconnect(const std::string &address)
     {
+        LOG(INFO) << "Disconnecting Address: " << address;
         std::unique_lock<std::shared_mutex> lock(_rw_lock);
 
-        auto it = _player_id_to_address.find(player_id);
-        if ( it != _player_id_to_address.end() ) {
-            std::string address = it->second;
-            _player_id_to_address.erase(it);
+        if ( _address_to_player_id.find(address) != _address_to_player_id.end() ) {
+            _player_id_to_address.erase(_address_to_player_id.find(address)->second);
+            _address_to_player_id.erase(address);
             _address_to_socket.erase(address);
-            LOG(INFO) << "Player with ID " << player_id << " disconnected and resources released.";
+            LOG(INFO) << "Player with Address " << address << " disconnected and resources released.";
         } else {
-            LOG(WARN) << "Attempted to disconnect player with ID " << player_id << ", but it was not found.";
+            LOG(WARN) << "Attempted to disconnect player with Address " << address << ", but it was not found.";
         }
     }
 

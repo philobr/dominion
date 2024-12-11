@@ -6,7 +6,7 @@ namespace shared
 {
     // Representing card types like this allows us to combine them using bitwise operations.
     // Example: `ACTION | ATTACK` will create a card that is both an action and an attack.
-    enum CardType
+    enum CardType : uint16_t
     {
         KINGDOM = 1,
         TREASURE = 2,

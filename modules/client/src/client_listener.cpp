@@ -72,6 +72,7 @@ wxThread::ExitCode ClientListener::Entry()
     }
 
     this->_connection->shutdown();
+    LOG(INFO) << "Exited Listener";
     return (wxThread::ExitCode)0; // everything okay
 }
 

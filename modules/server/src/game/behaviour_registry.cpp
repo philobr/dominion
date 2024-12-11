@@ -77,6 +77,9 @@ void server::BehaviourRegistry::initialiseBehaviours()
     insert<GainActions<2>, GainCoins<2>, GainBuys<1>>("Festival");
     insert<GainActions<1>, GainCoins<1>, GainBuys<1>, DrawCards<1>>("Market");
 
+    insert<DrawCards<1>, GainActions<2>, GainBuys<1>>("Workers_Village");
+    insertVictory<ConstantVictoryPoints<1>, DrawCards<1>, GainActions<1>>("Great_Hall");
+
     // enemies draw a card
     insert<DrawCards<4>, GainBuys<1>, DrawCardsEnemies<1>>("Council_Room");
 

@@ -146,15 +146,14 @@ namespace client
             if ( can_buy && price <= treasure && !pile.empty() ) {
                 makeBuyable(Pile);
             } else {
-                if ( !can_buy && !isGainFromBoardPhase_ ) {
-                    Pile->SetToolTip("Not your turn");
-
-                } else if ( !can_buy && isGainFromBoardPhase_ ) {
+                if ( !can_buy && isGainFromBoardPhase_ ) {
                     Pile->SetToolTip("Can't choose this card type");
                 } else if ( pile.empty() ) {
                     Pile->SetToolTip("Empty pile");
-                } else {
+                } else if ( can_buy && price > treasure ) {
                     Pile->SetToolTip("Too expensive");
+                } else {
+                    Pile->SetToolTip("Can't select this card right now");
                 }
                 Pile->makeGrey();
                 Pile->SetCursor(wxCursor(wxCURSOR_NO_ENTRY));

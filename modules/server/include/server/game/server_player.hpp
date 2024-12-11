@@ -72,7 +72,7 @@ inline bool server::Player::hasType(shared::CardType type) const
 {
     auto pile = get<PILE>();
     return std::any_of(pile.begin(), pile.end(), [type](const auto &card_id)
-                       { return (shared::CardFactory::getCard(card_id).getType() & type) != 0; });
+                       { return (shared::CardFactory::getCard(card_id).getType() & type) == type; });
 }
 
 template <enum shared::CardAccess PILE>

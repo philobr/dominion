@@ -122,6 +122,13 @@ namespace server
         inline void move(const shared::CardBase::id_t &card_id);
 
         /**
+         * @brief Moves cards from pile FROM to pile TO (push_back, except for draw_pile top).
+         * if FROM is TRASH we throw, if TO is TRASH we just delete the cards
+         */
+        template <enum shared::CardAccess FROM, enum shared::CardAccess TO>
+        inline void move(unsigned int n = 0);
+
+        /**
          * @brief Get the victory points of the player.
          *
          * This includes the draw_pile, discard_pile and hand_cards.
@@ -199,13 +206,6 @@ namespace server
 
         template <enum shared::CardAccess FROM>
         inline std::vector<shared::CardBase::id_t> takeIndices(const std::vector<unsigned int> &indices);
-
-        /**
-         * @brief Moves cards from pile FROM to pile TO (push_back, except for draw_pile top).
-         * if FROM is TRASH we throw, if TO is TRASH we just delete the cards
-         */
-        template <enum shared::CardAccess FROM, enum shared::CardAccess TO>
-        inline void move(unsigned int n = 0);
 
         /**
          * @brief Moves the card at the index form FROM to TO (push_back, except for draw_pile top).

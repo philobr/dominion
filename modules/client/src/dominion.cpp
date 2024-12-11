@@ -5,8 +5,10 @@
 
 #include <gui_event_receiver.h>
 #include <shared/utils/logger.h>
+#include <stdexcept>
 #include <wx/cmdline.h>
 #include "game_controller.h"
+#include "uiElements/image_map.h"
 #include "windows/game_window.h"
 
 static const wxCmdLineEntryDesc CMD_LINE_DESC[] = {
@@ -89,6 +91,10 @@ namespace client
         );
         gameWindow->Show(true);
 
+        _imageMap = std::make_unique<ImageMap>();
+        if ( !_imageMap ) {
+            throw std::runtime_error("Failed to create ImageMap");
+        }
         Gui *gui = new Gui(gameWindow);
         GuiEventReceiver *eventReceiver = new GuiEventReceiver(gui);
         _controller = std::make_unique<GameController>(eventReceiver);
@@ -97,6 +103,7 @@ namespace client
     }
 
     GameController &Dominion::getController() { return *_controller; }
+    ImageMap &Dominion::getImageMap() { return *_imageMap; }
 
     bool Dominion::isDebugMode() const { return _debug_mode; }
 

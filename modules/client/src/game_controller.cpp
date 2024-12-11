@@ -81,14 +81,14 @@ namespace client
             LOG(INFO) << "Reverted to ClientState::LOGIN_SCREEN";
         } else {
 
+            _gameName = input.lobby_name;
+            _playerName = input.player_name;
+            _clientState = ClientState::CREATING_LOBBY;
+
             // send request to join game
             std::unique_ptr<shared::CreateLobbyRequestMessage> request =
                     std::make_unique<shared::CreateLobbyRequestMessage>(input.lobby_name, input.player_name);
             sendRequest(std::move(request));
-
-            _gameName = input.lobby_name;
-            _playerName = input.player_name;
-            _clientState = ClientState::CREATING_LOBBY;
         }
     }
 
@@ -109,13 +109,18 @@ namespace client
 
         _clientNetworkManager->init(input.host, input.port);
 
-        std::unique_ptr<shared::JoinLobbyRequestMessage> request =
-                std::make_unique<shared::JoinLobbyRequestMessage>(input.lobby_name, input.player_name);
-        sendRequest(std::move(request));
+        if ( _clientNetworkManager->failedToConnect() ) {
+            _clientState = ClientState::LOGIN_SCREEN;
+            LOG(INFO) << "Reverted to ClientState::LOGIN_SCREEN";
+        } else {
+            _gameName = input.lobby_name;
+            _playerName = input.player_name;
+            _clientState = ClientState::JOINING_LOBBY;
 
-        _gameName = input.lobby_name;
-        _playerName = input.player_name;
-        _clientState = ClientState::JOINING_LOBBY;
+            std::unique_ptr<shared::JoinLobbyRequestMessage> request =
+                    std::make_unique<shared::JoinLobbyRequestMessage>(input.lobby_name, input.player_name);
+            sendRequest(std::move(request));
+        }
     }
 
     void GameController::proceedToCardSelection()

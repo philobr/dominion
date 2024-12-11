@@ -53,6 +53,7 @@ namespace shared
     REGISTER_CARD(Council_Room, CardType::ACTION, 5);
     REGISTER_CARD(Witch, CardType::ACTION | CardType::ATTACK, 5);
     REGISTER_CARD(Workers_Village, CardType::ACTION, 4);
+    REGISTER_CARD(Great_Hall, CardType::ACTION | CardType::VICTORY, 3);
 
     // victory cards
     REGISTER_CARD(Gardens, CardType::KINGDOM | CardType::VICTORY, 4);

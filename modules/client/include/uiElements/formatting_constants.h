@@ -16,7 +16,7 @@ namespace client
         const wxColour PASSIVE_PLAYER_INFO_BACKGROUND = ACTIVE_ENEMY_BACKGROUND; // wxColour(200, 220, 240);
         const wxColour SELECTED_CARD_BACKGROUND = *wxYELLOW;
 
-// Panel formatting constants
+        // Panel formatting constants
 #ifdef __APPLE__
         const wxSize DEFAULT_BOARD_PILE_SIZE = wxSize(100, 150);
 #else
@@ -27,5 +27,10 @@ namespace client
 
         // Border colours
         const wxColour PLAYABLE_HAND_CARD_BORDER = wxColour(0, 130, 0);
+
+        // Victory screen formatting constants
+        const wxSize VICTORY_SCREEN_MIN_SIZE = wxSize(1200, -1);
+        const wxSize VICTORY_SCREEN_IMAGE_SIZE = wxSize(500, 500);
+        const wxSize VICTORY_SCREEN_TEXT_SIZE = wxSize(100, -1);
     } // namespace formatting_constants
 } // namespace client

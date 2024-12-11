@@ -20,7 +20,7 @@ namespace client
         victory_screen_sizer = new wxBoxSizer(wxVERTICAL);
 
         // Set min size for victory screen
-        SetMinSize(wxSize(1200, -1));
+        SetMinSize(formatting_constants::VICTORY_SCREEN_MIN_SIZE);
 
         // Show the winner in a special line
         wxBoxSizer *winner_sizer = new wxBoxSizer(wxHORIZONTAL);
@@ -42,7 +42,7 @@ namespace client
 
         // Add the image to the horizontal sizer
         ImagePanel *godminion =
-                new ImagePanel(this, "God_Mode.png", wxBITMAP_TYPE_PNG, wxDefaultPosition, wxSize(500, 500), 0.0);
+                new ImagePanel(this, "God_Mode.png", wxBITMAP_TYPE_PNG, wxDefaultPosition, formatting_constants::VICTORY_SCREEN_IMAGE_SIZE, 0.0);
         horizontal_sizer->Add(godminion, 0, wxALIGN_CENTER_VERTICAL | wxRIGHT, 10);
 
         // Create a grid sizer for the player results
@@ -56,8 +56,8 @@ namespace client
             TextPanel *name_text = new TextPanel(this, wxID_ANY, playerName, TextFormat::BOLD);
             TextPanel *score_text = new TextPanel(this, wxID_ANY, std::to_string(player.score()), TextFormat::BOLD);
 
-            name_text->SetMinSize(wxSize(100, -1)); // Set a minimum width for the name text
-            score_text->SetMinSize(wxSize(100, -1)); // Set a minimum width for the score text
+            name_text->SetMinSize(formatting_constants::VICTORY_SCREEN_TEXT_SIZE); // Set a minimum width for the name text
+            score_text->SetMinSize(formatting_constants::VICTORY_SCREEN_TEXT_SIZE); // Set a minimum width for the score text
 
             grid_sizer->Add(name_text, wxSizerFlags().Expand().Right());
             grid_sizer->Add(score_text, wxSizerFlags().Expand().Left());

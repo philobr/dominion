@@ -72,11 +72,10 @@ namespace shared
     bool PlayerBase::removeFromPlayedCards(const CardBase::id_t &card_id)
     {
         auto it = std::find(played_cards.begin(), played_cards.end(), card_id);
-        if (it != played_cards.end()) {
+        if ( it != played_cards.end() ) {
             played_cards.erase(it);
             return true;
-        }
-        else {
+        } else {
             return false;
         }
     }

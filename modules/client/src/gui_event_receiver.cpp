@@ -58,6 +58,13 @@ namespace client
                     _gui->showGainFromBoardScreen(data.game_state, data.order);
                     break;
                 }
+            case ControllerEventType::SHOW_CHOOSE_FROM_HAND_SCREEN:
+                {
+                    ShowChooseFromHandScreenEventData data =
+                            controllerEvent.getData<ShowChooseFromHandScreenEventData>();
+                    _gui->showChooseFromHandScreen(data.game_state, data.order);
+                    break;
+                }
             default:
                 {
                     LOG(ERROR) << "Unknown controller event type: " << static_cast<int>(controllerEvent.getType());

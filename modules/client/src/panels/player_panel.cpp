@@ -27,6 +27,7 @@ namespace client
     {
         // Remove old stuff
         this->DestroyChildren();
+        handPanels.clear();
 
         LOG(INFO) << "Drawing player " << player->getId();
         // Create a sizer to hold the player stuff

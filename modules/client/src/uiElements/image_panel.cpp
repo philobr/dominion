@@ -1,30 +1,24 @@
 
 #include <cstddef>
 #include <shared/utils/logger.h>
+#include <uiElements/image_map.h>
 #include <uiElements/image_panel.h>
 #include <wx/filename.h>
 #include <wx/image.h>
+#include "dominion.h"
 
 namespace client
 {
-    ImagePanel::ImagePanel(wxWindow *parent, wxString asset_name, wxBitmapType format, wxPoint position, wxSize size,
-                           double rotation) :
-        wxPanel(parent, wxID_ANY, position, size)
+    ImagePanel::ImagePanel(wxWindow *parent, wxString asset_name, wxBitmapType /*format*/, wxPoint position,
+                           wxSize size, double rotation) :
+        wxPanel(parent, wxID_ANY, position, size),
+        _rotation(rotation)
     {
         wxString file = wxString("assets") + wxFileName::GetPathSeparator() + asset_name;
-        if ( !wxFileExists(file) ) {
-            wxMessageBox("Could not find file: " + file, "File error", wxICON_ERROR);
-            LOG(ERROR) << "Could not find file: " << file;
-            throw std::runtime_error("Could not find file: " + file);
-        }
 
-        if ( !this->_image.LoadFile(file, format) ) {
-            wxMessageBox("Could not load file: " + file, "File error", wxICON_ERROR);
-            LOG(ERROR) << "Could not load file: " << file;
-            throw std::runtime_error("Could not load file: " + file);
-        }
-
-        this->_rotation = rotation;
+        // this either gets the image from the map or loads it from the file system
+        // if it hasn't been used before
+        this->_image = wxGetApp().getImageMap().getImage(file);
 
         this->Bind(wxEVT_PAINT, &ImagePanel::paintEvent, this);
         this->Bind(wxEVT_SIZE, &ImagePanel::onSize, this);

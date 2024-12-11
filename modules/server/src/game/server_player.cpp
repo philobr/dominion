@@ -10,6 +10,45 @@ namespace server
 {
     reduced::Player::ptr_t Player::getReducedPlayer()
     {
+        std::sort(this->hand_cards.begin(), this->hand_cards.end(),
+                  [](const auto &id_a, const auto &id_b)
+                  {
+                      const auto type_a = shared::CardFactory::getType(id_a);
+                      const auto type_b = shared::CardFactory::getType(id_b);
+
+                      // custom order
+                      auto getCustomOrder = [](shared::CardType type)
+                      {
+                          switch ( type ) {
+                              case shared::CardType::ACTION:
+                                  return 1;
+                              case shared::CardType::TREASURE:
+                                  return 2;
+                              case shared::CardType::VICTORY:
+                                  return 3;
+                              default:
+                                  return 4; // fallback type
+                          }
+                      };
+
+                      int order_a = getCustomOrder(type_a);
+                      int order_b = getCustomOrder(type_b);
+
+                      if ( order_a != order_b ) {
+                          return order_a < order_b;
+                      }
+
+                      const auto cost_a = shared::CardFactory::getCost(id_a);
+                      const auto cost_b = shared::CardFactory::getCost(id_b);
+
+                      if ( cost_a != cost_b ) {
+                          return cost_a < cost_b; // lowest cost first
+                      }
+
+                      // sort by name if same category and same cost
+                      return id_a < id_b;
+                  });
+
         this->draw_pile_size = draw_pile.size();
         return reduced::Player::make(static_cast<shared::PlayerBase>(*this), hand_cards);
     }

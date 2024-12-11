@@ -50,6 +50,8 @@ namespace client
         victory_screen_sizer->Add(container, 1, wxCENTER | wxALL, 10);
         SetSizer(victory_screen_sizer);
 
+        SetBackgroundColour(formatting_constants::DEFAULT_PANEL_BACKGROUND);
+
         container_sizer->Fit(container);
         victory_screen_sizer->Fit(this);
         Layout();

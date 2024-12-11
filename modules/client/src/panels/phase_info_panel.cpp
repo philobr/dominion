@@ -1,6 +1,7 @@
 #include <panels/phase_info_panel.h>
 #include <shared/utils/logger.h>
 #include <uiElements/formatting_constants.h>
+#include <uiElements/popup.h>
 #include <uiElements/single_card_panel.h>
 
 #include <dominion.h>
@@ -105,6 +106,8 @@ namespace client
         for ( size_t i = 0; i < num_cards; i++ ) {
             SingleCardPanel *card =
                     new SingleCardPanel(scrolledWindow, cards[i], formatting_constants::DEFAULT_PLAYED_CARD_SIZE);
+            card->makeClickable(wxEVT_RIGHT_UP,
+                                [card](const wxMouseEvent & /*event*/) { showCardPopup(card, card->getCardName()); });
 
             sizer->Add(card, 0, wxALL, 4);
         }

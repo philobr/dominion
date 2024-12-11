@@ -3,11 +3,19 @@
 #include "client_network_manager.h"
 
 
-ClientListener::ClientListener(sockpp::tcp_connector *connection) : wxThread(wxTHREAD_DETACHED), _connection(connection)
+ClientListener::ClientListener(sockpp::tcp_connector *connection) :
+    wxThread(wxTHREAD_DETACHED), _connection(connection), _isActive(true), _listenerExited(false)
 {}
 
 
-ClientListener::~ClientListener() { this->_connection->shutdown(); }
+ClientListener::~ClientListener()
+{
+    // Deconstructor is called from a differnt thread, so we have to let the loop know to terminate
+    this->_isActive = false;
+    // Wait for listener loop to exit
+    while ( !listenerExited() ) {
+    };
+}
 
 
 wxThread::ExitCode ClientListener::Entry()
@@ -16,7 +24,11 @@ wxThread::ExitCode ClientListener::Entry()
         char buffer[512]; // 512 bytes
         ssize_t count = 0;
 
-        while ( (count = this->_connection->read(buffer, sizeof(buffer))) > 0 ) {
+        this->_connection->set_non_blocking();
+
+        while ( this->isActive() &&
+                ((count = this->_connection->read(buffer, sizeof(buffer))) > 0 ||
+                 this->_connection->last_error() == EWOULDBLOCK) ) {
             try {
                 int pos = 0;
 
@@ -51,34 +63,26 @@ wxThread::ExitCode ClientListener::Entry()
                     //});
 
                 } else {
-                    this->outputError("Network error",
-                                      "Could not read entire message. TCP stream ended early. Difference is " +
-                                              std::to_string(messageLength - bytesReadSoFar) + " bytes");
+                    LOG(ERROR) << "Network error. Could not read entire message. TCP stream ended early. Difference is "
+                               << std::to_string(messageLength - bytesReadSoFar) << " bytes";
                 }
 
             } catch ( std::exception &e ) {
                 // Make sure the connection isn't terminated only because of a read error
-                this->outputError("Network error", "Error while reading message: " + std::string(e.what()));
+                LOG(ERROR) << "Network error. Error while reading message: " << std::string(e.what());
             }
         }
 
-        this->outputError("Network error",
-                          "Read error [" + std::to_string(this->_connection->last_error()) +
-                                  "]: " + this->_connection->last_error_str());
-
+        LOG(ERROR) << "Network error. Read error, shutting down Listener";
 
     } catch ( const std::exception &e ) {
-        this->outputError("Network error", "Error in listener thread: " + std::string(e.what()));
+        LOG(ERROR) << "Network error. Error in listener thread: " << std::string(e.what());
     }
 
-    this->_connection->shutdown();
+    LOG(INFO) << "Exited Listener";
+    _listenerExited = true;
     return (wxThread::ExitCode)0; // everything okay
 }
 
-
-void ClientListener::outputError(const std::string & /*title*/, const std::string & /*message*/)
-{
-    // GameController::getMainThreadEventHandler()->CallAfter([title, message]{
-    //     GameController::showError(title, message);
-    // });
-}
+bool ClientListener::isActive() { return this->_isActive; }
+bool ClientListener::listenerExited() { return this->_listenerExited; }

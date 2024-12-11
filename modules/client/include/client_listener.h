@@ -16,7 +16,12 @@ protected:
 
 private:
     void outputError(const std::string &title, const std::string &message);
+    bool isActive();
+    bool listenerExited();
 
 
     sockpp::tcp_connector *_connection;
+
+    bool _isActive;
+    bool _listenerExited;
 };

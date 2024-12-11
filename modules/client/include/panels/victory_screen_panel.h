@@ -27,7 +27,7 @@ namespace client
     private:
         wxBoxSizer *victory_screen_sizer;
 
-        void onCloseButtonClicked(wxCommandEvent& /*event*/);
+        void onCloseButtonClicked(wxCommandEvent & /*event*/);
     };
 
 } // namespace client

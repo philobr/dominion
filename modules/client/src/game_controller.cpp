@@ -437,7 +437,7 @@ namespace client
     {
         LOG(WARN) << "Skipping to victory screen, this is debug functionality";
         std::vector<shared::PlayerResult> players = {
-            {"E löl", 69}, {"E blöde siech", 42}, {"E glünggi", 9}, {"E sürmel", 6} };
+                {"E löl", 69}, {"E blöde siech", 42}, {"E glünggi", 9}, {"E sürmel", 6}};
         showVictoryScreen(players);
     }
 

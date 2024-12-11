@@ -15,10 +15,12 @@ namespace client
 
     PlayerPanel::PlayerPanel(wxWindow *parent, wxSize size) : wxPanel(parent, wxID_ANY, wxDefaultPosition, size)
     {
-        LOG(WARN) << "using hard coded player";
-        auto player = shared::PlayerBase("gigu");
-        auto reduced = reduced::Player::make(player, {"Village", "Copper", "Copper", "Copper", "Estate"});
-        this->drawSelectFromHandPlayer(reduced, 2, 3, shared::ChooseFromOrder::AllowedChoice::HAND_CARDS);
+        if ( wxGetApp().isDebugMode() ) {
+            LOG(WARN) << "Using hard coded player";
+            auto player = shared::PlayerBase("gigu");
+            auto reduced = reduced::Player::make(player, {"Village", "Copper", "Copper", "Copper", "Estate"});
+            this->drawSelectFromHandPlayer(reduced, 2, 3, shared::ChooseFromOrder::AllowedChoice::HAND_CARDS);
+        }
     }
 
     void PlayerPanel::drawPlayer(const std::unique_ptr<reduced::Player> &player, bool is_active,

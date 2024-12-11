@@ -10,11 +10,13 @@ namespace server
 {
     reduced::Player::ptr_t Player::getReducedPlayer()
     {
+        this->draw_pile_size = draw_pile.size();
         return reduced::Player::make(static_cast<shared::PlayerBase>(*this), hand_cards);
     }
 
     reduced::Enemy::ptr_t Player::getReducedEnemy()
     {
+        this->draw_pile_size = draw_pile.size();
         return reduced::Enemy::make(static_cast<shared::PlayerBase>(*this), hand_cards.size());
     }
 

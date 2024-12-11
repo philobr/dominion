@@ -7,6 +7,7 @@
 
 #include <wx/dcbuffer.h>
 #include <wx/gbsizer.h>
+#include "shared/game/cards/card_base.h"
 
 namespace client
 {
@@ -68,8 +69,12 @@ namespace client
         // Text for the title
         TextPanel *discardPileText = new TextPanel(this, wxID_ANY, "Discard Pile", TextFormat::PLAIN);
 
+        shared::CardBase::id_t top_discard_card = "Card_back";
+        if ( enemy.getDiscardPileSize() > 0 ) {
+            top_discard_card = enemy.getTopDiscardCard();
+        }
         // The pile itself
-        shared::Pile Discard_Pile("Card_back", enemy.getDiscardPileSize());
+        shared::Pile Discard_Pile(top_discard_card, enemy.getDiscardPileSize());
         PilePanel *Discard_Pile_panel = new PilePanel(this, Discard_Pile, wxSize(height / 3 * 2, height));
 
         // add new items to the sizer

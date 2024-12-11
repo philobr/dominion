@@ -4,6 +4,7 @@
 
 #include <server/network/server_network_manager.h>
 #include <shared/utils/logger.h>
+#include "server/network/basic_network.h"
 
 using handler = std::function<void(const std::string &, const sockpp::tcp_socket::addr_t &)>;
 
@@ -129,6 +130,7 @@ namespace server
         }
 
         LOG(DEBUG) << "Closing connection to " << socket.peer_address();
+        BasicNetwork::playerDisconnect(socket.peer_address().to_string());
         socket.shutdown();
     }
 

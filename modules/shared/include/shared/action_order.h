@@ -98,8 +98,13 @@ namespace shared
 
     class GainFromBoardOrder : public ActionOrder
     {
+        static constexpr shared::CardType any_type = static_cast<shared::CardType>(
+                shared::CardType::ACTION | shared::CardType::ATTACK | shared::CardType::CURSE |
+                shared::CardType::KINGDOM | shared::CardType::REACTION | shared::CardType::TREASURE |
+                shared::CardType::VICTORY);
+
     public:
-        GainFromBoardOrder(unsigned int max_cost, shared::CardType allowed_type) :
+        GainFromBoardOrder(unsigned int max_cost, shared::CardType allowed_type = GainFromBoardOrder::any_type) :
             max_cost(max_cost), allowed_type(allowed_type)
         {}
 
@@ -115,6 +120,11 @@ namespace shared
 
     class ChooseFromOrder : public ActionOrder
     {
+        static constexpr shared::CardType any_type = static_cast<shared::CardType>(
+                shared::CardType::ACTION | shared::CardType::ATTACK | shared::CardType::CURSE |
+                shared::CardType::KINGDOM | shared::CardType::REACTION | shared::CardType::TREASURE |
+                shared::CardType::VICTORY);
+
     public:
         enum AllowedChoice
         {
@@ -126,7 +136,7 @@ namespace shared
         };
 
         ChooseFromOrder(unsigned int min_cards, unsigned int max_cards, AllowedChoice allowed_choices,
-                        shared::CardType allowed_type) :
+                        shared::CardType allowed_type = ChooseFromOrder::any_type) :
             min_cards(min_cards), max_cards(max_cards), allowed_choices(allowed_choices), allowed_type(allowed_type)
         {}
 
@@ -146,15 +156,10 @@ namespace shared
 
     class ChooseFromStagedOrder : public ChooseFromOrder
     {
-        static constexpr shared::CardType any_type = static_cast<shared::CardType>(
-                shared::CardType::ACTION | shared::CardType::ATTACK | shared::CardType::CURSE |
-                shared::CardType::KINGDOM | shared::CardType::REACTION | shared::CardType::TREASURE |
-                shared::CardType::VICTORY);
-
     public:
         ChooseFromStagedOrder(unsigned int min_cards, unsigned int max_cards, AllowedChoice choices,
                               std::vector<shared::CardBase::id_t> cards) :
-            ChooseFromOrder(min_cards, max_cards, choices, any_type), cards(cards)
+            ChooseFromOrder(min_cards, max_cards, choices), cards(cards)
         {}
 
         ~ChooseFromStagedOrder() override = default;
@@ -175,6 +180,11 @@ namespace shared
                             shared::CardType allowed_type) :
             ChooseFromOrder(min_cards, max_cards, choices, allowed_type)
         {}
+
+        ChooseFromHandOrder(unsigned int min_cards, unsigned int max_cards, AllowedChoice choices) :
+            ChooseFromOrder(min_cards, max_cards, choices)
+        {}
+
         ~ChooseFromHandOrder() override = default;
 
         bool operator==(const ChooseFromHandOrder &other) const;

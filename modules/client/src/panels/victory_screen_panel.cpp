@@ -1,6 +1,6 @@
+#include <dominion.h>
 #include <panels/victory_screen_panel.h>
 #include <uiElements/text_panel.h>
-#include <dominion.h>
 
 namespace client
 {
@@ -57,7 +57,7 @@ namespace client
 
     void VictoryScreenPanel::drawTestVictoryScreen()
     {
-        if (!wxGetApp().isDebugMode()) {
+        if ( !wxGetApp().isDebugMode() ) {
             LOG(WARN) << "Tried to draw test victory screen in non-debug mode";
             return;
         }

@@ -73,8 +73,9 @@ namespace client
         if ( wxGetApp().isDebugMode() ) {
             wxButton *skipToGameScreenButton =
                     new wxButton(this, wxID_ANY, "Game Screen", wxDefaultPosition, wxSize(100, 40));
-            skipToGameScreenButton->Bind(
-                    wxEVT_BUTTON, [](const wxCommandEvent & /*event*/) { wxGetApp().getController().skipToGamePanel(); });
+            skipToGameScreenButton->Bind(wxEVT_BUTTON,
+                                         [](const wxCommandEvent & /*event*/)
+                                         { wxGetApp().getController().skipToGamePanel(); });
             VerticalLayout->Add(skipToGameScreenButton, 0, wxALIGN_RIGHT | wxALL, 10);
 
             wxButton *skipToVictoryScreenButton =

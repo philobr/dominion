@@ -1,8 +1,8 @@
+#include <dominion.h>
 #include <panels/enemy_info_panel.h>
 #include <shared/utils/logger.h>
 #include <uiElements/enemy_panel.h>
 #include <wx/wx.h>
-#include <dominion.h>
 
 namespace client
 {

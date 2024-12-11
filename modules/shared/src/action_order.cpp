@@ -24,6 +24,8 @@ namespace shared
         } else if ( type == "gain_card" ) {
             unsigned int max_cost;
             shared::CardType allowed_type;
+            GET_UINT_MEMBER(max_cost, json, "max_cost");
+            GET_ENUM_MEMBER(allowed_type, json, "allowed_type", shared::CardType);
             return std::make_unique<GainFromBoardOrder>(max_cost, allowed_type);
         } else if ( type == "choose_from_hand" || type == "choose_from_staged" ) {
             unsigned int min_cards;

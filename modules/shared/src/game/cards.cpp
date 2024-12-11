@@ -60,6 +60,9 @@ namespace shared
     REGISTER_CARD(Duke, CardType::KINGDOM | CardType::VICTORY, 5);
     REGISTER_CARD(Silk_Road, CardType::KINGDOM | CardType::VICTORY, 4);
 
+    // treasure cards
+    REGISTER_CARD(Treasure_Trove, CardType::KINGDOM | CardType::TREASURE, 5);
+
     // interactive
     // REGISTER_CARD(Cellar, CardType::ACTION, 2);
     // REGISTER_CARD(Chapel, CardType::ACTION, 2);

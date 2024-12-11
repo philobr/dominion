@@ -1,9 +1,8 @@
-#include <condition_variable>
-#include <mutex>
 #include <panels/main_game_panel.h>
 #include <shared/utils/logger.h>
 
 #include <wx/app.h>
+#include "shared/game/cards/card_base.h"
 
 namespace client
 {
@@ -49,6 +48,18 @@ namespace client
         // set is_active to false to avoid any issues with players trying to play cards
         // during this phase
         Player->drawPlayer(game_state.reduced_player, false, game_state.game_phase);
+        EnemyInfo->drawEnemies(game_state.reduced_enemies, game_state.active_player);
+    }
+
+    void MainGamePanel::drawSelectFromHand(const reduced::GameState &game_state, shared::CardType /*type*/,
+                                           unsigned min_count, unsigned max_count,
+                                           shared::ChooseFromOrder::AllowedChoice allowed_choices)
+    {
+        PhaseInfo->drawInfoPanel(game_state);
+        Board->drawBoard(game_state.board, game_state.isPlayerActive(), game_state.reduced_player->getTreasure(),
+                         game_state.game_phase);
+
+        Player->drawSelectFromHandPlayer(game_state.reduced_player, min_count, max_count, allowed_choices);
         EnemyInfo->drawEnemies(game_state.reduced_enemies, game_state.active_player);
     }
 

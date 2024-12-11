@@ -4,6 +4,7 @@
 #include <game_controller.h>
 #include <shared/utils/logger.h>
 #include <uiElements/pile_panel.h>
+#include <wx/event.h>
 #include <wx/gbsizer.h>
 #include <wx/wx.h>
 
@@ -29,7 +30,7 @@ namespace client
                                shared::GamePhase phase)
     {
         this->DestroyChildren();
-
+        isGainFromBoardPhase_ = false;
         bool buy_phase = phase == shared::GamePhase::BUY_PHASE;
 
         auto can_buy = [buy_phase, is_active](const shared::CardType /*type*/) { return buy_phase && is_active; };
@@ -40,7 +41,7 @@ namespace client
     void BoardPanel::drawBoard(std::shared_ptr<shared::Board> board, unsigned int treasure, shared::CardType type)
     {
         this->DestroyChildren();
-
+        isGainFromBoardPhase_ = true;
         auto can_buy = [type](const shared::CardType pile_type) { return (pile_type & type) == pile_type; };
 
         drawPiles(board, can_buy, treasure);
@@ -52,6 +53,13 @@ namespace client
         pile->SetToolTip("Buy card");
 
         pile->SetCursor(wxCursor(wxCURSOR_HAND));
+
+        if ( isGainFromBoardPhase_ ) {
+            pile->makeClickable(wxEVT_LEFT_UP,
+                                [pile](wxMouseEvent & /*event*/)
+                                { wxGetApp().getController().gainCardFromBoard(pile->getPile().card_id); });
+            return;
+        }
 
         // Bind left click on the panel to the buyCard function
         pile->makeClickable(wxEVT_LEFT_UP,

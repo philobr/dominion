@@ -1,17 +1,17 @@
+
 #include <cstddef>
 #include <shared/utils/logger.h>
 #include <uiElements/image_panel.h>
+#include <wx/filename.h>
 #include <wx/image.h>
-
-// NOLINTBEGIN(bugprone-suspicious-enum-usage)
 
 namespace client
 {
-
-    ImagePanel::ImagePanel(wxWindow *parent, wxString file, wxBitmapType format, wxPoint position, wxSize size,
+    ImagePanel::ImagePanel(wxWindow *parent, wxString asset_name, wxBitmapType format, wxPoint position, wxSize size,
                            double rotation) :
         wxPanel(parent, wxID_ANY, position, size)
     {
+        wxString file = wxString("assets") + wxFileName::GetPathSeparator() + asset_name;
         if ( !wxFileExists(file) ) {
             wxMessageBox("Could not find file: " + file, "File error", wxICON_ERROR);
             LOG(ERROR) << "Could not find file: " << file;
@@ -35,7 +35,8 @@ namespace client
     {
         // this code is called when the system requests this panel to be redrawn.
 
-        if ( !this->_image.IsOk() ) {
+        if ( !_image.IsOk() ) {
+            LOG(WARN) << "Image is not ok";
             return;
         }
 
@@ -50,11 +51,11 @@ namespace client
             wxImage transformed;
 
             if ( this->_rotation == 0.0 ) {
-                transformed = this->_image.Scale(newWidth, newHeight, wxIMAGE_QUALITY_HIGH);
+                transformed = _image.Scale(newWidth, newHeight, wxIMAGE_QUALITY_HIGH);
 
             } else {
-                wxPoint centerOfRotation = wxPoint(this->_image.GetWidth() / 2, this->_image.GetHeight() / 2);
-                transformed = this->_image.Rotate(this->_rotation, centerOfRotation, true);
+                wxPoint centerOfRotation = wxPoint(_image.GetWidth() / 2, _image.GetHeight() / 2);
+                transformed = _image.Rotate(this->_rotation, centerOfRotation, true);
                 transformed = transformed.Scale(newWidth, newHeight, wxIMAGE_QUALITY_BILINEAR);
             }
             this->_bitmap = wxBitmap(transformed);
@@ -70,7 +71,6 @@ namespace client
 
     void ImagePanel::onSize(wxSizeEvent &event)
     {
-
         // when the user resizes this panel, the image should redraw itself
         Refresh();
 
@@ -80,28 +80,7 @@ namespace client
 
     void ImagePanel::makeGrey()
     {
-        // This is some hard github copilot magic
-        // it works:)
-        if ( _image.IsOk() ) {
-            unsigned char *data = _image.GetData();
-            if ( data != nullptr ) {
-                int width = _image.GetWidth();
-                int height = _image.GetHeight();
-                for ( int y = 0; y < height; ++y ) {
-                    for ( int x = 0; x < width; ++x ) {
-                        unsigned char r = data[static_cast<ptrdiff_t>((y * width + x) * 3)];
-                        unsigned char g = data[(y * width + x) * 3 + 1];
-                        unsigned char b = data[(y * width + x) * 3 + 2];
-                        unsigned char grey = static_cast<unsigned char>(0.299 * r + 0.587 * g + 0.114 * b);
-                        data[static_cast<ptrdiff_t>((y * width + x) * 3)] = grey;
-                        data[(y * width + x) * 3 + 1] = grey;
-                        data[(y * width + x) * 3 + 2] = grey;
-                    }
-                }
-                _bitmap = wxBitmap(_image);
-                Refresh();
-            }
-        }
+        _image = _image.ConvertToGreyscale();
+        Refresh();
     }
 } // namespace client
-  // NOLINTEND(bugprone-suspicious-enum-usage)

@@ -1,4 +1,5 @@
 #pragma once
+#include <wx/gdicmn.h>
 #include <wx/wx.h>
 
 namespace client
@@ -13,6 +14,7 @@ namespace client
         const wxColour ACTIVE_ENEMY_BACKGROUND = wxColour(255, 200, 150);
         const wxColour ACTIVE_PLAYER_INFO_BACKGROUND = wxColour(200, 240, 200);
         const wxColour PASSIVE_PLAYER_INFO_BACKGROUND = ACTIVE_ENEMY_BACKGROUND; // wxColour(200, 220, 240);
+        const wxColour SELECTED_CARD_BACKGROUND = *wxYELLOW;
 
 // Panel formatting constants
 #ifdef __APPLE__

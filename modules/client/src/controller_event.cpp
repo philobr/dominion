@@ -30,6 +30,9 @@ namespace client
             case ControllerEventType::SHOW_GAIN_FROM_BOARD_SCREEN:
                 os << "ShowGainFromBoardScreen";
                 break;
+            case ControllerEventType::SHOW_CHOOSE_FROM_HAND_SCREEN:
+                os << "ShowChooseFromHandScreen";
+                break;
             default:
                 LOG(ERROR) << "Unknown ControllerEventType: " << static_cast<int>(type);
                 os << "UnknownEventType";
@@ -56,6 +59,12 @@ namespace client
 
     ShowGainFromBoardScreenEventData::ShowGainFromBoardScreenEventData(std::unique_ptr<reduced::GameState> game_state,
                                                                        shared::GainFromBoardOrder order) :
+        ShowGameScreenEventData(std::move(game_state)),
+        order(order)
+    {}
+
+    ShowChooseFromHandScreenEventData::ShowChooseFromHandScreenEventData(std::unique_ptr<reduced::GameState> game_state,
+                                                                         shared::ChooseFromHandOrder order) :
         ShowGameScreenEventData(std::move(game_state)),
         order(order)
     {}
@@ -99,6 +108,13 @@ namespace client
     {
         ShowGainFromBoardScreenEventData data(std::move(game_state), order);
         return new ControllerEvent(ControllerEventType::SHOW_GAIN_FROM_BOARD_SCREEN, data);
+    }
+
+    ControllerEvent *ControllerEvent::showChooseFromHandScreen(std::unique_ptr<reduced::GameState> game_state,
+                                                               shared::ChooseFromHandOrder order)
+    {
+        ShowChooseFromHandScreenEventData data(std::move(game_state), order);
+        return new ControllerEvent(ControllerEventType::SHOW_CHOOSE_FROM_HAND_SCREEN, data);
     }
 
     ControllerEvent::ControllerEvent(ControllerEventType type, std::any data) :

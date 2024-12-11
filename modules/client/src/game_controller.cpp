@@ -8,6 +8,7 @@
 #include <shared/message_types.h>
 #include <shared/utils/logger.h>
 #include <vector>
+#include "shared/action_decision.h"
 
 using namespace shared;
 
@@ -41,6 +42,18 @@ namespace client
     void GameController::showCardSelectionScreen()
     {
         wxQueueEvent(_guiEventReceiver.get(), ControllerEvent::showCardSelectionScreen());
+    }
+
+    void GameController::showGainFromBoard(std::unique_ptr<reduced::GameState> game_state,
+                                           shared::GainFromBoardOrder order)
+    {
+        wxQueueEvent(_guiEventReceiver.get(),
+                     ControllerEvent::showGainFromBoardScreen(std::move(game_state), std::move(order)));
+    }
+    void GameController::showChooseFromHandOrder(std::unique_ptr<reduced::GameState> game_state,
+                                                 shared::ChooseFromHandOrder order)
+    {
+        wxQueueEvent(_guiEventReceiver.get(), ControllerEvent::showChooseFromHandScreen(std::move(game_state), order));
     }
 
     GameController::GameController(GuiEventReceiver *event_receiver) :
@@ -174,6 +187,35 @@ namespace client
         _clientNetworkManager->sendRequest(std::move(action_decision_message));
     }
 
+    void GameController::gainCardFromBoard(const std::string &card_id)
+    {
+        LOG(DEBUG) << "Gaining card from board " << card_id;
+
+        std::unique_ptr<shared::ActionDecision> decision(new shared::GainFromBoardDecision(card_id));
+
+        // TODO (#120) Implement in_response_to
+        std::optional<std::string> in_response_to = std::nullopt;
+
+        std::unique_ptr<shared::ActionDecisionMessage> action_decision_message =
+                std::make_unique<shared::ActionDecisionMessage>(_gameName, _playerName, std::move(decision),
+                                                                in_response_to);
+        _clientNetworkManager->sendRequest(std::move(action_decision_message));
+    }
+    void GameController::confirmSelectionFromHand(std::vector<shared::CardBase::id_t> selected_cards,
+                                                  std::vector<shared::ChooseFromOrder::AllowedChoice> choices)
+    {
+        LOG(DEBUG) << "Confirming selection";
+        std::unique_ptr<shared::ActionDecision> decision(new shared::DeckChoiceDecision(selected_cards, choices));
+
+        // TODO (#120) Implement in_response_to
+        std::optional<std::string> in_response_to = std::nullopt;
+
+        std::unique_ptr<shared::ActionDecisionMessage> action_decision_message =
+                std::make_unique<shared::ActionDecisionMessage>(_gameName, _playerName, std::move(decision),
+                                                                in_response_to);
+        _clientNetworkManager->sendRequest(std::move(action_decision_message));
+    }
+
     void GameController::endActionPhase()
     {
         LOG(INFO) << "Ending action phase";
@@ -232,8 +274,9 @@ namespace client
             LOG(ERROR) << "Received EndTurnOrder, this is deprecated (see #194)";
             return;
         } else if ( typeid(action_order) == typeid(GainFromBoardOrder) ) {
-            // TODO(#195): Implement
-            LOG(WARN) << "Received GainFromBoardOrder, but this does not do anything yet";
+            LOG(WARN) << "Received GainFromBoardOrder";
+            showGainFromBoard(std::move(msg->game_state),
+                              std::move(*dynamic_cast<GainFromBoardOrder *>(&action_order)));
             return;
         } else if ( typeid(action_order) == typeid(ChooseFromOrder) ) {
             // TODO(#195): Implement

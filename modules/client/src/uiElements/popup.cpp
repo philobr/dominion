@@ -2,6 +2,7 @@
 
 #include <shared/utils/logger.h>
 #include <wx/display.h>
+#include <wx/filename.h>
 #include <wx/wx.h>
 
 namespace client
@@ -14,7 +15,7 @@ namespace client
         wxDialog *dialog = new wxDialog(parent, wxID_ANY, "Card Preview", wxDefaultPosition, wxSize(500, 750));
 
         // Load the card image
-        std::string cardPath = "assets/" + card_id + ".png";
+        wxString cardPath = wxString("assets") + wxFileName::GetPathSeparator() + wxString(card_id) + ".png";
         wxImage cardImage(cardPath, wxBITMAP_TYPE_PNG);
 
         wxBoxSizer *dialogSizer = new wxBoxSizer(wxVERTICAL);

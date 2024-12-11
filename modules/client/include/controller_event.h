@@ -63,7 +63,8 @@ namespace client
         ShowGameScreenEventData(std::unique_ptr<reduced::GameState> game_state);
 
         // This is hacky bullshit, but this is the easiest way to make this
-        // struct copyable. We should really be using a unique_ptr here.
+        // struct copyable. 
+        // TODO: We should really be using a unique_ptr here.
         std::shared_ptr<reduced::GameState> game_state;
     };
 

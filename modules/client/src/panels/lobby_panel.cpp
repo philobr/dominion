@@ -23,7 +23,9 @@ namespace client
         VerticalSizer->Add(Title, 0, wxALIGN_CENTER | wxALL, 5);
         wxPanel *Panel = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxSize(512, 512));
         VerticalSizer->Add(Panel, 1, wxALIGN_CENTER | wxALL, 5);
-        SetBackgroundColour(formatting_constants::DEFAULT_PANEL_BACKGROUND);
+        if ( formatting_constants::background_image ) {
+            SetBackgroundColour(formatting_constants::DEFAULT_PANEL_BACKGROUND);
+        }
 
         Panel->SetSizer(NamesSizer);
 

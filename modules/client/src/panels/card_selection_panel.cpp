@@ -74,7 +74,9 @@ namespace client
         GridSizer->Add(StartButton, 0, wxALIGN_RIGHT | wxALL, 5);
 
         VerticalSizer->Add(GridSizer, 0, wxEXPAND | wxALL, 5);
-        SetBackgroundColour(formatting_constants::DEFAULT_PANEL_BACKGROUND);
+        if ( formatting_constants::background_iamge ) {
+            SetBackgroundColour(formatting_constants::DEFAULT_PANEL_BACKGROUND);
+        }
         this->SetSizerAndFit(VerticalSizer);
     }
 

@@ -98,16 +98,10 @@ namespace shared
 
     class GainFromBoardOrder : public ActionOrder
     {
-        static constexpr shared::CardType any_card_type =
-                static_cast<shared::CardType>(shared::CardType::ACTION | shared::CardType::VICTORY |
-                                              shared::CardType::TREASURE | shared::CardType::CURSE);
-
     public:
         GainFromBoardOrder(unsigned int max_cost, shared::CardType allowed_type) :
             max_cost(max_cost), allowed_type(allowed_type)
         {}
-
-        GainFromBoardOrder(unsigned int max_cost) : max_cost(max_cost), allowed_type(any_card_type) {}
 
         bool operator==(const GainFromBoardOrder &other) const;
         bool operator!=(const GainFromBoardOrder &other) const { return !(*this == other); }

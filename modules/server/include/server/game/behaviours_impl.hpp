@@ -143,6 +143,24 @@ namespace server
             BEHAVIOUR_DONE;
         }
 
+        DEFINE_BEHAVIOUR(SeaHag)
+        {
+            LOG_CALL;
+            ASSERT_NO_DECISION;
+
+            auto all_player_ids = game_state.getAllPlayerIDs();
+            for (auto &player_id : all_player_ids) {
+                if (player_id == game_state.getCurrentPlayerId()) {
+                    continue;
+                }
+                auto &affected_player = game_state.getPlayer(player_id);
+                affected_player.move<shared::DRAW_PILE_TOP, shared::DISCARD_PILE>();
+                affected_player.add<shared::DRAW_PILE_TOP>("Curse");
+            }
+
+            BEHAVIOUR_DONE;
+        }
+
         DEFINE_BEHAVIOUR(Moneylender)
         {
             LOG_CALL;

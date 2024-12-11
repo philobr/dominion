@@ -55,6 +55,7 @@ namespace shared
     REGISTER_CARD(Workers_Village, CardType::ACTION, 4);
     REGISTER_CARD(Great_Hall, CardType::ACTION | CardType::VICTORY, 3);
     REGISTER_CARD(Treasure_Map, CardType::ACTION, 4);
+    REGISTER_CARD(Sea_Hag, CardType::ACTION | CardType::ATTACK, 4);
 
     // victory cards
     REGISTER_CARD(Gardens, CardType::KINGDOM | CardType::VICTORY, 4);

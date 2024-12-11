@@ -78,6 +78,7 @@ void server::BehaviourRegistry::initialiseBehaviours()
     insert<GainActions<1>, GainCoins<1>, GainBuys<1>, DrawCards<1>>("Market");
 
     insert<DrawCards<1>, GainActions<2>, GainBuys<1>>("Workers_Village");
+    insert<SeaHag>("Sea_Hag");
     insertVictory<ConstantVictoryPoints<1>, DrawCards<1>, GainActions<1>>("Great_Hall");
     insert<TreasureMap>("Treasure_Map");
 

@@ -188,6 +188,34 @@ namespace server
             BEHAVIOUR_DONE;
         }
 
+        DEFINE_BEHAVIOUR(TreasureMap)
+        {
+            LOG_CALL;
+            ASSERT_NO_DECISION;
+
+            auto &affected_player = game_state.getCurrentPlayer();
+            auto &board = *game_state.getBoard();
+            if (affected_player.hasCard<shared::HAND>("Treasure_Map")) {
+                affected_player.move<shared::HAND, shared::TRASH>("Treasure_Map");
+                // Currently, ServerPlayer::move does not delete the card from
+                // the hand, so we have to do it manually
+                board.trashCard("Treasure_Map");
+                if ( !board.removeFromPlayedCards("Treasure_Map") )
+                {
+                    // We played a treasure map, so it should be in the played cards now
+                    LOG(ERROR) << "Treasure_Map not found in played cards";
+                    throw std::runtime_error("Treasure_Map not found in played cards");
+                }
+                board.trashCard("Treasure_Map");
+                for (int i = 0; i < 4; i++) {
+                    affected_player.add<shared::DRAW_PILE_TOP>("Gold");
+                }
+            }
+
+            BEHAVIOUR_DONE;
+        }
+
+
 #define TODO_IMPLEMENT_ME                                                                                              \
     SUPPRESS_UNUSED_VAR_WARNING(game_state);                                                                           \
     SUPPRESS_UNUSED_VAR_WARNING(action_decision);                                                                      \

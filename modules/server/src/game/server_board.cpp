@@ -20,6 +20,17 @@ namespace server
 
     void ServerBoard::addToPlayedCards(const shared::CardBase::id_t &card_id) { played_cards.push_back(card_id); }
 
+    bool ServerBoard::removeFromPlayedCards(const shared::CardBase::id_t &card_id)
+    {
+        auto it = std::find(played_cards.begin(), played_cards.end(), card_id);
+        if ( it != played_cards.end() ) {
+            played_cards.erase(it);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     void ServerBoard::tryTake(const shared::CardBase::id_t &card_id)
     {
         if ( !has(card_id) ) {

@@ -78,13 +78,17 @@ void server::BehaviourRegistry::initialiseBehaviours()
     insert<GainActions<1>, GainCoins<1>, GainBuys<1>, DrawCards<1>>("Market");
 
     insert<DrawCards<1>, GainActions<2>, GainBuys<1>>("Workers_Village");
+    insert<SeaHag>("Sea_Hag");
     insertVictory<ConstantVictoryPoints<1>, DrawCards<1>, GainActions<1>>("Great_Hall");
+    insert<TreasureMap>("Treasure_Map");
 
     // money cards
     insert<GainCoins<2>, TreasureTrove>("Treasure_Trove");
 
     // enemies draw a card
     insert<DrawCards<4>, GainBuys<1>, DrawCardsEnemies<1>>("Council_Room");
+    // may trash copper and gain +3
+    insert<Moneylender>("Moneylender");
     // enemies get curse on discard pile
     insert<DrawCards<2>, CurseEnemy>("Witch");
     // gain card costing up to 5. put card from hand onto deck
@@ -133,8 +137,6 @@ void server::BehaviourRegistry::initialiseBehaviours()
     insert<NOT_IMPLEMENTED_YET>("Workshop");
     // discard top of draw pile, if action you may play it
     insert<NOT_IMPLEMENTED_YET>("Vassal");
-    // may trash copper and gain +3
-    insert<NOT_IMPLEMENTED_YET>("Moneylender");
     // compilcated, google it
     insert<NOT_IMPLEMENTED_YET>("Bureaucrat");
     // trash card from hand, gain card (to discard pile), costing 2 more than it

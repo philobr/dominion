@@ -54,6 +54,8 @@ namespace shared
     REGISTER_CARD(Witch, CardType::ACTION | CardType::ATTACK, 5);
     REGISTER_CARD(Workers_Village, CardType::ACTION, 4);
     REGISTER_CARD(Great_Hall, CardType::ACTION | CardType::VICTORY, 3);
+    REGISTER_CARD(Treasure_Map, CardType::ACTION, 4);
+    REGISTER_CARD(Sea_Hag, CardType::ACTION | CardType::ATTACK, 4);
 
     // victory cards
     REGISTER_CARD(Gardens, CardType::KINGDOM | CardType::VICTORY, 4);
@@ -64,10 +66,15 @@ namespace shared
     REGISTER_CARD(Treasure_Trove, CardType::KINGDOM | CardType::TREASURE, 5);
 
     // interactive
+    REGISTER_CARD(Moneylender, CardType::ACTION, 4);
     REGISTER_CARD(Mine, CardType::ACTION, 5);
     REGISTER_CARD(Artisan, CardType::ACTION, 6);
     REGISTER_CARD(Cellar, CardType::ACTION, 2);
     REGISTER_CARD(Chapel, CardType::ACTION, 2);
+    // REGISTER_CARD(Workshop, CardType::ACTION, 3);
+    // REGISTER_CARD(Vassal, CardType::ACTION, 3);
+    // REGISTER_CARD(Harbinger, CardType::ACTION, 3);
+    // REGISTER_CARD(Poacher, CardType::ACTION, 4);
     // REGISTER_CARD(Militia, CardType::ACTION | CardType::ATTACK, 4);
     // REGISTER_CARD(Moat, CardType::ACTION | CardType::REACTION, 2);
     //  REGISTER_CARD(Workshop, CardType::ACTION, 3);

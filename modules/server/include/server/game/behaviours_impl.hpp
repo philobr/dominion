@@ -145,6 +145,39 @@ namespace server
             BEHAVIOUR_DONE;
         }
 
+        DEFINE_BEHAVIOUR(SeaHag)
+        {
+            LOG_CALL;
+            ASSERT_NO_DECISION;
+
+            auto all_player_ids = game_state.getAllPlayerIDs();
+            for (auto &player_id : all_player_ids) {
+                if (player_id == game_state.getCurrentPlayerId()) {
+                    continue;
+                }
+                auto &affected_player = game_state.getPlayer(player_id);
+                affected_player.move<shared::DRAW_PILE_TOP, shared::DISCARD_PILE>();
+                affected_player.add<shared::DRAW_PILE_TOP>("Curse");
+            }
+
+            BEHAVIOUR_DONE;
+        }
+
+        DEFINE_BEHAVIOUR(Moneylender)
+        {
+            LOG_CALL;
+            ASSERT_NO_DECISION;
+
+            auto &affected_player = game_state.getCurrentPlayer();
+            if (affected_player.hasCard<shared::HAND>("Copper")) {
+                // Discard the copper
+                affected_player.move<shared::HAND, shared::TRASH>("Copper");
+                affected_player.addTreasure(3);
+            }
+
+            BEHAVIOUR_DONE;
+        }
+
         DEFINE_BEHAVIOUR(TreasureTrove)
         {
             LOG_CALL;
@@ -156,6 +189,34 @@ namespace server
 
             BEHAVIOUR_DONE;
         }
+
+        DEFINE_BEHAVIOUR(TreasureMap)
+        {
+            LOG_CALL;
+            ASSERT_NO_DECISION;
+
+            auto &affected_player = game_state.getCurrentPlayer();
+            auto &board = *game_state.getBoard();
+            if (affected_player.hasCard<shared::HAND>("Treasure_Map")) {
+                affected_player.move<shared::HAND, shared::TRASH>("Treasure_Map");
+                // Currently, ServerPlayer::move does not delete the card from
+                // the hand, so we have to do it manually
+                board.trashCard("Treasure_Map");
+                if ( !board.removeFromPlayedCards("Treasure_Map") )
+                {
+                    // We played a treasure map, so it should be in the played cards now
+                    LOG(ERROR) << "Treasure_Map not found in played cards";
+                    throw std::runtime_error("Treasure_Map not found in played cards");
+                }
+                board.trashCard("Treasure_Map");
+                for (int i = 0; i < 4; i++) {
+                    affected_player.add<shared::DRAW_PILE_TOP>("Gold");
+                }
+            }
+
+            BEHAVIOUR_DONE;
+        }
+
 
 #define TODO_IMPLEMENT_ME                                                                                              \
     SUPPRESS_UNUSED_VAR_WARNING(game_state);                                                                           \

@@ -1,20 +1,17 @@
 #include "client_listener.h"
 #include <shared/utils/logger.h>
+#include <unistd.h>
 #include "client_network_manager.h"
 
 
 ClientListener::ClientListener(sockpp::tcp_connector *connection) :
-    wxThread(wxTHREAD_DETACHED), _connection(connection), _isActive(true), _listenerExited(false)
+    wxThread(wxTHREAD_DETACHED), _connection(connection), _isActive(true)
 {}
 
 
-ClientListener::~ClientListener()
-{
-    this->_isActive = false;
-    while ( !listenerExited() ) {
-    };
-}
+ClientListener::~ClientListener() = default;
 
+void ClientListener::shutdown() { this->_isActive = false; }
 
 wxThread::ExitCode ClientListener::Entry()
 {
@@ -79,7 +76,6 @@ wxThread::ExitCode ClientListener::Entry()
     }
 
     LOG(INFO) << "Exited Listener";
-    _listenerExited = true;
     return (wxThread::ExitCode)0; // everything okay
 }
 
@@ -92,4 +88,3 @@ void ClientListener::outputError(const std::string & /*title*/, const std::strin
 }
 
 bool ClientListener::isActive() { return this->_isActive; }
-bool ClientListener::listenerExited() { return this->_listenerExited; }

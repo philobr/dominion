@@ -1,5 +1,6 @@
 #pragma once
 
+#include <map>
 #include <unordered_map>
 
 #include <shared/game/cards/card_base.h>
@@ -11,11 +12,14 @@ namespace shared
     {
     public:
         using map_t = std::unordered_map<CardBase::id_t, std::unique_ptr<CardBase>>;
+        // Greater bc the first element inserted in the view will be the lowest on the screen
+        using sorted_t = std::multimap<unsigned int, std::unique_ptr<CardBase>, std::greater<>>;
 
         static void insert(const CardBase::id_t &card_id, CardType type, unsigned int cost);
         static bool has(const CardBase::id_t &card_id) { return _map.count(card_id) > 0; }
 
         static const map_t &getAll() { return _map; }
+        static const sorted_t getAllSortedByCost();
 
         static const CardBase &getCard(const CardBase::id_t &card_id);
         static unsigned int getCost(const CardBase::id_t &card_id);
@@ -130,4 +134,14 @@ namespace shared
         }
         return getCard(card_id).isCurse();
     }
+
+    inline const shared::CardFactory::sorted_t shared::CardFactory::getAllSortedByCost()
+    {
+        shared::CardFactory::sorted_t sorted_map;
+        for (const auto& card : _map) {
+            sorted_map.emplace(card.second->getCost(), card.second.get());
+        }
+        return sorted_map;
+    }
+
 } // namespace shared

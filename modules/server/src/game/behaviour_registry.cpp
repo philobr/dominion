@@ -101,7 +101,9 @@ void server::BehaviourRegistry::initialiseBehaviours()
     insert<GainActions<1>, DiscardAndRedrawAnyAmount>("Cellar");
     // draw to cards and you can block enemy attacks
     insert<DrawCards<2>>("Moat");
-
+    // gain any card costing up to 4
+    insert<GainCardMaxCost<4>>("Workshop");
+    
     auto gardens_filter = [](const shared::CardBase::id_t & /*card*/) -> bool { return true; };
     insertVictory<VictoryPointsPerNCards<1, 10, gardens_filter>>("Gardens");
 
@@ -111,6 +113,8 @@ void server::BehaviourRegistry::initialiseBehaviours()
     auto silk_road_filter = [](const shared::CardBase::id_t &card) -> bool
     { return shared::CardFactory::isVictory(card); };
     insertVictory<VictoryPointsPerNCards<1, 4, silk_road_filter>>("Silk_Road");
+
+
 
     /*
     UNSURE
@@ -132,9 +136,6 @@ void server::BehaviourRegistry::initialiseBehaviours()
     insert<GainCoins<2>, NOT_IMPLEMENTED_YET>("Militia");
     // peek top 2 from deck, trash (and/or) discard any. return rest to draw pile in any order
     insert<DrawCards<1>, GainActions<1>, NOT_IMPLEMENTED_YET>("Sentry");
-
-    // gain any card costing up to 4
-    insert<NOT_IMPLEMENTED_YET>("Workshop");
     // discard top of draw pile, if action you may play it
     insert<NOT_IMPLEMENTED_YET>("Vassal");
     // compilcated, google it

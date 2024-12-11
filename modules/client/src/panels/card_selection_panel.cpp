@@ -25,16 +25,16 @@ namespace client
         wxBoxSizer *VerticalSizer = new wxBoxSizer(wxVERTICAL);
         VerticalSizer->Add(Title, 0, wxALIGN_CENTER | wxALL, 5);
 
-        const shared::CardFactory::map_t &all_cards = shared::CardFactory::getAll();
+        const shared::CardFactory::sorted_t &all_cards = shared::CardFactory::getAllSortedByCost();
         for ( const auto &card : all_cards ) {
             if ( card.second->isKingdom() ) {
                 // This is a really hacky way of ignoring the God Mode card, but
                 // it is good enough for now
-                if ( !wxGetApp().isDebugMode() && card.first == "God_Mode" ) {
+                if ( !wxGetApp().isDebugMode() && card.second->getId() == "God_Mode" ) {
                     continue;
                 }
 
-                selectedCards[card.first] = false;
+                selectedCards[card.second->getId()] = false;
             }
         }
 
@@ -145,7 +145,8 @@ namespace client
         if ( selectedCardCount >= 10 ) {
             return;
         }
-        while ( selectedCardCount < 10 ) {
+        // Little bug that i found bc my map doesnt work yet:)
+        while ( selectedCardCount < 10  && selectedCardCount < cardPanels.size() ) {
             while ( true ) {
                 // Generate random index between 0 and the number of cards
                 int random_index = rand() % cardPanels.size();

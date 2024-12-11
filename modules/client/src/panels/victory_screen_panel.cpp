@@ -65,7 +65,7 @@ namespace client
         victory_screen_sizer = new wxBoxSizer(wxVERTICAL);
 
         // Set min size for victory screen
-        SetMinSize(wxSize(900, -1));
+        SetMinSize(wxSize(1200, -1));
 
         // Show the winner in a special line
         wxBoxSizer* winner_sizer = new wxBoxSizer(wxHORIZONTAL);
@@ -108,7 +108,7 @@ namespace client
         victory_screen_sizer->Add(horizontal_sizer, 0, wxALIGN_CENTER | wxALL, 20);
 
         // Create the close button
-        wxButton* close_button = new wxButton(this, wxID_ANY, "Close Game");
+        wxButton* close_button = new wxButton(this, wxID_ANY, "Close Game", wxDefaultPosition, wxSize(100, 40));
         victory_screen_sizer->Add(close_button, 0, wxALIGN_CENTER | wxALL, 20);
 
         // Bind the button click event to a handler

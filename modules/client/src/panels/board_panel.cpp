@@ -20,10 +20,11 @@ namespace client
 
     BoardPanel::BoardPanel(wxWindow *parent, wxSize size) : wxPanel(parent, wxID_ANY, wxDefaultPosition, size)
     {
-
-        auto board = shared::Board::make(getValidKingdomCards(), 3);
-
-        this->drawBoard(board, true, 3, shared::GamePhase::ACTION_PHASE);
+        if ( wxGetApp().isDebugMode() ) {
+            LOG(WARN) << "Using hardcoded board for debugging purposes";
+            auto board = shared::Board::make(getValidKingdomCards(), 3);
+            this->drawBoard(board, true, 3, shared::GamePhase::ACTION_PHASE);
+        }
     }
 
     void BoardPanel::drawBoard(std::shared_ptr<shared::Board> board, bool is_active, unsigned int treasure,

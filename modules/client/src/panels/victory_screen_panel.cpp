@@ -1,3 +1,4 @@
+#include <dominion.h>
 #include <panels/victory_screen_panel.h>
 #include <uiElements/text_panel.h>
 
@@ -56,6 +57,11 @@ namespace client
 
     void VictoryScreenPanel::drawTestVictoryScreen()
     {
+        if ( !wxGetApp().isDebugMode() ) {
+            LOG(WARN) << "Tried to draw test victory screen in non-debug mode";
+            return;
+        }
+
         DestroyChildren();
         if ( victory_screen_sizer != nullptr ) {
             delete victory_screen_sizer;

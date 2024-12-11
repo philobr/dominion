@@ -125,9 +125,11 @@ namespace shared
             HAND_CARDS = 16
         };
 
-        ChooseFromOrder(unsigned int min_cards, unsigned int max_cards, AllowedChoice allowed_choices) :
-            min_cards(min_cards), max_cards(max_cards), allowed_choices(allowed_choices)
+        ChooseFromOrder(unsigned int min_cards, unsigned int max_cards, AllowedChoice allowed_choices,
+                        shared::CardType allowed_type) :
+            min_cards(min_cards), max_cards(max_cards), allowed_choices(allowed_choices), allowed_type(allowed_type)
         {}
+
         ~ChooseFromOrder() override = default;
 
         bool operator==(const ChooseFromOrder &other) const;
@@ -136,6 +138,7 @@ namespace shared
         unsigned int min_cards;
         unsigned int max_cards;
         AllowedChoice allowed_choices;
+        shared::CardType allowed_type;
 
     protected:
         bool equals(const ActionOrder &other) const override;
@@ -143,11 +146,15 @@ namespace shared
 
     class ChooseFromStagedOrder : public ChooseFromOrder
     {
+        static constexpr shared::CardType any_type = static_cast<shared::CardType>(
+                shared::CardType::ACTION | shared::CardType::ATTACK | shared::CardType::CURSE |
+                shared::CardType::KINGDOM | shared::CardType::REACTION | shared::CardType::TREASURE |
+                shared::CardType::VICTORY);
+
     public:
         ChooseFromStagedOrder(unsigned int min_cards, unsigned int max_cards, AllowedChoice choices,
                               std::vector<shared::CardBase::id_t> cards) :
-            ChooseFromOrder(min_cards, max_cards, choices),
-            cards(cards)
+            ChooseFromOrder(min_cards, max_cards, choices, any_type), cards(cards)
         {}
 
         ~ChooseFromStagedOrder() override = default;
@@ -164,8 +171,9 @@ namespace shared
     class ChooseFromHandOrder : public ChooseFromOrder
     {
     public:
-        ChooseFromHandOrder(unsigned int min_cards, unsigned int max_cards, AllowedChoice choices) :
-            ChooseFromOrder(min_cards, max_cards, choices)
+        ChooseFromHandOrder(unsigned int min_cards, unsigned int max_cards, AllowedChoice choices,
+                            shared::CardType allowed_type) :
+            ChooseFromOrder(min_cards, max_cards, choices, allowed_type)
         {}
         ~ChooseFromHandOrder() override = default;
 

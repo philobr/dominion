@@ -143,13 +143,17 @@ namespace client
             makePreview(Pile);
 
             int price = shared::CardFactory::getCard(pile.card_id).getCost();
-            if ( can_buy && price <= treasure ) {
+            if ( can_buy && price <= treasure && !pile.empty() ) {
                 makeBuyable(Pile);
             } else {
-                if ( !can_buy ) {
-                    Pile->SetToolTip("Not your turn");
-                } else {
+                if ( !can_buy && isGainFromBoardPhase_ ) {
+                    Pile->SetToolTip("Can't choose this card type");
+                } else if ( pile.empty() ) {
+                    Pile->SetToolTip("Empty pile");
+                } else if ( can_buy && price > treasure ) {
                     Pile->SetToolTip("Too expensive");
+                } else {
+                    Pile->SetToolTip("Can't select this card right now");
                 }
                 Pile->makeGrey();
                 Pile->SetCursor(wxCursor(wxCURSOR_NO_ENTRY));

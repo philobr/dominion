@@ -68,6 +68,8 @@ namespace shared
          */
         void decTreasure(const unsigned int dec_amount);
 
+        bool removeFromPlayedCards(const CardBase::id_t &card_id);
+
     protected:
         id_t player_id;
 

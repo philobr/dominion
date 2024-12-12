@@ -43,7 +43,7 @@ namespace server
     {
         try {
             // all checks are done here
-            game_state->tryPlayFromHand(requestor_id, action_decision->card_id);
+            game_state->tryPlay<shared::CardAccess::HAND>(requestor_id, action_decision->card_id);
             game_state->setPhase(
                     shared::GamePhase::PLAYING_ACTION_CARD); // phase is only set if we successfully played a card
         } catch ( std::exception &e ) {

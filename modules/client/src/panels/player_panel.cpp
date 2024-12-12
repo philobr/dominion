@@ -7,6 +7,7 @@
 #include <uiElements/formatting_constants.h>
 #include <uiElements/popup.h>
 #include <uiElements/single_card_panel.h>
+#include <wx/statline.h>
 #include <wx/wx.h>
 #include "shared/action_order.h"
 
@@ -49,8 +50,14 @@ namespace client
         wxPanel *DiscardPilePanel = createDiscardPilePanel(player->getDiscardPileSize(), player->getTopDiscardCard(),
                                                            confirm_button, allowed_choices);
 
+        // Add a vertical line between the draw pile and the hand
+        wxStaticLine *line1 = new wxStaticLine(this, wxID_ANY, wxDefaultPosition, wxSize(5, 120), wxLI_VERTICAL);
+        wxStaticLine *line2 = new wxStaticLine(this, wxID_ANY, wxDefaultPosition, wxSize(5, 120), wxLI_VERTICAL);
+
         outersizer->Add(DrawPilePanel, 0, wxTOP, 5);
+        outersizer->Add(line1, 0, wxEXPAND | wxALL, 5);
         outersizer->Add(hand, 1, wxTOP, 5);
+        outersizer->Add(line2, 0, wxEXPAND | wxALL, 5);
         outersizer->Add(DiscardPilePanel, 0, wxTOP, 5);
 
         this->SetSizer(outersizer);

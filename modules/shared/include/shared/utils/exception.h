@@ -80,20 +80,20 @@ NEW_INHERITED_EXCEPTION(DuplicateCards, GameStateConstructor);
 NEW_INHERITED_EXCEPTION(CardCountMismatch, GameStateConstructor);
  */
 
-NEW_BASE_EXCEPTION(Logger, "");
+NEW_BASE_EXCEPTION(Logger, "Exception in the Logger");
 
 // for gamestate
 NEW_BASE_EXCEPTION(GameState, "GameStateError");
 NEW_INHERITED_EXCEPTION(PlayerCountMismatch, GameState, "Wrong number of players.");
 NEW_INHERITED_EXCEPTION(InsufficientFunds, GameState, "You don not have enough funds.");
-NEW_INHERITED_EXCEPTION(CardNotAvailable, GameState, "Card is not available.");
+NEW_INHERITED_EXCEPTION(CardNotAvailable, GameState, "Chosen card is not available.");
 NEW_INHERITED_EXCEPTION(WrongCardCount, GameState, "Received wrong number of cards.");
-NEW_INHERITED_EXCEPTION(OutOfPhase, GameState, "");
 NEW_INHERITED_EXCEPTION(OutOfActions, GameState, "You do not have enough actions.");
+NEW_INHERITED_EXCEPTION(NotYourTurn, GameState, "It's not your turn.");
+NEW_INHERITED_EXCEPTION(OutOfPhase, GameState, "");
 NEW_INHERITED_EXCEPTION(InvalidCardAccess, GameState, "");
 NEW_INHERITED_EXCEPTION(InvalidCardType, GameState, "");
 NEW_INHERITED_EXCEPTION(InvalidRequest, GameState, "");
-NEW_INHERITED_EXCEPTION(NotYourTurn, GameState, "");
 
 NEW_BASE_EXCEPTION(SevereError, "Severe Error!");
 NEW_INHERITED_EXCEPTION(UnreachableCode, SevereError, "This should NEVER happen!");

@@ -11,7 +11,7 @@ format:
     - apt-get update && apt-get install -y clang clang-format cmake git libwxgtk3.0-gtk3-dev
     - mkdir -p build
     - cd build
-    - cmake ..
+    - cmake -DCMAKE_BUILD_TYPE=Debug ..
     - cmake --build . --target format
   allow_failure: false
   rules:
@@ -24,7 +24,7 @@ lint:
     - apt-get update && apt-get install -y clang clang-tidy cmake cppcheck libwxgtk3.0-gtk3-dev
     - mkdir -p build
     - cd build
-    - cmake ..
+    - cmake -DCMAKE_BUILD_TYPE=Debug ..
     - cmake --build . --target check
   allow_failure: false
   rules:
@@ -37,7 +37,7 @@ test:
     - apt-get update && apt-get install -y clang cmake libwxgtk3.0-gtk3-dev
     - mkdir -p build
     - cd build
-    - cmake ..
+    - cmake -DCMAKE_BUILD_TYPE=Debug ..
     - cmake --build . -j $(nproc)
     - ctest --output-on-failure
   allow_failure: false

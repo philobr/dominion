@@ -14,7 +14,7 @@ namespace client
     class ImageMap
     {
     public:
-        ImageMap() : _images() {}
+        ImageMap() : _images(), _grey_images() {}
         ~ImageMap() = default;
 
         /**
@@ -23,7 +23,12 @@ namespace client
          * @param path
          * @return wxImage
          */
-        wxImage getImage(wxString path);
+        wxImage getImage(wxString name);
+
+        /**
+         * @brief get greyscale image
+         */
+        wxImage getGreyImage(wxString name);
 
         /**
          * @brief add an image to the map
@@ -32,6 +37,7 @@ namespace client
 
     private:
         std::map<wxString, wxImage> _images;
+        std::map<wxString, wxImage> _grey_images;
     };
 
 } // namespace client

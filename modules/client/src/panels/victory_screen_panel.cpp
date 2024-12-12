@@ -1,9 +1,11 @@
 #include <dominion.h>
 #include <panels/victory_screen_panel.h>
+#include <uiElements/image_panel.h>
 #include <uiElements/text_panel.h>
 
 namespace client
 {
+    // NOLINTBEGIN(bugprone-suspicious-enum-usage)
     VictoryScreenPanel::VictoryScreenPanel(wxWindow *parent) :
         wxPanel(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize), victory_screen_sizer(new wxBoxSizer(wxVERTICAL))
     {}
@@ -17,99 +19,77 @@ namespace client
 
         victory_screen_sizer = new wxBoxSizer(wxVERTICAL);
 
-        wxPanel *container = new wxPanel(this, wxID_ANY);
-        container->SetMinSize(wxSize(600, -1));
+        // Set min size for victory screen
+        SetMinSize(formatting_constants::VICTORY_SCREEN_MIN_SIZE);
 
-        wxBoxSizer *container_sizer = new wxBoxSizer(wxVERTICAL);
+        // Show the winner in a special line
+        wxBoxSizer *winner_sizer = new wxBoxSizer(wxHORIZONTAL);
+        TextPanel *winner_text = new TextPanel(this, wxID_ANY, "Winner:", TextFormat::TITLE);
+        wxString winner_name = wxString::FromUTF8(player_results[0].playerName().c_str());
+        TextPanel *winner_score_text = new TextPanel(this, wxID_ANY, winner_name, TextFormat::TITLE);
 
-        wxBoxSizer *title_sizer = new wxBoxSizer(wxHORIZONTAL);
+        winner_sizer->Add(winner_text, 0, wxALIGN_CENTER_VERTICAL | wxRIGHT, 5);
+        winner_sizer->Add(winner_score_text, 0, wxALIGN_CENTER_VERTICAL);
 
-        TextPanel *title = new TextPanel(container, wxID_ANY, "Score", TextFormat::TITLE);
+        // Add a spacer for top padding
+        victory_screen_sizer->Add(0, 30, 0, wxEXPAND); // 30 pixels tall spacer
 
-        title_sizer->Add(title, 1, wxALL, 20);
-        container_sizer->Add(0, 20);
-        container_sizer->Add(title_sizer, 0, wxCENTER);
+        // Add the winner sizer to the main victory screen sizer
+        victory_screen_sizer->Add(winner_sizer, 0, wxALIGN_CENTER | wxALL, 10);
 
+        // Create a horizontal sizer for the image and text
+        wxBoxSizer *horizontal_sizer = new wxBoxSizer(wxHORIZONTAL);
+
+        // Add the image to the horizontal sizer
+        ImagePanel *godminion = new ImagePanel(this, "God_Mode.png", wxBITMAP_TYPE_PNG, wxDefaultPosition,
+                                               formatting_constants::VICTORY_SCREEN_IMAGE_SIZE, 0.0);
+        horizontal_sizer->Add(godminion, 0, wxALIGN_CENTER_VERTICAL | wxRIGHT, 10);
+
+        // Create a grid sizer for the player results
         wxFlexGridSizer *grid_sizer = new wxFlexGridSizer(0, 2, 10, 20);
-        grid_sizer->AddGrowableCol(1);
+        grid_sizer->AddGrowableCol(0, 1); // Make the first column (names) growable
+        grid_sizer->AddGrowableCol(1, 1); // Make the second column (scores) growable
 
         for ( const auto &player : player_results ) {
-            TextPanel *name_text = new TextPanel(container, wxID_ANY, player.playerName() + ":", TextFormat::BOLD);
+            // Set explicit foreground color and ensure text is visible
+            wxString playerName = wxString::FromUTF8(player.playerName().c_str());
+            TextPanel *name_text = new TextPanel(this, wxID_ANY, playerName, TextFormat::BOLD);
+            TextPanel *score_text = new TextPanel(this, wxID_ANY, std::to_string(player.score()), TextFormat::BOLD);
 
-            TextPanel *score_text =
-                    new TextPanel(container, wxID_ANY, std::to_string(player.score()), TextFormat::BOLD);
+            name_text->SetMinSize(
+                    formatting_constants::VICTORY_SCREEN_TEXT_SIZE); // Set a minimum width for the name text
+            score_text->SetMinSize(
+                    formatting_constants::VICTORY_SCREEN_TEXT_SIZE); // Set a minimum width for the score text
 
-            grid_sizer->Add(name_text, wxSizerFlags().Right());
-            grid_sizer->Add(score_text, wxSizerFlags().Left());
+            grid_sizer->Add(name_text, wxSizerFlags().Expand().Right());
+            grid_sizer->Add(score_text, wxSizerFlags().Expand().Left());
         }
 
-        container_sizer->Add(grid_sizer, 0, wxCENTER | wxALL, 20);
-        container_sizer->Add(0, 20);
+        // Add the grid sizer to the horizontal sizer
+        horizontal_sizer->Add(grid_sizer, 1, wxALIGN_CENTER_VERTICAL | wxLEFT, 20);
 
-        container->SetSizer(container_sizer);
-        victory_screen_sizer->Add(container, 1, wxCENTER | wxALL, 10);
-        SetSizer(victory_screen_sizer);
+        // Add the horizontal sizer to the main vertical sizer
+        victory_screen_sizer->Add(horizontal_sizer, 1, wxALIGN_CENTER | wxALL, 20);
 
         SetBackgroundColour(formatting_constants::DEFAULT_PANEL_BACKGROUND);
 
-        container_sizer->Fit(container);
-        victory_screen_sizer->Fit(this);
-        Layout();
+        // Create the close button
+        wxButton *close_button = new wxButton(this, wxID_ANY, "Close Game", wxDefaultPosition, wxSize(100, 40));
+        victory_screen_sizer->Add(close_button, 0, wxALIGN_CENTER | wxALL, 20);
+
+        // Bind the button click event to a handler
+        close_button->Bind(wxEVT_BUTTON, &VictoryScreenPanel::onCloseButtonClicked, this);
+
+        SetSizerAndFit(victory_screen_sizer);
     }
 
-    void VictoryScreenPanel::drawTestVictoryScreen()
+    // NOLINTEND(bugprone-suspicious-enum-usage)
+    void VictoryScreenPanel::onCloseButtonClicked(wxCommandEvent & /*event*/)
     {
-        if ( !wxGetApp().isDebugMode() ) {
-            LOG(WARN) << "Tried to draw test victory screen in non-debug mode";
-            return;
+        // Assuming this panel is part of the main frame or you have a way to access it
+        wxWindow *mainFrame = wxTheApp->GetTopWindow();
+        if ( mainFrame != nullptr ) {
+            mainFrame->Close(true); // Close the main frame, which should close the application
         }
-
-        DestroyChildren();
-        if ( victory_screen_sizer != nullptr ) {
-            delete victory_screen_sizer;
-        }
-
-        victory_screen_sizer = new wxBoxSizer(wxVERTICAL);
-
-        wxPanel *container = new wxPanel(this, wxID_ANY);
-        container->SetMinSize(wxSize(1200, -1));
-
-        wxBoxSizer *container_sizer = new wxBoxSizer(wxVERTICAL);
-
-        wxBoxSizer *title_sizer = new wxBoxSizer(wxHORIZONTAL);
-
-        TextPanel *title =
-                new TextPanel(container, wxID_ANY, "https://www.youtube.com/watch?v=dQw4w9WgXcQ", TextFormat::TITLE);
-
-        title_sizer->Add(title, 1, wxALL, 20);
-        container_sizer->Add(0, 20);
-        container_sizer->Add(title_sizer, 0, wxCENTER);
-
-        std::vector<shared::PlayerResult> players = {
-                {"E löl", 69}, {"E blöde siech", 42}, {"E glünggi", 9}, {"E sürmel", 6}};
-
-        wxFlexGridSizer *grid_sizer = new wxFlexGridSizer(0, 2, 10, 20);
-        grid_sizer->AddGrowableCol(1);
-
-        for ( const auto &player : players ) {
-            TextPanel *name_text = new TextPanel(container, wxID_ANY, player.playerName() + ":", TextFormat::BOLD);
-
-            TextPanel *score_text =
-                    new TextPanel(container, wxID_ANY, std::to_string(player.score()), TextFormat::BOLD);
-
-            grid_sizer->Add(name_text, wxSizerFlags().Right());
-            grid_sizer->Add(score_text, wxSizerFlags().Left());
-        }
-
-        container_sizer->Add(grid_sizer, 0, wxCENTER | wxALL, 20);
-        container_sizer->Add(0, 20);
-
-        container->SetSizer(container_sizer);
-        victory_screen_sizer->Add(container, 1, wxCENTER | wxALL, 10);
-        SetSizer(victory_screen_sizer);
-
-        container_sizer->Fit(container);
-        victory_screen_sizer->Fit(this);
-        Layout();
     }
 } // namespace client

@@ -68,7 +68,7 @@ namespace client
         wxPanel *Player = new wxPanel(NamesSizer->GetContainingWindow(), wxID_ANY, wxDefaultPosition, wxSize(256, 256));
         Player->SetSizer(new wxBoxSizer(wxVERTICAL));
 
-        std::string asset_name = "Minion" + std::to_string(this->playerCount) + ".png";
+        std::string asset_name = "Minion" + std::to_string(this->playerCount);
 
         ImagePanel *LogoPanel = new ImagePanel(Player, // parent element
                                                asset_name, // path to image

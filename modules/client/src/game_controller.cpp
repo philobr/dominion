@@ -438,7 +438,9 @@ namespace client
     void GameController::skipToVictoryScreen()
     {
         LOG(WARN) << "Skipping to victory screen, this is debug functionality";
-        LOG(ERROR) << "Skipping to victory screen is not implemented";
+        std::vector<shared::PlayerResult> players = {
+                {"E löl", 69}, {"E blöde siech", 42}, {"E glünggi", 9}, {"E sürmel", 6}};
+        showVictoryScreen(players);
     }
 
     void GameController::skipToGamePanel()

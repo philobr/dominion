@@ -61,12 +61,6 @@ namespace server
 
     std::vector<shared::CardBase::id_t> Player::getDeck() const
     {
-        std::vector<shared::CardBase::id_t> deck;
-        deck.reserve(draw_pile.size() + discard_pile.size() + hand_cards.size());
-        deck.insert(deck.end(), draw_pile.begin(), draw_pile.end());
-        deck.insert(deck.end(), discard_pile.begin(), discard_pile.end());
-        deck.insert(deck.end(), hand_cards.begin(), hand_cards.end());
-
         if ( !staged_cards.empty() ) {
             LOG(ERROR) << "staged cards should be empty when getting deck";
             throw exception::OutOfPhase("You can not get your deck while you are playing a card!");
@@ -76,6 +70,13 @@ namespace server
             LOG(ERROR) << "played cards should be empty when getting deck";
             throw exception::OutOfPhase("You can not get your deck while you still have played cards!");
         }
+
+        std::vector<shared::CardBase::id_t> deck;
+        deck.reserve(draw_pile.size() + discard_pile.size() + hand_cards.size());
+        deck.insert(deck.end(), draw_pile.begin(), draw_pile.end());
+        deck.insert(deck.end(), discard_pile.begin(), discard_pile.end());
+        deck.insert(deck.end(), hand_cards.begin(), hand_cards.end());
+
         return deck;
     }
 

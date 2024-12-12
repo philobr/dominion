@@ -157,7 +157,7 @@ inline shared::CardBase::id_t server::Player::take(const shared::CardBase::id_t 
     if constexpr ( FROM == shared::TRASH ) {
         LOG(ERROR) << "Can not take card from trash";
         throw exception::UnreachableCode();
-    } else if constexpr ( FROM == shared::DRAW_PILE_TOP || FROM == shared::DRAW_PILE_TOP ) {
+    } else if constexpr ( FROM == shared::DRAW_PILE_TOP || FROM == shared::DRAW_PILE_BOTTOM ) {
         LOG(ERROR) << "Can not take card from the draw pile by ID";
         throw exception::UnreachableCode();
     }

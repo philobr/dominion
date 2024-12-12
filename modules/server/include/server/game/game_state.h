@@ -72,7 +72,7 @@ namespace server
         template <enum shared::CardAccess TO>
         inline void tryGain(const shared::PlayerBase::id_t &requestor_id, const shared::CardBase::id_t &card_id);
 
-#pragma region GETTERS/SETTERS
+#pragma region GETTERS / SETTERS
 
         std::unique_ptr<reduced::GameState> getReducedState(const Player::id_t &affected_player);
 

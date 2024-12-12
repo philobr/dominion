@@ -166,7 +166,7 @@ inline shared::CardBase::id_t server::Player::take(const shared::CardBase::id_t 
     auto it = std::find(pile.begin(), pile.end(), card_id);
 
     if ( it == pile.end() ) {
-        LOG(ERROR) << "Card \'" << card_id << "\' does not exist in the pile " << to_string(FROM);
+        LOG(ERROR) << "Card \'" << card_id << "\' does not exist in the pile " << toString(FROM);
         throw exception::InvalidCardAccess();
     }
 

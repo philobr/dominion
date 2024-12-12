@@ -4,7 +4,7 @@
 
 namespace shared
 {
-    std::string to_string(CardAccess val)
+    std::string toString(CardAccess val)
     {
         switch ( val ) {
             case DISCARD_PILE:

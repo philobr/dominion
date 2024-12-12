@@ -24,7 +24,7 @@ namespace shared
         STAGED_CARDS = 64 // ex: sentry could move here
     };
 
-    std::string to_string(CardAccess val);
+    std::string toString(CardAccess val);
 
     class PlayerBase
     {

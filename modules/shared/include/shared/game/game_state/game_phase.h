@@ -12,7 +12,7 @@ namespace shared
         PLAYING_ACTION_CARD,
     };
 
-    std::string gamePhaseToString(GamePhase game_phase);
+    std::string toString(GamePhase game_phase);
     std::string gamePhaseToDisplayedString(GamePhase game_phase);
     GamePhase gamePhaseFromString(const std::string &game_phase);
 } // namespace shared

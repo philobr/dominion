@@ -4,7 +4,7 @@
 
 namespace shared
 {
-    std::string gamePhaseToString(GamePhase game_phase)
+    std::string toString(GamePhase game_phase)
     {
         switch ( game_phase ) {
             case GamePhase::ACTION_PHASE:

@@ -206,9 +206,9 @@ namespace server
     {
         if ( this->phase != expected_phase ) {
             LOG(WARN) << "Player: \'" << requestor_id << "\' called " << function_name << " with card \'" << card_id
-                      << "\'. Expected to be in \'" << gamePhaseToString(expected_phase)
-                      << "\', but current phase is \'" << gamePhaseToString(this->phase);
-            throw exception::OutOfPhase(error_msg + std::string(" while in ") + gamePhaseToString(phase));
+                      << "\'. Expected to be in \'" << toString(expected_phase) << "\', but current phase is \'"
+                      << toString(this->phase);
+            throw exception::OutOfPhase(error_msg + std::string(" while in ") + toString(phase));
         }
     }
 
@@ -217,9 +217,8 @@ namespace server
     {
         if ( this->phase != expected_phase ) {
             LOG(WARN) << "Player: \'" << requestor_id << "\' called " << function_name << ". Expected to be in \'"
-                      << gamePhaseToString(expected_phase) << "\', but current phase is \'"
-                      << gamePhaseToString(this->phase);
-            throw exception::OutOfPhase(error_msg + std::string(" while in ") + gamePhaseToString(phase));
+                      << toString(expected_phase) << "\', but current phase is \'" << toString(this->phase);
+            throw exception::OutOfPhase(error_msg + std::string(" while in ") + toString(phase));
         }
     }
 
@@ -259,7 +258,7 @@ namespace server
         guaranteeIsCurrentPlayer(requestor_id, FUNC_NAME);
 
         guaranteePhase(requestor_id, shared::GamePhase::ACTION_PHASE,
-                       "You can not end " + gamePhaseToString(shared::GamePhase::ACTION_PHASE), FUNC_NAME);
+                       "You can not end " + toString(shared::GamePhase::ACTION_PHASE), FUNC_NAME);
 
         forceSwitchPhase();
         printSuccess(requestor_id, FUNC_NAME);

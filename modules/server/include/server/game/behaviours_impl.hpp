@@ -329,7 +329,7 @@ namespace server
                                 1, 1, shared::ChooseFromOrder::AllowedChoice::DISCARD, shared::CardType::TREASURE)};
             }
 
-            if ( dynamic_cast<shared::DeckChoiceDecision *>(action_decision.value().get()) ) {
+            if ( dynamic_cast<shared::DeckChoiceDecision *>(action_decision.value().get()) != nullptr ) {
                 auto trash_decision =
                         helper::validateResponse(game_state, action_decision.value(), 1, 1, shared::CardType::TREASURE);
 

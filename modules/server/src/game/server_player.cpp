@@ -66,13 +66,15 @@ namespace server
         deck.insert(deck.end(), draw_pile.begin(), draw_pile.end());
         deck.insert(deck.end(), discard_pile.begin(), discard_pile.end());
         deck.insert(deck.end(), hand_cards.begin(), hand_cards.end());
+
         if ( !staged_cards.empty() ) {
             LOG(ERROR) << "staged cards should be empty when getting deck";
-            throw std::runtime_error("tried to get deck while staged cards were not empty");
+            throw exception::OutOfPhase("You can not get your deck while you are playing a card!");
         }
+
         if ( !played_cards.empty() ) {
             LOG(ERROR) << "played cards should be empty when getting deck";
-            throw std::runtime_error("tried to get deck while played cards were not empty");
+            throw exception::OutOfPhase("You can not get your deck while you still have played cards!");
         }
         return deck;
     }
@@ -87,8 +89,9 @@ namespace server
     void Player::endTurn()
     {
         if ( !staged_cards.empty() ) {
+            // this should actually be unreachable because of the checks in GameState/GameInterface
             LOG(ERROR) << "staged cards should be empty when ending a turn";
-            throw std::runtime_error("tried to end a turn while staged cards were not empty");
+            throw exception::OutOfPhase("You can not end your turn while you are playing a card!");
         }
 
         resetValues();
@@ -101,9 +104,8 @@ namespace server
 
     void Player::playAvailableTreasureCards()
     {
-        for ( const auto &card_id : getType<shared::CardAccess::HAND>(shared::CardType::TREASURE) ) {
-            playCardFromHand(card_id);
-        }
+        auto cards_to_play = getType<shared::CardAccess::HAND>(shared::CardType::TREASURE);
+        move<shared::HAND, shared::PLAYED_CARDS>(cards_to_play);
     }
 
     int Player::getVictoryPoints() const

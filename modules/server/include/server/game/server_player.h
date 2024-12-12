@@ -58,16 +58,6 @@ namespace server
          */
         inline void draw(size_t n) { move<shared::DRAW_PILE_TOP, shared::HAND>(n); }
 
-        inline void playCardFromHand(const shared::CardBase::id_t &card_id)
-        {
-            move<shared::HAND, shared::PLAYED_CARDS>(card_id);
-        }
-
-        inline void playCardFromStaged(const shared::CardBase::id_t &card_id)
-        {
-            move<shared::STAGED_CARDS, shared::PLAYED_CARDS>(card_id);
-        }
-
         /**
          * @brief Adds a card to the discard_pile
          */

@@ -1,10 +1,5 @@
 #include "server_player.h"
 
-/*
-FUNCTIONS IN THIS FILE ARE FINAL AND CAN BE TESTED
-*/
-
-
 #pragma region UTILS
 template <enum shared::CardAccess PILE>
 inline std::vector<shared::CardBase::id_t> &server::Player::getMutable()
@@ -136,6 +131,11 @@ inline void server::Player::move(const shared::CardBase::id_t &card_id)
 template <enum shared::CardAccess FROM, enum shared::CardAccess TO>
 inline void server::Player::move(const std::vector<shared::CardBase::id_t> &cards)
 {
+    if ( cards.empty() ) {
+        LOG(WARN) << "Tried to move an empty set of cards from " << toString(FROM) << " to " << toString(TO);
+        return;
+    }
+
     std::for_each(cards.begin(), cards.end(), [this](const auto &card_id) { this->move<FROM, TO>(card_id); });
 }
 

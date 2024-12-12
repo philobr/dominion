@@ -14,11 +14,10 @@ namespace client
         wxPanel(parent, wxID_ANY, position, size),
         _rotation(rotation)
     {
-        wxString file = wxString("assets") + wxFileName::GetPathSeparator() + asset_name;
 
         // this either gets the image from the map or loads it from the file system
         // if it hasn't been used before
-        this->_image = wxGetApp().getImageMap().getImage(file);
+        this->_image = wxGetApp().getImageMap().getImage(asset_name);
 
         this->Bind(wxEVT_PAINT, &ImagePanel::paintEvent, this);
         this->Bind(wxEVT_SIZE, &ImagePanel::onSize, this);
@@ -72,9 +71,9 @@ namespace client
         event.Skip();
     }
 
-    void ImagePanel::makeGrey()
+    void ImagePanel::makeGrey(wxString asset_name)
     {
-        _image = _image.ConvertToGreyscale();
+        _image = wxGetApp().getImageMap().getGreyImage(asset_name);
         Refresh();
     }
 } // namespace client

@@ -37,7 +37,7 @@ namespace client
         /**
          * @brief Make the image grey
          */
-        void makeGrey();
+        void makeGrey(wxString asset_name);
     };
 
 } // namespace client

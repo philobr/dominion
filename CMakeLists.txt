@@ -7,29 +7,9 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_BUILD_TYPE Debug)
-# Necessary to output stack traces
-set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -rdynamic")
 set(EXTERNAL_LIBS ${CMAKE_SOURCE_DIR}/external)
 
 enable_testing()
-
-set(SAN_FLAG "-fsanitize=address,signed-integer-overflow,undefined")
-
-# Enable sanitizers
-if(APPLE)
-    # Check if the compiler supports sanitizers
-    set(SANITIZER_FLAGS "${SAN_FLAG}") # Exclude 'leak' (ASan handles it on macOS)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${SANITIZER_FLAGS} -g") # Add debug symbols
-    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${SANITIZER_FLAGS}")
-    
-    # Optional: Suppress certain warnings for better output readability
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-omit-frame-pointer")
-else()
-    # Non-Apple platform configuration (e.g., Linux)
-    set(SANITIZER_FLAGS "${SAN_FLAG},leak")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${SANITIZER_FLAGS}")
-    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${SANITIZER_FLAGS}")
-endif()
 
 # always provide test output on failure
 list(APPEND CMAKE_CTEST_ARGUMENTS "--output-on-failure" "--timeout" "10")
@@ -39,7 +19,6 @@ add_compile_definitions(PROJECT_ROOT="${CMAKE_SOURCE_DIR}")
 
 add_compile_options(
     -Wall
-    -Werror
     -Wextra
     -Wpedantic
     -Wreturn-type
@@ -51,6 +30,32 @@ add_compile_options(
     # We don't care too much about shadowing
     -Wno-shadow
 )
+
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+    add_compile_options(
+        -Werror
+    )
+
+    # Enable sanitizers
+    set(SAN_FLAG "-fsanitize=address,signed-integer-overflow,undefined")
+    if(APPLE)
+        # Check if the compiler supports sanitizers
+        set(SANITIZER_FLAGS "${SAN_FLAG}") # Exclude 'leak' (ASan handles it on macOS)
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${SANITIZER_FLAGS} -g") # Add debug symbols
+        set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${SANITIZER_FLAGS}")
+
+        # Optional: Suppress certain warnings for better output readability
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-omit-frame-pointer")
+    else()
+        # Non-Apple platform configuration (e.g., Linux)
+        set(SANITIZER_FLAGS "${SAN_FLAG},leak")
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${SANITIZER_FLAGS}")
+        set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${SANITIZER_FLAGS}")
+    endif()
+
+    # Necessary to output stack traces
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -rdynamic")
+endif()
 
 add_subdirectory(${EXTERNAL_LIBS}/sockpp)
 add_subdirectory(${EXTERNAL_LIBS}/googletest) # warnings because of old cmake version, cant supress them

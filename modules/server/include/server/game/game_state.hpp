@@ -6,7 +6,7 @@ template <enum shared::CardAccess FROM>
 inline void server::GameState::tryPlay(const shared::PlayerBase::id_t &requestor_id,
                                        const shared::CardBase::id_t &card_id)
 {
-    if constexpr ( FROM != shared::CardAccess::HAND && FROM == shared::CardAccess::STAGED_CARDS ) {
+    if constexpr ( FROM != shared::CardAccess::HAND || FROM != shared::CardAccess::STAGED_CARDS ) {
         LOG(ERROR) << "Cards can only be played from " << toString(shared::CardAccess::HAND) << " or from "
                    << toString(shared::CardAccess::STAGED_CARDS) << ". " << toString(FROM) << " is not allowed!";
         static_assert(FROM == shared::CardAccess::HAND ||
@@ -21,8 +21,8 @@ inline void server::GameState::tryPlay(const shared::PlayerBase::id_t &requestor
         guaranteePhase(requestor_id, card_id, shared::GamePhase::ACTION_PHASE, "You can not play a card", FUNC_NAME);
 
         if ( getPlayer(requestor_id).getActions() == 0 ) {
-            LOG(WARN) << "Player \'" << requestor_id << "\' attempted to play card " << card_id
-                      << " with no actions left.";
+            LOG(WARN) << "Player \'" << requestor_id << "\' attempted to play card \'" << card_id
+                      << "\' with no actions left.";
             throw exception::OutOfActions();
         }
     } else if constexpr ( FROM == shared::CardAccess::STAGED_CARDS ) {
@@ -31,7 +31,7 @@ inline void server::GameState::tryPlay(const shared::PlayerBase::id_t &requestor
     }
 
     if ( !getPlayer(requestor_id).hasCard<FROM>(card_id) ) {
-        LOG(WARN) << "Player \'" << requestor_id << "\' attempted to play card " << card_id << " not in "
+        LOG(WARN) << "Player \'" << requestor_id << "\' attempted to play card \'" << card_id << "\' not in "
                   << toString(FROM);
         throw exception::CardNotAvailable();
     }

@@ -61,34 +61,13 @@ namespace server
         void initialisePlayers(const std::vector<Player::id_t> &player_ids);
         void initialiseBoard(const std::vector<shared::CardBase::id_t> &selected_cards);
 
-        void startTurn();
         void endTurn();
 
         inline void setPhase(shared::GamePhase new_phase) { phase = new_phase; }
 
         bool isGameOver() const;
 
-        std::vector<shared::CardBase::id_t> playAllTreasures(const shared::PlayerBase::id_t &affected_player_id)
-        {
-            auto cards_to_play =
-                    getPlayer(affected_player_id).getType<shared::CardAccess::HAND>(shared::CardType::TREASURE);
-            play(affected_player_id, cards_to_play);
-            return cards_to_play;
-        }
-
-        void play(const shared::PlayerBase::id_t &affected_player_id, const shared::CardBase::id_t &card_id)
-        {
-            getPlayer(affected_player_id).playCardFromHand(card_id);
-            board->addToPlayedCards(card_id);
-        }
-
-        void play(const shared::PlayerBase::id_t &affected_player_id,
-                  const std::vector<shared::CardBase::id_t> &card_ids)
-        {
-            for ( const auto &card_id : card_ids ) {
-                play(affected_player_id, card_id);
-            }
-        }
+        std::vector<shared::CardBase::id_t> playAllTreasures(const shared::PlayerBase::id_t &affected_player_id);
 
         /**
          * @brief Switches phases if necessary, this means: if a player is out
@@ -126,18 +105,8 @@ namespace server
          */
         void tryGainToHand(const shared::PlayerBase::id_t &requestor_id, const shared::CardBase::id_t &card_id);
 
-        /**
-         * @brief Plays a card from the hand cards. This involves moving the card from the hand to played cards.
-         * @throws exception::InvalidRequest, exception::OutOfPhase, exception::OutOfActions,
-         * exception::CardNotAvailable
-         */
-        void tryPlayFromHand(const shared::PlayerBase::id_t &requestor_id, const shared::CardBase::id_t &card_id);
-
-        /**
-         * @brief Plays a card from the staged cards. This involves moving the card from staged to played cards.
-         * @throws exception::InvalidRequest, exception::OutOfPhase, exception::CardNotAvailable
-         */
-        void tryPlayFromStaged(const shared::PlayerBase::id_t &requestor_id, const shared::CardBase::id_t &card_id);
+        template <enum shared::CardAccess FROM>
+        void tryPlay(const shared::PlayerBase::id_t &requestor_id, const shared::CardBase::id_t &card_id);
 
     private:
         /**
@@ -148,4 +117,6 @@ namespace server
         inline void resetPhase() { phase = shared::GamePhase::ACTION_PHASE; }
         inline void switchPlayer() { current_player_idx = (current_player_idx + 1) % player_map.size(); }
     };
+
+#include "game_state.hpp"
 } // namespace server

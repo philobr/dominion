@@ -178,6 +178,21 @@ namespace server
         }
     }
 
+    std::vector<shared::CardBase::id_t> GameState::playAllTreasures(const shared::PlayerBase::id_t &affected_player_id)
+    {
+        auto &player = getPlayer(affected_player_id);
+
+        if ( !player.hasType<shared::HAND>(shared::CardType::TREASURE) ) {
+            LOG(INFO) << "Player: \'" << player.getId() << "\' has no treasures, returning nothing";
+            return {};
+        }
+
+        auto treasure_cards = player.getType<shared::CardAccess::HAND>(shared::CardType::TREASURE);
+        player.move<shared::HAND, shared::PLAYED_CARDS>(treasure_cards);
+        board->addToPlayedCards(treasure_cards);
+        return treasure_cards;
+    }
+
     void GameState::tryEndActionPhase(const shared::PlayerBase::id_t &requestor_id)
     {
         if ( requestor_id != getCurrentPlayerId() ) {
@@ -250,62 +265,6 @@ namespace server
         getPlayer(requestor_id).add<shared::CardAccess::HAND>(card_id);
 
         LOG(INFO) << "Player " << requestor_id << " successfully gained card " << card_id;
-    }
-
-    void GameState::tryPlayFromHand(const shared::PlayerBase::id_t &requestor_id, const shared::CardBase::id_t &card_id)
-    {
-        if ( requestor_id != getCurrentPlayerId() ) {
-            LOG(WARN) << "Player " << requestor_id << " attempted to play a card out of turn.";
-            throw exception::InvalidRequest("Not your turn.");
-        }
-
-        if ( phase != GamePhase::ACTION_PHASE ) {
-            LOG(WARN) << "Player " << requestor_id << " attempted to play card " << card_id << " during "
-                      << gamePhaseToString(phase);
-            throw exception::OutOfPhase("Cannot play cards while in " + gamePhaseToString(phase));
-        }
-
-
-        if ( getPlayer(requestor_id).getActions() == 0 ) {
-            LOG(WARN) << "Player " << requestor_id << " attempted to play card " << card_id << " with no actions left.";
-            throw exception::OutOfActions();
-        }
-
-        if ( !getPlayer(requestor_id).hasCard<shared::CardAccess::HAND>(card_id) ) {
-            LOG(WARN) << "Player " << requestor_id << " attempted to play card " << card_id << " not in their hand.";
-            throw exception::CardNotAvailable();
-        }
-
-        getPlayer(requestor_id).playCardFromHand(card_id);
-        getPlayer(requestor_id).decActions();
-        board->addToPlayedCards(card_id);
-
-        LOG(INFO) << "Player " << requestor_id << " successfully played card " << card_id << " from their hand.";
-    }
-
-    void GameState::tryPlayFromStaged(const shared::PlayerBase::id_t &requestor_id,
-                                      const shared::CardBase::id_t &card_id)
-    {
-        if ( requestor_id != getCurrentPlayerId() ) {
-            LOG(WARN) << "Player " << requestor_id << " attempted to play a staged card out of turn.";
-            throw exception::InvalidRequest("Not your turn.");
-        }
-
-        if ( phase != GamePhase::PLAYING_ACTION_CARD ) {
-            LOG(WARN) << "Player " << requestor_id << " attempted to play staged card " << card_id << " during "
-                      << gamePhaseToString(phase);
-            throw exception::OutOfPhase("Cannot play staged cards while in " + gamePhaseToString(phase));
-        }
-
-        if ( !getPlayer(requestor_id).hasCard<shared::CardAccess::STAGED_CARDS>(card_id) ) {
-            LOG(WARN) << "Player " << requestor_id << " attempted to play card " << card_id << " not in staged cards.";
-            throw exception::CardNotAvailable();
-        }
-
-        getPlayer(requestor_id).playCardFromStaged(card_id);
-        board->addToPlayedCards(card_id);
-
-        LOG(INFO) << "Player " << requestor_id << " successfully played staged card " << card_id;
     }
 
 } // namespace server

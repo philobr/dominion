@@ -26,17 +26,10 @@ namespace client
         this->SetMinSize(wxSize(1000, 720));
 
 #ifdef __WXMAC__
-        wxDisplay display(wxDisplay::GetFromWindow(this));
-        wxSize fixed_size = display.GetGeometry().GetSize();
-        this->SetSize(fixed_size);
-        this->SetMinSize(fixed_size);
-        this->SetMaxSize(fixed_size);
+
 #else
         this->ShowFullScreen(true, wxFULLSCREEN_ALL);
 #endif
-
-        // disable size changes
-        this->Bind(wxEVT_SIZE, [](wxSizeEvent &event) { event.Skip(); });
 
         // Bind paint event to draw background image
         this->Bind(wxEVT_PAINT, &GameWindow::onPaint, this);
@@ -56,6 +49,10 @@ namespace client
                     if ( this->_currentPanel != nullptr ) {
                         this->_mainLayout->Detach(this->_currentPanel);
 
+                        this->_mainLayout->Layout();
+                        this->Update();
+                        this->Refresh();
+
                         this->_currentPanel->Hide();
                         this->_currentPanel = nullptr;
                     }
@@ -64,17 +61,10 @@ namespace client
                         this->_mainLayout->Add(panel, 1, wxALIGN_CENTER, 20); // 20-pixel spacing
                         panel->Show(true);
                         this->_currentPanel = panel;
-                    }
 
-                    // Layout adjustments for the sizer
-                    this->_mainLayout->Layout();
-                    this->_mainLayout->Fit(this);
-                    //  Minimize repaints by refreshing only the affected area
-                    if ( panel != nullptr ) {
-                        panel->Refresh(); // Refresh the new panel only
+                        this->_mainLayout->Layout();
+                        this->Fit();
                     }
-                    this->Refresh();
-                    this->Update();
                 });
     }
 

@@ -45,7 +45,7 @@ namespace server
             LOG(ERROR) << "Tried to perform an action, but the game has not started yet";
             message_interface.send<shared::ResultResponseMessage>(requestor_id, lobby_id, false, message->message_id,
                                                                   "Game has not started yet!");
-            throw std::exception("game has not started yet");
+            throw std::runtime_error("game has not started yet");
         }
 
         OrderResponse order_response;

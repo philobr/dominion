@@ -9,6 +9,7 @@ FUNCTIONS IN THIS FILE ARE FINAL AND CAN BE TESTED
 template <enum shared::CardAccess PILE>
 inline std::vector<shared::CardBase::id_t> &server::Player::getMutable()
 {
+    static_assert(PILE != shared::TRASH && "Player does not have access to the trash pile!");
     if constexpr ( PILE == shared::DISCARD_PILE ) {
         return discard_pile;
     } else if constexpr ( PILE == shared::HAND ) {
@@ -22,7 +23,7 @@ inline std::vector<shared::CardBase::id_t> &server::Player::getMutable()
     } else if constexpr ( PILE == shared::DRAW_PILE_BOTTOM ) {
         return draw_pile;
     } else {
-        // should only happen for the trash pile
+        // should only happen for the trash pile i.e. never, as we assert at compiletime
         LOG(ERROR) << "Invalid pile specified or pile is not accessible.";
         throw std::invalid_argument("Invalid pile specified or pile is not accessible.");
     }
@@ -31,6 +32,8 @@ inline std::vector<shared::CardBase::id_t> &server::Player::getMutable()
 template <enum shared::CardAccess PILE>
 inline const std::vector<shared::CardBase::id_t> &server::Player::get() const
 {
+    static_assert(PILE != shared::TRASH && "Player does not have access to the trash pile!");
+
     if constexpr ( PILE == shared::DISCARD_PILE ) {
         return discard_pile;
     } else if constexpr ( PILE == shared::HAND ) {
@@ -44,7 +47,7 @@ inline const std::vector<shared::CardBase::id_t> &server::Player::get() const
     } else if constexpr ( PILE == shared::DRAW_PILE_BOTTOM ) {
         return draw_pile;
     } else {
-        // should only happen for the trash pile
+        // should only happen for the trash pile i.e. never, as we assert at compiletime
         LOG(ERROR) << "Invalid pile specified or pile is not accessible.";
         throw std::invalid_argument("Invalid pile specified or pile is not accessible.");
     }
@@ -90,10 +93,7 @@ inline std::vector<shared::CardBase::id_t> server::Player::getType(shared::CardT
 template <enum shared::CardAccess TO, typename Iterator>
 inline void server::Player::add(Iterator begin, Iterator end)
 {
-    if constexpr ( TO == shared::TRASH ) {
-        LOG(ERROR) << "Can't add cards to the trash Pile from the player! (you need to trash cards using the board)";
-        throw std::invalid_argument("Can't add cards to the trash pile!");
-    }
+    static_assert(TO != shared::TRASH && "Can't add cards to the trash pile!");
 
     auto &pile = getMutable<TO>();
     if constexpr ( TO == shared::DRAW_PILE_TOP ) {
@@ -126,7 +126,7 @@ inline void server::Player::add(const std::vector<shared::CardBase::id_t> &cards
 template <enum shared::CardAccess FROM, enum shared::CardAccess TO>
 inline void server::Player::move(const shared::CardBase::id_t &card_id)
 {
-    if ( TO == shared::TRASH ) {
+    if constexpr ( TO == shared::TRASH ) {
         take<FROM>(card_id);
     } else {
         add<TO>(take<FROM>(card_id));
@@ -154,13 +154,9 @@ inline void server::Player::move(unsigned int n)
 template <enum shared::CardAccess FROM>
 inline shared::CardBase::id_t server::Player::take(const shared::CardBase::id_t &card_id)
 {
-    if constexpr ( FROM == shared::TRASH ) {
-        LOG(ERROR) << "Can not take card from trash";
-        throw exception::UnreachableCode();
-    } else if constexpr ( FROM == shared::DRAW_PILE_TOP || FROM == shared::DRAW_PILE_BOTTOM ) {
-        LOG(ERROR) << "Can not take card from the draw pile by ID";
-        throw exception::UnreachableCode();
-    }
+    static_assert(FROM != shared::TRASH && "Can not take cards from the trash pile!");
+    static_assert((FROM != shared::DRAW_PILE_TOP && FROM != shared::DRAW_PILE_BOTTOM) &&
+                  "Can not take card from the draw pile by ID!");
 
     auto &pile = getMutable<FROM>();
     auto it = std::find(pile.begin(), pile.end(), card_id);
@@ -202,7 +198,7 @@ inline std::vector<shared::CardBase::id_t> server::Player::take(unsigned int n)
     } else {
         // throw if we dont have enough cards
         if ( pile.size() < n ) {
-            throw std::runtime_error("Not enough cards in the pile to take.");
+            throw exception::WrongCardCount("Not enough cards in the pile to take.");
         }
     }
 

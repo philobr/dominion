@@ -281,7 +281,7 @@ namespace server
             }
 
             const auto chosen_card_id = gain_decision->chosen_card;
-            game_state.tryGainToHand(cur_player_id, chosen_card_id);
+            game_state.tryGain<shared::HAND>(cur_player_id, chosen_card_id);
 
             BEHAVIOUR_DONE;
         }
@@ -344,9 +344,7 @@ namespace server
                     throw std::runtime_error("CardType not allowed!");
                 }
 
-                game_state.tryGainToDiscard(player_id, card_id);
-                // gain adds to discard pile, i dont want to rewrite it now so we just move the card back:)
-                player.move<shared::CardAccess::DISCARD_PILE, shared::CardAccess::HAND>(card_id);
+                game_state.tryGain<shared::HAND>(player_id, card_id);
             }
 
             BEHAVIOUR_DONE;

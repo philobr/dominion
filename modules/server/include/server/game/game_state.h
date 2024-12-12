@@ -60,8 +60,6 @@ namespace server
          */
         std::vector<shared::CardBase::id_t> tryPlayAllTreasures(const shared::PlayerBase::id_t &requestor_id);
 
-        void tryEndGame(const shared::PlayerBase::id_t &requestor_id);
-
         /**
          * @brief Tries to play the given card_id from the specified pile.
          */

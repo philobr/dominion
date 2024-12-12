@@ -41,7 +41,7 @@ namespace client
         wxBoxSizer *horizontal_sizer = new wxBoxSizer(wxHORIZONTAL);
 
         // Add the image to the horizontal sizer
-        ImagePanel *godminion = new ImagePanel(this, "God_Mode.png", wxBITMAP_TYPE_PNG, wxDefaultPosition,
+        ImagePanel *godminion = new ImagePanel(this, "God_Mode", wxBITMAP_TYPE_PNG, wxDefaultPosition,
                                                formatting_constants::VICTORY_SCREEN_IMAGE_SIZE, 0.0);
         horizontal_sizer->Add(godminion, 0, wxALIGN_CENTER_VERTICAL | wxRIGHT, 10);
 

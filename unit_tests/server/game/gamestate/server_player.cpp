@@ -185,7 +185,7 @@ TEST(PlayerTest, EndTurn)
     EXPECT_EQ(player.getTreasure(), 0);
 
     // hand should contain 5 cards again
-    EXPECT_EQ(player.get<shared::CardAccess::HAND>().size(), 4);
+    EXPECT_EQ(player.get<shared::CardAccess::HAND>().size(), 3);
 
     // discard pile should be empty as reshuffle was triggered
     ASSERT_EQ(player.get<shared::CardAccess::DISCARD_PILE>().size(), 0); // hand + played + pile

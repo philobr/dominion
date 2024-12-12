@@ -61,13 +61,13 @@ namespace server
         inline void playCardFromHand(const shared::CardBase::id_t &card_id)
         {
             size_t index = getIndex<shared::HAND>(card_id);
-            take<shared::HAND>(index);
+            takeIndices<shared::HAND>(index);
         }
 
         inline void playCardFromStaged(const shared::CardBase::id_t &card_id)
         {
             size_t index = getIndex<shared::STAGED_CARDS>(card_id);
-            take<shared::STAGED_CARDS>(index);
+            takeIndices<shared::STAGED_CARDS>(index);
         }
 
         /**

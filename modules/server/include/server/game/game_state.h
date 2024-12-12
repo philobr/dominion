@@ -93,20 +93,11 @@ namespace server
          */
         void tryBuy(const shared::PlayerBase::id_t &requestor_id, const shared::CardBase::id_t &card_id);
 
-        /**
-         * @brief Takes a card from the board (without payment)
-         * @throws exception::OutOfPhase, exception::CardNotAvailable
-         */
-        void tryGainToDiscard(const shared::PlayerBase::id_t &requestor_id, const shared::CardBase::id_t &card_id);
-
-        /**
-         * @brief Takes a card from the board (without payment)
-         * @throws exception::OutOfPhase, exception::CardNotAvailable
-         */
-        void tryGainToHand(const shared::PlayerBase::id_t &requestor_id, const shared::CardBase::id_t &card_id);
-
         template <enum shared::CardAccess FROM>
         void tryPlay(const shared::PlayerBase::id_t &requestor_id, const shared::CardBase::id_t &card_id);
+
+        template <enum shared::CardAccess TO>
+        void tryGain(const shared::PlayerBase::id_t &requestor_id, const shared::CardBase::id_t &card_id);
 
     private:
         /**

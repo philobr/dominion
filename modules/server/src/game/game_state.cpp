@@ -121,7 +121,22 @@ namespace server
         }
     }
 
-    bool GameState::isGameOver() const { return board->isGameOver(); }
+    std::vector<Player::id_t> GameState::getEnemyIDs(const Player::id_t &player_id) const
+    {
+        const size_t num_players = player_order.size();
+        const size_t num_enemies = num_players - 1;
+
+        const size_t attacker_index =
+                std::distance(player_order.begin(), std::find(player_order.begin(), player_order.end(), player_id));
+
+        std::vector<Player::id_t> enemies(num_enemies);
+        for ( size_t i = 1; i < num_players; ++i ) {
+            const size_t enemy_index = (i + attacker_index) % num_players;
+            enemies[i - 1] = player_order[enemy_index];
+        }
+
+        return enemies;
+    }
 
     void GameState::forceSwitchPhase()
     {
@@ -178,48 +193,78 @@ namespace server
         }
     }
 
-    std::vector<shared::CardBase::id_t> GameState::playAllTreasures(const shared::PlayerBase::id_t &affected_player_id)
-    {
-        auto &player = getPlayer(affected_player_id);
+#pragma region ASSERTION_HELPERS
 
-        if ( !player.hasType<shared::HAND>(shared::CardType::TREASURE) ) {
-            LOG(INFO) << "Player: \'" << player.getId() << "\' has no treasures, returning nothing";
-            return {};
+    void GameState::guaranteePhase(const shared::PlayerBase::id_t &requestor_id, const shared::CardBase::id_t &card_id,
+                                   shared::GamePhase expected_phase, const std::string &error_msg,
+                                   const std::string &function_name)
+    {
+        if ( this->phase != expected_phase ) {
+            LOG(WARN) << "Player: \'" << requestor_id << "\' called " << function_name << " with card \'" << card_id
+                      << "\'. Expected to be in \'" << gamePhaseToString(expected_phase)
+                      << "\', but current phase is \'" << gamePhaseToString(this->phase);
+            throw exception::OutOfPhase(error_msg + std::string(" while in ") + gamePhaseToString(phase));
         }
+    }
+
+    void GameState::guaranteePhase(const shared::PlayerBase::id_t &requestor_id, shared::GamePhase expected_phase,
+                                   const std::string &error_msg, const std::string &function_name)
+    {
+        if ( this->phase != expected_phase ) {
+            LOG(WARN) << "Player: \'" << requestor_id << "\' called " << function_name << ". Expected to be in \'"
+                      << gamePhaseToString(expected_phase) << "\', but current phase is \'"
+                      << gamePhaseToString(this->phase);
+            throw exception::OutOfPhase(error_msg + std::string(" while in ") + gamePhaseToString(phase));
+        }
+    }
+
+    void GameState::guaranteeIsCurrentPlayer(const shared::PlayerBase::id_t &requestor_id,
+                                             const std::string &function_name)
+    {
+        if ( requestor_id != getCurrentPlayerId() ) {
+            LOG(WARN) << "Player: \'" << requestor_id << "\' attempted to call " << function_name << " out of turn.";
+            throw exception::InvalidRequest("Not your turn.");
+        }
+    }
+
+    void GameState::printSuccess(const shared::PlayerBase::id_t &requestor_id, const std::string &function_name)
+    {
+        LOG(DEBUG) << "Player: \'" << requestor_id << "\' successfully finished \'" << function_name;
+    }
+
+#pragma region TRY_FUNCTIONS
+
+    std::vector<shared::CardBase::id_t> GameState::tryPlayAllTreasures(const shared::PlayerBase::id_t &requestor_id)
+    {
+        guaranteeIsCurrentPlayer(requestor_id, FUNC_NAME);
+        guaranteePhase(requestor_id, shared::GamePhase::BUY_PHASE, "You can not play all treasures", FUNC_NAME);
+
+        auto &player = getPlayer(requestor_id);
 
         auto treasure_cards = player.getType<shared::CardAccess::HAND>(shared::CardType::TREASURE);
         player.move<shared::HAND, shared::PLAYED_CARDS>(treasure_cards);
         board->addToPlayedCards(treasure_cards);
+
+        printSuccess(requestor_id, FUNC_NAME);
         return treasure_cards;
     }
 
     void GameState::tryEndActionPhase(const shared::PlayerBase::id_t &requestor_id)
     {
-        if ( requestor_id != getCurrentPlayerId() ) {
-            LOG(WARN) << "Player " << requestor_id << " attempted to end the action phase out of turn.";
-            throw exception::InvalidRequest("Not your turn.");
-        }
+        guaranteeIsCurrentPlayer(requestor_id, FUNC_NAME);
 
-        if ( phase != GamePhase::ACTION_PHASE ) {
-            LOG(WARN) << "Player " << requestor_id << " attempted to end the action phase while in phase "
-                      << gamePhaseToString(phase);
-            throw exception::OutOfPhase("Cannot end action phase while in " + gamePhaseToString(phase));
-        }
+        guaranteePhase(requestor_id, shared::GamePhase::ACTION_PHASE,
+                       "You can not end " + gamePhaseToString(shared::GamePhase::ACTION_PHASE), FUNC_NAME);
 
         forceSwitchPhase();
+        printSuccess(requestor_id, FUNC_NAME);
     }
 
     void GameState::tryBuy(const shared::PlayerBase::id_t &requestor_id, const shared::CardBase::id_t &card_id)
     {
-        if ( requestor_id != getCurrentPlayerId() ) {
-            LOG(WARN) << "Player " << requestor_id << " attempted to buy a card out of turn.";
-            throw exception::InvalidRequest("Not your turn.");
-        }
+        guaranteeIsCurrentPlayer(requestor_id, FUNC_NAME);
+        guaranteePhase(requestor_id, card_id, shared::GamePhase::BUY_PHASE, "You can not buy a card", FUNC_NAME);
 
-        if ( phase != GamePhase::BUY_PHASE ) {
-            LOG(WARN) << "Player " << requestor_id << " attempted to buy a card during " << gamePhaseToString(phase);
-            throw exception::OutOfPhase("Cannot buy cards while in " + gamePhaseToString(phase));
-        }
         const auto card_cost = shared::CardFactory::getCard(card_id).getCost();
 
         if ( !getPlayer(requestor_id).canBuy(card_cost) ) {
@@ -231,11 +276,12 @@ namespace server
 
         board->tryTake(card_id);
 
-        getPlayer(requestor_id).decTreasure(card_cost);
-        getPlayer(requestor_id).decBuys();
-        getPlayer(requestor_id).gain(card_id);
+        auto &player = getCurrentPlayer();
+        player.decTreasure(card_cost);
+        player.decBuys();
+        player.gain(card_id);
 
-        LOG(INFO) << "Player " << requestor_id << " successfully bought card " << card_id;
+        printSuccess(requestor_id, FUNC_NAME);
     }
 
 } // namespace server

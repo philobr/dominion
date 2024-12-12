@@ -70,10 +70,6 @@ namespace server
             LOG(ERROR) << "staged cards should be empty when getting deck";
             throw std::runtime_error("tried to get deck while staged cards were not empty");
         }
-        if ( !played_cards.empty() ) {
-            LOG(ERROR) << "played cards should be empty when getting deck";
-            throw std::runtime_error("tried to get deck while played cards were not empty");
-        }
         return deck;
     }
 
@@ -94,7 +90,6 @@ namespace server
         resetValues();
 
         move<shared::HAND, shared::DISCARD_PILE>();
-        move<shared::PLAYED_CARDS, shared::DISCARD_PILE>();
 
         draw(5);
     }

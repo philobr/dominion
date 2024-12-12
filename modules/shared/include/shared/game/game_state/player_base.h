@@ -19,9 +19,8 @@ namespace shared
         DRAW_PILE_TOP = 4,
         DRAW_PILE_BOTTOM = 8,
 
-        PLAYED_CARDS = 16,
-        TRASH = 32,
-        STAGED_CARDS = 64 // ex: sentry could move here
+        TRASH = 16,
+        STAGED_CARDS = 32 // ex: sentry could move here
     };
 
     class PlayerBase
@@ -49,7 +48,6 @@ namespace shared
         unsigned int getDrawPileSize() const { return draw_pile_size; }
         unsigned int getDiscardPileSize() const { return discard_pile.size(); }
         CardBase::id_t getTopDiscardCard() const { return discard_pile.empty() ? "" : discard_pile.back(); }
-        std::vector<CardBase::id_t> getPlayedCards() const { return played_cards; }
 
         /**
          * @brief Decrements actions by one, or keeps it at 0.
@@ -68,8 +66,6 @@ namespace shared
          */
         void decTreasure(const unsigned int dec_amount);
 
-        bool removeFromPlayedCards(const CardBase::id_t &card_id);
-
     protected:
         id_t player_id;
 
@@ -80,8 +76,6 @@ namespace shared
         CardBase::id_t current_card;
         std::vector<CardBase::id_t> discard_pile;
         unsigned int draw_pile_size;
-
-        std::vector<CardBase::id_t> played_cards;
 
         /**
          * @brief Convert the player to a `rapidjson::Document` JSON object.

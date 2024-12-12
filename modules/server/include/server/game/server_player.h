@@ -60,12 +60,14 @@ namespace server
 
         inline void playCardFromHand(const shared::CardBase::id_t &card_id)
         {
-            move<shared::HAND, shared::PLAYED_CARDS>(card_id);
+            size_t index = getIndex<shared::HAND>(card_id);
+            take<shared::HAND>(index);
         }
 
         inline void playCardFromStaged(const shared::CardBase::id_t &card_id)
         {
-            move<shared::STAGED_CARDS, shared::PLAYED_CARDS>(card_id);
+            size_t index = getIndex<shared::STAGED_CARDS>(card_id);
+            take<shared::STAGED_CARDS>(index);
         }
 
         /**
@@ -102,7 +104,7 @@ namespace server
         void addTreasure(unsigned int n) { treasure += n; }
 
         /**
-         * @brief Moves the played_cards & hand_cards to the discard_pile, then draws 5 cards again.
+         * @brief Moves the hand_cards to the discard_pile, then draws 5 cards again.
          */
         void endTurn();
 
@@ -132,7 +134,7 @@ namespace server
          * @brief Get the victory points of the player.
          *
          * This includes the draw_pile, discard_pile and hand_cards.
-         * This should only be called when played_cards and staged_cards are empty.
+         * This should only be called when staged_cards are empty.
          */
         int getVictoryPoints() const;
 
@@ -142,7 +144,7 @@ namespace server
          * @brief Get all cards in the deck of the player.
          *
          * This includes the draw_pile, discard_pile and hand_cards.
-         * This should only be called when played_cards and staged_cards are empty.
+         * This should only be called when staged_cards are empty.
          */
         std::vector<shared::CardBase::id_t> getDeck() const;
 

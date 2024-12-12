@@ -13,8 +13,6 @@ inline std::vector<shared::CardBase::id_t> &server::Player::getMutable()
         return discard_pile;
     } else if constexpr ( PILE == shared::HAND ) {
         return hand_cards;
-    } else if constexpr ( PILE == shared::PLAYED_CARDS ) {
-        return played_cards;
     } else if constexpr ( PILE == shared::STAGED_CARDS ) {
         return staged_cards;
     } else if constexpr ( PILE == shared::DRAW_PILE_TOP ) {
@@ -35,8 +33,6 @@ inline const std::vector<shared::CardBase::id_t> &server::Player::get() const
         return discard_pile;
     } else if constexpr ( PILE == shared::HAND ) {
         return hand_cards;
-    } else if constexpr ( PILE == shared::PLAYED_CARDS ) {
-        return played_cards;
     } else if constexpr ( PILE == shared::STAGED_CARDS ) {
         return staged_cards;
     } else if constexpr ( PILE == shared::DRAW_PILE_TOP ) {

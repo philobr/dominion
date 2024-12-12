@@ -69,23 +69,11 @@ namespace shared
         treasure -= dec_amount;
     }
 
-    bool PlayerBase::removeFromPlayedCards(const CardBase::id_t &card_id)
-    {
-        auto it = std::find(played_cards.begin(), played_cards.end(), card_id);
-        if ( it != played_cards.end() ) {
-            played_cards.erase(it);
-            return true;
-        } else {
-            return false;
-        }
-    }
-
     bool PlayerBase::operator==(const PlayerBase &other) const
     {
         return (player_id == other.player_id) && (actions == other.actions) && (buys == other.buys) &&
                 (treasure == other.treasure) && (current_card == other.current_card) &&
-                (discard_pile == other.discard_pile) && (draw_pile_size == other.draw_pile_size) &&
-                (played_cards == other.played_cards);
+                (discard_pile == other.discard_pile) && (draw_pile_size == other.draw_pile_size);
     }
 
     rapidjson::Document PlayerBase::toJson() const
@@ -100,7 +88,6 @@ namespace shared
         ADD_STRING_MEMBER(this->current_card.c_str(), current_card);
         ADD_ARRAY_OF_STRINGS_MEMBER(this->discard_pile, discard_pile);
         ADD_UINT_MEMBER(this->draw_pile_size, draw_pile_size);
-        ADD_ARRAY_OF_STRINGS_MEMBER(this->played_cards, played_cards);
 
         return doc;
     }
@@ -116,7 +103,6 @@ namespace shared
         GET_STRING_MEMBER(player->current_card, json, "current_card");
         GET_STRING_ARRAY_MEMBER(player->discard_pile, json, "discard_pile");
         GET_UINT_MEMBER(player->draw_pile_size, json, "draw_pile_size");
-        GET_STRING_ARRAY_MEMBER(player->played_cards, json, "played_cards");
         return player;
     }
 

@@ -15,8 +15,8 @@
 namespace client
 {
     LobbyPanel::LobbyPanel(wxWindow *parent) :
-        wxPanel(parent, wxID_ANY, wxDefaultPosition, wxSize(1024, 1024)), NamesSizer(new wxGridSizer(2, 2, 0, 0)),
-        StartButton(nullptr), playerCount(0)
+        wxPanel(parent, wxID_ANY, wxDefaultPosition), NamesSizer(new wxGridSizer(2, 2, 0, 0)), StartButton(nullptr),
+        playerCount(0)
     {
         TextPanel *Title = new TextPanel(this, wxID_ANY, "Lobby", TextFormat::TITLE);
         wxBoxSizer *VerticalSizer = new wxBoxSizer(wxVERTICAL);

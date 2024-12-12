@@ -18,8 +18,9 @@ namespace server
         phase(GamePhase::ACTION_PHASE)
     {
         if ( player_ids.size() < 2 || player_ids.size() > 4 ) {
-            LOG(ERROR) << "Invalid number of players: expected 2-4, got " << player_ids.size();
-            throw exception::PlayerCountMismatch("Invalid player count!");
+            LOG(ERROR) << "Invalid number of players: expected 2-4, got " << player_ids.size() << " in " << FUNC_NAME
+                       << ". This should have been checked implicitly by the lobby!";
+            throw exception::UnreachableCode();
         }
 
         initialisePlayers(player_ids);
@@ -62,8 +63,9 @@ namespace server
         player_order = player_ids;
         for ( const auto &id : player_ids ) {
             if ( player_map.count(id) != 0u ) {
-                LOG(ERROR) << "Duplicate player ID: " << id;
-                throw exception::DuplicatePlayer("Cannot add the same player twice!");
+                LOG(ERROR) << "Duplicate player ID: " << id << " in " << FUNC_NAME
+                           << ". This should have been checked implicitly by the lobby!";
+                throw exception::UnreachableCode();
             }
 
             player_map[id] = std::make_unique<Player>(id);
@@ -117,7 +119,8 @@ namespace server
         bool turn_ended =
                 maybeSwitchPhase(); // a player might not have any action cards at the beginning of the action phase
         if ( turn_ended ) {
-            throw std::runtime_error("Tried to end turn twice, this should never happen.");
+            LOG(ERROR) << "Tried to call " << FUNC_NAME << " twice in a row, this should NEVER happen.";
+            throw exception::UnreachableCode();
         }
     }
 
@@ -158,8 +161,9 @@ namespace server
                 }
             default:
                 {
-                    LOG(ERROR) << "Invalid game phase: " << static_cast<int>(phase);
-                    throw std::runtime_error("Unreachable code.");
+                    LOG(ERROR) << "Tried to call " << FUNC_NAME
+                               << " with an invalid game phase: " << static_cast<int>(phase);
+                    throw exception::UnreachableCode();
                 }
         }
     }
@@ -187,8 +191,9 @@ namespace server
             case GamePhase::PLAYING_ACTION_CARD:
             default:
                 {
-                    LOG(ERROR) << "Invalid game phase: " << static_cast<int>(phase);
-                    throw std::runtime_error("Invalid game phase in maybeSwitchPhase");
+                    LOG(ERROR) << "Tried to call " << FUNC_NAME
+                               << " with an invalid game phase: " << static_cast<int>(phase);
+                    throw exception::UnreachableCode();
                 }
         }
     }
@@ -223,7 +228,7 @@ namespace server
     {
         if ( requestor_id != getCurrentPlayerId() ) {
             LOG(WARN) << "Player: \'" << requestor_id << "\' attempted to call " << function_name << " out of turn.";
-            throw exception::InvalidRequest("Not your turn.");
+            throw exception::NotYourTurn();
         }
     }
 
@@ -268,8 +273,8 @@ namespace server
         const auto card_cost = shared::CardFactory::getCard(card_id).getCost();
 
         if ( !getPlayer(requestor_id).canBuy(card_cost) ) {
-            LOG(WARN) << "Player " << requestor_id << " cannot afford card " << card_id << " (cost: " << card_cost
-                      << ", treasure: " << getPlayer(requestor_id).getTreasure()
+            LOG(WARN) << "Player \'" << requestor_id << "\' cannot afford card \'" << card_id
+                      << "\' (cost: " << card_cost << ", treasure: " << getPlayer(requestor_id).getTreasure()
                       << ", buys: " << getPlayer(requestor_id).getBuys() << ").";
             throw exception::InsufficientFunds();
         }

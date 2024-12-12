@@ -52,7 +52,17 @@ namespace server
         }
 
         LOG(INFO) << "Creating lobby with ID: " << lobby_id;
-        games.emplace(lobby_id, std::make_shared<Lobby>(game_master_id, lobby_id));
+
+        try {
+            games.emplace(lobby_id, std::make_shared<Lobby>(game_master_id, lobby_id));
+        } catch ( std::exception &e ) {
+            LOG(ERROR) << "Error while creating a new lobby. ID: \'" << lobby_id << "\', game_master: \'"
+                       << game_master_id << "\'";
+            message_interface->send<shared::ResultResponseMessage>(game_master_id, lobby_id, false, request->message_id,
+                                                                   "Failed to create lobby: \'" + lobby_id +
+                                                                           "\'. Please try again.");
+            return;
+        }
 
         std::vector<shared::CardBase::id_t> available_cards =
                 std::vector<shared::CardBase::id_t>(); // TODO implement available cards

@@ -41,7 +41,7 @@ namespace client
         wxBoxSizer *horizontal_sizer = new wxBoxSizer(wxHORIZONTAL);
 
         // Add the image to the horizontal sizer
-        ImagePanel *godminion = new ImagePanel(this, "God_Mode.png", wxBITMAP_TYPE_PNG, wxDefaultPosition,
+        ImagePanel *godminion = new ImagePanel(this, "God_Mode", wxBITMAP_TYPE_PNG, wxDefaultPosition,
                                                formatting_constants::VICTORY_SCREEN_IMAGE_SIZE, 0.0);
         horizontal_sizer->Add(godminion, 0, wxALIGN_CENTER_VERTICAL | wxRIGHT, 10);
 
@@ -70,6 +70,8 @@ namespace client
 
         // Add the horizontal sizer to the main vertical sizer
         victory_screen_sizer->Add(horizontal_sizer, 1, wxALIGN_CENTER | wxALL, 20);
+
+        SetBackgroundColour(formatting_constants::DEFAULT_PANEL_BACKGROUND);
 
         // Create the close button
         wxButton *close_button = new wxButton(this, wxID_ANY, "Close Game", wxDefaultPosition, wxSize(100, 40));

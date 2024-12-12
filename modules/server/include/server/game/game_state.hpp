@@ -6,13 +6,12 @@ template <enum shared::CardAccess FROM>
 inline void server::GameState::tryPlay(const shared::PlayerBase::id_t &requestor_id,
                                        const shared::CardBase::id_t &card_id)
 {
-    if constexpr ( FROM != shared::CardAccess::HAND || FROM != shared::CardAccess::STAGED_CARDS ) {
+    if constexpr ( FROM != shared::CardAccess::HAND && FROM != shared::CardAccess::STAGED_CARDS ) {
         LOG(ERROR) << "Cards can only be played from " << toString(shared::CardAccess::HAND) << " or from "
                    << toString(shared::CardAccess::STAGED_CARDS) << ". " << toString(FROM) << " is not allowed!";
-        static_assert(FROM == shared::CardAccess::HAND ||
-                      FROM == shared::CardAccess::STAGED_CARDS &&
-                              "provided CardAccess is not allowed!"); // this is on purpose, this way this fails to
-                                                                      // compile and the error can not go unnoticed
+        static_assert((FROM == shared::CardAccess::HAND || FROM == shared::CardAccess::STAGED_CARDS) &&
+                      "provided CardAccess is not allowed!"); // this is on purpose, this way this fails to
+                                                              // compile and the error can not go unnoticed
     }
 
     guaranteeIsCurrentPlayer(requestor_id, FUNC_NAME);
@@ -54,10 +53,9 @@ inline void server::GameState::tryGain(const shared::PlayerBase::id_t &requestor
     if constexpr ( TO != shared::HAND && TO != shared::DISCARD_PILE ) {
         LOG(ERROR) << "Cards can only be gained to " << toString(shared::HAND) << " or to "
                    << toString(shared::STAGED_CARDS) << ". " << toString(TO) << " is not allowed!";
-        static_assert(TO == shared::HAND ||
-                      TO == shared::DISCARD_PILE &&
-                              "CardAccess not allowed!"); // this is on purpose, this way this fails to
-                                                          // compile and the error can not go unnoticed
+        static_assert((TO == shared::HAND || TO == shared::DISCARD_PILE) &&
+                      "CardAccess not allowed!"); // this is on purpose, this way this fails to
+                                                  // compile and the error can not go unnoticed
     }
 
     guaranteePhase(requestor_id, card_id, shared::GamePhase::PLAYING_ACTION_CARD, "You can not gain a card", FUNC_NAME);

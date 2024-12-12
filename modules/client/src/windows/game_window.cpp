@@ -24,6 +24,17 @@ namespace client
         // Set the minimum size of the window. The user won't be able to resize the window to a size smaller than this
         this->SetMinSize(wxSize(1000, 720));
 
+        this->Bind(wxEVT_FULLSCREEN,
+                   [this](wxFullScreenEvent &event)
+                   {
+                       this->_mainLayout->Layout();
+                       this->Update();
+                       this->Refresh();
+                       event.Skip();
+                   });
+
+        this->ShowFullScreen(true, wxFULLSCREEN_ALL);
+
         // Bind paint event to draw background image
         this->Bind(wxEVT_PAINT, &GameWindow::onPaint, this);
     }
@@ -58,6 +69,7 @@ namespace client
                         this->_mainLayout->Layout();
                         this->Fit();
                     }
+                    this->ShowFullScreen(true, wxFULLSCREEN_ALL);
                 });
     }
 

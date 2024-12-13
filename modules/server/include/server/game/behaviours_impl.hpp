@@ -384,6 +384,12 @@ namespace server
 
             auto discard_decision =
                     helper::validateResponse(game_state, action_decision.value(), 0, max_discard_amount);
+            
+            // stop behaviour if no cards are selected 
+            // otherwise draw(0) would draw the entire draw pile
+            if ( discard_decision.cards.empty() ) {
+                BEHAVIOUR_DONE;
+            }
 
             game_state.getCurrentPlayer().draw(discard_decision.cards.size());
             for ( const auto &card_id : discard_decision.cards ) {

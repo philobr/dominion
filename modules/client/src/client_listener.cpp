@@ -17,7 +17,7 @@ void ClientListener::shutdown() { this->_isActive = false; }
 wxThread::ExitCode ClientListener::Entry()
 {
     try {
-        char buffer[512]; // 512 bytes
+        char buffer[1024]; // 512 bytes
         ssize_t count = 0;
 
         this->_connection->set_non_blocking();
@@ -74,6 +74,7 @@ wxThread::ExitCode ClientListener::Entry()
                 // Make sure the connection isn't terminated only because of a read error
                 LOG(ERROR) << "Network error. Error while reading message: " << std::string(e.what());
             }
+            Sleep(1);
         }
 
         LOG(ERROR) << "Network error. Read error, shutting down Listener";

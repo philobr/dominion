@@ -418,6 +418,7 @@ namespace server
                             const auto hand_size = enemy.get<shared::HAND>().size();
 
                             if ( hand_size <= 3 ) {
+                                // no order for this player
                                 return std::unique_ptr<shared::ChooseFromHandOrder>(nullptr);
                             }
 
@@ -433,9 +434,8 @@ namespace server
 
             auto enemy_iter = this->expect_response.find(requestor_id);
             if ( enemy_iter == this->expect_response.end() ) {
-                // WRONG
-                LOG(ERROR) << "Not expecting a response from enemy: " << requestor_id;
-                throw std::runtime_error("uff");
+                LOG(WARN) << "Not expecting a response from enemy: " << requestor_id;
+                throw exception::NotYourTurn();
             }
 
             const auto n_cards_to_discard = this->expect_response.at(requestor_id);
@@ -449,11 +449,11 @@ namespace server
 
             this->expect_response.erase(enemy_iter);
 
-            if ( this->expect_response.empty() ) {
-                BEHAVIOUR_DONE;
+            if ( !this->expect_response.empty() ) {
+                return OrderResponse();
             }
 
-            return OrderResponse();
+            BEHAVIOUR_DONE;
         }
 
 // ================================

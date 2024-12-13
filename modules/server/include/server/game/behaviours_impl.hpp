@@ -449,11 +449,11 @@ namespace server
 
             this->expect_response.erase(enemy_iter);
 
-            if ( this->expect_response.size() != 0 ) {
-                return OrderResponse();
+            if ( this->expect_response.empty() ) {
+                BEHAVIOUR_DONE;
             }
 
-            BEHAVIOUR_DONE;
+            return OrderResponse();
         }
 
 // ================================

@@ -146,13 +146,18 @@ namespace client
     {
         // Select random action cards until 10 are selected
         if ( selectedCardCount >= 10 ) {
-            return;
+            clearSelection();
+            makeAutoSelection();
         }
+
+        // Make a uniform distribution for the random indices
+        std::uniform_int_distribution<int> dist(0, cardPanels.size() - 1);
+
         // Little bug that i found bc my map doesnt work yet:)
         while ( selectedCardCount < 10 && selectedCardCount < cardPanels.size() ) {
             while ( true ) {
                 // Generate random index between 0 and the number of cards
-                int random_index = rand() % cardPanels.size();
+                int random_index = dist(rng);
                 if ( !selectedCards[cardPanels.at(random_index)->getCardName()] ) {
                     clickOnSelectableCard(cardPanels.at(random_index));
                     break;

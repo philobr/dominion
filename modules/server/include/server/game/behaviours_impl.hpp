@@ -152,15 +152,17 @@ namespace server
             LOG_CALL;
             ASSERT_NO_DECISION;
 
-            auto all_player_ids = game_state.getAllPlayerIDs();
-            for ( auto &player_id : all_player_ids ) {
-                if ( player_id == game_state.getCurrentPlayerId() ) {
-                    continue;
-                }
-                auto &affected_player = game_state.getPlayer(player_id);
-                affected_player.move<shared::DRAW_PILE_TOP, shared::DISCARD_PILE>();
-                affected_player.add<shared::DRAW_PILE_TOP>("Curse");
-            }
+            // ensure play order
+            helper::applyAttackToEnemies(game_state,
+                                         [&](GameState &game_state, const shared::PlayerBase::id_t &enemy_id)
+                                         {
+                                             auto &affected_enemy = game_state.getPlayer(enemy_id);
+                                             affected_enemy.move<shared::DRAW_PILE_TOP, shared::DISCARD_PILE>(1);
+                                             if ( game_state.getBoard()->has("Curse") ) {
+                                                 game_state.getBoard()->tryTake("Curse");
+                                                 affected_enemy.add<shared::DRAW_PILE_TOP>("Curse");
+                                             }
+                                         });
 
             BEHAVIOUR_DONE;
         }
@@ -211,7 +213,10 @@ namespace server
                 }
                 board.trashCard("Treasure_Map");
                 for ( int i = 0; i < 4; i++ ) {
-                    affected_player.add<shared::DRAW_PILE_TOP>("Gold");
+                    if ( board.has("Gold") ) {
+                        board.tryTake("Gold");
+                        affected_player.add<shared::DRAW_PILE_TOP>("Gold");
+                    }
                 }
             }
 
@@ -245,14 +250,14 @@ namespace server
             LOG_CALL;
             ASSERT_NO_DECISION;
 
-            const std::string curse_card = "Curse";
-            helper::applyAttackToEnemies(
-                    game_state,
-                    [&, curse_card](GameState &game_state, const shared::PlayerBase::id_t &enemy_id)
-                    {
-                        game_state.getBoard()->tryTake(curse_card);
-                        game_state.getPlayer(enemy_id).gain(curse_card);
-                    });
+            helper::applyAttackToEnemies(game_state,
+                                         [&](GameState &game_state, const shared::PlayerBase::id_t &enemy_id)
+                                         {
+                                             if ( game_state.getBoard()->has("Curse") ) {
+                                                 game_state.getBoard()->tryTake("Curse");
+                                                 game_state.getPlayer(enemy_id).gain("Curse");
+                                             }
+                                         });
 
             BEHAVIOUR_DONE;
         }
@@ -386,6 +391,12 @@ namespace server
 
             auto discard_decision =
                     helper::validateResponse(game_state, requestor_id, action_decision.value(), 0, max_discard_amount);
+
+            // stop behaviour if no cards are selected
+            // otherwise draw(0) would draw the entire draw pile
+            if ( discard_decision.cards.empty() ) {
+                BEHAVIOUR_DONE;
+            }
 
             auto &affected_player = game_state.getPlayer(requestor_id);
             affected_player.draw(discard_decision.cards.size());

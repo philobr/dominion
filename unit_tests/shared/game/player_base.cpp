@@ -32,7 +32,6 @@ public:
     const shared::CardBase::id_t getCurrentCard() const { return current_card; }
     const std::vector<shared::CardBase::id_t> getDiscardPile() const { return discard_pile; }
     unsigned int getDrawPileSize() const { return draw_pile_size; }
-    const std::vector<shared::CardBase::id_t> getPlayedCards() const { return played_cards; }
 
     void setActions(unsigned int action_count) { actions = action_count; }
     void setBuys(unsigned int buy_count) { buys = buy_count; }
@@ -54,7 +53,6 @@ TEST(PlayerBaseTest, Constructor)
     EXPECT_EQ(player.getCurrentCard(), "");
     EXPECT_EQ(player.getDiscardPile().empty(), true);
     EXPECT_EQ(player.getDrawPileSize(), 0);
-    EXPECT_EQ(player.getPlayedCards().size(), 0);
 }
 
 TEST(PlayerBaseTest, CopyConstructor)

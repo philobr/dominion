@@ -172,8 +172,7 @@ TEST(PlayerTest, EndTurn)
     player.addBuys(1);
     player.addTreasure(3);
     player.getMutable<shared::CardAccess::HAND>() = {"Card1", "Card2"};
-    player.getMutable<shared::CardAccess::PLAYED_CARDS>() = {"Card3"};
-    player.getMutable<shared::CardAccess::DISCARD_PILE>() = {"Card4"};
+    player.getMutable<shared::CardAccess::DISCARD_PILE>() = {"Card3"};
 
     // Call end_turn()
     player.endTurn();
@@ -184,7 +183,7 @@ TEST(PlayerTest, EndTurn)
     EXPECT_EQ(player.getTreasure(), 0);
 
     // hand should contain 5 cards again
-    EXPECT_EQ(player.get<shared::CardAccess::HAND>().size(), 4);
+    EXPECT_EQ(player.get<shared::CardAccess::HAND>().size(), 3);
 
     // discard pile should be empty as reshuffle was triggered
     ASSERT_EQ(player.get<shared::CardAccess::DISCARD_PILE>().size(), 0); // hand + played + pile
@@ -219,7 +218,6 @@ TEST(PlayerTest, GetPile)
     player.getMutable<shared::CardAccess::DISCARD_PILE>() = {"Card1", "Card2"};
     player.getMutable<shared::CardAccess::DRAW_PILE_TOP>() = {"Card3", "Card4"};
     player.getMutable<shared::CardAccess::HAND>() = {"Card5"};
-    player.getMutable<shared::CardAccess::PLAYED_CARDS>() = {"Card6"};
 
     // Access and verify each pile
     EXPECT_EQ(player.get<shared::CardAccess::DISCARD_PILE>()[0], "Card1");
@@ -229,6 +227,4 @@ TEST(PlayerTest, GetPile)
     EXPECT_EQ(player.get<shared::CardAccess::DRAW_PILE_TOP>()[1], "Card4");
 
     EXPECT_EQ(player.get<shared::CardAccess::HAND>()[0], "Card5");
-
-    EXPECT_EQ(player.get<shared::CardAccess::PLAYED_CARDS>()[0], "Card6");
 }

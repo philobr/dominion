@@ -2,6 +2,7 @@
 #include <uiElements/enemy_panel.h>
 #include <uiElements/formatting_constants.h>
 #include <uiElements/pile_panel.h>
+#include <uiElements/popup.h>
 #include <uiElements/single_card_panel.h>
 #include <uiElements/text_panel.h>
 
@@ -32,7 +33,11 @@ namespace client
         TextPanel *DrawPileText = new TextPanel(this, wxID_ANY, "Draw Pile", TextFormat::PLAIN);
 
         // The pile itself
-        shared::Pile Draw_Pile("Card_back", enemy.getDrawPileSize());
+        shared::CardBase::id_t top_draw_card = "empty_panel";
+        if ( enemy.getDrawPileSize() > 0 ) {
+            top_draw_card = "Card_back";
+        }
+        shared::Pile Draw_Pile(top_draw_card, enemy.getDrawPileSize());
         auto height = 30;
         PilePanel *Draw_Pile_panel = new PilePanel(this, Draw_Pile, wxSize(height / 3 * 2, height));
 
@@ -50,17 +55,25 @@ namespace client
         TextPanel *PlayerId = new TextPanel(this, wxID_ANY, enemy.getId(), TextFormat::BOLD);
 
         // new sizer for the hand cards
-        auto *handCardSizer = new wxGridSizer(1, enemy.getHandSize(), 1, 1);
+        auto *handCardSizer = new wxGridSizer(
+                1, enemy.getHandSize() > formatting_constants::MAX_ENEMY_HAND_CARDS ? 1 : enemy.getHandSize(), 1, 1);
         auto hand_card_heigth = 30;
         auto hand_card_width = hand_card_heigth / 3 * 2;
-        for ( unsigned int i = 0; i < enemy.getHandSize(); i++ ) {
-            SingleCardPanel *Card = new SingleCardPanel(this, "Card_back", wxSize(hand_card_width, hand_card_heigth));
-            handCardSizer->Add(Card, 0, wxALL, 2);
+        if ( enemy.getHandSize() > formatting_constants::MAX_ENEMY_HAND_CARDS ) {
+            PilePanel *Hand_Pile_panel = new PilePanel(this, shared::Pile("Card_back", enemy.getHandSize()),
+                                                       wxSize(hand_card_width, hand_card_heigth));
+            handCardSizer->Add(Hand_Pile_panel, 0, wxALL, 2);
+        } else {
+            for ( unsigned int i = 0; i < enemy.getHandSize(); i++ ) {
+                SingleCardPanel *Card =
+                        new SingleCardPanel(this, "Card_back", wxSize(hand_card_width, hand_card_heigth));
+                handCardSizer->Add(Card, 0, wxALL, 2);
+            }
         }
 
         // add new items to the sizer
         centerSizer->Add(PlayerId, wxSizerFlags().Align(wxALIGN_CENTER_HORIZONTAL).Border(wxALL));
-        centerSizer->Add(handCardSizer, wxSizerFlags().Align(wxALIGN_CENTER_HORIZONTAL).Border(wxALL));
+        centerSizer->Add(handCardSizer, wxSizerFlags().Align(wxALIGN_CENTER_HORIZONTAL).Border(wxBOTTOM, 5));
         innerSizer->Add(centerSizer, wxSizerFlags().Align(wxALIGN_CENTER_VERTICAL));
 
         /* ===========display discard pile=========== */
@@ -69,13 +82,21 @@ namespace client
         // Text for the title
         TextPanel *discardPileText = new TextPanel(this, wxID_ANY, "Discard Pile", TextFormat::PLAIN);
 
-        shared::CardBase::id_t top_discard_card = "Card_back";
+        shared::CardBase::id_t top_discard_card = "empty_panel";
         if ( enemy.getDiscardPileSize() > 0 ) {
             top_discard_card = enemy.getTopDiscardCard();
         }
         // The pile itself
         shared::Pile Discard_Pile(top_discard_card, enemy.getDiscardPileSize());
         PilePanel *Discard_Pile_panel = new PilePanel(this, Discard_Pile, wxSize(height / 3 * 2, height));
+
+        // Make top card preview if discard pile is not empty
+        if ( enemy.getDiscardPileSize() > 0 ) {
+            Discard_Pile_panel->makeClickable(
+                    wxEVT_RIGHT_UP,
+                    [Discard_Pile_panel](wxMouseEvent & /*event*/)
+                    { showCardPopup(Discard_Pile_panel, Discard_Pile_panel->getPile().card_id); });
+        }
 
         // add new items to the sizer
         discardPileSizer->Add(discardPileText, wxSizerFlags().Align(wxALIGN_CENTER_HORIZONTAL).Border(wxALL));

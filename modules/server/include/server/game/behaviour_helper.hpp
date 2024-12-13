@@ -70,7 +70,7 @@ namespace server
             static inline auto validateResponse(GameState &game_state, const shared::PlayerBase::id_t &requestor_id,
                                                 std::unique_ptr<shared::ActionDecision> &action_decision,
                                                 unsigned int min_cards, unsigned int max_cards,
-                                                shared::CardType type = static_cast<shared::CardType>(
+                                                shared::CardType expected_type = static_cast<shared::CardType>(
                                                         shared::CardType::ACTION | shared::CardType::ATTACK |
                                                         shared::CardType::CURSE | shared::CardType::KINGDOM |
                                                         shared::CardType::REACTION | shared::CardType::TREASURE |
@@ -80,7 +80,6 @@ namespace server
                 auto &player = game_state.getPlayer(player_id);
                 const auto *deck_choice = dynamic_cast<shared::DeckChoiceDecision *>(action_decision.get());
                 const auto choice_size = deck_choice->cards.size();
-                auto &player = game_state.getCurrentPlayer();
 
                 // validate the decision type
                 if ( deck_choice == nullptr ) {

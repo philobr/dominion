@@ -6,8 +6,6 @@ namespace server
 {
     namespace behaviour
     {
-        // TODO: define a stateful behaviour, ask @aaron if you need this
-
 // False positive of clang-tidy
 // NOLINTBEGIN(bugprone-macro-parentheses)
 #define DEFINE_BEHAVIOUR(name)                                                                                         \
@@ -267,11 +265,10 @@ namespace server
             LOG_CALL;
 
             const bool has_action_decision = action_decision.has_value();
-            const auto cur_player_id = game_state.getCurrentPlayerId();
 
             if ( !has_action_decision ) {
                 // choose any card
-                return {cur_player_id, std::make_unique<shared::GainFromBoardOrder>(max_cost)};
+                return {requestor_id, std::make_unique<shared::GainFromBoardOrder>(max_cost)};
             }
 
             auto *gain_decision = dynamic_cast<shared::GainFromBoardDecision *>(action_decision.value().get());
@@ -288,7 +285,7 @@ namespace server
             }
 
             const auto chosen_card_id = gain_decision->chosen_card;
-            game_state.tryGain<shared::HAND>(cur_player_id, chosen_card_id);
+            game_state.tryGain<shared::HAND>(requestor_id, chosen_card_id);
 
             BEHAVIOUR_DONE;
         }

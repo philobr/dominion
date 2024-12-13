@@ -71,7 +71,7 @@ namespace shared
     REGISTER_CARD(Artisan, CardType::ACTION, 6);
     REGISTER_CARD(Cellar, CardType::ACTION, 2);
     REGISTER_CARD(Chapel, CardType::ACTION, 2);
-    // REGISTER_CARD(Workshop, CardType::ACTION, 3);
+    REGISTER_CARD(Workshop, CardType::ACTION, 3);
     // REGISTER_CARD(Vassal, CardType::ACTION, 3);
     // REGISTER_CARD(Harbinger, CardType::ACTION, 3);
     // REGISTER_CARD(Poacher, CardType::ACTION, 4);

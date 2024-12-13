@@ -43,7 +43,7 @@ namespace server
     {
         try {
             // all checks are done here
-            game_state->tryPlayFromHand(requestor_id, action_decision->card_id);
+            game_state->tryPlay<shared::CardAccess::HAND>(requestor_id, action_decision->card_id);
             game_state->setPhase(
                     shared::GamePhase::PLAYING_ACTION_CARD); // phase is only set if we successfully played a card
         } catch ( std::exception &e ) {
@@ -178,7 +178,7 @@ namespace server
                 return {current_player.getId(), std::make_unique<shared::ActionPhaseOrder>()};
             case shared::GamePhase::BUY_PHASE:
                 {
-                    for ( const auto &card_id : game_state->playAllTreasures(current_player.getId()) ) {
+                    for ( const auto &card_id : game_state->tryPlayAllTreasures(current_player.getId()) ) {
                         behaviour_chain->loadBehaviours(card_id);
                         behaviour_chain->startChain(*game_state);
                     }

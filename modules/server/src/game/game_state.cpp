@@ -18,8 +18,9 @@ namespace server
         phase(GamePhase::ACTION_PHASE)
     {
         if ( player_ids.size() < 2 || player_ids.size() > 4 ) {
-            LOG(ERROR) << "Invalid number of players: expected 2-4, got " << player_ids.size();
-            throw exception::PlayerCountMismatch("Invalid player count!");
+            LOG(ERROR) << "Invalid number of players: expected 2-4, got " << player_ids.size() << " in " << FUNC_NAME
+                       << ". This should have been checked implicitly by the lobby!";
+            throw exception::UnreachableCode();
         }
 
         initialisePlayers(player_ids);
@@ -62,8 +63,9 @@ namespace server
         player_order = player_ids;
         for ( const auto &id : player_ids ) {
             if ( player_map.count(id) != 0u ) {
-                LOG(ERROR) << "Duplicate player ID: " << id;
-                throw exception::DuplicatePlayer("Cannot add the same player twice!");
+                LOG(ERROR) << "Duplicate player ID: " << id << " in " << FUNC_NAME
+                           << ". This should have been checked implicitly by the lobby!";
+                throw exception::UnreachableCode();
             }
 
             player_map[id] = std::make_unique<Player>(id);
@@ -117,11 +119,27 @@ namespace server
         bool turn_ended =
                 maybeSwitchPhase(); // a player might not have any action cards at the beginning of the action phase
         if ( turn_ended ) {
-            throw std::runtime_error("Tried to end turn twice, this should never happen.");
+            LOG(ERROR) << "Tried to call " << FUNC_NAME << " twice in a row, this should NEVER happen.";
+            throw exception::UnreachableCode();
         }
     }
 
-    bool GameState::isGameOver() const { return board->isGameOver(); }
+    std::vector<Player::id_t> GameState::getEnemyIDs(const Player::id_t &player_id) const
+    {
+        const size_t num_players = player_order.size();
+        const size_t num_enemies = num_players - 1;
+
+        const size_t attacker_index =
+                std::distance(player_order.begin(), std::find(player_order.begin(), player_order.end(), player_id));
+
+        std::vector<Player::id_t> enemies(num_enemies);
+        for ( size_t i = 1; i < num_players; ++i ) {
+            const size_t enemy_index = (i + attacker_index) % num_players;
+            enemies[i - 1] = player_order[enemy_index];
+        }
+
+        return enemies;
+    }
 
     void GameState::forceSwitchPhase()
     {
@@ -143,8 +161,9 @@ namespace server
                 }
             default:
                 {
-                    LOG(ERROR) << "Invalid game phase: " << static_cast<int>(phase);
-                    throw std::runtime_error("Unreachable code.");
+                    LOG(ERROR) << "Tried to call " << FUNC_NAME
+                               << " with an invalid game phase: " << static_cast<int>(phase);
+                    throw exception::UnreachableCode();
                 }
         }
     }
@@ -172,140 +191,101 @@ namespace server
             case GamePhase::PLAYING_ACTION_CARD:
             default:
                 {
-                    LOG(ERROR) << "Invalid game phase: " << static_cast<int>(phase);
-                    throw std::runtime_error("Invalid game phase in maybeSwitchPhase");
+                    LOG(ERROR) << "Tried to call " << FUNC_NAME
+                               << " with an invalid game phase: " << static_cast<int>(phase);
+                    throw exception::UnreachableCode();
                 }
         }
     }
 
-    void GameState::tryEndActionPhase(const shared::PlayerBase::id_t &requestor_id)
+#pragma region ASSERTION_HELPERS
+
+    void GameState::guaranteePhase(const shared::PlayerBase::id_t &requestor_id, const shared::CardBase::id_t &card_id,
+                                   shared::GamePhase expected_phase, const std::string &error_msg,
+                                   const std::string &function_name)
+    {
+        if ( this->phase != expected_phase ) {
+            LOG(WARN) << "Player: \'" << requestor_id << "\' called " << function_name << " with card \'" << card_id
+                      << "\'. Expected to be in \'" << toString(expected_phase) << "\', but current phase is \'"
+                      << toString(this->phase);
+            throw exception::OutOfPhase(error_msg + std::string(" while in ") + toString(phase));
+        }
+    }
+
+    void GameState::guaranteePhase(const shared::PlayerBase::id_t &requestor_id, shared::GamePhase expected_phase,
+                                   const std::string &error_msg, const std::string &function_name)
+    {
+        if ( this->phase != expected_phase ) {
+            LOG(WARN) << "Player: \'" << requestor_id << "\' called " << function_name << ". Expected to be in \'"
+                      << toString(expected_phase) << "\', but current phase is \'" << toString(this->phase);
+            throw exception::OutOfPhase(error_msg + std::string(" while in ") + toString(phase));
+        }
+    }
+
+    void GameState::guaranteeIsCurrentPlayer(const shared::PlayerBase::id_t &requestor_id,
+                                             const std::string &function_name)
     {
         if ( requestor_id != getCurrentPlayerId() ) {
-            LOG(WARN) << "Player " << requestor_id << " attempted to end the action phase out of turn.";
-            throw exception::InvalidRequest("Not your turn.");
+            LOG(WARN) << "Player: \'" << requestor_id << "\' attempted to call " << function_name << " out of turn.";
+            throw exception::NotYourTurn();
         }
+    }
 
-        if ( phase != GamePhase::ACTION_PHASE ) {
-            LOG(WARN) << "Player " << requestor_id << " attempted to end the action phase while in phase "
-                      << gamePhaseToString(phase);
-            throw exception::OutOfPhase("Cannot end action phase while in " + gamePhaseToString(phase));
-        }
+    void GameState::printSuccess(const shared::PlayerBase::id_t &requestor_id, const std::string &function_name)
+    {
+        LOG(DEBUG) << "Player: \'" << requestor_id << "\' successfully finished \'" << function_name;
+    }
+
+#pragma region TRY_FUNCTIONS
+
+    std::vector<shared::CardBase::id_t> GameState::tryPlayAllTreasures(const shared::PlayerBase::id_t &requestor_id)
+    {
+        guaranteeIsCurrentPlayer(requestor_id, FUNC_NAME);
+        guaranteePhase(requestor_id, shared::GamePhase::BUY_PHASE, "You can not play all treasures", FUNC_NAME);
+
+        auto &player = getPlayer(requestor_id);
+
+        auto treasure_cards = player.getType<shared::CardAccess::HAND>(shared::CardType::TREASURE);
+        player.move<shared::HAND, shared::PLAYED_CARDS>(treasure_cards);
+        board->addToPlayedCards(treasure_cards);
+
+        printSuccess(requestor_id, FUNC_NAME);
+        return treasure_cards;
+    }
+
+    void GameState::tryEndActionPhase(const shared::PlayerBase::id_t &requestor_id)
+    {
+        guaranteeIsCurrentPlayer(requestor_id, FUNC_NAME);
+
+        guaranteePhase(requestor_id, shared::GamePhase::ACTION_PHASE,
+                       "You can not end " + toString(shared::GamePhase::ACTION_PHASE), FUNC_NAME);
 
         forceSwitchPhase();
+        printSuccess(requestor_id, FUNC_NAME);
     }
 
     void GameState::tryBuy(const shared::PlayerBase::id_t &requestor_id, const shared::CardBase::id_t &card_id)
     {
-        if ( requestor_id != getCurrentPlayerId() ) {
-            LOG(WARN) << "Player " << requestor_id << " attempted to buy a card out of turn.";
-            throw exception::InvalidRequest("Not your turn.");
-        }
+        guaranteeIsCurrentPlayer(requestor_id, FUNC_NAME);
+        guaranteePhase(requestor_id, card_id, shared::GamePhase::BUY_PHASE, "You can not buy a card", FUNC_NAME);
 
-        if ( phase != GamePhase::BUY_PHASE ) {
-            LOG(WARN) << "Player " << requestor_id << " attempted to buy a card during " << gamePhaseToString(phase);
-            throw exception::OutOfPhase("Cannot buy cards while in " + gamePhaseToString(phase));
-        }
         const auto card_cost = shared::CardFactory::getCard(card_id).getCost();
 
         if ( !getPlayer(requestor_id).canBuy(card_cost) ) {
-            LOG(WARN) << "Player " << requestor_id << " cannot afford card " << card_id << " (cost: " << card_cost
-                      << ", treasure: " << getPlayer(requestor_id).getTreasure()
+            LOG(WARN) << "Player \'" << requestor_id << "\' cannot afford card \'" << card_id
+                      << "\' (cost: " << card_cost << ", treasure: " << getPlayer(requestor_id).getTreasure()
                       << ", buys: " << getPlayer(requestor_id).getBuys() << ").";
             throw exception::InsufficientFunds();
         }
 
         board->tryTake(card_id);
 
-        getPlayer(requestor_id).decTreasure(card_cost);
-        getPlayer(requestor_id).decBuys();
-        getPlayer(requestor_id).gain(card_id);
+        auto &player = getCurrentPlayer();
+        player.decTreasure(card_cost);
+        player.decBuys();
+        player.gain(card_id);
 
-        LOG(INFO) << "Player " << requestor_id << " successfully bought card " << card_id;
-    }
-
-    void GameState::tryGainToDiscard(const shared::PlayerBase::id_t &requestor_id,
-                                     const shared::CardBase::id_t &card_id)
-    {
-        if ( phase != GamePhase::PLAYING_ACTION_CARD ) {
-            LOG(WARN) << "Player " << requestor_id << " attempted to gain a card outside of the action card phase.";
-            throw exception::OutOfPhase("Cannot gain a card while in " + gamePhaseToString(phase));
-        }
-
-        board->tryTake(card_id);
-
-        getPlayer(requestor_id).add<shared::CardAccess::DISCARD_PILE>(card_id);
-
-        LOG(INFO) << "Player " << requestor_id << " successfully gained card " << card_id;
-    }
-
-    void GameState::tryGainToHand(const shared::PlayerBase::id_t &requestor_id, const shared::CardBase::id_t &card_id)
-    {
-        if ( phase != GamePhase::PLAYING_ACTION_CARD ) {
-            LOG(WARN) << "Player " << requestor_id << " attempted to gain a card outside of the action card phase.";
-            throw exception::OutOfPhase("Cannot gain a card while in " + gamePhaseToString(phase));
-        }
-
-        board->tryTake(card_id);
-
-        getPlayer(requestor_id).add<shared::CardAccess::HAND>(card_id);
-
-        LOG(INFO) << "Player " << requestor_id << " successfully gained card " << card_id;
-    }
-
-    void GameState::tryPlayFromHand(const shared::PlayerBase::id_t &requestor_id, const shared::CardBase::id_t &card_id)
-    {
-        if ( requestor_id != getCurrentPlayerId() ) {
-            LOG(WARN) << "Player " << requestor_id << " attempted to play a card out of turn.";
-            throw exception::InvalidRequest("Not your turn.");
-        }
-
-        if ( phase != GamePhase::ACTION_PHASE ) {
-            LOG(WARN) << "Player " << requestor_id << " attempted to play card " << card_id << " during "
-                      << gamePhaseToString(phase);
-            throw exception::OutOfPhase("Cannot play cards while in " + gamePhaseToString(phase));
-        }
-
-
-        if ( getPlayer(requestor_id).getActions() == 0 ) {
-            LOG(WARN) << "Player " << requestor_id << " attempted to play card " << card_id << " with no actions left.";
-            throw exception::OutOfActions();
-        }
-
-        if ( !getPlayer(requestor_id).hasCard<shared::CardAccess::HAND>(card_id) ) {
-            LOG(WARN) << "Player " << requestor_id << " attempted to play card " << card_id << " not in their hand.";
-            throw exception::CardNotAvailable();
-        }
-
-        getPlayer(requestor_id).playCardFromHand(card_id);
-        getPlayer(requestor_id).decActions();
-        board->addToPlayedCards(card_id);
-
-        LOG(INFO) << "Player " << requestor_id << " successfully played card " << card_id << " from their hand.";
-    }
-
-    void GameState::tryPlayFromStaged(const shared::PlayerBase::id_t &requestor_id,
-                                      const shared::CardBase::id_t &card_id)
-    {
-        if ( requestor_id != getCurrentPlayerId() ) {
-            LOG(WARN) << "Player " << requestor_id << " attempted to play a staged card out of turn.";
-            throw exception::InvalidRequest("Not your turn.");
-        }
-
-        if ( phase != GamePhase::PLAYING_ACTION_CARD ) {
-            LOG(WARN) << "Player " << requestor_id << " attempted to play staged card " << card_id << " during "
-                      << gamePhaseToString(phase);
-            throw exception::OutOfPhase("Cannot play staged cards while in " + gamePhaseToString(phase));
-        }
-
-        if ( !getPlayer(requestor_id).hasCard<shared::CardAccess::STAGED_CARDS>(card_id) ) {
-            LOG(WARN) << "Player " << requestor_id << " attempted to play card " << card_id << " not in staged cards.";
-            throw exception::CardNotAvailable();
-        }
-
-        getPlayer(requestor_id).playCardFromStaged(card_id);
-        board->addToPlayedCards(card_id);
-
-        LOG(INFO) << "Player " << requestor_id << " successfully played staged card " << card_id;
+        printSuccess(requestor_id, FUNC_NAME);
     }
 
 } // namespace server

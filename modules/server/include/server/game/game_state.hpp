@@ -36,11 +36,10 @@ inline void server::GameState::tryPlay(const shared::PlayerBase::id_t &requestor
     }
 
     auto &player = getPlayer(requestor_id);
-    player.move<FROM, shared::PLAYED_CARDS>(card_id);
+    player.take<FROM>(card_id);
     if constexpr ( FROM == shared::CardAccess::HAND ) {
         player.decActions();
     }
-
     board->addToPlayedCards(card_id);
 
     printSuccess(requestor_id, FUNC_NAME);

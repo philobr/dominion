@@ -46,7 +46,6 @@ namespace server
 
         response_t terminate()
         {
-            game_state->forceSwitchPhase();
             game_state->endTurn();
             return endGame();
         }

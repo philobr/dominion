@@ -124,7 +124,7 @@ namespace server
 
             auto &affected_player = game_state.getCurrentPlayer();
             affected_player.draw(n_cards);
-            throw exception::UnreachableCode("TESTIAN TESTER");
+
             BEHAVIOUR_DONE;
         }
 
@@ -356,6 +356,38 @@ namespace server
 
             BEHAVIOUR_DONE;
         }
+
+        DEFINE_BEHAVIOUR(Remodel)
+        {
+            LOG_CALL;
+
+            const bool has_action_decision = action_decision.has_value();
+            const auto player_id = game_state.getCurrentPlayerId();
+            auto &player = game_state.getCurrentPlayer();
+
+            if ( !has_action_decision ) {
+                return {player_id,
+                        std::make_unique<shared::ChooseFromHandOrder>(1, 1,
+                                                                      shared::ChooseFromOrder::AllowedChoice::TRASH)};
+            }
+
+            if ( dynamic_cast<shared::DeckChoiceDecision *>(action_decision.value().get()) != nullptr ) {
+                auto trash_decision = helper::validateResponse(game_state, action_decision.value(), 1, 1);
+
+                const auto card_id = trash_decision.cards.at(0);
+                player.move<shared::CardAccess::HAND, shared::CardAccess::TRASH>(card_id);
+                const auto max_cost = shared::CardFactory::getCost(card_id) + 23;
+                return {player_id, std::make_unique<shared::GainFromBoardOrder>(max_cost)};
+
+            } else if ( auto *card_choice =
+                                dynamic_cast<shared::GainFromBoardDecision *>(action_decision.value().get()) ) {
+                auto card_id = card_choice->chosen_card;
+                game_state.tryGain<shared::DISCARD_PILE>(player_id, card_id);
+            }
+
+            BEHAVIOUR_DONE;
+        }
+
 
         DEFINE_TEMPLATED_BEHAVIOUR(TrashCards, int, num_cards)
         {

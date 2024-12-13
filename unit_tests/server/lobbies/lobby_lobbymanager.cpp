@@ -118,25 +118,30 @@ TEST(ServerLibraryTest, StartGame)
 {
     std::shared_ptr<MockMessageInterface> message_interface = std::make_shared<MockMessageInterface>();
     server::LobbyManager lobby_manager(message_interface);
-    shared::PlayerBase::id_t player_1 = "Max";
-    shared::PlayerBase::id_t player_2 = "Peter";
+    shared::PlayerBase::id_t game_master = "Max";
+    shared::PlayerBase::id_t not_game_master = "Peter";
 
-    auto create_lobby = std::make_unique<shared::CreateLobbyRequestMessage>("123", player_1);
-    auto join_lobby = std::make_unique<shared::JoinLobbyRequestMessage>("123", player_2);
+    const std::string game_id = "123";
+    const std::string invalid_game_id = "abc";
+
+    auto create_lobby = std::make_unique<shared::CreateLobbyRequestMessage>(game_id, game_master);
+    auto join_lobby = std::make_unique<shared::JoinLobbyRequestMessage>(game_id, not_game_master);
 
     std::vector<shared::CardBase::id_t> selected_cards = getValidKingdomCards();
 
     // Start game request with wrong game_id
-    auto start_game_invalid = std::make_unique<shared::StartGameRequestMessage>("abc", player_1, selected_cards);
+    auto invalid_game_id_message =
+            std::make_unique<shared::StartGameRequestMessage>(invalid_game_id, game_master, selected_cards);
 
     // Start game request not as game_master
-    auto start_game_valid = std::make_unique<shared::StartGameRequestMessage>("123", player_2, selected_cards);
+    auto invalid_game_master =
+            std::make_unique<shared::StartGameRequestMessage>(game_id, not_game_master, selected_cards);
 
     // Start game request as game_master
-    auto start_game_again_invalid = std::make_unique<shared::StartGameRequestMessage>("123", player_1, selected_cards);
+    auto valid_request = std::make_unique<shared::StartGameRequestMessage>(game_id, game_master, selected_cards);
 
-    LOG(DEBUG) << "StartGameRequestMessage(player, game, message): " << start_game_invalid->player_id << " "
-               << start_game_invalid->game_id << " " << start_game_invalid->message_id;
+    LOG(DEBUG) << "StartGameRequestMessage(player, game, message): " << valid_request->player_id << " "
+               << valid_request->game_id << " " << valid_request->message_id;
 
     LOBBY_MANAGER_CALL(create_lobby);
     LOBBY_MANAGER_CALL(join_lobby);
@@ -144,18 +149,17 @@ TEST(ServerLibraryTest, StartGame)
     // All expected function calls of sendMessage
     {
         InSequence s;
-        // start_game_invalid
-        EXPECT_CALL(*message_interface, sendMessage(IsFailureMessage(), player_1)).Times(1);
-        // request4
-        EXPECT_CALL(*message_interface, sendMessage(IsFailureMessage(), player_2)).Times(1);
-        // request5
+        // start_game_invalid, invalid game_id
+        EXPECT_CALL(*message_interface, sendMessage(IsFailureMessage(), game_master)).Times(1);
+        // start_game_invalid_again, not game master
+        EXPECT_CALL(*message_interface, sendMessage(IsFailureMessage(), not_game_master)).Times(1);
+        // start_game_valid, correct game_id and game_master
         EXPECT_CALL(*message_interface, sendMessage(_, _)).Times(4); // num players * 3
     }
 
-    LOBBY_MANAGER_CALL(start_game_invalid);
-    LOBBY_MANAGER_CALL(start_game_valid);
-    LOBBY_MANAGER_CALL(start_game_again_invalid);
-    // TODO: Check if the game started correctly
+    LOBBY_MANAGER_CALL(invalid_game_id_message);
+    LOBBY_MANAGER_CALL(invalid_game_master);
+    LOBBY_MANAGER_CALL(valid_request);
 }
 
 

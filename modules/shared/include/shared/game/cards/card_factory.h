@@ -1,6 +1,7 @@
 #pragma once
 
 #include <unordered_map>
+#include <vector>
 
 #include <shared/game/cards/card_base.h>
 #include <shared/utils/logger.h>
@@ -17,7 +18,7 @@ namespace shared
         static bool has(const CardBase::id_t &card_id) { return _map.count(card_id) > 0; }
 
         static const map_t &getAll() { return _map; }
-        static const sorted_t getKingdomSortedByCost();
+        static sorted_t getKingdomSortedByCost();
         static const CardBase &getCard(const CardBase::id_t &card_id);
         static unsigned int getCost(const CardBase::id_t &card_id);
         static CardType getType(const CardBase::id_t &card_id);
@@ -132,7 +133,7 @@ namespace shared
         return getCard(card_id).isCurse();
     }
 
-    inline const shared::CardFactory::sorted_t shared::CardFactory::getKingdomSortedByCost()
+    inline shared::CardFactory::sorted_t shared::CardFactory::getKingdomSortedByCost()
     {
         sorted_t sorted_vec;
         for (const auto& entry : CardFactory::getAll()) {

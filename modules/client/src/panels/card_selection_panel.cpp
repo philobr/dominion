@@ -25,16 +25,15 @@ namespace client
         wxBoxSizer *VerticalSizer = new wxBoxSizer(wxVERTICAL);
         VerticalSizer->Add(Title, 0, wxALIGN_CENTER | wxALL, 5);
 
-        const shared::CardFactory::sorted_t &all_cards = shared::CardFactory::getAllSortedByCost();
+        const auto &all_cards = shared::CardFactory::getAll();
         for ( const auto &card : all_cards ) {
-            if ( card.second->isKingdom() ) {
+            if ( card.second ) {
                 // This is a really hacky way of ignoring the God Mode card, but
                 // it is good enough for now
-                if ( !wxGetApp().isDebugMode() && card.second->getId() == "God_Mode" ) {
+                if ( !wxGetApp().isDebugMode() && card.first == "God_Mode" ) {
                     continue;
                 }
-
-                selectedCards[card.second->getId()] = false;
+                selectedCards[card.first] = false;
             }
         }
 
@@ -123,13 +122,16 @@ namespace client
         wxGridSizer *CardSelection = new wxGridSizer(0, 4, 15, 15);
 
         // Add the cards to the sizer
-        for ( auto card : selectedCards ) {
-            SingleCardPanel *CardPanel = new SingleCardPanel(scrolledWindow, card.first,
-                                                             formatting_constants::DEFAULT_CARD_SELECTION_SIZE, 5);
-            CardPanel->setBorderColor(wxNullColour);
-            makeSelectable(CardPanel);
-            cardPanels.push_back(CardPanel);
-            CardSelection->Add(CardPanel, 0, wxALIGN_CENTER);
+        auto sorted = shared::CardFactory::getKingdomSortedByCost();
+        for ( auto card : sorted ) {
+            if (selectedCards.find(card) != selectedCards.end()){
+                SingleCardPanel *CardPanel = new SingleCardPanel(scrolledWindow, card,
+                                                                 formatting_constants::DEFAULT_CARD_SELECTION_SIZE, 5);
+                CardPanel->setBorderColor(wxNullColour);
+                makeSelectable(CardPanel);
+                cardPanels.push_back(CardPanel);
+                CardSelection->Add(CardPanel, 0, wxALIGN_CENTER);
+            }
         }
 
         ParentSizer->Add(CardSelection, 1, wxEXPAND | wxALL, 20);

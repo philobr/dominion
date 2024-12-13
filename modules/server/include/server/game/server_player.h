@@ -179,7 +179,7 @@ namespace server
         inline std::vector<shared::CardBase::id_t> take(const std::vector<shared::CardBase::id_t> &cards);
 
         /**
-         * @brief Removes min(n, pile.size()) cards from a pile.
+         * @brief Removes min(n, pile.size()) cards from a pile. If n == 0, pile.size() cards are taken.
          * Always takes the back, except for DRAW_PILE_TOP
          *
          * @tparam FROM, a pile from which we want to take cards

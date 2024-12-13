@@ -384,8 +384,10 @@ namespace server
 
             auto discard_decision =
                     helper::validateResponse(game_state, action_decision.value(), 0, max_discard_amount);
-
-            game_state.getCurrentPlayer().draw(discard_decision.cards.size());
+            
+            if ( !discard_decision.cards.empty() ) {
+                game_state.getCurrentPlayer().draw(discard_decision.cards.size());
+            }
             for ( const auto &card_id : discard_decision.cards ) {
                 game_state.getCurrentPlayer().move<shared::CardAccess::HAND, shared::CardAccess::DISCARD_PILE>(card_id);
             }

@@ -39,5 +39,6 @@ namespace client
         const wxSize VICTORY_SCREEN_IMAGE_SIZE = wxSize(500, 500);
         const wxSize VICTORY_SCREEN_TEXT_SIZE = wxSize(100, -1);
 
+        const unsigned int MAX_ENEMY_HAND_CARDS = 7;
     } // namespace formatting_constants
 } // namespace client

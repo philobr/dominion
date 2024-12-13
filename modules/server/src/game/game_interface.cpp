@@ -84,19 +84,21 @@ namespace server
     GameInterface::EndTurnDecision_handler(std::unique_ptr<shared::EndTurnDecision> action_decision,
                                            const Player::id_t &requestor_id)
     {
-        if ( requestor_id != game_state->getCurrentPlayerId() ) {
-            LOG(ERROR) << "Player " << requestor_id << " is trying to end the turn but its not his turn!";
-            throw exception::NotYourTurn();
+        try {
+            game_state->tryEndTurn(requestor_id);
+        } catch ( exception::UnreachableCode &e ) {
+            LOG(ERROR) << "Somehow reached unreachable code in " << FUNC_NAME << ". Aborting.";
+            throw e;
+        } catch ( std::exception &e ) {
+            LOG(WARN) << "Failed to end turn: " << e.what();
+            throw e;
         }
 
-        if ( game_state->getPhase() == shared::GamePhase::PLAYING_ACTION_CARD ) {
-            // ISSUE: 166
-            LOG(ERROR) << "Player " << requestor_id << " is trying to end his turn while playing a card";
-            throw exception::OutOfPhase("");
+        if ( game_state->isGameOver() ) {
+            return endGame();
+        } else {
+            return nextPhase();
         }
-
-        bool end_turn = true;
-        return nextPhase(end_turn);
     }
 
     /**
@@ -159,30 +161,25 @@ namespace server
 
     GameInterface::response_t GameInterface::nextPhase(bool end_turn)
     {
-        bool turn_ended = false;
-        if ( end_turn ) {
-            game_state->endTurn();
-            turn_ended = true;
-        }
-        // switches phase if: actions==0 OR (buys==0 -> end_turn + next player)
-        turn_ended |= game_state->maybeSwitchPhase();
-
-        if ( turn_ended && game_state->isGameOver() ) {
+        auto current_player_id = game_state->getCurrentPlayerId();
+        game_state->maybeSwitchPhase();
+        if ( current_player_id != game_state->getCurrentPlayerId() && game_state->isGameOver() ) {
+            // the player has changed in switchPhase and the game is over, hence the game has ended
             return endGame();
         }
 
-        const auto current_player = game_state->getCurrentPlayer();
+        current_player_id = game_state->getCurrentPlayerId();
         switch ( game_state->getPhase() ) {
             case shared::GamePhase::ACTION_PHASE:
-                return {current_player.getId(), std::make_unique<shared::ActionPhaseOrder>()};
+                return {current_player_id, std::make_unique<shared::ActionPhaseOrder>()};
             case shared::GamePhase::BUY_PHASE:
                 {
-                    for ( const auto &card_id : game_state->tryPlayAllTreasures(current_player.getId()) ) {
+                    for ( const auto &card_id : game_state->tryPlayAllTreasures(current_player_id) ) {
                         behaviour_chain->loadBehaviours(card_id);
                         behaviour_chain->startChain(*game_state);
                     }
 
-                    return {current_player.getId(), std::make_unique<shared::BuyPhaseOrder>()};
+                    return {current_player_id, std::make_unique<shared::BuyPhaseOrder>()};
                 }
             case shared::GamePhase::PLAYING_ACTION_CARD:
             default:

@@ -168,7 +168,7 @@ namespace server
         }
     }
 
-    bool GameState::maybeSwitchPhase()
+    void GameState::maybeSwitchPhase()
     {
         switch ( phase ) {
             case GamePhase::ACTION_PHASE:
@@ -177,15 +177,11 @@ namespace server
                          !getCurrentPlayer().hasType<shared::CardAccess::HAND>(shared::CardType::ACTION) ) {
                         phase = GamePhase::BUY_PHASE;
                     }
-                    return false;
                 }
             case GamePhase::BUY_PHASE:
                 {
                     if ( getCurrentPlayer().getBuys() == 0 ) {
                         endTurn();
-                        return true;
-                    } else {
-                        return false;
                     }
                 }
             case GamePhase::PLAYING_ACTION_CARD:
@@ -218,6 +214,27 @@ namespace server
         if ( this->phase != expected_phase ) {
             LOG(WARN) << "Player: \'" << requestor_id << "\' called " << function_name << ". Expected to be in \'"
                       << toString(expected_phase) << "\', but current phase is \'" << toString(this->phase);
+            throw exception::OutOfPhase(error_msg + std::string(" while in ") + toString(phase));
+        }
+    }
+
+    void GameState::guaranteeNotPhase(const shared::PlayerBase::id_t &requestor_id,
+                                      const shared::CardBase::id_t &card_id, shared::GamePhase expected_phase,
+                                      const std::string &error_msg, const std::string &function_name)
+    {
+        if ( this->phase == expected_phase ) {
+            LOG(WARN) << "Player: \'" << requestor_id << "\' called " << function_name << " with card \'" << card_id
+                      << "\'. Expected to not be in \'" << toString(expected_phase) << "\'";
+            throw exception::OutOfPhase(error_msg + std::string(" while in ") + toString(phase));
+        }
+    }
+
+    void GameState::guaranteeNotPhase(const shared::PlayerBase::id_t &requestor_id, shared::GamePhase expected_phase,
+                                      const std::string &error_msg, const std::string &function_name)
+    {
+        if ( this->phase == expected_phase ) {
+            LOG(WARN) << "Player: \'" << requestor_id << "\' called " << function_name << ". Expected to not be in \'"
+                      << toString(expected_phase) << "\'";
             throw exception::OutOfPhase(error_msg + std::string(" while in ") + toString(phase));
         }
     }

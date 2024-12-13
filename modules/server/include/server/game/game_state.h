@@ -48,6 +48,14 @@ namespace server
          */
         void tryEndActionPhase(const shared::PlayerBase::id_t &requestor_id);
 
+        inline void tryEndTurn(const shared::PlayerBase::id_t &requestor_id)
+        {
+            guaranteeIsCurrentPlayer(requestor_id, FUNC_NAME);
+            guaranteeNotPhase(requestor_id, shared::GamePhase::PLAYING_ACTION_CARD, "Can not end turn", FUNC_NAME);
+
+            endTurn();
+        }
+
         /**
          * @brief Buys a card from the board and adds it to the players discard pile.
          * @throws exception::InvalidRequest, exception::OutOfPhase, exception::InsufficientFunds
@@ -125,7 +133,7 @@ namespace server
          *
          * @return true if the player's turn has ended.
          */
-        bool maybeSwitchPhase();
+        void maybeSwitchPhase();
 
     private:
         /**
@@ -144,6 +152,13 @@ namespace server
 
         void guaranteePhase(const shared::PlayerBase::id_t &requestor_id, shared::GamePhase expected_phase,
                             const std::string &error_msg, const std::string &function_name);
+
+        void guaranteeNotPhase(const shared::PlayerBase::id_t &requestor_id, const shared::CardBase::id_t &card_id,
+                               shared::GamePhase expected_phase, const std::string &error_msg,
+                               const std::string &function_name);
+
+        void guaranteeNotPhase(const shared::PlayerBase::id_t &requestor_id, shared::GamePhase expected_phase,
+                               const std::string &error_msg, const std::string &function_name);
 
         void guaranteeIsCurrentPlayer(const shared::PlayerBase::id_t &requestor_id, const std::string &function_name);
     };

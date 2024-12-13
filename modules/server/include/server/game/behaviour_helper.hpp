@@ -26,7 +26,13 @@ namespace server
                                       return;
                                   }
 
-                                  orders.addOrder(enemy_id, gen(game_state, enemy_id));
+                                  auto order = gen(game_state, enemy_id);
+
+                                  if ( order == nullptr ) {
+                                      return;
+                                  }
+
+                                  orders.addOrder(enemy_id, std::move(order));
                               });
 
                 return orders;
@@ -61,16 +67,17 @@ namespace server
             }
 
 
-            static inline auto
-            validateResponse(GameState &game_state, std::unique_ptr<shared::ActionDecision> &action_decision,
-                             unsigned int min_cards, unsigned int max_cards,
-                             shared::CardType type = static_cast<shared::CardType>(
-                                     shared::CardType::ACTION | shared::CardType::ATTACK | shared::CardType::CURSE |
-                                     shared::CardType::KINGDOM | shared::CardType::REACTION |
-                                     shared::CardType::TREASURE | shared::CardType::VICTORY))
+            static inline auto validateResponse(GameState &game_state, const shared::PlayerBase::id_t &requestor_id,
+                                                std::unique_ptr<shared::ActionDecision> &action_decision,
+                                                unsigned int min_cards, unsigned int max_cards,
+                                                shared::CardType type = static_cast<shared::CardType>(
+                                                        shared::CardType::ACTION | shared::CardType::ATTACK |
+                                                        shared::CardType::CURSE | shared::CardType::KINGDOM |
+                                                        shared::CardType::REACTION | shared::CardType::TREASURE |
+                                                        shared::CardType::VICTORY))
             {
-                const auto player_id = game_state.getCurrentPlayerId();
-                auto &player = game_state.getCurrentPlayer();
+                const auto player_id = requestor_id;
+                auto &player = game_state.getPlayer(player_id);
                 const auto *deck_choice = dynamic_cast<shared::DeckChoiceDecision *>(action_decision.get());
                 if ( deck_choice == nullptr ) {
                     LOG(ERROR) << FUNC_NAME << " got a wrong decision type! Expected: shared::DeckChoiceDecision";

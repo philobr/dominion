@@ -299,7 +299,7 @@ namespace server
                                 1, 1, shared::ChooseFromOrder::AllowedChoice::DRAW_PILE)};
             }
 
-            auto deck_choice = helper::validateResponse(game_state, action_decision.value(), 1, 1);
+            auto deck_choice = helper::validateResponse(game_state, requestor_id, action_decision.value(), 1, 1);
 
             const auto move_card_id = deck_choice.cards.at(0);
             game_state.getCurrentPlayer().move<shared::CardAccess::HAND, shared::CardAccess::DRAW_PILE_TOP>(
@@ -329,8 +329,8 @@ namespace server
             }
 
             if ( dynamic_cast<shared::DeckChoiceDecision *>(action_decision.value().get()) != nullptr ) {
-                auto trash_decision =
-                        helper::validateResponse(game_state, action_decision.value(), 1, 1, shared::CardType::TREASURE);
+                auto trash_decision = helper::validateResponse(game_state, requestor_id, action_decision.value(), 1, 1,
+                                                               shared::CardType::TREASURE);
 
                 const auto card_id = trash_decision.cards.at(0);
                 affected_player.move<shared::CardAccess::HAND, shared::CardAccess::TRASH>(card_id);
@@ -362,7 +362,8 @@ namespace server
                                                                       shared::ChooseFromOrder::AllowedChoice::TRASH)};
             }
 
-            auto trash_decision = helper::validateResponse(game_state, action_decision.value(), 0, num_cards);
+            auto trash_decision =
+                    helper::validateResponse(game_state, requestor_id, action_decision.value(), 0, num_cards);
 
             auto &affected_player = game_state.getPlayer(requestor_id);
             for ( const auto &card_id : trash_decision.cards ) {
@@ -384,12 +385,72 @@ namespace server
             }
 
             auto discard_decision =
-                    helper::validateResponse(game_state, action_decision.value(), 0, max_discard_amount);
+                    helper::validateResponse(game_state, requestor_id, action_decision.value(), 0, max_discard_amount);
 
             auto &affected_player = game_state.getPlayer(requestor_id);
             affected_player.draw(discard_decision.cards.size());
             for ( const auto &card_id : discard_decision.cards ) {
                 affected_player.move<shared::CardAccess::HAND, shared::CardAccess::DISCARD_PILE>(card_id);
+            }
+
+            BEHAVIOUR_DONE;
+        }
+
+        class MilitiaAttack : public server::base::Behaviour
+        {
+            std::unordered_map<shared::PlayerBase::id_t, unsigned int> expect_response;
+
+        public:
+            inline ret_t apply(server::GameState &state, const shared::PlayerBase::id_t &requestor_id,
+                               server::base::Behaviour::action_decision_t action_decision = std::nullopt);
+        };
+        inline server::base::Behaviour::ret_t
+        MilitiaAttack::apply(server::GameState &game_state, const shared::PlayerBase::id_t &requestor_id,
+                             server::base::Behaviour::action_decision_t action_decision)
+        {
+            LOG_CALL;
+            if ( !action_decision.has_value() ) {
+                return helper::sendAttackToEnemies(
+                        game_state,
+                        [this](GameState &game_state, const shared::PlayerBase::id_t &enemy_id)
+                        {
+                            const auto &enemy = game_state.getPlayer(enemy_id);
+                            const auto hand_size = enemy.get<shared::HAND>().size();
+
+                            if ( hand_size <= 3 ) {
+                                return std::unique_ptr<shared::ChooseFromHandOrder>(nullptr);
+                            }
+
+                            const unsigned int n_cards_to_discard = hand_size - 3;
+
+                            this->expect_response.emplace(enemy_id, n_cards_to_discard);
+
+                            return std::make_unique<shared::ChooseFromHandOrder>(
+                                    n_cards_to_discard, n_cards_to_discard,
+                                    shared::ChooseFromOrder::AllowedChoice::TRASH);
+                        });
+            }
+
+            auto enemy_iter = this->expect_response.find(requestor_id);
+            if ( enemy_iter == this->expect_response.end() ) {
+                // WRONG
+                LOG(ERROR) << "Not expecting a response from enemy: " << requestor_id;
+                throw std::runtime_error("uff");
+            }
+
+            const auto n_cards_to_discard = this->expect_response.at(requestor_id);
+            auto decision = helper::validateResponse(game_state, requestor_id, action_decision.value(),
+                                                     n_cards_to_discard, n_cards_to_discard);
+
+            auto &affected_enemy = game_state.getPlayer(requestor_id);
+            for ( const auto &card_id : decision.cards ) {
+                affected_enemy.move<shared::HAND, shared::DISCARD_PILE>(card_id);
+            }
+
+            this->expect_response.erase(enemy_iter);
+
+            if ( this->expect_response.size() != 0 ) {
+                return OrderResponse();
             }
 
             BEHAVIOUR_DONE;

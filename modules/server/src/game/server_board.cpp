@@ -63,6 +63,10 @@ namespace server
 
     void ServerBoard::take(const shared::CardBase::id_t &card_id)
     {
+        if ( card_id == curse_card_pile.card_id ) {
+            --curse_card_pile.count;
+        }
+
         // helper to search the card in each pile
         auto buy_if_found = [card_id](auto &card_piles)
         {

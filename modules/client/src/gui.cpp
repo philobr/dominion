@@ -50,6 +50,9 @@ namespace client
         if ( form.host.empty() ) {
             showError("Invalid host", "Host must not be empty");
             return false;
+        } else if ( form.host.size() > 255 ) {
+            showError("Invalid host", "Host must not be longer than 255 characters");
+            return false;
         }
 
         unsigned long port = 0;
@@ -64,12 +67,18 @@ namespace client
         if ( form.player_name.empty() ) {
             showError("Invalid player name", "Player name must not be empty");
             return false;
+        } else if ( form.player_name.size() > 20 ) {
+            showError("Invalid player name", "Player name must not be longer than 20 characters");
+            return false;
         }
 
         form.lobby_name = _connectionPanel->getGameName().Trim().ToStdString();
 
         if ( form.lobby_name.empty() ) {
             showError("Invalid lobby name", "Lobby name must not be empty");
+            return false;
+        } else if ( form.lobby_name.size() > 20 ) {
+            showError("Invalid lobby name", "Lobby name must not be longer than 20 characters");
             return false;
         }
 

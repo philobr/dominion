@@ -116,12 +116,7 @@ namespace server
         resetPhase();
         board->resetPlayedCards();
 
-        bool turn_ended =
-                maybeSwitchPhase(); // a player might not have any action cards at the beginning of the action phase
-        if ( turn_ended ) {
-            LOG(ERROR) << "Tried to call " << FUNC_NAME << " twice in a row, this should NEVER happen.";
-            throw exception::UnreachableCode();
-        }
+        maybeSwitchPhase(); // a player might not have any action cards at the beginning of the action phase
     }
 
     std::vector<Player::id_t> GameState::getEnemyIDs(const Player::id_t &player_id) const
@@ -178,12 +173,14 @@ namespace server
                         phase = GamePhase::BUY_PHASE;
                     }
                 }
+                break;
             case GamePhase::BUY_PHASE:
                 {
                     if ( getCurrentPlayer().getBuys() == 0 ) {
                         endTurn();
                     }
                 }
+                break;
             case GamePhase::PLAYING_ACTION_CARD:
             default:
                 {

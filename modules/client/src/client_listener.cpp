@@ -1,5 +1,6 @@
 #include "client_listener.h"
 #include <cerrno>
+#include <cstddef>
 #include <shared/utils/logger.h>
 #include <unistd.h>
 #include "client_network_manager.h"
@@ -17,7 +18,8 @@ void ClientListener::shutdown() { this->_isActive = false; }
 wxThread::ExitCode ClientListener::Entry()
 {
     try {
-        char buffer[1024]; // 512 bytes
+        char buffer[512]; // 512 bytes
+        std::string leftover; // To store incomplete messages across reads
         ssize_t count = 0;
 
         this->_connection->set_non_blocking();
@@ -27,54 +29,50 @@ wxThread::ExitCode ClientListener::Entry()
                 count = this->_connection->read(buffer, sizeof(buffer));
                 // if you get a message, read it
                 if ( count > 0 ) {
-                    int pos = 0;
+                    // Append new data to leftover string
+                    leftover.append(buffer, count);
 
-                    // extract length of message in bytes (which is sent at the start of the message, and is separated
-                    // by a
-                    // ":")
-                    std::stringstream messageLengthStream;
-                    while ( pos < count && buffer[pos] != ':' ) {
-                        messageLengthStream << buffer[pos];
-                        pos++;
-                    }
-                    ssize_t messageLength = std::stoi(messageLengthStream.str());
+                    while ( !leftover.empty() ) {
 
-                    // initialize a stream for the message
-                    std::stringstream messageStream;
+                        size_t colonPos = leftover.find(':');
+                        if ( colonPos == std::string::npos ) {
+                            // Wait for more data if ':' is not yet available
+                            break;
+                        }
 
-                    // copy everything following the message length declaration into a stringstream
-                    messageStream.write(&buffer[pos + 1], count - (pos + 1));
-                    ssize_t bytesReadSoFar = count - (pos + 1);
+                        try {
+                            ssize_t messageLength = std::stoi(leftover.substr(0, colonPos));
+                            size_t totalMessageSize = colonPos + 1 + messageLength;
 
-                    // read remaining packages until full message length is reached
-                    while ( bytesReadSoFar < messageLength && count != 0 ) {
-                        count = this->_connection->read(buffer, sizeof(buffer));
-                        messageStream.write(buffer, count);
-                        bytesReadSoFar += count;
-                    }
+                            // Check if the full message is available
+                            if ( leftover.size() < totalMessageSize ) {
+                                // Wait for more data
+                                break;
+                            }
 
-                    // process message (if we've received entire message)
-                    if ( bytesReadSoFar == messageLength ) {
-                        std::string message = messageStream.str();
-                        // GameController::getMainThreadEventHandler()->CallAfter([message]{
-                        ClientNetworkManager::receiveMessage(message);
-                        //});
+                            std::string message = leftover.substr(colonPos + 1, messageLength);
+                            leftover = leftover.substr(totalMessageSize);
 
-                    } else {
-                        LOG(ERROR) << "Network error. Could not read entire message. TCP stream ended early. "
-                                      "Difference is "
-                                   << std::to_string(messageLength - bytesReadSoFar) << " bytes";
+                            ClientNetworkManager::receiveMessage(message);
+
+                        } catch ( const std::exception &e ) {
+                            LOG(ERROR) << "Network error. Error while reading message: " << e.what();
+                            leftover.clear(); // Reset leftover to avoid infinite errors
+                            break;
+                        }
                     }
                 } else if ( this->_connection->last_error() != EWOULDBLOCK ) {
                     // Connection Error
-                    this->_isActive = false;
+                    LOG(ERROR) << "Network error: Read error, shutting down Listener";
+                    break;
                 }
 
             } catch ( std::exception &e ) {
                 // Make sure the connection isn't terminated only because of a read error
-                LOG(ERROR) << "Network error. Error while reading message: " << std::string(e.what());
+                LOG(ERROR) << "Network error: " << e.what();
             }
-            Sleep(1);
+            // wxThread sleep function in milliseconds
+            Sleep(5);
         }
 
         LOG(ERROR) << "Network error. Read error, shutting down Listener";

@@ -1,48 +1,88 @@
 stages:
-  - format
-  - lint
-  - test
+  - pipeline
   - deploy
 
-format:
-  stage: format
+pipeline:
+  stage: pipeline
   image: ubuntu:22.04
   script:
-    - apt-get update && apt-get install -y clang clang-format cmake git libwxgtk3.0-gtk3-dev
+    # Install dependencies
+    - apt-get update && apt-get install -y clang clang-format clang-tidy cmake cppcheck libwxgtk3.0-gtk3-dev git
+
+    # Create and navigate to the build directory
     - mkdir -p build
     - cd build
+
+    # Start compilation in the background
+    - echo "Starting compilation..."
     - cmake -DCMAKE_BUILD_TYPE=Debug ..
-    - cmake --build . --target format
-  allow_failure: false
+    - cmake --build . > ../build.log 2>&1 & # Compilation runs in the background
+    - BUILD_PID=$!
+
+    # Run format
+    - echo "Running clang-format..."
+    - cmake --build . --target format > ../format.log 2>&1 || echo "clang-format failed!" > ../format.failed
+
+    # Run lint
+    - echo "Running clang-tidy and cppcheck..."
+    - cmake --build . --target check > ../lint.log 2>&1 || echo "Linting failed!" > ../lint.failed
+
+    # Wait for compilation to finish
+    - echo "Waiting for compilation to finish..."
+    - wait $BUILD_PID || echo "Build failed!" > ../build.failed
+
+    # Run tests if the build succeeded
+    - if [ ! -f ../build.failed ]; then
+          echo "Running tests...";
+          ctest --output-on-failure > ../test.log 2>&1 || echo "Tests failed!" > ../test.failed;
+      else
+          echo "Skipping tests due to build failure.";
+      fi
+
+  artifacts:
+    paths:
+      - format.log
+      - format.failed
+      - lint.log
+      - lint.failed
+      - build.log
+      - build.failed
+      - test.log
+      - test.failed
+    expire_in: 1 hour
   rules:
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event' || ($CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_REF_NAME == 'main')
+
+format:
+  stage: pipeline
+  image: ubuntu:22.04
+  script:
+    - if [ -f format.failed ]; then echo "clang-format failed!"; cat format.log; exit 1; else echo "clang-format passed!"; fi
+  dependencies:
+    - pipeline
+  allow_failure: false
 
 lint:
-  stage: lint
+  stage: pipeline
   image: ubuntu:22.04
   script:
-    - apt-get update && apt-get install -y clang clang-tidy cmake cppcheck libwxgtk3.0-gtk3-dev
-    - mkdir -p build
-    - cd build
-    - cmake -DCMAKE_BUILD_TYPE=Debug ..
-    - cmake --build . --target check
+    - if [ -f lint.failed ]; then echo "Linting failed!"; cat lint.log; exit 1; else echo "Linting passed!"; fi
+  dependencies:
+    - pipeline
   allow_failure: false
-  rules:
-    - if: $CI_PIPELINE_SOURCE == 'merge_request_event' || ($CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_REF_NAME == 'main')
 
 test:
-  stage: test
+  stage: pipeline
   image: ubuntu:22.04
   script:
-    - apt-get update && apt-get install -y clang cmake libwxgtk3.0-gtk3-dev
-    - mkdir -p build
-    - cd build
-    - cmake -DCMAKE_BUILD_TYPE=Debug ..
-    - cmake --build . -j $(nproc)
-    - ctest --output-on-failure
+    - if [ -f build.failed ] || [ -f test.failed ]; then
+          echo "Tests or build failed!";
+          cat build.log test.log;
+          exit 1;
+      else echo "Tests passed!"; fi
+  dependencies:
+    - pipeline
   allow_failure: false
-  rules:
-    - if: $CI_PIPELINE_SOURCE == 'merge_request_event' || ($CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_REF_NAME == 'main')
 
 deploy:
   stage: deploy
@@ -52,11 +92,8 @@ deploy:
     - mkdir -p ~/.ssh
     # Decode the SSH deployment key
     - base64 -d $SSH_DEPLOY_KEY > ~/.ssh/id_rsa
-    # - cat ~/.ssh/id_rsa
     # Make SSH happy and protect the key
     - chmod 600 ~/.ssh/id_rsa
-    # Check if the key is correct (TODO: Remove this line maybe?)
-    - ssh-keygen -lf ~/.ssh/id_rsa
     # Add the host to known_hosts
     - ssh-keyscan -H se.nicolabruhin.com >> ~/.ssh/known_hosts
     # Do the actual deployment
@@ -66,4 +103,4 @@ deploy:
   rules:
     - if: $CI_PIPELINE_SOURCE == 'push' && $CI_COMMIT_REF_NAME == 'main'  # only run on the main branch
       when: on_success                                                    # run automatically if condition above is true
-    - when: never                                                         # else: dont run it
+    - when: never                                                         # else: don't run it

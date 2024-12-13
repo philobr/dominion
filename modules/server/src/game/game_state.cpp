@@ -112,11 +112,11 @@ namespace server
     void GameState::endTurn()
     {
         auto &current_player = getCurrentPlayer();
-        current_player.endTurn();
         const std::vector<shared::CardBase::id_t> &played_cards = board->getPlayedCards();
         for ( const auto &card_id : played_cards ) {
             current_player.add<shared::CardAccess::DISCARD_PILE>(card_id);
         }
+        current_player.endTurn();
         switchPlayer();
         resetPhase();
         board->clearPlayedCards();

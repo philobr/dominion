@@ -62,10 +62,10 @@ else
     fi
 fi
 
-if WXWIDGETS_STATUS==1; then
+if WXWIDGETS_STATUS==2; then
     echo "WxWidgets version too low, removing it"
     #TODO
-    WXWIDGETS_STATUS==2
+    WXWIDGETS_STATUS==1
     exit 1;
 fi
 

@@ -2,6 +2,7 @@
 #include <uiElements/formatting_constants.h>
 #include <windows/game_window.h>
 #include <wx/dcbuffer.h>
+#include <wx/display.h>
 #include <wx/wx.h>
 
 namespace client
@@ -23,6 +24,12 @@ namespace client
 
         // Set the minimum size of the window. The user won't be able to resize the window to a size smaller than this
         this->SetMinSize(wxSize(1000, 720));
+
+#ifdef __WXMAC__
+
+#else
+        this->ShowFullScreen(true, wxFULLSCREEN_ALL);
+#endif
 
         // Bind paint event to draw background image
         this->Bind(wxEVT_PAINT, &GameWindow::onPaint, this);
@@ -66,7 +73,6 @@ namespace client
     void GameWindow::onPaint(wxPaintEvent & /*event*/)
     {
         wxBufferedPaintDC dc(this);
-
         // Load the background image
         wxImage backgroundImage(formatting_constants::WINDOW_BACKGROUND_PATH);
         if ( backgroundImage.IsOk() ) {

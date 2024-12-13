@@ -58,7 +58,7 @@ namespace server
          * @brief Tries to play all treasures from a players hand.
          * @return All treasure cards in a players hand
          */
-        std::vector<shared::CardBase::id_t> tryPlayAllTreasures(const shared::PlayerBase::id_t &affected_player_id);
+        std::vector<shared::CardBase::id_t> tryPlayAllTreasures(const shared::PlayerBase::id_t &requestor_id);
 
         /**
          * @brief Tries to play the given card_id from the specified pile.

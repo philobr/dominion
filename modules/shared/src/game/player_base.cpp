@@ -4,6 +4,31 @@
 
 namespace shared
 {
+    std::string toString(CardAccess val)
+    {
+        switch ( val ) {
+            case DISCARD_PILE:
+                return "\'DISCARD_PILE\'";
+            case HAND:
+                return "\'HAND\'";
+            case DRAW_PILE_TOP:
+                return "\'DRAW_PILE_TOP\'";
+            case DRAW_PILE_BOTTOM:
+                return "\'DRAW_PILE_BOTTOM\'";
+            case PLAYED_CARDS:
+                return "\'PLAYED_CARDS\'";
+            case TRASH:
+                return "\'TRASH\'";
+            case STAGED_CARDS:
+                return "\'STAGED_CARDS\'";
+            default:
+                {
+                    LOG(ERROR) << "CardAccess with value: " << val << " does not exist!";
+                    throw exception::UnreachableCode();
+                }
+        }
+    }
+
     PlayerBase::PlayerBase(id_t player_id) : player_id(player_id), actions(1), buys(1), treasure(0), draw_pile_size(0)
     {}
 

@@ -28,7 +28,9 @@ namespace client
 #ifdef __WXMAC__
 
 #else
+#ifndef NO_FULLSCREEN
         this->ShowFullScreen(true, wxFULLSCREEN_ALL);
+#endif
 #endif
 
         // Bind paint event to draw background image

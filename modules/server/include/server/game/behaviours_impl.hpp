@@ -14,10 +14,11 @@ namespace server
     class name : public server::base::Behaviour                                                                        \
     {                                                                                                                  \
     public:                                                                                                            \
-        inline ret_t apply(server::GameState &state,                                                                   \
+        inline ret_t apply(server::GameState &state, const shared::PlayerBase::id_t &requestor_id,                     \
                            server::base::Behaviour::action_decision_t action_decision = std::nullopt);                 \
     };                                                                                                                 \
     inline server::base::Behaviour::ret_t name::apply(server::GameState &game_state,                                   \
+                                                      const shared::PlayerBase::id_t &requestor_id,                    \
                                                       server::base::Behaviour::action_decision_t action_decision)
 // NOLINTEND(bugprone-macro-parentheses)
 
@@ -28,12 +29,13 @@ namespace server
     class name : public server::base::Behaviour                                                                        \
     {                                                                                                                  \
     public:                                                                                                            \
-        inline ret_t apply(server::GameState &state,                                                                   \
+        inline ret_t apply(server::GameState &state, const shared::PlayerBase::id_t &requestor_id,                     \
                            server::base::Behaviour::action_decision_t action_decision = std::nullopt);                 \
     };                                                                                                                 \
     template <template_type template_name>                                                                             \
     inline server::base::Behaviour::ret_t name<template_name>::apply(                                                  \
-            server::GameState &game_state, server::base::Behaviour::action_decision_t action_decision)
+            server::GameState &game_state, const shared::PlayerBase::id_t &requestor_id,                               \
+            server::base::Behaviour::action_decision_t action_decision)
 // NOLINTEND(bugprone-macro-parentheses)
 
 // ================================
@@ -41,7 +43,7 @@ namespace server
 // ================================
 
 // call this at the top of your behaviour to log the call.
-#define LOG_CALL LOG(INFO) << "Applying " << CLASS_NAME
+#define LOG_CALL LOG(INFO) << "Applying " << CLASS_NAME << " to player " << requestor_id
 
 // call this if the linter is beeing a lil bitch.
 #define SUPPRESS_UNUSED_VAR_WARNING(variable) (void)(variable)
@@ -89,7 +91,7 @@ namespace server
             LOG_CALL;
             ASSERT_NO_DECISION;
 
-            auto &affected_player = game_state.getCurrentPlayer();
+            auto &affected_player = game_state.getPlayer(requestor_id);
             affected_player.addTreasure(coins);
 
             BEHAVIOUR_DONE;
@@ -100,7 +102,7 @@ namespace server
             LOG_CALL;
             ASSERT_NO_DECISION;
 
-            auto &affected_player = game_state.getCurrentPlayer();
+            auto &affected_player = game_state.getPlayer(requestor_id);
             affected_player.addBuys(buys);
 
             BEHAVIOUR_DONE;
@@ -111,7 +113,7 @@ namespace server
             LOG_CALL;
             ASSERT_NO_DECISION;
 
-            auto &affected_player = game_state.getCurrentPlayer();
+            auto &affected_player = game_state.getPlayer(requestor_id);
             affected_player.addActions(actions);
 
             BEHAVIOUR_DONE;
@@ -122,7 +124,7 @@ namespace server
             LOG_CALL;
             ASSERT_NO_DECISION;
 
-            auto &affected_player = game_state.getCurrentPlayer();
+            auto &affected_player = game_state.getPlayer(requestor_id);
             affected_player.draw(n_cards);
 
             BEHAVIOUR_DONE;
@@ -168,7 +170,7 @@ namespace server
             LOG_CALL;
             ASSERT_NO_DECISION;
 
-            auto &affected_player = game_state.getCurrentPlayer();
+            auto &affected_player = game_state.getPlayer(requestor_id);
             if ( affected_player.hasCard<shared::HAND>("Copper") ) {
                 // Discard the copper
                 affected_player.move<shared::HAND, shared::TRASH>("Copper");
@@ -183,7 +185,7 @@ namespace server
             LOG_CALL;
             ASSERT_NO_DECISION;
 
-            auto &affected_player = game_state.getCurrentPlayer();
+            auto &affected_player = game_state.getPlayer(requestor_id);
             affected_player.gain("Copper");
             affected_player.gain("Gold");
 
@@ -195,7 +197,7 @@ namespace server
             LOG_CALL;
             ASSERT_NO_DECISION;
 
-            auto &affected_player = game_state.getCurrentPlayer();
+            auto &affected_player = game_state.getPlayer(requestor_id);
             auto &board = *game_state.getBoard();
             if ( affected_player.hasCard<shared::HAND>("Treasure_Map") ) {
                 affected_player.move<shared::HAND, shared::TRASH>("Treasure_Map");
@@ -220,6 +222,7 @@ namespace server
 #define TODO_IMPLEMENT_ME                                                                                              \
     SUPPRESS_UNUSED_VAR_WARNING(game_state);                                                                           \
     SUPPRESS_UNUSED_VAR_WARNING(action_decision);                                                                      \
+    SUPPRESS_UNUSED_VAR_WARNING(requestor_id);                                                                         \
     LOG(ERROR) << "BEHAVIOUR " << CLASS_NAME << " IS NOT IMPLEMENTED YET";                                             \
     throw std::runtime_error("not implemented");                                                                       \
     return OrderResponse()
@@ -311,16 +314,16 @@ namespace server
 
             const bool has_action_decision = action_decision.has_value();
             const auto player_id = game_state.getCurrentPlayerId();
-            auto &player = game_state.getCurrentPlayer();
+            auto &affected_player = game_state.getPlayer(requestor_id);
 
             if ( !has_action_decision ) {
-                if ( !player.hasType<shared::CardAccess::HAND>(shared::CardType::TREASURE) ) {
+                if ( !affected_player.hasType<shared::CardAccess::HAND>(shared::CardType::TREASURE) ) {
                     LOG(INFO) << "Player: "
                               << " has no treasure in hand, returning";
                     BEHAVIOUR_DONE;
                 }
 
-                return {player_id,
+                return {requestor_id,
                         std::make_unique<shared::ChooseFromHandOrder>(
                                 1, 1, shared::ChooseFromOrder::AllowedChoice::DISCARD, shared::CardType::TREASURE)};
             }
@@ -330,7 +333,7 @@ namespace server
                         helper::validateResponse(game_state, action_decision.value(), 1, 1, shared::CardType::TREASURE);
 
                 const auto card_id = trash_decision.cards.at(0);
-                player.move<shared::CardAccess::HAND, shared::CardAccess::TRASH>(card_id);
+                affected_player.move<shared::CardAccess::HAND, shared::CardAccess::TRASH>(card_id);
                 const auto max_cost = shared::CardFactory::getCost(card_id) + 3;
                 return {player_id, std::make_unique<shared::GainFromBoardOrder>(max_cost, shared::CardType::TREASURE)};
 
@@ -339,7 +342,7 @@ namespace server
                 auto card_id = card_choice->chosen_card;
 
                 if ( !shared::CardFactory::isTreasure(card_id) ) {
-                    LOG(ERROR) << FUNC_NAME << "Player: " << player.getId() << " tried to select card: " << card_id
+                    LOG(ERROR) << FUNC_NAME << "Player: " << requestor_id << " tried to select card: " << card_id
                                << " which does not have type Treasure";
                     throw std::runtime_error("CardType not allowed!");
                 }
@@ -361,8 +364,9 @@ namespace server
 
             auto trash_decision = helper::validateResponse(game_state, action_decision.value(), 0, num_cards);
 
+            auto &affected_player = game_state.getPlayer(requestor_id);
             for ( const auto &card_id : trash_decision.cards ) {
-                game_state.getCurrentPlayer().move<shared::CardAccess::HAND, shared::CardAccess::TRASH>(card_id);
+                affected_player.move<shared::CardAccess::HAND, shared::CardAccess::TRASH>(card_id);
             }
 
             BEHAVIOUR_DONE;
@@ -374,7 +378,7 @@ namespace server
 
             const auto max_discard_amount = game_state.getCurrentPlayer().get<shared::CardAccess::HAND>().size();
             if ( !action_decision.has_value() ) {
-                return {game_state.getCurrentPlayerId(),
+                return {requestor_id,
                         std::make_unique<shared::ChooseFromHandOrder>(0, max_discard_amount,
                                                                       shared::ChooseFromOrder::AllowedChoice::TRASH)};
             }
@@ -382,9 +386,10 @@ namespace server
             auto discard_decision =
                     helper::validateResponse(game_state, action_decision.value(), 0, max_discard_amount);
 
-            game_state.getCurrentPlayer().draw(discard_decision.cards.size());
+            auto &affected_player = game_state.getPlayer(requestor_id);
+            affected_player.draw(discard_decision.cards.size());
             for ( const auto &card_id : discard_decision.cards ) {
-                game_state.getCurrentPlayer().move<shared::CardAccess::HAND, shared::CardAccess::DISCARD_PILE>(card_id);
+                affected_player.move<shared::CardAccess::HAND, shared::CardAccess::DISCARD_PILE>(card_id);
             }
 
             BEHAVIOUR_DONE;

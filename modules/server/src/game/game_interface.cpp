@@ -122,7 +122,7 @@ namespace server
             throw exception::UnreachableCode();
         }
 
-        auto response = behaviour_chain->continueChain(*game_state, decision);
+        auto response = behaviour_chain->continueChain(*game_state, message->player_id, decision);
 
         if ( behaviour_chain->empty() ) {
             return finishedPlayingCard();

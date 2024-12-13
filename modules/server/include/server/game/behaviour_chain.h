@@ -36,7 +36,8 @@ namespace server
         /**
          * @brief If a card has multi-step behaviours we call this function to pass in the action_decision.
          */
-        ret_t continueChain(server::GameState &game_state, std::unique_ptr<shared::ActionDecision> &action_decision);
+        ret_t continueChain(server::GameState &game_state, const shared::PlayerBase::id_t &player_id,
+                            std::unique_ptr<shared::ActionDecision> &action_decision);
 
         inline bool empty() const { return (behaviour_idx == 0) && current_card.empty() && behaviour_list.empty(); }
 

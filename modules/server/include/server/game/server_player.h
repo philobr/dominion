@@ -178,8 +178,9 @@ namespace server
         template <enum shared::CardAccess TO, typename Iterator>
         inline void add(Iterator begin, Iterator end);
 
+
         /**
-         * @brief Removes min(n, pile.size()) cards from a pile.
+         * @brief Removes min(n, pile.size()) cards from a pile. If n == 0, pile.size() cards are taken.
          * Always takes the back, except for DRAW_PILE_TOP
          *
          * @tparam FROM, a pile from which we want to take cards

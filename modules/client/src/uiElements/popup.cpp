@@ -69,7 +69,7 @@ namespace client
 
         // Showing the dialog until it is manually closed
         dialog->ShowModal();
-        dialog->Destroy();
+        // dialog->Destroy();
     }
     // NOLINTEND(bugprone-suspicious-enum-usage)
 } // namespace client

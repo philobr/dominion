@@ -179,6 +179,9 @@ namespace client
         } else {
             DiscardPile = new PilePanel(DiscardPilePanel, shared::Pile(top_discard_card, discard_pile_size),
                                         formatting_constants::DEFAULT_BOARD_PILE_SIZE);
+            DiscardPile->makeClickable(wxEVT_RIGHT_UP,
+                                       [DiscardPile](wxMouseEvent & /*event*/)
+                                       { showCardPopup(DiscardPile, DiscardPile->getPile().card_id); });
         }
 
         // Create the sizer for the discard pile

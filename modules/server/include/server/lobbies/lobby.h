@@ -58,6 +58,13 @@ namespace server
          */
         const Player::id_t &getGameMaster() const { return game_master; };
 
+        bool isGameOver() const { return (game_interface != nullptr) && (game_interface->isGameOver()); }
+
+        /**
+         * @brief Forcefully ends a players turn and returns the games results.
+         */
+        void terminate(MessageInterface &message_interface);
+
     private:
         std::unique_ptr<server::GameInterface> game_interface;
         Player::id_t game_master;

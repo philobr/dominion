@@ -124,7 +124,7 @@ namespace server
 
             auto &affected_player = game_state.getCurrentPlayer();
             affected_player.draw(n_cards);
-
+            throw exception::UnreachableCode("TESTIAN TESTER");
             BEHAVIOUR_DONE;
         }
 

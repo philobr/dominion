@@ -33,17 +33,21 @@ namespace server
 
         auto &lobby = games.at(lobby_id);
         try {
-            lobby->handleMessage(*(message_interface), message);
+            lobby->handleMessage(*message_interface, message);
         } catch ( std::exception &e ) {
             // the lobby only throws if we can not recover
             LOG(ERROR) << "Lobby: \'" << lobby_id
-                       << "\' had a fatal error while handling a message. Shutting down the lobby.";
+                       << "\' had a fatal error while handling a message. Error: " << e.what()
+                       << "\nShutting down the lobby now...";
 
-            auto players = lobby->getPlayers(); // storing the players to send messages
-            auto lobby_it = games.find(lobby_id);
-            games.erase(lobby_it);
+            lobby->terminate(*message_interface);
+            games.erase(games.find(lobby_id));
+            return;
+        }
 
-            // TODO: new message type needed i guess?
+        if ( lobby->isGameOver() ) {
+            LOG(DEBUG) << "Game finished in lobby: \'" << lobby_id << "\'. Deleting the lobby.";
+            games.erase(games.find(lobby_id));
         }
     }
 

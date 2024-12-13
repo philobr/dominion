@@ -42,6 +42,15 @@ namespace server
 
         response_t startGame() { return nextPhase(); }
 
+        bool isGameOver() const { return game_state->isGameOver(); }
+
+        response_t terminate()
+        {
+            game_state->forceSwitchPhase();
+            game_state->endTurn();
+            return endGame();
+        }
+
     private:
         GameInterface(const std::string &game_id, const std::vector<shared::CardBase::id_t> &play_cards,
                       const std::vector<Player::id_t> &player_ids) :

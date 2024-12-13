@@ -15,6 +15,11 @@
 
 namespace server
 {
+    /**
+     * @brief Behaviours are registered in this class. The Behaviour chain can request behaviours from the
+     * BehaviourRegistry. As some of the behaviours we have require to keep some state, we create a new behaviour list
+     * for each call. This way we can ensure that we always have fresh behaviours and it also helps with modularity.
+     */
     class BehaviourRegistry
     {
     public:
@@ -24,6 +29,10 @@ namespace server
          */
         BehaviourRegistry();
 
+        /**
+         * @brief Generates a list of behaviours that are registered for the card_id. The list will be generated anew
+         * for each call to getBehaviours.
+         */
         std::vector<std::unique_ptr<base::Behaviour>> getBehaviours(const std::string &card_id);
 
         VictoryCardBehaviour &getVictoryBehaviour(const shared::CardBase::id_t &card_id) const;

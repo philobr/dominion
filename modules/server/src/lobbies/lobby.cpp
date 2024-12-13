@@ -45,7 +45,7 @@ namespace server
             LOG(ERROR) << "Tried to perform an action, but the game has not started yet";
             message_interface.send<shared::ResultResponseMessage>(requestor_id, lobby_id, false, message->message_id,
                                                                   "Game has not started yet!");
-            throw std::runtime_error("unreachable code");
+            throw std::runtime_error("game has not started yet");
         }
 
         OrderResponse order_response;
@@ -53,6 +53,9 @@ namespace server
         try {
             // ISSUE: 166
             order_response = game_interface->handleMessage(message);
+        } catch ( exception::UnreachableCode &e ) {
+            LOG(ERROR) << "Unrecoverable error received from game_interface. Error: " << e.what();
+            throw e;
         } catch ( std::exception &e ) {
             LOG(WARN) << "Caught an error in " << FUNC_NAME << ": " << e.what();
             message_interface.send<shared::ResultResponseMessage>(requestor_id, lobby_id, false, message_id, e.what());
@@ -71,9 +74,6 @@ namespace server
     void Lobby::getGameState(MessageInterface &message_interface,
                              std::unique_ptr<shared::GameStateRequestMessage> &request)
     {
-        LOG(ERROR) << "Not implemented yet";
-        throw std::runtime_error("not implemented yet");
-
         const auto &requestor_id = request->player_id;
         if ( !gameRunning() ) {
             LOG(WARN) << "Tried to get the gamestate, but the game has not started yet";
@@ -156,12 +156,21 @@ namespace server
             if ( players.size() > shared::board_config::MAX_PLAYER_COUNT ) {
                 LOG(ERROR) << "we somehow have too many players in the lobby. (" << players.size() << " > "
                            << shared::board_config::MAX_PLAYER_COUNT << ")";
-                throw std::runtime_error("invalid state, unreachable code");
+                throw exception::UnreachableCode();
             }
             return;
         }
 
-        game_interface = GameInterface::make(lobby_id, request->selected_cards, players);
+        try {
+            game_interface = GameInterface::make(lobby_id, request->selected_cards, players);
+        } catch ( std::exception &e ) {
+            // any error while trying to create a game is unrecoverable
+            LOG(ERROR) << "We somehow reached unreachable code while trying to create game \'" << lobby_id
+                       << "\':" << e.what();
+            message_interface.send<shared::ResultResponseMessage>(requestor_id, lobby_id, false, request->message_id,
+                                                                  "Error while starting the game. Try again.");
+            return;
+        }
 
         LOG(INFO) << "Sending StartGameBroadcastMessage in Lobby ID: " << lobby_id;
         message_interface.broadcast<shared::StartGameBroadcastMessage>(players, lobby_id);

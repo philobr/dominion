@@ -10,11 +10,11 @@ server::BehaviourChain::BehaviourChain() :
 void server::BehaviourChain::loadBehaviours(const std::string &card_id)
 {
     if ( !empty() ) {
-        LOG(WARN) << "BehaviourList is already in use for card: " << card_id;
-        throw std::runtime_error("BehaviourList is already in use!");
+        LOG(ERROR) << "BehaviourList is already in use for card: \'" << card_id << "\'.Error in " << FUNC_NAME;
+        throw exception::UnreachableCode();
     }
 
-    LOG(DEBUG) << "Loading Behaviours for card:" << card_id;
+    LOG(DEBUG) << "Loading Behaviours for card \'" << card_id << "\'";
     behaviour_idx = 0;
     current_card = card_id;
     behaviour_list = behaviour_registry->getBehaviours(card_id);
@@ -23,9 +23,11 @@ void server::BehaviourChain::loadBehaviours(const std::string &card_id)
 void server::BehaviourChain::resetBehaviours()
 {
     if ( hasNext() ) {
-        LOG(WARN) << "Tried to reset the BehaviourChain while it was still used!";
-        return;
+        LOG(ERROR) << "Tried to reset the BehaviourChain while it was still used!. Error in " << FUNC_NAME;
+        throw exception::UnreachableCode();
     }
+
+    LOG(DEBUG) << "Clearing behaviours for card \'" << current_card << "\'";
 
     behaviour_idx = 0;
     current_card.clear();
@@ -35,8 +37,8 @@ void server::BehaviourChain::resetBehaviours()
 server::BehaviourChain::ret_t server::BehaviourChain::startChain(server::GameState &game_state)
 {
     if ( empty() ) {
-        LOG(ERROR) << "Tried to use an empty BehaviourChain, crashing now";
-        throw std::runtime_error("Unreachable Code");
+        LOG(ERROR) << "Tried to use an empty BehaviourChain, crashing now. Error in " << FUNC_NAME;
+        throw exception::UnreachableCode();
     }
 
     return runBehaviourChain(game_state);
@@ -44,6 +46,7 @@ server::BehaviourChain::ret_t server::BehaviourChain::startChain(server::GameSta
 
 server::BehaviourChain::ret_t server::BehaviourChain::runBehaviourChain(server::GameState &game_state)
 {
+    LOG(INFO) << "Called " << FUNC_NAME << "for card \'" << current_card << "\'";
     while ( hasNext() ) {
         auto action_order = currentBehaviour().apply(game_state, std::nullopt);
 
@@ -64,9 +67,10 @@ server::BehaviourChain::ret_t
 server::BehaviourChain::continueChain(server::GameState &game_state,
                                       std::unique_ptr<shared::ActionDecision> &action_decision)
 {
+    LOG(INFO) << "Called " << FUNC_NAME << "for card \'" << current_card << "\'";
     if ( empty() ) {
-        LOG(ERROR) << "Tried to use an empty BehaviourChain, crashing now";
-        throw std::runtime_error("Unreachable Code");
+        LOG(ERROR) << "Tried to use an empty BehaviourChain. Client has a state mismatch.";
+        throw exception::UnreachableCode();
     }
 
     auto action_order = currentBehaviour().apply(game_state, std::move(action_decision));

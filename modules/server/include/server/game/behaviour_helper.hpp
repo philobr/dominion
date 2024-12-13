@@ -64,14 +64,17 @@ namespace server
             static inline auto
             validateResponse(GameState &game_state, std::unique_ptr<shared::ActionDecision> &action_decision,
                              unsigned int min_cards, unsigned int max_cards,
-                             shared::CardType type = static_cast<shared::CardType>(
+                             shared::CardType expected_type = static_cast<shared::CardType>(
                                      shared::CardType::ACTION | shared::CardType::ATTACK | shared::CardType::CURSE |
                                      shared::CardType::KINGDOM | shared::CardType::REACTION |
                                      shared::CardType::TREASURE | shared::CardType::VICTORY))
             {
                 const auto player_id = game_state.getCurrentPlayerId();
-                auto &player = game_state.getCurrentPlayer();
                 const auto *deck_choice = dynamic_cast<shared::DeckChoiceDecision *>(action_decision.get());
+                const auto choice_size = deck_choice->cards.size();
+                auto &player = game_state.getCurrentPlayer();
+
+                // validate the decision type
                 if ( deck_choice == nullptr ) {
                     LOG(ERROR) << FUNC_NAME << " got a wrong decision type! Expected: shared::DeckChoiceDecision";
                     throw std::runtime_error("Decision type is not allowed!");
@@ -84,40 +87,41 @@ namespace server
                     } else {
                         LOG(ERROR) << FUNC_NAME << " got a null pointer for action decision!";
                     }
+
                     throw std::runtime_error("Decision type is not allowed!");
                 }
 
-                const auto choice_size = deck_choice->cards.size();
-                if ( (min_cards == max_cards) && (choice_size != min_cards) ) {
-                    LOG(ERROR) << FUNC_NAME << "Expects exactly " << min_cards << ", but player " << player_id
-                               << " chose " << choice_size << " cards!";
-                    throw std::runtime_error("You have to choose exactly " + std::to_string(min_cards) + "!");
-                } else if ( choice_size < min_cards || choice_size > max_cards ) {
-                    LOG(ERROR) << FUNC_NAME << "Expected between " << min_cards << " and " << max_cards
-                               << " cards, but player " << player_id << " chose " << choice_size << " cards!";
-                    throw std::runtime_error("You have to choose between " + std::to_string(min_cards) + " and " +
-                                             std::to_string(max_cards) + " cards!");
+                // validate number of cards
+                if ( min_cards == max_cards ) {
+                    // choose exactly
+                    if ( (choice_size != min_cards) ) {
+                        LOG(ERROR) << FUNC_NAME << "Expects exactly " << min_cards << ", but player " << player_id
+                                   << " chose " << choice_size << " cards!";
+                        throw std::runtime_error("You have to choose exactly " + std::to_string(min_cards) + "!");
+                    }
+                } else {
+                    // choose in range
+                    if ( choice_size < min_cards || choice_size > max_cards ) {
+                        LOG(ERROR) << FUNC_NAME << "Expected between " << min_cards << " and " << max_cards
+                                   << " cards, but player " << player_id << " chose " << choice_size << " cards!";
+                        throw std::runtime_error("You have to choose between " + std::to_string(min_cards) + " and " +
+                                                 std::to_string(max_cards) + " cards!");
+                    }
                 }
 
-                auto move_card_id = deck_choice->cards.at(0);
-                if ( !player.hasCard<shared::CardAccess::HAND>(move_card_id) ) {
-                    LOG(ERROR) << FUNC_NAME << "Player: " << player.getId() << " does not have card: " << move_card_id
-                               << " in hand!";
-                    throw std::runtime_error("Card not found!");
-                }
-
-                for ( size_t i = 0; i < choice_size; ++i ) {
-                    const auto card_id = deck_choice->cards.at(i);
+                // validate existence and type of the card
+                for ( const auto card_id : deck_choice->cards ) {
                     const auto card_type = shared::CardFactory::getType(card_id);
-                    if ( (card_type & type) != card_type ) {
+
+                    if ( (card_type & expected_type) != card_type ) {
                         LOG(ERROR) << FUNC_NAME << "Player: " << player_id << " chose card: " << card_id
                                    << ", which has the wrong type!";
                         throw std::runtime_error("Card type not allowed!");
                     }
 
-                    if ( !player.hasCard<shared::CardAccess::HAND>(move_card_id) ) {
-                        LOG(ERROR) << FUNC_NAME << "Player: " << player.getId()
-                                   << " does not have card: " << move_card_id << " in hand!";
+                    if ( !player.hasCard<shared::CardAccess::HAND>(card_id) ) {
+                        LOG(ERROR) << FUNC_NAME << "Player: " << player.getId() << " does not have card: " << card_id
+                                   << " in hand!";
                         throw std::runtime_error("Card not in hand!");
                     }
                 }

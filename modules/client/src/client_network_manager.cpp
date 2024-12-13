@@ -54,8 +54,8 @@ void ::ClientNetworkManager::init(const std::string &host, const uint16_t port)
         }
 
     } else {
+        // We don't need to log the error here, as it is already logged in the connect method
         ClientNetworkManager::_failed_to_connect = true;
-        LOG(ERROR) << "Failed to connect";
         wxGetApp().getController().showStatus("Not connected");
     }
 }
@@ -72,7 +72,6 @@ bool ClientNetworkManager::connect(const std::string &host, const uint16_t port)
         if ( !ClientNetworkManager::_connection->connect(address) ) {
             wxGetApp().getController().showError("Connection error",
                                                  "Failed to connect to server " + address.to_string());
-            LOG(ERROR) << "Failed to connect to server " << address.to_string();
             return false;
         }
     } catch ( const sockpp::getaddrinfo_error &e ) {

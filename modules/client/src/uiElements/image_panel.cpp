@@ -39,7 +39,7 @@ namespace client
         int newHeight;
         deviceContext.GetSize(&newWidth, &newHeight);
 
-        if ( newWidth != this->_width || newHeight != this->_height ) {
+        if ( newWidth != this->_width || newHeight != this->_height || !_bitmap.IsOk() ) {
 
             wxImage transformed;
 

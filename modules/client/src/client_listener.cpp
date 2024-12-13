@@ -1,4 +1,5 @@
 #include "client_listener.h"
+#include <cerrno>
 #include <shared/utils/logger.h>
 #include <unistd.h>
 #include "client_network_manager.h"
@@ -21,45 +22,52 @@ wxThread::ExitCode ClientListener::Entry()
 
         this->_connection->set_non_blocking();
 
-        while ( this->isActive() &&
-                ((count = this->_connection->read(buffer, sizeof(buffer))) > 0 ||
-                 this->_connection->last_error() == EWOULDBLOCK) ) {
+        while ( this->isActive() ) {
             try {
-                int pos = 0;
+                count = this->_connection->read(buffer, sizeof(buffer));
+                // if you get a message, read it
+                if ( count > 0 ) {
+                    int pos = 0;
 
-                // extract length of message in bytes (which is sent at the start of the message, and is separated by a
-                // ":")
-                std::stringstream messageLengthStream;
-                while ( pos < count && buffer[pos] != ':' ) {
-                    messageLengthStream << buffer[pos];
-                    pos++;
-                }
-                ssize_t messageLength = std::stoi(messageLengthStream.str());
+                    // extract length of message in bytes (which is sent at the start of the message, and is separated
+                    // by a
+                    // ":")
+                    std::stringstream messageLengthStream;
+                    while ( pos < count && buffer[pos] != ':' ) {
+                        messageLengthStream << buffer[pos];
+                        pos++;
+                    }
+                    ssize_t messageLength = std::stoi(messageLengthStream.str());
 
-                // initialize a stream for the message
-                std::stringstream messageStream;
+                    // initialize a stream for the message
+                    std::stringstream messageStream;
 
-                // copy everything following the message length declaration into a stringstream
-                messageStream.write(&buffer[pos + 1], count - (pos + 1));
-                ssize_t bytesReadSoFar = count - (pos + 1);
+                    // copy everything following the message length declaration into a stringstream
+                    messageStream.write(&buffer[pos + 1], count - (pos + 1));
+                    ssize_t bytesReadSoFar = count - (pos + 1);
 
-                // read remaining packages until full message length is reached
-                while ( bytesReadSoFar < messageLength && count != 0 ) {
-                    count = this->_connection->read(buffer, sizeof(buffer));
-                    messageStream.write(buffer, count);
-                    bytesReadSoFar += count;
-                }
+                    // read remaining packages until full message length is reached
+                    while ( bytesReadSoFar < messageLength && count != 0 ) {
+                        count = this->_connection->read(buffer, sizeof(buffer));
+                        messageStream.write(buffer, count);
+                        bytesReadSoFar += count;
+                    }
 
-                // process message (if we've received entire message)
-                if ( bytesReadSoFar == messageLength ) {
-                    std::string message = messageStream.str();
-                    // GameController::getMainThreadEventHandler()->CallAfter([message]{
-                    ClientNetworkManager::receiveMessage(message);
-                    //});
+                    // process message (if we've received entire message)
+                    if ( bytesReadSoFar == messageLength ) {
+                        std::string message = messageStream.str();
+                        // GameController::getMainThreadEventHandler()->CallAfter([message]{
+                        ClientNetworkManager::receiveMessage(message);
+                        //});
 
-                } else {
-                    LOG(ERROR) << "Network error. Could not read entire message. TCP stream ended early. Difference is "
-                               << std::to_string(messageLength - bytesReadSoFar) << " bytes";
+                    } else {
+                        LOG(ERROR) << "Network error. Could not read entire message. TCP stream ended early. "
+                                      "Difference is "
+                                   << std::to_string(messageLength - bytesReadSoFar) << " bytes";
+                    }
+                } else if ( this->_connection->last_error() != EWOULDBLOCK ) {
+                    // Connection Error
+                    this->_isActive = false;
                 }
 
             } catch ( std::exception &e ) {

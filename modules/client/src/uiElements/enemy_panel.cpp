@@ -93,7 +93,6 @@ namespace client
     void EnemyPanel::onPaint(wxPaintEvent &event)
     {
         wxAutoBufferedPaintDC dc(this); // Use double-buffered drawing to prevent flickering
-        dc.Clear(); // Clear the panel
 
         // Get the panel dimensions
         wxSize size = this->GetSize();

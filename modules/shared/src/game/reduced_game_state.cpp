@@ -42,7 +42,7 @@ namespace reduced
         }
         doc.AddMember("reduced_enemies", reduced_enemies_value, doc.GetAllocator());
 
-        std::string game_phase = shared::gamePhaseToString(this->game_phase);
+        std::string game_phase = shared::toString(this->game_phase);
         ADD_STRING_MEMBER(game_phase.c_str(), game_phase);
 
         ADD_STRING_MEMBER(this->active_player.c_str(), active_player);

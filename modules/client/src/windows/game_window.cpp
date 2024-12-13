@@ -1,5 +1,8 @@
 #include <shared/utils/logger.h>
+#include <uiElements/formatting_constants.h>
 #include <windows/game_window.h>
+#include <wx/dcbuffer.h>
+#include <wx/display.h>
 #include <wx/wx.h>
 
 namespace client
@@ -16,14 +19,23 @@ namespace client
         // Set up status bar
         this->_statusBar = this->CreateStatusBar(1);
 
-        // Set background
-        wxColor lightBlue = wxColor(213, 231, 239);
-        this->SetBackgroundColour(lightBlue);
+        // Set background style to allow custom drawing
+        this->SetBackgroundStyle(wxBG_STYLE_PAINT);
 
         // Set the minimum size of the window. The user won't be able to resize the window to a size smaller than this
         this->SetMinSize(wxSize(1000, 720));
-    }
 
+#ifdef __WXMAC__
+
+#else
+#ifndef NO_FULLSCREEN
+        this->ShowFullScreen(true, wxFULLSCREEN_ALL);
+#endif
+#endif
+
+        // Bind paint event to draw background image
+        this->Bind(wxEVT_PAINT, &GameWindow::onPaint, this);
+    }
 
     void GameWindow::showPanel(wxPanel *panel)
     {
@@ -34,7 +46,7 @@ namespace client
 
         // idk why, but if we use this then the panel switch actually works on osx...
         this->CallAfter(
-                [=, this]()
+                [panel, this]()
                 {
                     if ( this->_currentPanel != nullptr ) {
                         this->_mainLayout->Detach(this->_currentPanel);
@@ -58,7 +70,21 @@ namespace client
                 });
     }
 
-
     void GameWindow::setStatus(const std::string &message) { this->_statusBar->SetStatusText(message, 0); }
+
+    void GameWindow::onPaint(wxPaintEvent & /*event*/)
+    {
+        wxBufferedPaintDC dc(this);
+        // Load the background image
+        wxImage backgroundImage(formatting_constants::WINDOW_BACKGROUND_PATH);
+        if ( backgroundImage.IsOk() ) {
+            wxBitmap bitmap(backgroundImage.Scale(GetSize().GetWidth(), GetSize().GetHeight()));
+            dc.DrawBitmap(bitmap, 0, 0, false);
+        } else {
+            // Fallback to a plain color if the image fails to load
+            dc.SetBackground(wxBrush(formatting_constants::DEFAULT_WINDOW_BACKGROUND));
+            dc.Clear();
+        }
+    }
 
 } // namespace client

@@ -134,8 +134,8 @@ namespace server
             ASSERT_NO_DECISION;
 
             auto all_player_ids = game_state.getAllPlayerIDs();
-            for (auto &player_id : all_player_ids) {
-                if (player_id == game_state.getCurrentPlayerId()) {
+            for ( auto &player_id : all_player_ids ) {
+                if ( player_id == game_state.getCurrentPlayerId() ) {
                     continue;
                 }
                 auto &affected_player = game_state.getPlayer(player_id);
@@ -150,15 +150,17 @@ namespace server
             LOG_CALL;
             ASSERT_NO_DECISION;
 
-            auto all_player_ids = game_state.getAllPlayerIDs();
-            for (auto &player_id : all_player_ids) {
-                if (player_id == game_state.getCurrentPlayerId()) {
-                    continue;
-                }
-                auto &affected_player = game_state.getPlayer(player_id);
-                affected_player.move<shared::DRAW_PILE_TOP, shared::DISCARD_PILE>();
-                affected_player.add<shared::DRAW_PILE_TOP>("Curse");
-            }
+            // ensure play order
+            helper::applyAttackToEnemies(game_state,
+                                         [&](GameState &game_state, const shared::PlayerBase::id_t &enemy_id)
+                                         {
+                                             auto &affected_enemy = game_state.getPlayer(enemy_id);
+                                             affected_enemy.move<shared::DRAW_PILE_TOP, shared::DISCARD_PILE>(1);
+                                             if ( game_state.getBoard()->has("Curse") ) {
+                                                 game_state.getBoard()->tryTake("Curse");
+                                                 affected_enemy.add<shared::DRAW_PILE_TOP>("Curse");
+                                             }
+                                         });
 
             BEHAVIOUR_DONE;
         }
@@ -169,7 +171,7 @@ namespace server
             ASSERT_NO_DECISION;
 
             auto &affected_player = game_state.getCurrentPlayer();
-            if (affected_player.hasCard<shared::HAND>("Copper")) {
+            if ( affected_player.hasCard<shared::HAND>("Copper") ) {
                 // Discard the copper
                 affected_player.move<shared::HAND, shared::TRASH>("Copper");
                 affected_player.addTreasure(3);
@@ -197,13 +199,12 @@ namespace server
 
             auto &affected_player = game_state.getCurrentPlayer();
             auto &board = *game_state.getBoard();
-            if (affected_player.hasCard<shared::HAND>("Treasure_Map")) {
+            if ( affected_player.hasCard<shared::HAND>("Treasure_Map") ) {
                 affected_player.move<shared::HAND, shared::TRASH>("Treasure_Map");
                 // Currently, ServerPlayer::move does not delete the card from
                 // the hand, so we have to do it manually
                 board.trashCard("Treasure_Map");
-                if ( !board.removeFromPlayedCards("Treasure_Map") )
-                {
+                if ( !board.removeFromPlayedCards("Treasure_Map") ) {
                     // We played a treasure map, so it should be in the played cards now
                     LOG(ERROR) << "Treasure_Map not found in played cards";
                     throw std::runtime_error("Treasure_Map not found in played cards");
@@ -247,13 +248,14 @@ namespace server
             LOG_CALL;
             ASSERT_NO_DECISION;
 
-            const std::string curse_card = "Curse";
             helper::applyAttackToEnemies(
                     game_state,
-                    [&, curse_card](GameState &game_state, const shared::PlayerBase::id_t &enemy_id)
+                    [&](GameState &game_state, const shared::PlayerBase::id_t &enemy_id)
                     {
-                        game_state.getBoard()->tryTake(curse_card);
-                        game_state.getPlayer(enemy_id).gain(curse_card);
+                        if ( game_state.getBoard()->has("Curse") ) {
+                            game_state.getBoard()->tryTake("Curse");
+                            game_state.getPlayer(enemy_id).gain("Curse");
+                        }
                     });
 
             BEHAVIOUR_DONE;
@@ -285,7 +287,7 @@ namespace server
             }
 
             const auto chosen_card_id = gain_decision->chosen_card;
-            game_state.tryGainToHand(cur_player_id, chosen_card_id);
+            game_state.tryGain<shared::HAND>(cur_player_id, chosen_card_id);
 
             BEHAVIOUR_DONE;
         }
@@ -320,7 +322,8 @@ namespace server
 
             if ( !has_action_decision ) {
                 if ( !player.hasType<shared::CardAccess::HAND>(shared::CardType::TREASURE) ) {
-                    LOG(INFO) << "Player: " << " has no treasure in hand, returning";
+                    LOG(INFO) << "Player: "
+                              << " has no treasure in hand, returning";
                     BEHAVIOUR_DONE;
                 }
 
@@ -348,9 +351,7 @@ namespace server
                     throw std::runtime_error("CardType not allowed!");
                 }
 
-                game_state.tryGainToDiscard(player_id, card_id);
-                // gain adds to discard pile, i dont want to rewrite it now so we just move the card back:)
-                player.move<shared::CardAccess::DISCARD_PILE, shared::CardAccess::HAND>(card_id);
+                game_state.tryGain<shared::HAND>(player_id, card_id);
             }
 
             BEHAVIOUR_DONE;

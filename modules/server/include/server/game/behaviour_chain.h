@@ -6,8 +6,10 @@
 namespace server
 {
     /**
-     * @brief This class stores the state of the card that is currently being played. it will be accessed from the game
-     * interface and handle incoming/outcoming messages. it will also apply the behaviours to the player/gamestate.
+     * @brief This class is used in the GameInterface to be store and run behaviours. We can load behaviours into this
+     * class, which are then stored. Should a card contain multistep behaviours (cards that require interaction from one
+     * or more users to continue) we can easily stop and continue where we left off. The class only does basic
+     * error-handling, the more detailed handling will be done by the behaviours themselves.
      */
     class BehaviourChain
     {

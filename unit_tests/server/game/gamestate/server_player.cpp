@@ -82,8 +82,7 @@ TEST(PlayerTest, TrashCard)
     std::vector<std::string> hand = {"Card1", "Card2", "Card3"};
     player.getMutable<shared::CardAccess::HAND>() = hand;
 
-    std::vector<unsigned int> indices = {1};
-    player.trash<shared::CardAccess::HAND>(indices);
+    player.move<shared::CardAccess::HAND, shared::CardAccess::TRASH>(hand[1]);
 
     ASSERT_EQ(player.get<shared::CardAccess::HAND>().size(), 2);
     EXPECT_EQ(player.get<shared::CardAccess::HAND>()[0], "Card1");
@@ -97,8 +96,7 @@ TEST(PlayerTest, DiscardCard)
     player.getMutable<shared::CardAccess::HAND>() = hand;
 
     // Discard the second card (index 1)
-    std::vector<unsigned int> indices = {1};
-    player.discard<shared::CardAccess::HAND>(indices);
+    player.move<shared::HAND, shared::DISCARD_PILE>(hand[1]);
 
     // Now hand should have "Card1", "Card3"
     ASSERT_EQ(player.get<shared::CardAccess::HAND>().size(), 2);

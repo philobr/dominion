@@ -7,12 +7,13 @@
 #include <uiElements/formatting_constants.h>
 #include <uiElements/popup.h>
 #include <uiElements/single_card_panel.h>
+#include <wx/statline.h>
 #include <wx/wx.h>
 #include "shared/action_order.h"
 
 namespace client
 {
-
+    // NOLINTBEGIN(bugprone-suspicious-enum-usage)
     PlayerPanel::PlayerPanel(wxWindow *parent, wxSize size) : wxPanel(parent, wxID_ANY, wxDefaultPosition, size)
     {
         if ( wxGetApp().isDebugMode() ) {
@@ -49,9 +50,16 @@ namespace client
         wxPanel *DiscardPilePanel = createDiscardPilePanel(player->getDiscardPileSize(), player->getTopDiscardCard(),
                                                            confirm_button, allowed_choices);
 
-        outersizer->Add(DrawPilePanel, 0, wxTOP, 5);
+
+        // Add a vertical line between the draw pile and the hand
+        wxStaticLine *line1 = new wxStaticLine(this, wxID_ANY, wxDefaultPosition, wxSize(5, 120), wxLI_VERTICAL);
+        wxStaticLine *line2 = new wxStaticLine(this, wxID_ANY, wxDefaultPosition, wxSize(5, 120), wxLI_VERTICAL);
+
+        outersizer->Add(DrawPilePanel, 0, wxLEFT | wxTOP, 15);
+        outersizer->Add(line1, 0, wxEXPAND | wxALL, 5);
         outersizer->Add(hand, 1, wxTOP, 5);
-        outersizer->Add(DiscardPilePanel, 0, wxTOP, 5);
+        outersizer->Add(line2, 0, wxEXPAND | wxALL, 5);
+        outersizer->Add(DiscardPilePanel, 0, wxRIGHT | wxTOP, 15);
 
         this->SetSizer(outersizer);
         this->Layout();
@@ -91,13 +99,22 @@ namespace client
         // Create the draw pile panel
         wxPanel *DrawPilePanel = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDefaultSize);
         // Create the draw pile
-        PilePanel *DrawPile = new PilePanel(DrawPilePanel, shared::Pile("Card_back", draw_pile_size),
-                                            formatting_constants::DEFAULT_BOARD_PILE_SIZE);
+        PilePanel *DrawPile;
+        if ( draw_pile_size == 0 ) {
+            DrawPile = new PilePanel(DrawPilePanel, shared::Pile("empty_panel", draw_pile_size),
+                                     formatting_constants::DEFAULT_BOARD_PILE_SIZE);
+        } else {
+            DrawPile = new PilePanel(DrawPilePanel, shared::Pile("Card_back", draw_pile_size),
+                                     formatting_constants::DEFAULT_BOARD_PILE_SIZE);
+        }
         // Create the sizer for the draw pile
         wxBoxSizer *DrawPileSizer = new wxBoxSizer(wxVERTICAL);
         DrawPileSizer->SetMinSize(wxSize(1 * hand_card_size.GetWidth(), 150));
         // Add the draw pile to the sizer
         DrawPileSizer->Add(DrawPile, 0, wxALIGN_CENTER, 4);
+
+        SetBackgroundColour(formatting_constants::DEFAULT_PANEL_BACKGROUND);
+
         // Set the sizer for the draw pile panel
         DrawPilePanel->SetSizer(DrawPileSizer);
 
@@ -111,6 +128,8 @@ namespace client
         // Get the hand cards
         const auto &cards = player->getHandCards();
         size_t hand_size = cards.size();
+
+        wxSize hand_card_size = formatting_constants::DEFAULT_HAND_CARD_SIZE;
 
         // Create the hand panel
         wxPanel *hand = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDefaultSize);
@@ -163,7 +182,7 @@ namespace client
 
         // Create the discard pile
         if ( discard_pile_size == 0 ) {
-            DiscardPile = new PilePanel(DiscardPilePanel, shared::Pile("logo", 0),
+            DiscardPile = new PilePanel(DiscardPilePanel, shared::Pile("empty_panel", discard_pile_size),
                                         formatting_constants::DEFAULT_BOARD_PILE_SIZE);
         } else {
             DiscardPile = new PilePanel(DiscardPilePanel, shared::Pile(top_discard_card, discard_pile_size),
@@ -191,7 +210,8 @@ namespace client
                                     // clear the selected cards to be ready for the next selection
                                     selectedCards.clear();
                                 });
-            confirmButton->Enable(false);
+            bool is_enabled = minCount == 0;
+            confirmButton->Enable(is_enabled);
             DiscardPileSizer->Add(confirmButton, 0, wxALIGN_CENTER, 4);
         }
 
@@ -247,5 +267,5 @@ namespace client
             confirmButton->Enable(false);
         }
     }
-
+    // NOLINTEND(bugprone-suspicious-enum-usage)
 } // namespace client

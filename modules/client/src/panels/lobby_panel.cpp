@@ -15,14 +15,15 @@
 namespace client
 {
     LobbyPanel::LobbyPanel(wxWindow *parent) :
-        wxPanel(parent, wxID_ANY, wxDefaultPosition, wxSize(1024, 1024)), NamesSizer(new wxGridSizer(2, 2, 0, 0)),
-        StartButton(nullptr), playerCount(0)
+        wxPanel(parent, wxID_ANY, wxDefaultPosition), NamesSizer(new wxGridSizer(2, 2, 0, 0)), StartButton(nullptr),
+        playerCount(0)
     {
         TextPanel *Title = new TextPanel(this, wxID_ANY, "Lobby", TextFormat::TITLE);
         wxBoxSizer *VerticalSizer = new wxBoxSizer(wxVERTICAL);
         VerticalSizer->Add(Title, 0, wxALIGN_CENTER | wxALL, 5);
         wxPanel *Panel = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxSize(512, 512));
         VerticalSizer->Add(Panel, 1, wxALIGN_CENTER | wxALL, 5);
+        SetBackgroundColour(formatting_constants::DEFAULT_PANEL_BACKGROUND);
 
         Panel->SetSizer(NamesSizer);
 
@@ -67,7 +68,7 @@ namespace client
         wxPanel *Player = new wxPanel(NamesSizer->GetContainingWindow(), wxID_ANY, wxDefaultPosition, wxSize(256, 256));
         Player->SetSizer(new wxBoxSizer(wxVERTICAL));
 
-        std::string asset_name = "Minion" + std::to_string(this->playerCount) + ".png";
+        std::string asset_name = "Minion" + std::to_string(this->playerCount);
 
         ImagePanel *LogoPanel = new ImagePanel(Player, // parent element
                                                asset_name, // path to image

@@ -8,7 +8,7 @@ namespace client
     {
         wxBoxSizer *sizer = new wxBoxSizer(wxVERTICAL);
 
-        std::string asset_name = card_name + ".png";
+        std::string asset_name = card_name;
 
         Image = new ImagePanel(this, asset_name, wxBITMAP_TYPE_PNG, wxDefaultPosition,
                                wxSize(size.GetWidth() - 2 * padding, size.GetHeight() - 2 * padding));

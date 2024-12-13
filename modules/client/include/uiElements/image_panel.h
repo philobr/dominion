@@ -21,7 +21,7 @@ namespace client
         int _height;
 
     public:
-        ImagePanel(wxWindow *parent, wxString file, wxBitmapType format, wxPoint position = wxDefaultPosition,
+        ImagePanel(wxWindow *parent, wxString file, wxBitmapType /*format*/, wxPoint position = wxDefaultPosition,
                    wxSize size = wxDefaultSize, double rotation = 0.0);
 
         /**
@@ -37,7 +37,7 @@ namespace client
         /**
          * @brief Make the image grey
          */
-        void makeGrey();
+        void makeGrey(wxString asset_name);
     };
 
 } // namespace client

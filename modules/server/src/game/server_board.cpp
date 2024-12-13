@@ -20,6 +20,11 @@ namespace server
 
     void ServerBoard::addToPlayedCards(const shared::CardBase::id_t &card_id) { played_cards.push_back(card_id); }
 
+    void ServerBoard::addToPlayedCards(const std::vector<shared::CardBase::id_t> &cards)
+    {
+        std::for_each(cards.begin(), cards.end(), [&](const auto &card_id) { played_cards.push_back(card_id); });
+    }
+
     bool ServerBoard::removeFromPlayedCards(const shared::CardBase::id_t &card_id)
     {
         auto it = std::find(played_cards.begin(), played_cards.end(), card_id);
@@ -58,6 +63,10 @@ namespace server
 
     void ServerBoard::take(const shared::CardBase::id_t &card_id)
     {
+        if ( card_id == curse_card_pile.card_id ) {
+            --curse_card_pile.count;
+        }
+
         // helper to search the card in each pile
         auto buy_if_found = [card_id](auto &card_piles)
         {

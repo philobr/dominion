@@ -30,7 +30,7 @@ namespace client
         const wxColour PLAYABLE_HAND_CARD_BORDER = wxColour(0, 130, 0);
 
         // Window background iamge
-        const wxString WINDOW_BACKGROUND_PATH = "assets/Background.jpg";
+        const wxString WINDOW_BACKGROUND_PATH = "assets/Background.png";
         const wxColour DEFAULT_PANEL_BACKGROUND = wxColour(255, 200, 100); // light orange
 
         // Victory screen formatting constants

@@ -23,6 +23,7 @@ namespace client
         VerticalSizer->Add(Title, 0, wxALIGN_CENTER | wxALL, 5);
         wxPanel *Panel = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxSize(512, 512));
         VerticalSizer->Add(Panel, 1, wxALIGN_CENTER | wxALL, 5);
+        SetBackgroundColour(formatting_constants::DEFAULT_PANEL_BACKGROUND);
 
         Panel->SetSizer(NamesSizer);
 
@@ -67,7 +68,7 @@ namespace client
         wxPanel *Player = new wxPanel(NamesSizer->GetContainingWindow(), wxID_ANY, wxDefaultPosition, wxSize(256, 256));
         Player->SetSizer(new wxBoxSizer(wxVERTICAL));
 
-        std::string asset_name = "Minion" + std::to_string(this->playerCount) + ".png";
+        std::string asset_name = "Minion" + std::to_string(this->playerCount);
 
         ImagePanel *LogoPanel = new ImagePanel(Player, // parent element
                                                asset_name, // path to image

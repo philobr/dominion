@@ -134,8 +134,8 @@ namespace server
             ASSERT_NO_DECISION;
 
             auto all_player_ids = game_state.getAllPlayerIDs();
-            for (auto &player_id : all_player_ids) {
-                if (player_id == game_state.getCurrentPlayerId()) {
+            for ( auto &player_id : all_player_ids ) {
+                if ( player_id == game_state.getCurrentPlayerId() ) {
                     continue;
                 }
                 auto &affected_player = game_state.getPlayer(player_id);
@@ -151,8 +151,8 @@ namespace server
             ASSERT_NO_DECISION;
 
             auto all_player_ids = game_state.getAllPlayerIDs();
-            for (auto &player_id : all_player_ids) {
-                if (player_id == game_state.getCurrentPlayerId()) {
+            for ( auto &player_id : all_player_ids ) {
+                if ( player_id == game_state.getCurrentPlayerId() ) {
                     continue;
                 }
                 auto &affected_player = game_state.getPlayer(player_id);
@@ -169,7 +169,7 @@ namespace server
             ASSERT_NO_DECISION;
 
             auto &affected_player = game_state.getCurrentPlayer();
-            if (affected_player.hasCard<shared::HAND>("Copper")) {
+            if ( affected_player.hasCard<shared::HAND>("Copper") ) {
                 // Discard the copper
                 affected_player.move<shared::HAND, shared::TRASH>("Copper");
                 affected_player.addTreasure(3);
@@ -197,19 +197,18 @@ namespace server
 
             auto &affected_player = game_state.getCurrentPlayer();
             auto &board = *game_state.getBoard();
-            if (affected_player.hasCard<shared::HAND>("Treasure_Map")) {
+            if ( affected_player.hasCard<shared::HAND>("Treasure_Map") ) {
                 affected_player.move<shared::HAND, shared::TRASH>("Treasure_Map");
                 // Currently, ServerPlayer::move does not delete the card from
                 // the hand, so we have to do it manually
                 board.trashCard("Treasure_Map");
-                if ( !board.removeFromPlayedCards("Treasure_Map") )
-                {
+                if ( !board.removeFromPlayedCards("Treasure_Map") ) {
                     // We played a treasure map, so it should be in the played cards now
                     LOG(ERROR) << "Treasure_Map not found in played cards";
                     throw std::runtime_error("Treasure_Map not found in played cards");
                 }
                 board.trashCard("Treasure_Map");
-                for (int i = 0; i < 4; i++) {
+                for ( int i = 0; i < 4; i++ ) {
                     affected_player.add<shared::DRAW_PILE_TOP>("Gold");
                 }
             }
@@ -316,7 +315,8 @@ namespace server
 
             if ( !has_action_decision ) {
                 if ( !player.hasType<shared::CardAccess::HAND>(shared::CardType::TREASURE) ) {
-                    LOG(INFO) << "Player: " << " has no treasure in hand, returning";
+                    LOG(INFO) << "Player: "
+                              << " has no treasure in hand, returning";
                     BEHAVIOUR_DONE;
                 }
 
@@ -325,7 +325,7 @@ namespace server
                                 1, 1, shared::ChooseFromOrder::AllowedChoice::DISCARD, shared::CardType::TREASURE)};
             }
 
-            if ( auto *tmp_decision = dynamic_cast<shared::DeckChoiceDecision *>(action_decision.value().get()) ) {
+            if ( dynamic_cast<shared::DeckChoiceDecision *>(action_decision.value().get()) != nullptr ) {
                 auto trash_decision =
                         helper::validateResponse(game_state, action_decision.value(), 1, 1, shared::CardType::TREASURE);
 

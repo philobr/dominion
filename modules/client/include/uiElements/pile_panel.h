@@ -32,7 +32,7 @@ namespace client
          * @brief Make the pile grey
          *
          */
-        void makeGrey() { Image->makeGrey(); }
+        void makeGrey();
 
     private:
         shared::Pile Pile;

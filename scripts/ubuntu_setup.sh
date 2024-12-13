@@ -21,6 +21,14 @@ while [ "$#" -gt 0 ]; do
     esac
 done
 
+# Check if the 'build-essential' package is installed
+if ! dpkg -l | grep -q "^ii  build-essential"; then
+    echo "'build-essential' is not installed. Installing..."
+    sudo apt update && sudo apt install -y build-essential
+else
+    echo "'build-essential' is already installed."
+fi
+
 # Check if cmake is installed
 if ! command -v cmake &> /dev/null; then
     echo "cmake not found, installing..."

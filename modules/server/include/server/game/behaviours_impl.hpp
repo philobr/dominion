@@ -210,9 +210,13 @@ namespace server
                     throw std::runtime_error("Treasure_Map not found in played cards");
                 }
                 board.trashCard("Treasure_Map");
-                for ( int i = 0; i < 4; i++ ) {
-                    affected_player.add<shared::DRAW_PILE_TOP>("Gold");
+                for (int i = 0; i < 4; i++) {
+                    if (board.has("Gold")) {
+                        board.tryTake("Gold");
+                        affected_player.add<shared::DRAW_PILE_TOP>("Gold");
+                    }
                 }
+
             }
 
             BEHAVIOUR_DONE;

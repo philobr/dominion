@@ -69,7 +69,18 @@ namespace server
          */
         void trashCard(const shared::CardBase::id_t &card_id);
 
-        void resetPlayedCards() { played_cards.clear(); }
+        /**
+         * @brief Returns the played cards
+         */
+        const std::vector<shared::CardBase::id_t> &getPlayedCards() const { return played_cards; }
+
+        /**
+         * @brief Clears the played cards
+         *
+         * The cards are voided, not trashed.
+         * If you want to move them somewhere else, do it before calling this function.
+         */
+        void clearPlayedCards() { played_cards.clear(); }
 
     protected:
         /**

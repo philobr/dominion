@@ -111,10 +111,15 @@ namespace server
 
     void GameState::endTurn()
     {
-        getCurrentPlayer().endTurn();
+        auto &current_player = getCurrentPlayer();
+        const std::vector<shared::CardBase::id_t> &played_cards = board->getPlayedCards();
+        for ( const auto &card_id : played_cards ) {
+            current_player.add<shared::CardAccess::DISCARD_PILE>(card_id);
+        }
+        current_player.endTurn();
         switchPlayer();
         resetPhase();
-        board->resetPlayedCards();
+        board->clearPlayedCards();
 
         bool turn_ended =
                 maybeSwitchPhase(); // a player might not have any action cards at the beginning of the action phase
@@ -246,7 +251,7 @@ namespace server
         auto &player = getPlayer(requestor_id);
 
         auto treasure_cards = player.getType<shared::CardAccess::HAND>(shared::CardType::TREASURE);
-        player.move<shared::HAND, shared::PLAYED_CARDS>(treasure_cards);
+        player.take<shared::HAND>(treasure_cards);
         board->addToPlayedCards(treasure_cards);
 
         printSuccess(requestor_id, FUNC_NAME);

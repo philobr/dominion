@@ -66,11 +66,6 @@ namespace server
             throw exception::OutOfPhase("You can not get your deck while you are playing a card!");
         }
 
-        if ( !played_cards.empty() ) {
-            LOG(ERROR) << "played cards should be empty when getting deck";
-            throw exception::OutOfPhase("You can not get your deck while you still have played cards!");
-        }
-
         std::vector<shared::CardBase::id_t> deck;
         deck.reserve(draw_pile.size() + discard_pile.size() + hand_cards.size());
         deck.insert(deck.end(), draw_pile.begin(), draw_pile.end());
@@ -98,7 +93,6 @@ namespace server
         resetValues();
 
         move<shared::HAND, shared::DISCARD_PILE>();
-        move<shared::PLAYED_CARDS, shared::DISCARD_PILE>();
 
         draw(5);
     }
@@ -106,7 +100,7 @@ namespace server
     void Player::playAvailableTreasureCards()
     {
         auto cards_to_play = getType<shared::CardAccess::HAND>(shared::CardType::TREASURE);
-        move<shared::HAND, shared::PLAYED_CARDS>(cards_to_play);
+        take<shared::HAND>(cards_to_play);
     }
 
     int Player::getVictoryPoints() const

@@ -56,6 +56,7 @@ namespace shared
     REGISTER_CARD(Great_Hall, CardType::ACTION | CardType::VICTORY, 3);
     REGISTER_CARD(Treasure_Map, CardType::ACTION, 4);
     REGISTER_CARD(Sea_Hag, CardType::ACTION | CardType::ATTACK, 4);
+    REGISTER_CARD(Remodel, CardType::ACTION, 4);
 
     // victory cards
     REGISTER_CARD(Gardens, CardType::KINGDOM | CardType::VICTORY, 4);
@@ -83,7 +84,6 @@ namespace shared
     //  REGISTER_CARD(Poacher, CardType::ACTION, 4);
     //  REGISTER_CARD(Moneylender, CardType::ACTION, 4);
     //  REGISTER_CARD(Bureaucrat, CardType::ACTION | CardType::ATTACK, 4);
-    //  REGISTER_CARD(Remodel, CardType::ACTION, 4);
     //  REGISTER_CARD(Sentry, CardType::ACTION, 5);
     //  REGISTER_CARD(Library, CardType::ACTION, 5);
     //  REGISTER_CARD(Bandit, CardType::ACTION | CardType::ATTACK, 5);

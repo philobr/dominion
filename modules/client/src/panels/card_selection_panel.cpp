@@ -124,9 +124,9 @@ namespace client
         // Add the cards to the sizer
         auto sorted = shared::CardFactory::getKingdomSortedByCost();
         for ( auto card : sorted ) {
-            if (selectedCards.find(card) != selectedCards.end()){
-                SingleCardPanel *CardPanel = new SingleCardPanel(scrolledWindow, card,
-                                                                 formatting_constants::DEFAULT_CARD_SELECTION_SIZE, 5);
+            if ( selectedCards.find(card) != selectedCards.end() ) {
+                SingleCardPanel *CardPanel =
+                        new SingleCardPanel(scrolledWindow, card, formatting_constants::DEFAULT_CARD_SELECTION_SIZE, 5);
                 CardPanel->setBorderColor(wxNullColour);
                 makeSelectable(CardPanel);
                 cardPanels.push_back(CardPanel);

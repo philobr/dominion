@@ -136,23 +136,24 @@ namespace shared
     inline shared::CardFactory::sorted_t shared::CardFactory::getKingdomSortedByCost()
     {
         sorted_t sorted_vec;
-        for (const auto& entry : CardFactory::getAll()) {
-            if (entry.second->isKingdom()) { sorted_vec.push_back(entry.first); }
-            
+        for ( const auto &entry : CardFactory::getAll() ) {
+            if ( entry.second->isKingdom() ) {
+                sorted_vec.push_back(entry.first);
+            }
         }
 
         std::sort(sorted_vec.begin(), sorted_vec.end(),
-            [](const auto& id_a, const auto& id_b)
-            {
-                const auto cost_a = CardFactory::getCost(id_a);
-                const auto cost_b = CardFactory::getCost(id_b);
+                  [](const auto &id_a, const auto &id_b)
+                  {
+                      const auto cost_a = CardFactory::getCost(id_a);
+                      const auto cost_b = CardFactory::getCost(id_b);
 
-                if (cost_a != cost_b) {
-                    return cost_a < cost_b;
-                }
+                      if ( cost_a != cost_b ) {
+                          return cost_a < cost_b;
+                      }
 
-                return id_a < id_b;
-            });
+                      return id_a < id_b;
+                  });
 
         return sorted_vec;
     }

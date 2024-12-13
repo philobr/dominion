@@ -66,7 +66,6 @@ if WXWIDGETS_STATUS==2; then
     echo "WxWidgets version too low, removing it"
     #TODO
     WXWIDGETS_STATUS==1
-    exit 1;
 fi
 
 if WXWIDGETS_STATUS==1; then

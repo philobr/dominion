@@ -215,7 +215,7 @@ namespace server
             }
 
             auto &affected_player = game_state.getCurrentPlayer();
-            for ( const auto &card_id : decison.cards ) {
+            for ( const auto &card_id : decision.cards ) {
                 affected_player.move<shared::HAND, shared::DISCARD_PILE>(card_id);
             }
 

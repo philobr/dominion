@@ -29,6 +29,14 @@ else
     echo "'build-essential' is already installed."
 fi
 
+# Check if the 'libwxgtk3.0-gtk3-dev' package is installed
+if ! dpkg -l | grep -q "^ii  libwxgtk3.0-gtk3-dev"; then
+    echo "'libwxgtk3.0-gtk3-dev' is not installed. Installing..."
+    sudo apt update && sudo apt install -y libwxgtk3.0-gtk3-dev
+else
+    echo "'libwxgtk3.0-gtk3-dev' is already installed."
+fi
+
 # Check if cmake is installed
 if ! command -v cmake &> /dev/null; then
     echo "cmake not found, installing..."

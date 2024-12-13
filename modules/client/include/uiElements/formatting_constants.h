@@ -23,6 +23,7 @@ namespace client
 #else
         const wxSize DEFAULT_BOARD_PILE_SIZE = wxSize(90, 135);
 #endif
+        const wxSize DEFAULT_HAND_CARD_SIZE = wxSize(100, 125);
         const wxSize DEFAULT_PLAYED_CARD_SIZE = wxSize(60, 90);
         const wxSize DEFAULT_CARD_SELECTION_SIZE = wxSize(160, 240);
 

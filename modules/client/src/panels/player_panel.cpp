@@ -208,7 +208,8 @@ namespace client
                                     // clear the selected cards to be ready for the next selection
                                     selectedCards.clear();
                                 });
-            confirmButton->Enable(false);
+            bool is_enabled = minCount == 0;
+            confirmButton->Enable(is_enabled);
             DiscardPileSizer->Add(confirmButton, 0, wxALIGN_CENTER, 4);
         }
 

@@ -66,6 +66,7 @@ if WXWIDGETS_STATUS==1; then
     echo "WxWidgets version too low, removing it"
     #TODO
     WXWIDGETS_STATUS==2
+    exit 1;
 fi
 
 if WXWIDGETS_STATUS==0; then
@@ -98,7 +99,7 @@ if [ -z "$DOMINION_DIR" ]; then
     exit 1
 fi
 
-if ![ -d "$DOMINION_DIR/build" ]; then
+if [ ! -d "$DOMINION_DIR/build" ]; then
     echo "Creating build directory"
     mkdir "$DOMINION_DIR/build"
 fi

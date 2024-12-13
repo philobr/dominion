@@ -2,6 +2,7 @@
 
 #include <unordered_map>
 #include <vector>
+#include <algorithm>
 
 #include <shared/game/cards/card_base.h>
 #include <shared/utils/logger.h>

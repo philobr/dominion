@@ -70,16 +70,15 @@ else
     fi
 fi
 
-if WXWIDGETS_STATUS==2; then
+if [ "$WXWIDGETS_STATUS" -eq 2 ]; then
     echo "WxWidgets version too low, removing it"
     #TODO
     WXWIDGETS_STATUS==1
 fi
 
-if WXWIDGETS_STATUS==0; then
+if [ "$WXWIDGETS_STATUS" -eq 0 ]; then
     echo "WxWidgets installation found and version high enough"
-fi
-if WXWIDGETS_STATUS==1; then
+else
     echo "installing wxWidgets"
     cd ~
     git clone https://github.com/wxWidgets/wxWidgets.git
@@ -87,7 +86,7 @@ if WXWIDGETS_STATUS==1; then
     mkdir buildgtk
     cd buildgtk
     ../configure --with-gtk
-    make -j$(nprocs)
+    make -j$(nproc)
     sudo make install
     sudo ldconfig
 fi
@@ -117,5 +116,5 @@ EXEC_DIR="$DOMINION_DIR/build"
 # build dominion
 cd $EXEC_DIR
 cmake ..
-make -j$(nprocs)
+make -j$(nproc)
 

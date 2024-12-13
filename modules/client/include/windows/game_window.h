@@ -33,6 +33,8 @@ namespace client
         wxStatusBar *_statusBar;
 
         wxPanel *_currentPanel;
+
+        void onPaint(wxPaintEvent &event);
     };
 
 } // namespace client

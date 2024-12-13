@@ -100,13 +100,12 @@ namespace client
         wxPanel *DrawPilePanel = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDefaultSize);
         // Create the draw pile
         PilePanel *DrawPile;
-        if (draw_pile_size == 0) {
+        if ( draw_pile_size == 0 ) {
             DrawPile = new PilePanel(DrawPilePanel, shared::Pile("empty_panel", draw_pile_size),
-                formatting_constants::DEFAULT_BOARD_PILE_SIZE);
-        }
-        else {
+                                     formatting_constants::DEFAULT_BOARD_PILE_SIZE);
+        } else {
             DrawPile = new PilePanel(DrawPilePanel, shared::Pile("Card_back", draw_pile_size),
-                formatting_constants::DEFAULT_BOARD_PILE_SIZE);
+                                     formatting_constants::DEFAULT_BOARD_PILE_SIZE);
         }
         // Create the sizer for the draw pile
         wxBoxSizer *DrawPileSizer = new wxBoxSizer(wxVERTICAL);

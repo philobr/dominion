@@ -159,7 +159,7 @@ namespace server
         return response;
     }
 
-    GameInterface::response_t GameInterface::nextPhase(bool end_turn)
+    GameInterface::response_t GameInterface::nextPhase()
     {
         auto current_player_id = game_state->getCurrentPlayerId();
         game_state->maybeSwitchPhase();

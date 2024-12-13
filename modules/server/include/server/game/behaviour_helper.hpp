@@ -110,7 +110,7 @@ namespace server
                 }
 
                 // validate existence and type of the card
-                for ( const auto card_id : deck_choice->cards ) {
+                for ( const auto& card_id : deck_choice->cards ) {
                     const auto card_type = shared::CardFactory::getType(card_id);
 
                     if ( (card_type & expected_type) != card_type ) {

@@ -150,18 +150,17 @@ namespace server
             LOG_CALL;
             ASSERT_NO_DECISION;
 
-            auto all_player_ids = game_state.getAllPlayerIDs();
-            for ( auto &player_id : all_player_ids ) {
-                if ( player_id == game_state.getCurrentPlayerId() ) {
-                    continue;
-                }
-                auto &affected_player = game_state.getPlayer(player_id);
-                affected_player.move<shared::DRAW_PILE_TOP, shared::DISCARD_PILE>();
-                if ( game_state.getBoard()->has("Curse") ) {
-                    affected_player.add<shared::DRAW_PILE_TOP>("Curse");
-                    game_state.getBoard()->tryTake("Curse");
-                }
-            }
+            // ensure play order
+            helper::applyAttackToEnemies(game_state,
+                                         [&](GameState &game_state, const shared::PlayerBase::id_t &enemy_id)
+                                         {
+                                             auto &affected_enemy = game_state.getPlayer(enemy_id);
+                                             affected_enemy.move<shared::DRAW_PILE_TOP, shared::DISCARD_PILE>(1);
+                                             if ( game_state.getBoard()->has("Curse") ) {
+                                                 game_state.getBoard()->tryTake("Curse");
+                                                 affected_enemy.add<shared::DRAW_PILE_TOP>("Curse");
+                                             }
+                                         });
 
             BEHAVIOUR_DONE;
         }

@@ -157,7 +157,10 @@ namespace server
                 }
                 auto &affected_player = game_state.getPlayer(player_id);
                 affected_player.move<shared::DRAW_PILE_TOP, shared::DISCARD_PILE>();
-                affected_player.add<shared::DRAW_PILE_TOP>("Curse");
+                if ( game_state.getBoard()->has("Curse") ) {
+                    affected_player.add<shared::DRAW_PILE_TOP>("Curse");
+                    game_state.getBoard()->tryTake("Curse");
+                }
             }
 
             BEHAVIOUR_DONE;
@@ -242,13 +245,14 @@ namespace server
             LOG_CALL;
             ASSERT_NO_DECISION;
 
-            const std::string curse_card = "Curse";
             helper::applyAttackToEnemies(
                     game_state,
-                    [&, curse_card](GameState &game_state, const shared::PlayerBase::id_t &enemy_id)
+                    [&](GameState &game_state, const shared::PlayerBase::id_t &enemy_id)
                     {
-                        game_state.getBoard()->tryTake(curse_card);
-                        game_state.getPlayer(enemy_id).gain(curse_card);
+                        if ( game_state.getBoard()->has("Curse") ) {
+                            game_state.getBoard()->tryTake("Curse");
+                            game_state.getPlayer(enemy_id).gain("Curse");
+                        }
                     });
 
             BEHAVIOUR_DONE;

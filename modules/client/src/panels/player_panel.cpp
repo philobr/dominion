@@ -207,7 +207,7 @@ namespace client
                                 });
             bool is_enabled = minCount == 0;
             confirmButton->Enable(is_enabled);
-            DiscardPileSizer->Add(confirmButton, 0, wxALIGN_CENTER, 4);
+            DiscardPileSizer->Add(confirmButton, 0, wxALIGN_CENTER | wxBOTTOM, 5);
         }
 
 

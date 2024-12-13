@@ -47,9 +47,14 @@ namespace server
         bool has(const shared::CardBase::id_t &card_id) const;
 
         /**
-         * @brief Adds the given card to the played_cards vector
+         * @brief Adds the given card to the played_cards vector.
          */
         void addToPlayedCards(const shared::CardBase::id_t &card_id);
+
+        /**
+         * @brief Adds the given cards to the played_cards vector.
+         */
+        void addToPlayedCards(const std::vector<shared::CardBase::id_t> &cards);
 
         /**
          * @brief Removes the given card from the played_cards vector

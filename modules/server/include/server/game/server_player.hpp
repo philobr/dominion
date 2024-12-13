@@ -136,7 +136,7 @@ inline void server::Player::move(const shared::CardBase::id_t &card_id)
 template <enum shared::CardAccess FROM, enum shared::CardAccess TO>
 inline void server::Player::move(const std::vector<shared::CardBase::id_t> &cards)
 {
-    std::for_each(cards.begin(), cards.end(), [this](const auto &card_id) { move<FROM, TO>(card_id); });
+    std::for_each(cards.begin(), cards.end(), [this](const auto &card_id) { this->move<FROM, TO>(card_id); });
 }
 
 template <enum shared::CardAccess FROM, enum shared::CardAccess TO>

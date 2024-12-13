@@ -161,7 +161,16 @@ namespace server
             return;
         }
 
-        game_interface = GameInterface::make(lobby_id, request->selected_cards, players);
+        try {
+            game_interface = GameInterface::make(lobby_id, request->selected_cards, players);
+        } catch ( std::exception &e ) {
+            // any error while trying to create a game is unrecoverable
+            LOG(ERROR) << "We somehow reached unreachable code while trying to create game \'" << lobby_id
+                       << "\':" << e.what();
+            message_interface.send<shared::ResultResponseMessage>(requestor_id, lobby_id, false, request->message_id,
+                                                                  "Error while starting the game. Try again.");
+            return;
+        }
 
         LOG(INFO) << "Sending StartGameBroadcastMessage in Lobby ID: " << lobby_id;
         message_interface.broadcast<shared::StartGameBroadcastMessage>(players, lobby_id);

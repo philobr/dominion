@@ -58,25 +58,32 @@ namespace server
          * @brief Tries if we have to switch phase and returns the phase transition for the corresponding
          * player.
          */
-        response_t nextPhase(bool end_turn = false);
+        response_t nextPhase();
 
         /**
          * @brief Resets the phase from CURRENTLY_PLAYING_CARD to ACTION_PHASE and then returns the next phase.
          */
         response_t finishedPlayingCard();
 
+/**
+ * @brief The handlers obviously handle the messages. The functions are specialised for certain decision types and
+ * perform all required checks themselves. Each function will return an OrderResponse containing the necessary
+ * information for the clients.
+ */
+#pragma region HANDLERS
+
         response_t passToBehaviour(std::unique_ptr<shared::ActionDecisionMessage> &message);
 
-        // TODO: expand this macro when the messages are finally final. Makes no sense now as there will probably be
-        // more messages in the future
+        response_t playActionCardDecisionHandler(std::unique_ptr<shared::PlayActionCardDecision> decision,
+                                                 const Player::id_t &affected_player_id);
 
-#define HANDLER(decision_type) /* can also be used to define the func outside of the class */                          \
-    response_t decision_type##_handler(std::unique_ptr<shared::decision_type> decision,                                \
-                                       const Player::id_t &affected_player_id)
+        response_t buyCardDecisionHandler(std::unique_ptr<shared::BuyCardDecision> decision,
+                                          const Player::id_t &affected_player_id);
 
-        HANDLER(PlayActionCardDecision);
-        HANDLER(BuyCardDecision);
-        HANDLER(EndTurnDecision);
-        HANDLER(EndActionPhaseDecision);
+        response_t endTurnDecisionHandler(std::unique_ptr<shared::EndTurnDecision> decision,
+                                          const Player::id_t &affected_player_id);
+
+        response_t endActionPhaseDecisionHandler(std::unique_ptr<shared::EndActionPhaseDecision> decision,
+                                                 const Player::id_t &affected_player_id);
     }; // namespace server
 } // namespace server

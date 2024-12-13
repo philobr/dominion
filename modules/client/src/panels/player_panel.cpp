@@ -13,7 +13,7 @@
 
 namespace client
 {
-
+    // NOLINTBEGIN(bugprone-suspicious-enum-usage)
     PlayerPanel::PlayerPanel(wxWindow *parent, wxSize size) : wxPanel(parent, wxID_ANY, wxDefaultPosition, size)
     {
         if ( wxGetApp().isDebugMode() ) {
@@ -258,5 +258,5 @@ namespace client
             confirmButton->Enable(false);
         }
     }
-
+    // NOLINTEND(bugprone-suspicious-enum-usage)
 } // namespace client

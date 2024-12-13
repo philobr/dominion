@@ -74,16 +74,16 @@ namespace server
 
         response_t passToBehaviour(std::unique_ptr<shared::ActionDecisionMessage> &message);
 
-        response_t PlayActionCardDecision_handler(std::unique_ptr<shared::PlayActionCardDecision> decision,
+        response_t playActionCardDecisionHandler(std::unique_ptr<shared::PlayActionCardDecision> decision,
                                                   const Player::id_t &affected_player_id);
 
-        response_t BuyCardDecision_handler(std::unique_ptr<shared::BuyCardDecision> decision,
+        response_t buyCardDecisionHandler(std::unique_ptr<shared::BuyCardDecision> decision,
                                            const Player::id_t &affected_player_id);
 
-        response_t EndTurnDecision_handler(std::unique_ptr<shared::EndTurnDecision> decision,
+        response_t endTurnDecisionHandler(std::unique_ptr<shared::EndTurnDecision> decision,
                                            const Player::id_t &affected_player_id);
 
-        response_t EndActionPhaseDecision_handler(std::unique_ptr<shared::EndActionPhaseDecision> decision,
+        response_t endActionPhaseDecisionHandler(std::unique_ptr<shared::EndActionPhaseDecision> decision,
                                                   const Player::id_t &affected_player_id);
     }; // namespace server
 } // namespace server

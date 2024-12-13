@@ -69,7 +69,7 @@ if WXWIDGETS_STATUS==2; then
     exit 1;
 fi
 
-if WXWIDGETS_STATUS==0; then
+if WXWIDGETS_STATUS==1; then
     echo "WxWidgets installation found and version high enough"
 else
     echo "installing wxWidgets"

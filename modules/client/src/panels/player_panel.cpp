@@ -129,6 +129,8 @@ namespace client
         const auto &cards = player->getHandCards();
         size_t hand_size = cards.size();
 
+        wxSize hand_card_size = formatting_constants::DEFAULT_HAND_CARD_SIZE;
+
         // Create the hand panel
         wxPanel *hand = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDefaultSize);
 

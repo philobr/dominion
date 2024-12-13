@@ -80,7 +80,23 @@ fi
 
 if [ "$WXWIDGETS_STATUS" -eq 2 ]; then
     echo "WxWidgets version too low, removing it"
-    #TODO
+    # List of wxWidgets-related packages
+    PACKAGES=("libwxgtk3.0-gtk3-dev" "libwxgtk3.0-0v5" "libwxbase3.0-0v5" "wx-common")
+
+    for PACKAGE in "${PACKAGES[@]}"; do
+        # Check if the package is installed
+        if dpkg -l | grep -q "^ii  $PACKAGE"; then
+            echo "Removing $PACKAGE..."
+            sudo apt-get remove --purge -y $PACKAGE
+        else
+            echo "$PACKAGE is not installed."
+        fi
+    done
+
+    # Clean up unused packages and dependencies
+    sudo apt-get autoremove -y
+    sudo apt-get clean
+    echo "wxWidgets and related packages have been removed."
     WXWIDGETS_STATUS==1
 fi
 

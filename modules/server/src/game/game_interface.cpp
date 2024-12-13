@@ -21,22 +21,22 @@ namespace server
             throw exception::UnreachableCode();
         }
 
-        if ( dynamic_cast<shared::PlayActionCardDecision *>(casted_msg->decision.get()) ) {
+        if ( dynamic_cast<shared::PlayActionCardDecision *>(casted_msg->decision.get()) != nullptr ) {
             return playActionCardDecisionHandler(
                     std::unique_ptr<shared::PlayActionCardDecision>(
                             static_cast<shared::PlayActionCardDecision *>(casted_msg->decision.release())),
                     casted_msg->player_id);
-        } else if ( dynamic_cast<shared::BuyCardDecision *>(casted_msg->decision.get()) ) {
+        } else if ( dynamic_cast<shared::BuyCardDecision *>(casted_msg->decision.get()) != nullptr ) {
             return buyCardDecisionHandler(
                     std::unique_ptr<shared::BuyCardDecision>(
                             static_cast<shared::BuyCardDecision *>(casted_msg->decision.release())),
                     casted_msg->player_id);
-        } else if ( dynamic_cast<shared::EndTurnDecision *>(casted_msg->decision.get()) ) {
+        } else if ( dynamic_cast<shared::EndTurnDecision *>(casted_msg->decision.get()) != nullptr ) {
             return endTurnDecisionHandler(
                     std::unique_ptr<shared::EndTurnDecision>(
                             static_cast<shared::EndTurnDecision *>(casted_msg->decision.release())),
                     casted_msg->player_id);
-        } else if ( dynamic_cast<shared::EndActionPhaseDecision *>(casted_msg->decision.get()) ) {
+        } else if ( dynamic_cast<shared::EndActionPhaseDecision *>(casted_msg->decision.get()) != nullptr ) {
             return endActionPhaseDecisionHandler(
                     std::unique_ptr<shared::EndActionPhaseDecision>(
                             static_cast<shared::EndActionPhaseDecision *>(casted_msg->decision.release())),

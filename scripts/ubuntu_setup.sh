@@ -98,7 +98,7 @@ if [ -z "$DOMINION_DIR" ]; then
     exit 1
 fi
 
-if [ -d "$DOMINION_DIR/build" ]; then
+if ![ -d "$DOMINION_DIR/build" ]; then
     echo "Creating build directory"
     mkdir "$DOMINION_DIR/build"
 fi

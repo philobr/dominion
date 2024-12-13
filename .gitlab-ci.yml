@@ -13,19 +13,31 @@ pipeline:
     - mkdir -p build
     - cd build
 
+    # Start compilation in the background
+    - echo "Starting compilation..."
+    - cmake -DCMAKE_BUILD_TYPE=Debug ..
+    - cmake --build . > ../build.log 2>&1 & # Compilation runs in the background
+    - BUILD_PID=$!
+
     # Run format
     - echo "Running clang-format..."
-    - cmake -DCMAKE_BUILD_TYPE=Debug ..
-    - cmake --build . --target format > ../format.log || echo "clang-format failed!" > ../format.failed
+    - cmake --build . --target format > ../format.log 2>&1 || echo "clang-format failed!" > ../format.failed
 
     # Run lint
     - echo "Running clang-tidy and cppcheck..."
-    - cmake --build . --target check > ../lint.log || echo "Linting failed!" > ../lint.failed
+    - cmake --build . --target check > ../lint.log 2>&1 || echo "Linting failed!" > ../lint.failed
 
-    # Build and run tests
-    - echo "Building and running tests..."
-    - cmake --build . -j $(nproc) > ../build.log || echo "Build failed!" > ../build.failed
-    - ctest --output-on-failure > ../test.log || echo "Tests failed!" > ../test.failed
+    # Wait for compilation to finish
+    - echo "Waiting for compilation to finish..."
+    - wait $BUILD_PID || echo "Build failed!" > ../build.failed
+
+    # Run tests if the build succeeded
+    - if [ ! -f ../build.failed ]; then
+          echo "Running tests...";
+          ctest --output-on-failure > ../test.log 2>&1 || echo "Tests failed!" > ../test.failed;
+      else
+          echo "Skipping tests due to build failure.";
+      fi
 
   artifacts:
     paths:

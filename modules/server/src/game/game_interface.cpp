@@ -17,29 +17,38 @@ namespace server
                 static_cast<shared::ActionDecisionMessage *>(message.release()));
 
         if ( casted_msg == nullptr ) {
-            // ISSUE: 166
             LOG(ERROR) << "Received a non shared::ActionDecisionMessage in " << FUNC_NAME;
             throw exception::UnreachableCode();
         }
 
-#define HANDLE_ACTION(type)                                                                                            \
-    if ( dynamic_cast<shared::type *>(casted_msg->decision.get()) ) {                                                  \
-        return type##_handler(                                                                                         \
-                std::unique_ptr<shared::type>(static_cast<shared::type *>(casted_msg->decision.release())),            \
-                casted_msg->player_id);                                                                                \
-    }
-
-        HANDLE_ACTION(PlayActionCardDecision);
-        HANDLE_ACTION(BuyCardDecision);
-        HANDLE_ACTION(EndTurnDecision);
-        HANDLE_ACTION(EndActionPhaseDecision);
-
-        return passToBehaviour(casted_msg);
+        if ( dynamic_cast<shared::PlayActionCardDecision *>(casted_msg->decision.get()) ) {
+            return playActionCardDecisionHandler(
+                    std::unique_ptr<shared::PlayActionCardDecision>(
+                            static_cast<shared::PlayActionCardDecision *>(casted_msg->decision.release())),
+                    casted_msg->player_id);
+        } else if ( dynamic_cast<shared::BuyCardDecision *>(casted_msg->decision.get()) ) {
+            return buyCardDecisionHandler(
+                    std::unique_ptr<shared::BuyCardDecision>(
+                            static_cast<shared::BuyCardDecision *>(casted_msg->decision.release())),
+                    casted_msg->player_id);
+        } else if ( dynamic_cast<shared::EndTurnDecision *>(casted_msg->decision.get()) ) {
+            return endTurnDecisionHandler(
+                    std::unique_ptr<shared::EndTurnDecision>(
+                            static_cast<shared::EndTurnDecision *>(casted_msg->decision.release())),
+                    casted_msg->player_id);
+        } else if ( dynamic_cast<shared::EndActionPhaseDecision *>(casted_msg->decision.get()) ) {
+            return endActionPhaseDecisionHandler(
+                    std::unique_ptr<shared::EndActionPhaseDecision>(
+                            static_cast<shared::EndActionPhaseDecision *>(casted_msg->decision.release())),
+                    casted_msg->player_id);
+        } else {
+            return passToBehaviour(casted_msg);
+        }
     }
 
     GameInterface::response_t
-    GameInterface::PlayActionCardDecision_handler(std::unique_ptr<shared::PlayActionCardDecision> action_decision,
-                                                  const Player::id_t &requestor_id)
+    GameInterface::playActionCardDecisionHandler(std::unique_ptr<shared::PlayActionCardDecision> action_decision,
+                                                 const Player::id_t &requestor_id)
     {
         try {
             game_state->tryPlay<shared::CardAccess::HAND>(requestor_id, action_decision->card_id);
@@ -64,8 +73,8 @@ namespace server
     }
 
     GameInterface::response_t
-    GameInterface::BuyCardDecision_handler(std::unique_ptr<shared::BuyCardDecision> action_decision,
-                                           const Player::id_t &requestor_id)
+    GameInterface::buyCardDecisionHandler(std::unique_ptr<shared::BuyCardDecision> action_decision,
+                                          const Player::id_t &requestor_id)
     {
         try {
             game_state->tryBuy(requestor_id, action_decision->card);
@@ -81,8 +90,8 @@ namespace server
     }
 
     GameInterface::response_t
-    GameInterface::EndTurnDecision_handler(std::unique_ptr<shared::EndTurnDecision> action_decision,
-                                           const Player::id_t &requestor_id)
+    GameInterface::endTurnDecisionHandler(std::unique_ptr<shared::EndTurnDecision> action_decision,
+                                          const Player::id_t &requestor_id)
     {
         try {
             game_state->tryEndTurn(requestor_id);
@@ -134,8 +143,8 @@ namespace server
     }
 
     GameInterface::response_t
-    GameInterface::EndActionPhaseDecision_handler(std::unique_ptr<shared::EndActionPhaseDecision> decision,
-                                                  const Player::id_t &requestor_id)
+    GameInterface::endActionPhaseDecisionHandler(std::unique_ptr<shared::EndActionPhaseDecision> decision,
+                                                 const Player::id_t &requestor_id)
     {
         try {
             game_state->tryEndActionPhase(requestor_id);

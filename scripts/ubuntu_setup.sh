@@ -68,9 +68,10 @@ if WXWIDGETS_STATUS==2; then
     WXWIDGETS_STATUS==1
 fi
 
-if WXWIDGETS_STATUS==1; then
+if WXWIDGETS_STATUS==0; then
     echo "WxWidgets installation found and version high enough"
-else
+fi
+if WXWIDGETS_STATUS==1; then
     echo "installing wxWidgets"
     cd ~
     git clone https://github.com/wxWidgets/wxWidgets.git

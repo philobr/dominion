@@ -171,7 +171,7 @@ inline std::vector<shared::CardBase::id_t> server::Player::take(const std::vecto
 {
     std::vector<shared::CardBase::id_t> taken_cards;
     std::for_each(cards.begin(), cards.end(),
-                  [&taken_cards, this](const auto &card_id) { taken_cards.push_back(take<FROM>(card_id)); });
+                  [&taken_cards, this](const auto &card_id) { taken_cards.push_back(this->take<FROM>(card_id)); });
     return taken_cards;
 }
 

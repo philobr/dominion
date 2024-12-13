@@ -30,8 +30,10 @@ void ::ClientNetworkManager::init(const std::string &host, const uint16_t port)
 
     // delete exiting connection and create new one
     if ( ClientNetworkManager::_connection != nullptr ) {
-        ClientNetworkManager::_listener->shutdown();
-        ClientNetworkManager::_listener = nullptr;
+        if ( ClientNetworkManager::_listener != nullptr ) {
+            ClientNetworkManager::_listener->shutdown();
+            ClientNetworkManager::_listener = nullptr;
+        }
         ClientNetworkManager::_connection->shutdown();
         delete ClientNetworkManager::_connection;
         LOG(INFO) << "Removed old connection";

@@ -9,7 +9,7 @@ namespace client
     wxImage ImageMap::getImage(wxString name)
     {
         wxString path = wxString("assets") + wxFileName::GetPathSeparator() + name + wxString(".png");
-        if ( _images.find(path) == _images.end() ) {
+        if ( _images.find(name) == _images.end() ) {
             wxImage image;
             if ( !image.LoadFile(path, wxBITMAP_TYPE_PNG) ) {
                 wxMessageBox("Could not load file: " + path, "File error", wxICON_ERROR);

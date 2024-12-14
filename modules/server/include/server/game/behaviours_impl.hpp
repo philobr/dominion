@@ -186,9 +186,17 @@ namespace server
             ASSERT_NO_DECISION;
 
             auto &affected_player = game_state.getCurrentPlayer();
-            affected_player.gain("Copper");
-            affected_player.gain("Gold");
-
+            auto &board = *game_state.getBoard();
+            if ( board.has("Copper") )
+            {
+                board.tryTake("Copper");
+                affected_player.gain("Copper");
+            }
+            if ( board.has("Gold") )
+            {
+                board.tryTake("Copper");
+                affected_player.gain("Gold");
+            }
             BEHAVIOUR_DONE;
         }
 

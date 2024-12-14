@@ -83,6 +83,7 @@ void server::BehaviourRegistry::initialiseBehaviours()
     insert<SeaHag>("Sea_Hag");
     insertVictory<ConstantVictoryPoints<1>, DrawCards<1>, GainActions<1>>("Great_Hall");
     insert<TreasureMap>("Treasure_Map");
+    insert<Remodel>("Remodel");
 
     // money cards
     insert<GainCoins<2>, TreasureTrove>("Treasure_Trove");
@@ -141,8 +142,6 @@ void server::BehaviourRegistry::initialiseBehaviours()
     insert<NOT_IMPLEMENTED_YET>("Vassal");
     // compilcated, google it
     insert<NOT_IMPLEMENTED_YET>("Bureaucrat");
-    // trash card from hand, gain card (to discard pile), costing 2 more than it
-    insert<NOT_IMPLEMENTED_YET>("Remodel");
     // draw until 7 hand cards, skip action cards or keep (if skip then discard pile, if keep hand)
     insert<NOT_IMPLEMENTED_YET>("Library");
     // gain a gold, enemies reveal top two card from deck trash any treasure except copper, discard rest

@@ -19,15 +19,14 @@ namespace server
                       // custom order
                       auto getCustomOrder = [](shared::CardType type)
                       {
-                          switch ( type ) {
-                              case shared::CardType::ACTION:
-                                  return 1;
-                              case shared::CardType::TREASURE:
-                                  return 2;
-                              case shared::CardType::VICTORY:
-                                  return 3;
-                              default:
-                                  return 4; // fallback type
+                          if ( (type & shared::CardType::ACTION) != 0 ) {
+                              return 1;
+                          } else if ( (type & shared::CardType::TREASURE) != 0 ) {
+                              return 2;
+                          } else if ( (type & shared::CardType::VICTORY) != 0 ) {
+                              return 3;
+                          } else {
+                              return 4;
                           }
                       };
 

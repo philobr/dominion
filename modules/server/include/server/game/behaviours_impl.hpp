@@ -194,7 +194,7 @@ namespace server
             }
             if ( board.has("Gold") )
             {
-                board.tryTake("Copper");
+                board.tryTake("Gold");
                 affected_player.gain("Gold");
             }
             BEHAVIOUR_DONE;

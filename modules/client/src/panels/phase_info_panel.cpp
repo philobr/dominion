@@ -107,7 +107,7 @@ namespace client
             SingleCardPanel *card =
                     new SingleCardPanel(scrolledWindow, card_id, formatting_constants::DEFAULT_PLAYED_CARD_SIZE);
             card->makeClickable(wxEVT_RIGHT_UP,
-                                [&card](const wxMouseEvent & /*event*/) { showCardPopup(card, card->getCardName()); });
+                                [card](const wxMouseEvent & /*event*/) { showCardPopup(card, card->getCardName()); });
 
             sizer->Add(card, 0, wxALL, 4);
         }

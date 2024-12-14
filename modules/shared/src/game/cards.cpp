@@ -78,7 +78,8 @@ namespace shared
     // REGISTER_CARD(Vassal, CardType::ACTION, 3);
     // REGISTER_CARD(Harbinger, CardType::ACTION, 3);
     // REGISTER_CARD(Poacher, CardType::ACTION, 4);
-    // REGISTER_CARD(Militia, CardType::ACTION | CardType::ATTACK, 4);
+    REGISTER_CARD(Militia, CardType::ACTION | CardType::ATTACK, 4);
+    // REGISTER_CARD(Moat, CardType::ACTION | CardType::REACTION, 2);
     //  REGISTER_CARD(Workshop, CardType::ACTION, 3);
     //  REGISTER_CARD(Vassal, CardType::ACTION, 3);
     //  REGISTER_CARD(Harbinger, CardType::ACTION, 3);

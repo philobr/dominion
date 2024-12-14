@@ -134,7 +134,7 @@ void server::BehaviourRegistry::initialiseBehaviours()
     // discard a card per empty supply pile
     insert<DrawCards<1>, GainActions<1>, GainCoins<1>, NOT_IMPLEMENTED_YET>("Poacher");
     // enemies discard down to three
-    insert<GainCoins<2>, NOT_IMPLEMENTED_YET>("Militia");
+    insert<GainCoins<2>, MilitiaAttack>("Militia");
     // peek top 2 from deck, trash (and/or) discard any. return rest to draw pile in any order
     insert<DrawCards<1>, GainActions<1>, NOT_IMPLEMENTED_YET>("Sentry");
     // discard top of draw pile, if action you may play it

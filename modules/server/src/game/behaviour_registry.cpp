@@ -105,6 +105,8 @@ void server::BehaviourRegistry::initialiseBehaviours()
     insert<DrawCards<2>>("Moat");
     // gain any card costing up to 4
     insert<GainCardMaxCost<4>>("Workshop");
+    // discard a card per empty supply pile
+    insert<DrawCards<1>, GainActions<1>, GainCoins<1>, Poacher>("Poacher");
 
     auto gardens_filter = [](const shared::CardBase::id_t & /*card*/) -> bool { return true; };
     insertVictory<VictoryPointsPerNCards<1, 10, gardens_filter>>("Gardens");

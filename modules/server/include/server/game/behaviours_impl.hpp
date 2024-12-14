@@ -294,7 +294,7 @@ namespace server
             BEHAVIOUR_DONE;
         }
 
-        DEFINE_TEMPLATED_BEHAVIOUR(GainCardMaxCost, int, max_cost)
+        DEFINE_TEMPLATED_BEHAVIOUR(GainCardMaxCostHand, int, max_cost)
         {
             LOG_CALL;
 
@@ -321,6 +321,38 @@ namespace server
 
             const auto chosen_card_id = gain_decision->chosen_card;
             game_state.tryGain<shared::HAND>(cur_player_id, chosen_card_id);
+
+            BEHAVIOUR_DONE;
+        }
+
+        DEFINE_TEMPLATED_BEHAVIOUR(GainCardMaxCostDiscard, int, max_cost)
+        {
+            LOG_CALL;
+
+            const bool has_action_decision = action_decision.has_value();
+            const auto cur_player_id = game_state.getCurrentPlayerId();
+
+            if (!has_action_decision) {
+                // choose any card
+                return { cur_player_id, std::make_unique<shared::GainFromBoardOrder>(max_cost) };
+            }
+
+            auto* gain_decision = dynamic_cast<shared::GainFromBoardDecision*>(action_decision.value().get());
+            if (gain_decision == nullptr) {
+                const auto* decision_ptr = action_decision.value().get();
+                if (decision_ptr != nullptr) {
+                    LOG(ERROR) << FUNC_NAME
+                        << " got a wrong decision type! expected: shared::GainFromBoardDecision, got: "
+                        << typeid(*decision_ptr).name();
+                }
+                else {
+                    LOG(ERROR) << FUNC_NAME << " got a null pointer for action decision!";
+                }
+                throw std::runtime_error("Decision type is not allowed!");
+            }
+
+            const auto chosen_card_id = gain_decision->chosen_card;
+            game_state.tryGain<shared::DISCARD_PILE>(cur_player_id, chosen_card_id);
 
             BEHAVIOUR_DONE;
         }

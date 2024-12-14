@@ -103,6 +103,13 @@ The game master will also be the first player. From now on players will take tur
     The player starts with one available action (one card to play) but can increase this number by playing cards that give additional actions. If a player has no more actions or action cards left, or presses the end actions the game will automatically switch to: 
     2. Buy phase: The player can now buy cards from the board. The amount of money they have available is displayed on the left hand side of the screen as well as the number of individual buys they have left. As soon as no buys are left or the player presses the end buys button the next player's turn will begin.
 
+### Some visual cues
+- Cards that can be played during the action phase will be highlighted in green.
+- Cards that can be bought or otherwise gained from the board through an action cards will be colored in where the others will be greyed out.
+- Be careful both the above happen on one click and can't be undone.
+- Sometimes you'll have to select some cards from your hand. During these phases the background of the cards will go red and you can select them by clicking once, deselect by clicking once again and confirm your selection by pressing the confirm button. Check how many cards you have to select by reading the card carefully or checking with which choices the confirm button activates
+- You can have a closer look at any card by right-clicking it. Close the pop-up before continuing.
+
 
 ## Developing
 

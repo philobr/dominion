@@ -100,7 +100,7 @@ using our random selection feature which will save you the hassle of counting.
 The game master will also be the first player. From now on players will take turns of the following structure until either 3 piles are emptied or there are no province cards left.
     1. Action Phase: The player may play action cards from their hand. These cards will have a variety of effects that can be read on the card itself.
     The player starts with one available action (one card to play) but can increase this number by playing cards that give additional actions. If a player has no more actions or action cards left, or presses the end actions the game will automatically switch to: 
-    2. Buy phase: The player can now buy cards from the board. The amount of money they have available is displayed on the left hand side of the screen as well as the number of individual buys they have left. As soon as no buys are left or the player presses the end buys button the next player's turn will begin.
+    2. Buy phase: The player can now buy cards from the board. The amount of money they have available is displayed on the left hand side of the screen as well as the number of individual buys they have left. As soon as no buys are left or the player presses the end turn button (this can also happen during action phase) the next player's turn will begin.
 
 ### Some visual cues
 - Cards that can be played during the action phase will be highlighted in green.

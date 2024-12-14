@@ -48,7 +48,7 @@ server::BehaviourChain::ret_t server::BehaviourChain::runBehaviourChain(server::
 {
     LOG(INFO) << "Called " << FUNC_NAME << "for card \'" << current_card << "\'";
     while ( hasNext() ) {
-        auto action_order = currentBehaviour().apply(game_state, std::nullopt);
+        auto action_order = currentBehaviour().apply(game_state, game_state.getCurrentPlayerId(), std::nullopt);
 
         if ( currentBehaviour().isDone() ) {
             advance();
@@ -64,7 +64,7 @@ server::BehaviourChain::ret_t server::BehaviourChain::runBehaviourChain(server::
 }
 
 server::BehaviourChain::ret_t
-server::BehaviourChain::continueChain(server::GameState &game_state,
+server::BehaviourChain::continueChain(server::GameState &game_state, const shared::PlayerBase::id_t &player_id,
                                       std::unique_ptr<shared::ActionDecision> &action_decision)
 {
     LOG(INFO) << "Called " << FUNC_NAME << "for card \'" << current_card << "\'";
@@ -73,7 +73,7 @@ server::BehaviourChain::continueChain(server::GameState &game_state,
         throw exception::UnreachableCode();
     }
 
-    auto action_order = currentBehaviour().apply(game_state, std::move(action_decision));
+    auto action_order = currentBehaviour().apply(game_state, player_id, std::move(action_decision));
 
     if ( !currentBehaviour().isDone() ) {
         // can be an empty OrderResponse as well

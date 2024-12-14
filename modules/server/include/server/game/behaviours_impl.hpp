@@ -202,7 +202,7 @@ namespace server
                 if ( cards_to_discard != 0) {
                     return {game_state.getCurrentPlayerId(),
                             std::make_unique<shared::ChooseFromHandOrder>(cards_to_discard, cards_to_discard,
-                                                                          shared::ChooseFromOrder::AllowedChoice::TRASH)};
+                                                                          shared::ChooseFromOrder::AllowedChoice::DISCARD)};
                 }
             }
 

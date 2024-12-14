@@ -37,9 +37,9 @@ namespace client
         wxBoxSizer *outersizer = new wxBoxSizer(wxHORIZONTAL);
 
         // Set background colour
-        if (phase == shared::GamePhase::ACTION_PHASE && is_active ){
+        if ( phase == shared::GamePhase::ACTION_PHASE && is_active ) {
             this->SetBackgroundColour(formatting_constants::ACTIVE_PLAYER_PANEL);
-        } else if (phase == shared::GamePhase::ACTION_PHASE &&  confirm_button){
+        } else if ( phase == shared::GamePhase::ACTION_PHASE && confirm_button ) {
             this->SetBackgroundColour(formatting_constants::ATTACKED_PLAYER_PANEL);
         } else {
             this->SetBackgroundColour(formatting_constants::INACTIVE_PLAYER_PANEL);

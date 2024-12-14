@@ -80,7 +80,6 @@ wxThread::ExitCode ClientListener::Entry()
         }
 
         LOG(ERROR) << "Network error. Read error, shutting down Listener";
-        wxGetApp().getController().showStatus("Not connection");
 
     } catch ( const std::exception &e ) {
         LOG(ERROR) << "Network error. Error in listener thread: " << std::string(e.what());

@@ -17,7 +17,7 @@ namespace client
                 throw std::runtime_error("Could not load file: " + path);
             }
             _images[name] = image;
-            LOG(DEBUG) << "we have: " << _images.size() << " images loaded";
+            LOG(INFO) << "we have: " << _images.size() << " images loaded";
         }
         return _images[name];
     }

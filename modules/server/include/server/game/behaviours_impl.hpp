@@ -417,6 +417,20 @@ namespace server
                              server::base::Behaviour::action_decision_t action_decision)
         {
             LOG_CALL;
+            // check if anything has to be done
+            unsigned count = 0;
+            for ( const auto &player_id : game_state.getAllPlayerIDs() ) {
+                if ( player_id == requestor_id ) {
+                    continue;
+                }
+                auto &affected_player = game_state.getPlayer(player_id);
+                if ( affected_player.get<shared::HAND>().size() > 3 && !affected_player.canBlock() ) {
+                  count++;
+                }
+            }
+            if (count == 0) {
+                BEHAVIOUR_DONE;
+            }
             if ( !action_decision.has_value() ) {
                 return helper::sendAttackToEnemies(
                         game_state,

@@ -147,7 +147,7 @@ namespace server
             }
 
             // check if this is a connection to a new player
-            BasicNetwork::addPlayerToAddress(req->player_id, peer_address.to_string());
+            BasicNetwork::addPlayerToAddress(req->player_id, req->game_id, peer_address.to_string());
             LOG(INFO) << "Handling request from player(" << req->player_id << "): " << msg;
 
             _lobby_manager.handleMessage(req);
@@ -163,6 +163,10 @@ namespace server
                                               const shared::PlayerBase::id_t &player_id)
     {
         return BasicNetwork::sendToPlayer(message->toJson(), player_id);
+    }
+
+    void ServerNetworkManager::removePlayer(std::string &lobby_id, player_id_t &player_id){
+        _lobby_manager.removePlayer(lobby_id, player_id);
     }
 
 } // namespace server

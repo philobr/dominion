@@ -10,6 +10,7 @@
 
 #include <shared/game/game_state/reduced_game_state.h>
 #include <shared/message_types.h>
+#include "server/network/basic_network.h"
 
 namespace server
 {
@@ -23,7 +24,6 @@ namespace server
     {
     public:
         // TODO: The message interface should not be passed to the constructor, but to the methods that need it.
-        // Also, the message interface should definitely not be passed as a raw pointer.
 
         /**
          * @brief Create a new lobby manager.
@@ -48,6 +48,11 @@ namespace server
          * @return A const reference to the map of lobby ids.
          */
         const std::map<std::string, std::shared_ptr<Lobby>> &getGames() const { return games; };
+
+        /**
+         * @brief Remove a player from his lobby and close the lobby if the game is in progress
+         */
+        void removePlayer(std::string &lobby_id, player_id_t &player_id);
 
     private:
         std::map<std::string, std::shared_ptr<Lobby>> games;

@@ -35,11 +35,19 @@ namespace server
         static ssize_t sendMessage(std::unique_ptr<shared::ServerToClientMessage> message,
                                    const shared::PlayerBase::id_t &player_id);
 
+        /**
+         * @brief removes a player from the lobby that he is in
+         *
+         * @param lobby_id the id of the lobby that the player is in
+         *
+         * @param player_id the id of the player to remove
+         */
+        static void removePlayer(std::string &lobby_id, player_id_t &player_id);
+
     private:
         // Lobby object to pass received messages to
         static LobbyManager _lobby_manager;
 
-        // Might get removed later, tbd
         inline static ServerNetworkManager *_instance;
 
         inline static std::shared_mutex _rw_lock;

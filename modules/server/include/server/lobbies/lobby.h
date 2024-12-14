@@ -65,6 +65,20 @@ namespace server
          */
         void terminate(MessageInterface &message_interface);
 
+        /**
+         * @brief Removes a player from the lobby
+         */
+        void removePlayer(player_id_t &player_id);
+
+        /**
+         * @brief The game_interface gets initialised only when we start a game, so we can check if a game is already
+         * running this way.
+         *
+         * @return true
+         * @return false
+         */
+        inline bool gameRunning() const { return game_interface != nullptr; }
+
     private:
         std::unique_ptr<server::GameInterface> game_interface;
         Player::id_t game_master;
@@ -117,15 +131,6 @@ namespace server
         {
             return std::any_of(players.begin(), players.end(), [&](const auto &player) { return player == player_id; });
         }
-
-        /**
-         * @brief The game_interface gets initialised only when we start a game, so we can check if a game is already
-         * running this way.
-         *
-         * @return true
-         * @return false
-         */
-        inline bool gameRunning() const { return game_interface != nullptr; }
 
         /**
          * @brief Broadcasts the gamestate to all players in the lobby.

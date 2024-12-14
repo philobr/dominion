@@ -1,8 +1,10 @@
 
+#include <algorithm>
 #include <server/lobbies/lobby.h>
 #include <shared/game/game_state/board_base.h>
 #include <shared/utils/assert.h>
 #include <shared/utils/logger.h>
+#include "server/network/basic_network.h"
 
 namespace server
 {
@@ -184,5 +186,15 @@ namespace server
         message_interface.broadcast<shared::StartGameBroadcastMessage>(players, lobby_id);
         auto start_orders = game_interface->startGame();
         broadcastOrders(message_interface, start_orders);
+    }
+
+    void Lobby::removePlayer(player_id_t &player_id){
+        // Check if player is already in the lobby
+        if ( playerInLobby(player_id) ) {
+            LOG(INFO) << "Removing player: " << player_id << " from lobby: " << lobby_id;
+            players.erase(std::find(players.begin(), players.end(), player_id));
+            return;
+        }
+        LOG(INFO) << "Tried removeing player: " << player_id << " from lobby: " << lobby_id << ", but player is not in lobby";
     }
 } // namespace server

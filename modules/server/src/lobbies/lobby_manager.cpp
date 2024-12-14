@@ -114,7 +114,7 @@ namespace server
             lobby->removePlayer(player_id);
 
             // if lobby is empty, remove it
-            if ( lobby->getPlayers().size() == 0 ) {
+            if ( lobby->getPlayers().size() == 0 || lobby->isGameMaster(player_id) ) {
                 games.erase(games.find(lobby_id));
             }
         }

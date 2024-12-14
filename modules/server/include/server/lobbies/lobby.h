@@ -8,6 +8,7 @@
 #include <server/network/message_interface.h>
 
 #include <shared/message_types.h>
+#include "server/network/basic_network.h"
 
 namespace server
 {
@@ -78,6 +79,15 @@ namespace server
          * @return false
          */
         inline bool gameRunning() const { return game_interface != nullptr; }
+
+        /**
+         * @brief returns whether or not the player is the game master
+         *
+         * @param player to check
+         *
+         * @return true if the player is game master
+         */
+        bool isGameMaster(player_id_t &player_id) { return player_id == game_master; }
 
     private:
         std::unique_ptr<server::GameInterface> game_interface;

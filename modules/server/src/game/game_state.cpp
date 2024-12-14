@@ -121,6 +121,10 @@ namespace server
         resetPhase();
         board->clearPlayedCards();
 
+        if ( board->isGameOver() ) {
+            is_actually_over = true;
+        }
+
         maybeSwitchPhase(); // a player might not have any action cards at the beginning of the action phase
     }
 

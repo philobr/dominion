@@ -30,6 +30,7 @@ namespace server
         unsigned int current_player_idx;
         ServerBoard::ptr_t board;
         shared::GamePhase phase;
+        bool is_actually_over = false;
 
     public:
         GameState();
@@ -112,7 +113,7 @@ namespace server
         /**
          * @return true; if the game is over
          */
-        bool isGameOver() const { return board->isGameOver(); }
+        bool isGameOver() const { return board->isGameOver() && (is_actually_over); }
 
         /**
          * @brief If the game has ended, this will return the results of the game.

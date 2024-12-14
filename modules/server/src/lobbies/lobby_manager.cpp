@@ -22,7 +22,7 @@ namespace server
         }
 
         // other messages get forwarded to the lobby
-        const auto &lobby_id = message->game_id;
+        const std::string lobby_id = message->game_id;
         if ( !lobbyExists(message->game_id) ) {
             const auto &player_id = message->player_id;
             LOG(WARN) << "Tried to access a nonexistent LobbyID: " << lobby_id << ", by PlayerID: " << player_id;

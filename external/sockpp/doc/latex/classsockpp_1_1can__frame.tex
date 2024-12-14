@@ -1,0 +1,102 @@
+\doxysection{sockpp\+::can\+\_\+frame Class Reference}
+\hypertarget{classsockpp_1_1can__frame}{}\label{classsockpp_1_1can__frame}\index{sockpp::can\_frame@{sockpp::can\_frame}}
+
+
+Class that represents a Linux Socket\+CAN frame.  
+
+
+
+
+{\ttfamily \#include $<$can\+\_\+frame.\+h$>$}
+
+Inheritance diagram for sockpp\+::can\+\_\+frame\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{classsockpp_1_1can__frame}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{classsockpp_1_1can__frame_a18326682b6bfca23192c1ea6f67669bf}{can\+\_\+frame}} ()
+\begin{DoxyCompactList}\small\item\em Constructs an empty frame. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classsockpp_1_1can__frame_a21e6d332b1abb69cba1c3a3300d71db1}{can\+\_\+frame}} (canid\+\_\+t can\+ID, const string \&data)
+\begin{DoxyCompactList}\small\item\em Constructs a frame with the specified ID and data. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classsockpp_1_1can__frame_afe056d20e8d166f0409d3f881d61e545}{can\+\_\+frame}} (canid\+\_\+t can\+ID, const void \texorpdfstring{$\ast$}{*}data, size\+\_\+t n)
+\begin{DoxyCompactList}\small\item\em Constructs a frame with the specified ID and data. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classsockpp_1_1can__frame_aadfc503bfaf856ced749bbbee96e8100}{can\+\_\+frame}} (const \mbox{\hyperlink{classsockpp_1_1can__frame}{base}} \&frame)
+\begin{DoxyCompactList}\small\item\em Construct a frame from a C library CAN frame. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Class that represents a Linux Socket\+CAN frame. 
+
+This inherits from the Linux CAN frame struct, just providing easier construction. 
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{classsockpp_1_1can__frame_a18326682b6bfca23192c1ea6f67669bf}\index{sockpp::can\_frame@{sockpp::can\_frame}!can\_frame@{can\_frame}}
+\index{can\_frame@{can\_frame}!sockpp::can\_frame@{sockpp::can\_frame}}
+\doxysubsubsection{\texorpdfstring{can\_frame()}{can\_frame()}\hspace{0.1cm}{\footnotesize\ttfamily [1/4]}}
+{\footnotesize\ttfamily \label{classsockpp_1_1can__frame_a18326682b6bfca23192c1ea6f67669bf} 
+sockpp\+::can\+\_\+frame\+::can\+\_\+frame (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Constructs an empty frame. 
+
+The frame is initialized to all zeroes. \Hypertarget{classsockpp_1_1can__frame_a21e6d332b1abb69cba1c3a3300d71db1}\index{sockpp::can\_frame@{sockpp::can\_frame}!can\_frame@{can\_frame}}
+\index{can\_frame@{can\_frame}!sockpp::can\_frame@{sockpp::can\_frame}}
+\doxysubsubsection{\texorpdfstring{can\_frame()}{can\_frame()}\hspace{0.1cm}{\footnotesize\ttfamily [2/4]}}
+{\footnotesize\ttfamily \label{classsockpp_1_1can__frame_a21e6d332b1abb69cba1c3a3300d71db1} 
+sockpp\+::can\+\_\+frame\+::can\+\_\+frame (\begin{DoxyParamCaption}\item[{canid\+\_\+t}]{can\+ID}{, }\item[{const string \&}]{data}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Constructs a frame with the specified ID and data. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em can\+ID} & The CAN identifier for the frame \\
+\hline
+{\em data} & The data field for the frame \\
+\hline
+\end{DoxyParams}
+\Hypertarget{classsockpp_1_1can__frame_afe056d20e8d166f0409d3f881d61e545}\index{sockpp::can\_frame@{sockpp::can\_frame}!can\_frame@{can\_frame}}
+\index{can\_frame@{can\_frame}!sockpp::can\_frame@{sockpp::can\_frame}}
+\doxysubsubsection{\texorpdfstring{can\_frame()}{can\_frame()}\hspace{0.1cm}{\footnotesize\ttfamily [3/4]}}
+{\footnotesize\ttfamily \label{classsockpp_1_1can__frame_afe056d20e8d166f0409d3f881d61e545} 
+sockpp\+::can\+\_\+frame\+::can\+\_\+frame (\begin{DoxyParamCaption}\item[{canid\+\_\+t}]{can\+ID}{, }\item[{const void \texorpdfstring{$\ast$}{*}}]{data}{, }\item[{size\+\_\+t}]{n}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Constructs a frame with the specified ID and data. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em can\+ID} & The CAN identifier for the frame \\
+\hline
+{\em data} & The data field for the frame \\
+\hline
+{\em n} & The number of bytes in the data field \\
+\hline
+\end{DoxyParams}
+\Hypertarget{classsockpp_1_1can__frame_aadfc503bfaf856ced749bbbee96e8100}\index{sockpp::can\_frame@{sockpp::can\_frame}!can\_frame@{can\_frame}}
+\index{can\_frame@{can\_frame}!sockpp::can\_frame@{sockpp::can\_frame}}
+\doxysubsubsection{\texorpdfstring{can\_frame()}{can\_frame()}\hspace{0.1cm}{\footnotesize\ttfamily [4/4]}}
+{\footnotesize\ttfamily \label{classsockpp_1_1can__frame_aadfc503bfaf856ced749bbbee96e8100} 
+sockpp\+::can\+\_\+frame\+::can\+\_\+frame (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classsockpp_1_1can__frame}{base}} \&}]{frame}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Construct a frame from a C library CAN frame. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em frame} & A C lib CAN frame. \\
+\hline
+\end{DoxyParams}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+include/sockpp/\mbox{\hyperlink{can__frame_8h}{can\+\_\+frame.\+h}}\end{DoxyCompactItemize}

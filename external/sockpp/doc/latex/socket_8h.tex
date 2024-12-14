@@ -1,0 +1,152 @@
+\doxysection{include/sockpp/socket.h File Reference}
+\hypertarget{socket_8h}{}\label{socket_8h}\index{include/sockpp/socket.h@{include/sockpp/socket.h}}
+
+
+The base {\ttfamily socket} and library initialization classes.  
+
+
+{\ttfamily \#include $<$chrono$>$}\newline
+{\ttfamily \#include $<$string$>$}\newline
+{\ttfamily \#include $<$tuple$>$}\newline
+{\ttfamily \#include "{}sockpp/result.\+h"{}}\newline
+{\ttfamily \#include "{}sockpp/sock\+\_\+address.\+h"{}}\newline
+{\ttfamily \#include "{}sockpp/types.\+h"{}}\newline
+\doxysubsubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \mbox{\hyperlink{classsockpp_1_1socket__initializer}{sockpp\+::socket\+\_\+initializer}}
+\begin{DoxyCompactList}\small\item\em RAII singleton class to initialize and then shut down the library. \end{DoxyCompactList}\item 
+class \mbox{\hyperlink{classsockpp_1_1socket}{sockpp\+::socket}}
+\begin{DoxyCompactList}\small\item\em Base class for socket objects. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{socket_8h_ab045671400eacfc589ce8f055ed66264}\label{socket_8h_ab045671400eacfc589ce8f055ed66264} 
+typedef int {\bfseries sockpp\+::socket\+\_\+t}
+\begin{DoxyCompactList}\small\item\em The OS socket handle. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+timeval \mbox{\hyperlink{socket_8h_a7acc836a52f14ef54001c689829dac5b}{sockpp\+::to\+\_\+timeval}} (const microseconds \&dur)
+\begin{DoxyCompactList}\small\item\em Converts a number of microseconds to a relative timeval. \end{DoxyCompactList}\item 
+{\footnotesize template$<$class Rep , class Period $>$ }\\timeval \mbox{\hyperlink{socket_8h_a499ceb4d055795c5c358d860bedfc99f}{sockpp\+::to\+\_\+timeval}} (const duration$<$ Rep, Period $>$ \&dur)
+\begin{DoxyCompactList}\small\item\em Converts a chrono duration to a relative timeval. \end{DoxyCompactList}\item 
+microseconds \mbox{\hyperlink{socket_8h_aff4e33d511649686d999f969c67d2554}{sockpp\+::to\+\_\+duration}} (const timeval \&tv)
+\begin{DoxyCompactList}\small\item\em Converts a relative timeval to a chrono duration. \end{DoxyCompactList}\item 
+std\+::chrono\+::system\+\_\+clock\+::time\+\_\+point \mbox{\hyperlink{socket_8h_a456ee381f848519b17b09c91a61e2901}{sockpp\+::to\+\_\+timepoint}} (const timeval \&tv)
+\begin{DoxyCompactList}\small\item\em Converts an absolute timeval to a chrono time\+\_\+point. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{socket_8h_a6913fe6ca77eb944670d69db715c09c0}{sockpp\+::initialize}} ()
+\begin{DoxyCompactList}\small\item\em Initializes the sockpp library. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{socket_8h_acb1c7a0b7291df798a8cd463568096ff}\label{socket_8h_acb1c7a0b7291df798a8cd463568096ff} 
+const \mbox{\hyperlink{socket_8h_ab045671400eacfc589ce8f055ed66264}{socket\+\_\+t}} {\bfseries sockpp\+::\+INVALID\+\_\+\+SOCKET} = -\/1
+\begin{DoxyCompactList}\small\item\em Invalid socket descriptor. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+The base {\ttfamily socket} and library initialization classes. 
+
+\begin{DoxyAuthor}{Author}
+Frank Pagliughi 
+
+So\+Ro Systems, Inc. 
+
+www.\+sorosys.\+com
+\end{DoxyAuthor}
+\begin{DoxyDate}{Date}
+December 2014 
+\end{DoxyDate}
+
+
+\doxysubsection{Function Documentation}
+\Hypertarget{socket_8h_a6913fe6ca77eb944670d69db715c09c0}\index{socket.h@{socket.h}!initialize@{initialize}}
+\index{initialize@{initialize}!socket.h@{socket.h}}
+\doxysubsubsection{\texorpdfstring{initialize()}{initialize()}}
+{\footnotesize\ttfamily \label{socket_8h_a6913fe6ca77eb944670d69db715c09c0} 
+void sockpp\+::initialize (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+Initializes the sockpp library. 
+
+This initializes the library by creating a static singleton RAII object which does any platform-\/specific initialization the first time it\textquotesingle{}s call in a process, and then performs cleanup automatically when the object is destroyed at program termination.
+
+This should be call at least once before any other sockpp objects are created or used. It can be called repeatedly with subsequent calls having no effect
+
+This is primarily required for Win32, to startup the Win\+Sock DLL.
+
+On Unix-\/style platforms it disables SIGPIPE signals. Errors are handled by functon return values and exceptions. \Hypertarget{socket_8h_aff4e33d511649686d999f969c67d2554}\index{socket.h@{socket.h}!to\_duration@{to\_duration}}
+\index{to\_duration@{to\_duration}!socket.h@{socket.h}}
+\doxysubsubsection{\texorpdfstring{to\_duration()}{to\_duration()}}
+{\footnotesize\ttfamily \label{socket_8h_aff4e33d511649686d999f969c67d2554} 
+microseconds sockpp\+::to\+\_\+duration (\begin{DoxyParamCaption}\item[{const timeval \&}]{tv}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Converts a relative timeval to a chrono duration. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em tv} & A timeval. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+A chrono duration. 
+\end{DoxyReturn}
+\Hypertarget{socket_8h_a456ee381f848519b17b09c91a61e2901}\index{socket.h@{socket.h}!to\_timepoint@{to\_timepoint}}
+\index{to\_timepoint@{to\_timepoint}!socket.h@{socket.h}}
+\doxysubsubsection{\texorpdfstring{to\_timepoint()}{to\_timepoint()}}
+{\footnotesize\ttfamily \label{socket_8h_a456ee381f848519b17b09c91a61e2901} 
+std\+::chrono\+::system\+\_\+clock\+::time\+\_\+point sockpp\+::to\+\_\+timepoint (\begin{DoxyParamCaption}\item[{const timeval \&}]{tv}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Converts an absolute timeval to a chrono time\+\_\+point. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em tv} & A timeval. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+A chrono time\+\_\+point. 
+\end{DoxyReturn}
+\Hypertarget{socket_8h_a499ceb4d055795c5c358d860bedfc99f}\index{socket.h@{socket.h}!to\_timeval@{to\_timeval}}
+\index{to\_timeval@{to\_timeval}!socket.h@{socket.h}}
+\doxysubsubsection{\texorpdfstring{to\_timeval()}{to\_timeval()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \label{socket_8h_a499ceb4d055795c5c358d860bedfc99f} 
+template$<$class Rep , class Period $>$ \\
+timeval sockpp\+::to\+\_\+timeval (\begin{DoxyParamCaption}\item[{const duration$<$ Rep, Period $>$ \&}]{dur}{}\end{DoxyParamCaption})}
+
+
+
+Converts a chrono duration to a relative timeval. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em dur} & A chrono duration. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+A timeval. 
+\end{DoxyReturn}
+\Hypertarget{socket_8h_a7acc836a52f14ef54001c689829dac5b}\index{socket.h@{socket.h}!to\_timeval@{to\_timeval}}
+\index{to\_timeval@{to\_timeval}!socket.h@{socket.h}}
+\doxysubsubsection{\texorpdfstring{to\_timeval()}{to\_timeval()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \label{socket_8h_a7acc836a52f14ef54001c689829dac5b} 
+timeval sockpp\+::to\+\_\+timeval (\begin{DoxyParamCaption}\item[{const microseconds \&}]{dur}{}\end{DoxyParamCaption})}
+
+
+
+Converts a number of microseconds to a relative timeval. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em dur} & A chrono duration of microseconds. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+A timeval 
+\end{DoxyReturn}

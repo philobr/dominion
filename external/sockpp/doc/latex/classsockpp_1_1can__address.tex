@@ -1,0 +1,362 @@
+\doxysection{sockpp\+::can\+\_\+address Class Reference}
+\hypertarget{classsockpp_1_1can__address}{}\label{classsockpp_1_1can__address}\index{sockpp::can\_address@{sockpp::can\_address}}
+
+
+Class that represents a Linux Socket\+CAN address.  
+
+
+
+
+{\ttfamily \#include $<$can\+\_\+address.\+h$>$}
+
+Inheritance diagram for sockpp\+::can\+\_\+address\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{classsockpp_1_1can__address}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{classsockpp_1_1can__address_abb52f2768042e8d148ea72dc3c78dbb4}{can\+\_\+address}} () noexcept
+\begin{DoxyCompactList}\small\item\em Constructs an empty address. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classsockpp_1_1can__address_aeb99e1a7491496a17c61c05fdd1d141b}{can\+\_\+address}} (unsigned idx) noexcept
+\begin{DoxyCompactList}\small\item\em Creates an address for binding to a specific CAN interface. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classsockpp_1_1can__address_aa634b4dc329dedd8d56f2413c79dd93c}{can\+\_\+address}} (const string \&\mbox{\hyperlink{classsockpp_1_1can__address_adf220acee4858b2b7c7e6b051639e3e9}{iface}})
+\begin{DoxyCompactList}\small\item\em Constructs an address for the specified CAN interface. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classsockpp_1_1can__address_a28adbdc672a05a282d6245f5961a5f0d}{can\+\_\+address}} (const sockaddr \&addr) noexcept
+\begin{DoxyCompactList}\small\item\em Constructs the address by copying the specified structure. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classsockpp_1_1can__address_a3fdc6027891cebad1244268e72301643}{can\+\_\+address}} (const \mbox{\hyperlink{classsockpp_1_1sock__address}{sock\+\_\+address}} \&addr) noexcept
+\begin{DoxyCompactList}\small\item\em Constructs the address by copying the specified structure. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classsockpp_1_1can__address_a9d0efbdc456d6df93cb62490ee7ec660}{can\+\_\+address}} (const sockaddr\+\_\+can \&addr) noexcept
+\begin{DoxyCompactList}\small\item\em Constructs the address by copying the specified structure. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classsockpp_1_1can__address_acf49506a3fc0e0c2b670bebfdad9b52d}{can\+\_\+address}} (const \mbox{\hyperlink{classsockpp_1_1can__address}{can\+\_\+address}} \&addr) noexcept
+\begin{DoxyCompactList}\small\item\em Constructs the address by copying the specified address. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{classsockpp_1_1can__address_a0e93d75f42bf1b4939500b68307f28eb}{is\+\_\+set}} () const noexcept override
+\begin{DoxyCompactList}\small\item\em Checks if the address is set to some value. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classsockpp_1_1result}{result}}$<$ string $>$ \mbox{\hyperlink{classsockpp_1_1can__address_a85126b3fea2f25cf908eae1336d30391}{get\+\_\+iface}} () const noexcept
+\begin{DoxyCompactList}\small\item\em Try to get the name of the CAN interface for this address. \end{DoxyCompactList}\item 
+string \mbox{\hyperlink{classsockpp_1_1can__address_adf220acee4858b2b7c7e6b051639e3e9}{iface}} () const noexcept
+\begin{DoxyCompactList}\small\item\em Get the name of the CAN interface for this address. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{classsockpp_1_1can__address_a14bd23afd5ee4e16624b0ad3433e7590}{index}} () const noexcept
+\begin{DoxyCompactList}\small\item\em Gets the index of the CAN interface for this address. \end{DoxyCompactList}\item 
+socklen\+\_\+t \mbox{\hyperlink{classsockpp_1_1can__address_af6e78e39748afb7db8a7285557994134}{size}} () const override
+\begin{DoxyCompactList}\small\item\em Gets the size of the address structure. \end{DoxyCompactList}\item 
+const sockaddr \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{classsockpp_1_1can__address_ab28b359f745395930b01090f59aacf79}{sockaddr\+\_\+ptr}} () const override
+\begin{DoxyCompactList}\small\item\em Gets a pointer to this object cast to a const {\itshape sockaddr}. \end{DoxyCompactList}\item 
+sockaddr \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{classsockpp_1_1can__address_af1824f4b6ed8d252b6621b2e351209f1}{sockaddr\+\_\+ptr}} () override
+\begin{DoxyCompactList}\small\item\em Gets a pointer to this object cast to a {\itshape sockaddr}. \end{DoxyCompactList}\item 
+const sockaddr\+\_\+can \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{classsockpp_1_1can__address_a1c96dc66e1d6686d02017ce2450166cd}{sockaddr\+\_\+can\+\_\+ptr}} () const
+\begin{DoxyCompactList}\small\item\em Gets a const pointer to this object cast to a {\itshape sockaddr\+\_\+can}. \end{DoxyCompactList}\item 
+sockaddr\+\_\+can \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{classsockpp_1_1can__address_ab291475e8228e15dc3b5013a11788ca8}{sockaddr\+\_\+can\+\_\+ptr}} () noexcept
+\begin{DoxyCompactList}\small\item\em Gets a pointer to this object cast to a {\itshape sockaddr\+\_\+can}. \end{DoxyCompactList}\item 
+string \mbox{\hyperlink{classsockpp_1_1can__address_a94b32afe88a3a05aa1da94f9edf8f3e1}{to\+\_\+string}} () const noexcept
+\begin{DoxyCompactList}\small\item\em Gets a printable string for the address. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Public Member Functions inherited from \mbox{\hyperlink{classsockpp_1_1sock__address}{sockpp\+::sock\+\_\+address}}}
+\begin{DoxyCompactItemize}
+\item 
+virtual {\bfseries \texorpdfstring{$\sim$}{\string~}sock\+\_\+address} () noexcept
+\begin{DoxyCompactList}\small\item\em Virtual destructor. \end{DoxyCompactList}\item 
+virtual sa\+\_\+family\+\_\+t \mbox{\hyperlink{classsockpp_1_1sock__address_af47688d3cff571fbf0c342c3d7885f97}{family}} () const
+\begin{DoxyCompactList}\small\item\em Gets the network family of the address. \end{DoxyCompactList}\item 
+virtual \mbox{\hyperlink{classsockpp_1_1sock__address_ab78f06a210ab1b936d25d0a8a5a9d896}{operator bool}} () const noexcept
+\begin{DoxyCompactList}\small\item\em Determines if the address is set to some value. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static \mbox{\hyperlink{classsockpp_1_1result}{result}}$<$ \mbox{\hyperlink{classsockpp_1_1can__address}{can\+\_\+address}} $>$ \mbox{\hyperlink{classsockpp_1_1can__address_ace950e03bbccdaf743636e1ca439c49a}{create}} (const string \&\mbox{\hyperlink{classsockpp_1_1can__address_adf220acee4858b2b7c7e6b051639e3e9}{iface}})
+\begin{DoxyCompactList}\small\item\em Attempts to get the address for the secified CAN interface. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Static Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{classsockpp_1_1can__address_a9b8b86ec81ad879313b617c53c498039}\label{classsockpp_1_1can__address_a9b8b86ec81ad879313b617c53c498039} 
+static constexpr sa\+\_\+family\+\_\+t {\bfseries ADDRESS\+\_\+\+FAMILY} = AF\+\_\+\+CAN
+\begin{DoxyCompactList}\small\item\em The address family for this type of address. \end{DoxyCompactList}\item 
+\Hypertarget{classsockpp_1_1can__address_a073807d79e842de516efcb07ee54ee19}\label{classsockpp_1_1can__address_a073807d79e842de516efcb07ee54ee19} 
+static const unsigned {\bfseries ALL\+\_\+\+IFACE} = 0
+\begin{DoxyCompactList}\small\item\em Iface to use to indicate binding to all interfaces. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Class that represents a Linux Socket\+CAN address. 
+
+This inherits from the CAN form of a socket address, {\itshape sockaddr\+\_\+can}. 
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{classsockpp_1_1can__address_abb52f2768042e8d148ea72dc3c78dbb4}\index{sockpp::can\_address@{sockpp::can\_address}!can\_address@{can\_address}}
+\index{can\_address@{can\_address}!sockpp::can\_address@{sockpp::can\_address}}
+\doxysubsubsection{\texorpdfstring{can\_address()}{can\_address()}\hspace{0.1cm}{\footnotesize\ttfamily [1/7]}}
+{\footnotesize\ttfamily \label{classsockpp_1_1can__address_abb52f2768042e8d148ea72dc3c78dbb4} 
+sockpp\+::can\+\_\+address\+::can\+\_\+address (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
+
+
+
+Constructs an empty address. 
+
+The address is initialized to all zeroes. \Hypertarget{classsockpp_1_1can__address_aeb99e1a7491496a17c61c05fdd1d141b}\index{sockpp::can\_address@{sockpp::can\_address}!can\_address@{can\_address}}
+\index{can\_address@{can\_address}!sockpp::can\_address@{sockpp::can\_address}}
+\doxysubsubsection{\texorpdfstring{can\_address()}{can\_address()}\hspace{0.1cm}{\footnotesize\ttfamily [2/7]}}
+{\footnotesize\ttfamily \label{classsockpp_1_1can__address_aeb99e1a7491496a17c61c05fdd1d141b} 
+sockpp\+::can\+\_\+address\+::can\+\_\+address (\begin{DoxyParamCaption}\item[{unsigned}]{idx}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [explicit]}, {\ttfamily [noexcept]}}
+
+
+
+Creates an address for binding to a specific CAN interface. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em idx} & The interface index to use. This must, obviously, be an index to a CAN interface. \\
+\hline
+\end{DoxyParams}
+\Hypertarget{classsockpp_1_1can__address_aa634b4dc329dedd8d56f2413c79dd93c}\index{sockpp::can\_address@{sockpp::can\_address}!can\_address@{can\_address}}
+\index{can\_address@{can\_address}!sockpp::can\_address@{sockpp::can\_address}}
+\doxysubsubsection{\texorpdfstring{can\_address()}{can\_address()}\hspace{0.1cm}{\footnotesize\ttfamily [3/7]}}
+{\footnotesize\ttfamily \label{classsockpp_1_1can__address_aa634b4dc329dedd8d56f2413c79dd93c} 
+sockpp\+::can\+\_\+address\+::can\+\_\+address (\begin{DoxyParamCaption}\item[{const string \&}]{iface}{}\end{DoxyParamCaption})}
+
+
+
+Constructs an address for the specified CAN interface. 
+
+The interface might be "{}can0"{}, "{}can1"{}, "{}vcan0"{}, etc. 
+\begin{DoxyParams}{Parameters}
+{\em iface} & The name of the CAN interface \\
+\hline
+\end{DoxyParams}
+
+\begin{DoxyExceptions}{Exceptions}
+{\em system\+\_\+error} & on failure \\
+\hline
+\end{DoxyExceptions}
+\Hypertarget{classsockpp_1_1can__address_a28adbdc672a05a282d6245f5961a5f0d}\index{sockpp::can\_address@{sockpp::can\_address}!can\_address@{can\_address}}
+\index{can\_address@{can\_address}!sockpp::can\_address@{sockpp::can\_address}}
+\doxysubsubsection{\texorpdfstring{can\_address()}{can\_address()}\hspace{0.1cm}{\footnotesize\ttfamily [4/7]}}
+{\footnotesize\ttfamily \label{classsockpp_1_1can__address_a28adbdc672a05a282d6245f5961a5f0d} 
+sockpp\+::can\+\_\+address\+::can\+\_\+address (\begin{DoxyParamCaption}\item[{const sockaddr \&}]{addr}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [explicit]}, {\ttfamily [noexcept]}}
+
+
+
+Constructs the address by copying the specified structure. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em addr} & The generic address. This must be an AF\+\_\+\+CAN address to be a valid CANbus address. \\
+\hline
+\end{DoxyParams}
+\Hypertarget{classsockpp_1_1can__address_a3fdc6027891cebad1244268e72301643}\index{sockpp::can\_address@{sockpp::can\_address}!can\_address@{can\_address}}
+\index{can\_address@{can\_address}!sockpp::can\_address@{sockpp::can\_address}}
+\doxysubsubsection{\texorpdfstring{can\_address()}{can\_address()}\hspace{0.1cm}{\footnotesize\ttfamily [5/7]}}
+{\footnotesize\ttfamily \label{classsockpp_1_1can__address_a3fdc6027891cebad1244268e72301643} 
+sockpp\+::can\+\_\+address\+::can\+\_\+address (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classsockpp_1_1sock__address}{sock\+\_\+address}} \&}]{addr}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
+
+
+
+Constructs the address by copying the specified structure. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em addr} & The other address. This must be an AF\+\_\+\+CAN address to be a valid CANbus address. \\
+\hline
+\end{DoxyParams}
+\Hypertarget{classsockpp_1_1can__address_a9d0efbdc456d6df93cb62490ee7ec660}\index{sockpp::can\_address@{sockpp::can\_address}!can\_address@{can\_address}}
+\index{can\_address@{can\_address}!sockpp::can\_address@{sockpp::can\_address}}
+\doxysubsubsection{\texorpdfstring{can\_address()}{can\_address()}\hspace{0.1cm}{\footnotesize\ttfamily [6/7]}}
+{\footnotesize\ttfamily \label{classsockpp_1_1can__address_a9d0efbdc456d6df93cb62490ee7ec660} 
+sockpp\+::can\+\_\+address\+::can\+\_\+address (\begin{DoxyParamCaption}\item[{const sockaddr\+\_\+can \&}]{addr}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
+
+
+
+Constructs the address by copying the specified structure. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em addr} & The other address. This must be initialized to a proper AF\+\_\+\+CAN address to be valid. \\
+\hline
+\end{DoxyParams}
+\Hypertarget{classsockpp_1_1can__address_acf49506a3fc0e0c2b670bebfdad9b52d}\index{sockpp::can\_address@{sockpp::can\_address}!can\_address@{can\_address}}
+\index{can\_address@{can\_address}!sockpp::can\_address@{sockpp::can\_address}}
+\doxysubsubsection{\texorpdfstring{can\_address()}{can\_address()}\hspace{0.1cm}{\footnotesize\ttfamily [7/7]}}
+{\footnotesize\ttfamily \label{classsockpp_1_1can__address_acf49506a3fc0e0c2b670bebfdad9b52d} 
+sockpp\+::can\+\_\+address\+::can\+\_\+address (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classsockpp_1_1can__address}{can\+\_\+address}} \&}]{addr}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
+
+
+
+Constructs the address by copying the specified address. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em addr} & The other address. \\
+\hline
+\end{DoxyParams}
+
+
+\doxysubsection{Member Function Documentation}
+\Hypertarget{classsockpp_1_1can__address_ace950e03bbccdaf743636e1ca439c49a}\index{sockpp::can\_address@{sockpp::can\_address}!create@{create}}
+\index{create@{create}!sockpp::can\_address@{sockpp::can\_address}}
+\doxysubsubsection{\texorpdfstring{create()}{create()}}
+{\footnotesize\ttfamily \label{classsockpp_1_1can__address_ace950e03bbccdaf743636e1ca439c49a} 
+static \mbox{\hyperlink{classsockpp_1_1result}{result}}$<$ \mbox{\hyperlink{classsockpp_1_1can__address}{can\+\_\+address}} $>$ sockpp\+::can\+\_\+address\+::create (\begin{DoxyParamCaption}\item[{const string \&}]{iface}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Attempts to get the address for the secified CAN interface. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em iface} & The name of the CAN interface \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+A result with a CAN address, if successful, or an error code on failure. 
+\end{DoxyReturn}
+\Hypertarget{classsockpp_1_1can__address_a85126b3fea2f25cf908eae1336d30391}\index{sockpp::can\_address@{sockpp::can\_address}!get\_iface@{get\_iface}}
+\index{get\_iface@{get\_iface}!sockpp::can\_address@{sockpp::can\_address}}
+\doxysubsubsection{\texorpdfstring{get\_iface()}{get\_iface()}}
+{\footnotesize\ttfamily \label{classsockpp_1_1can__address_a85126b3fea2f25cf908eae1336d30391} 
+\mbox{\hyperlink{classsockpp_1_1result}{result}}$<$ string $>$ sockpp\+::can\+\_\+address\+::get\+\_\+iface (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [noexcept]}}
+
+
+
+Try to get the name of the CAN interface for this address. 
+
+\begin{DoxyReturn}{Returns}
+The name of the CAN interface for this address. 
+\end{DoxyReturn}
+\Hypertarget{classsockpp_1_1can__address_adf220acee4858b2b7c7e6b051639e3e9}\index{sockpp::can\_address@{sockpp::can\_address}!iface@{iface}}
+\index{iface@{iface}!sockpp::can\_address@{sockpp::can\_address}}
+\doxysubsubsection{\texorpdfstring{iface()}{iface()}}
+{\footnotesize\ttfamily \label{classsockpp_1_1can__address_adf220acee4858b2b7c7e6b051639e3e9} 
+string sockpp\+::can\+\_\+address\+::iface (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [noexcept]}}
+
+
+
+Get the name of the CAN interface for this address. 
+
+If the name can not be found or there\textquotesingle{}s an error, returns "{}unknown"{}. \begin{DoxyReturn}{Returns}
+The name of the CAN interface for this address. 
+\end{DoxyReturn}
+\Hypertarget{classsockpp_1_1can__address_a14bd23afd5ee4e16624b0ad3433e7590}\index{sockpp::can\_address@{sockpp::can\_address}!index@{index}}
+\index{index@{index}!sockpp::can\_address@{sockpp::can\_address}}
+\doxysubsubsection{\texorpdfstring{index()}{index()}}
+{\footnotesize\ttfamily \label{classsockpp_1_1can__address_a14bd23afd5ee4e16624b0ad3433e7590} 
+int sockpp\+::can\+\_\+address\+::index (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
+
+
+
+Gets the index of the CAN interface for this address. 
+
+\begin{DoxyReturn}{Returns}
+The index of the CAN interface for this address. 
+\end{DoxyReturn}
+\Hypertarget{classsockpp_1_1can__address_a0e93d75f42bf1b4939500b68307f28eb}\index{sockpp::can\_address@{sockpp::can\_address}!is\_set@{is\_set}}
+\index{is\_set@{is\_set}!sockpp::can\_address@{sockpp::can\_address}}
+\doxysubsubsection{\texorpdfstring{is\_set()}{is\_set()}}
+{\footnotesize\ttfamily \label{classsockpp_1_1can__address_a0e93d75f42bf1b4939500b68307f28eb} 
+bool sockpp\+::can\+\_\+address\+::is\+\_\+set (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [override]}, {\ttfamily [virtual]}, {\ttfamily [noexcept]}}
+
+
+
+Checks if the address is set to some value. 
+
+This doesn\textquotesingle{}t attempt to determine if the address is valid, simply that it\textquotesingle{}s not all zero. \begin{DoxyReturn}{Returns}
+{\itshape true} if the address has been set, {\itshape false} otherwise. 
+\end{DoxyReturn}
+
+
+Reimplemented from \mbox{\hyperlink{classsockpp_1_1sock__address_ac4e5b06da0efbbc6b8d289e3215f13aa}{sockpp\+::sock\+\_\+address}}.
+
+\Hypertarget{classsockpp_1_1can__address_af6e78e39748afb7db8a7285557994134}\index{sockpp::can\_address@{sockpp::can\_address}!size@{size}}
+\index{size@{size}!sockpp::can\_address@{sockpp::can\_address}}
+\doxysubsubsection{\texorpdfstring{size()}{size()}}
+{\footnotesize\ttfamily \label{classsockpp_1_1can__address_af6e78e39748afb7db8a7285557994134} 
+socklen\+\_\+t sockpp\+::can\+\_\+address\+::size (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Gets the size of the address structure. 
+
+Note\+: In this implementation, this should return sizeof(this) but more convenient in some places, and the implementation might change in the future, so it might be more compatible with future revisions to use this call. \begin{DoxyReturn}{Returns}
+The size of the address structure. 
+\end{DoxyReturn}
+
+
+Implements \mbox{\hyperlink{classsockpp_1_1sock__address_adf9f4a69071562366ea6d5e50258c281}{sockpp\+::sock\+\_\+address}}.
+
+\Hypertarget{classsockpp_1_1can__address_a1c96dc66e1d6686d02017ce2450166cd}\index{sockpp::can\_address@{sockpp::can\_address}!sockaddr\_can\_ptr@{sockaddr\_can\_ptr}}
+\index{sockaddr\_can\_ptr@{sockaddr\_can\_ptr}!sockpp::can\_address@{sockpp::can\_address}}
+\doxysubsubsection{\texorpdfstring{sockaddr\_can\_ptr()}{sockaddr\_can\_ptr()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \label{classsockpp_1_1can__address_a1c96dc66e1d6686d02017ce2450166cd} 
+const sockaddr\+\_\+can \texorpdfstring{$\ast$}{*} sockpp\+::can\+\_\+address\+::sockaddr\+\_\+can\+\_\+ptr (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Gets a const pointer to this object cast to a {\itshape sockaddr\+\_\+can}. 
+
+\begin{DoxyReturn}{Returns}
+const sockaddr\+\_\+can pointer to this object. 
+\end{DoxyReturn}
+\Hypertarget{classsockpp_1_1can__address_ab291475e8228e15dc3b5013a11788ca8}\index{sockpp::can\_address@{sockpp::can\_address}!sockaddr\_can\_ptr@{sockaddr\_can\_ptr}}
+\index{sockaddr\_can\_ptr@{sockaddr\_can\_ptr}!sockpp::can\_address@{sockpp::can\_address}}
+\doxysubsubsection{\texorpdfstring{sockaddr\_can\_ptr()}{sockaddr\_can\_ptr()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \label{classsockpp_1_1can__address_ab291475e8228e15dc3b5013a11788ca8} 
+sockaddr\+\_\+can \texorpdfstring{$\ast$}{*} sockpp\+::can\+\_\+address\+::sockaddr\+\_\+can\+\_\+ptr (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
+
+
+
+Gets a pointer to this object cast to a {\itshape sockaddr\+\_\+can}. 
+
+\begin{DoxyReturn}{Returns}
+sockaddr\+\_\+can pointer to this object. 
+\end{DoxyReturn}
+\Hypertarget{classsockpp_1_1can__address_ab28b359f745395930b01090f59aacf79}\index{sockpp::can\_address@{sockpp::can\_address}!sockaddr\_ptr@{sockaddr\_ptr}}
+\index{sockaddr\_ptr@{sockaddr\_ptr}!sockpp::can\_address@{sockpp::can\_address}}
+\doxysubsubsection{\texorpdfstring{sockaddr\_ptr()}{sockaddr\_ptr()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \label{classsockpp_1_1can__address_ab28b359f745395930b01090f59aacf79} 
+const sockaddr \texorpdfstring{$\ast$}{*} sockpp\+::can\+\_\+address\+::sockaddr\+\_\+ptr (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Gets a pointer to this object cast to a const {\itshape sockaddr}. 
+
+\begin{DoxyReturn}{Returns}
+A pointer to this object cast to a const {\itshape sockaddr}. 
+\end{DoxyReturn}
+
+
+Implements \mbox{\hyperlink{classsockpp_1_1sock__address_a3a9cb6445288251aa463529d84b7801d}{sockpp\+::sock\+\_\+address}}.
+
+\Hypertarget{classsockpp_1_1can__address_af1824f4b6ed8d252b6621b2e351209f1}\index{sockpp::can\_address@{sockpp::can\_address}!sockaddr\_ptr@{sockaddr\_ptr}}
+\index{sockaddr\_ptr@{sockaddr\_ptr}!sockpp::can\_address@{sockpp::can\_address}}
+\doxysubsubsection{\texorpdfstring{sockaddr\_ptr()}{sockaddr\_ptr()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \label{classsockpp_1_1can__address_af1824f4b6ed8d252b6621b2e351209f1} 
+sockaddr \texorpdfstring{$\ast$}{*} sockpp\+::can\+\_\+address\+::sockaddr\+\_\+ptr (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Gets a pointer to this object cast to a {\itshape sockaddr}. 
+
+\begin{DoxyReturn}{Returns}
+A pointer to this object cast to a {\itshape sockaddr}. 
+\end{DoxyReturn}
+
+
+Implements \mbox{\hyperlink{classsockpp_1_1sock__address_a024c74ac9d3fe8cd5284b82f1f2d33e2}{sockpp\+::sock\+\_\+address}}.
+
+\Hypertarget{classsockpp_1_1can__address_a94b32afe88a3a05aa1da94f9edf8f3e1}\index{sockpp::can\_address@{sockpp::can\_address}!to\_string@{to\_string}}
+\index{to\_string@{to\_string}!sockpp::can\_address@{sockpp::can\_address}}
+\doxysubsubsection{\texorpdfstring{to\_string()}{to\_string()}}
+{\footnotesize\ttfamily \label{classsockpp_1_1can__address_a94b32afe88a3a05aa1da94f9edf8f3e1} 
+string sockpp\+::can\+\_\+address\+::to\+\_\+string (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
+
+
+
+Gets a printable string for the address. 
+
+\begin{DoxyReturn}{Returns}
+A string representation of the address in the form "{}unix\+:$<$path$>$"{} 
+\end{DoxyReturn}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+include/sockpp/\mbox{\hyperlink{can__address_8h}{can\+\_\+address.\+h}}\end{DoxyCompactItemize}

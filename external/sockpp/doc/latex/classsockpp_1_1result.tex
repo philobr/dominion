@@ -1,0 +1,391 @@
+\doxysection{sockpp\+::result\texorpdfstring{$<$}{<} T \texorpdfstring{$>$}{>} Class Template Reference}
+\hypertarget{classsockpp_1_1result}{}\label{classsockpp_1_1result}\index{sockpp::result$<$ T $>$@{sockpp::result$<$ T $>$}}
+
+
+A result type that can contain a value of any type on successful completion of an operation, or a std\+::error\+\_\+code on failure.  
+
+
+
+
+{\ttfamily \#include $<$result.\+h$>$}
+
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{classsockpp_1_1result_a7c6e5b6d4cde93f4e64f00e1091f8499}\label{classsockpp_1_1result_a7c6e5b6d4cde93f4e64f00e1091f8499} 
+{\bfseries result} ()=default
+\begin{DoxyCompactList}\small\item\em Default result is considered a success with default value. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classsockpp_1_1result_ab2f8b4e977581c915b0f7b23d6656739}{result}} (const T \&val)
+\begin{DoxyCompactList}\small\item\em Construct a success result with the specified value. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classsockpp_1_1result_a1cf40665fd8728a87add1bcc512abd6d}{result}} (T \&\&val)
+\begin{DoxyCompactList}\small\item\em Construct a success result with the specified value. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classsockpp_1_1result_a1a876a9198924a13c05dc071d85eeacd}{result}} (\mbox{\hyperlink{error_8h_ad5857d6ec748ff40b1cc5e36e7fc3ed6}{errc}} err)
+\begin{DoxyCompactList}\small\item\em Creates a failed result from a portable error condition. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classsockpp_1_1result_a49bc4f76e2a907a79c4d08f16501d3bd}{result}} (const \mbox{\hyperlink{error_8h_ab1e0c0347ae112be97a91664fd6c830d}{error\+\_\+code}} \&err)
+\begin{DoxyCompactList}\small\item\em Creates a failed result from a portable error condition. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classsockpp_1_1result_a6192fea7d3b0df8da5888c995f73939a}{result}} (\mbox{\hyperlink{error_8h_ab1e0c0347ae112be97a91664fd6c830d}{error\+\_\+code}} \&\&err)
+\begin{DoxyCompactList}\small\item\em Creates a failed result from a portable error condition. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{classsockpp_1_1result_a7f792a9a3618f25880c07f58c990321c}{is\+\_\+error}} () const
+\begin{DoxyCompactList}\small\item\em Determines if the result represents a failed operation. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{classsockpp_1_1result_af8e4fa8ee1afdb71a9bce85384696003}{is\+\_\+ok}} () const
+\begin{DoxyCompactList}\small\item\em Determines if the result represents a successful operation. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classsockpp_1_1result_ae941c4c9ac0db2f37f7b09c5d35e0a0f}{operator bool}} () const
+\begin{DoxyCompactList}\small\item\em Determines if the result represents a successful operation. \end{DoxyCompactList}\item 
+const T \& \mbox{\hyperlink{classsockpp_1_1result_a95c7fa89b3d6f513bde329686d546b94}{value}} () const
+\begin{DoxyCompactList}\small\item\em Gets the value from a successful operation. \end{DoxyCompactList}\item 
+const T \& \mbox{\hyperlink{classsockpp_1_1result_a1a6467f31bfe060386ec7358e34d8794}{value\+\_\+or\+\_\+throw}} () const
+\begin{DoxyCompactList}\small\item\em Gets the value if the result is a success, otherwise throws a system error exception corresponding to the internal error code if it hold an error. \end{DoxyCompactList}\item 
+T \&\& \mbox{\hyperlink{classsockpp_1_1result_a06e4fc6ac992c1745f3a3a3edfbbe2fe}{release}} ()
+\begin{DoxyCompactList}\small\item\em Releases the value from this result. \end{DoxyCompactList}\item 
+T \&\& \mbox{\hyperlink{classsockpp_1_1result_a1ea8441c908ab0fd47c826dd6fa6e707}{release\+\_\+or\+\_\+throw}} ()
+\begin{DoxyCompactList}\small\item\em Releases the value if the result is a success, otherwise throws a system error exception corresponding to the internal error code if it hold an error. \end{DoxyCompactList}\item 
+const \mbox{\hyperlink{error_8h_ab1e0c0347ae112be97a91664fd6c830d}{error\+\_\+code}} \& \mbox{\hyperlink{classsockpp_1_1result_a8f0ca062bd663eefd25219dd22b62f2c}{error}} () const
+\begin{DoxyCompactList}\small\item\em Gets the error code from a failed operation. \end{DoxyCompactList}\item 
+std\+::string \mbox{\hyperlink{classsockpp_1_1result_a3f8bcf51fd538bc77e2994ed3dbb9ad3}{error\+\_\+message}} () const
+\begin{DoxyCompactList}\small\item\em Gets the message corresponding to the current error. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static \mbox{\hyperlink{classsockpp_1_1result}{result}} \mbox{\hyperlink{classsockpp_1_1result_a273ebeaee3785d2fe96eec45f1767ad8}{from\+\_\+error}} (const \mbox{\hyperlink{error_8h_ab1e0c0347ae112be97a91664fd6c830d}{error\+\_\+code}} \&err)
+\begin{DoxyCompactList}\small\item\em Creates a failed result from an error code. \end{DoxyCompactList}\item 
+static \mbox{\hyperlink{classsockpp_1_1result}{result}} \mbox{\hyperlink{classsockpp_1_1result_afbb5ab52164782eeb18a8137590d05a3}{from\+\_\+error}} (int ec, const \mbox{\hyperlink{error_8h_aece68bdc9a4c31bbe3fdb87ac954ded4}{error\+\_\+category}} \&ecat=std\+::system\+\_\+category())
+\begin{DoxyCompactList}\small\item\em Creates a failed result from an platform-\/specific integer error code and an optional category. \end{DoxyCompactList}\item 
+static \mbox{\hyperlink{classsockpp_1_1result}{result}} \mbox{\hyperlink{classsockpp_1_1result_a4ba23ea7d1774ace70545b0bced32d05}{from\+\_\+error}} (\mbox{\hyperlink{error_8h_ad5857d6ec748ff40b1cc5e36e7fc3ed6}{errc}} err)
+\begin{DoxyCompactList}\small\item\em Creates an unsuccesful result from a portable error condition. \end{DoxyCompactList}\item 
+static \mbox{\hyperlink{classsockpp_1_1result}{result}} \mbox{\hyperlink{classsockpp_1_1result_a9cd9c56a95c3ca7ed30102d0c699ee7a}{from\+\_\+last\+\_\+error}} ()
+\begin{DoxyCompactList}\small\item\em Creates an unsuccessful result from an platform-\/specific integer error code and an optional category. \end{DoxyCompactList}\item 
+static \mbox{\hyperlink{error_8h_ab1e0c0347ae112be97a91664fd6c830d}{error\+\_\+code}} \mbox{\hyperlink{classsockpp_1_1result_ab06f35877fc2ce07122735d1a80cd3c3}{last\+\_\+error}} ()
+\begin{DoxyCompactList}\small\item\em Retrieves the last error from an operation. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\subsubsection*{template$<$typename T = none$>$\newline
+class sockpp\+::result$<$ T $>$}
+A result type that can contain a value of any type on successful completion of an operation, or a std\+::error\+\_\+code on failure. 
+
+Objects can contain a value of type T on an operation\textquotesingle{}s success, or a standard {\ttfamily error\+\_\+code} on failure. As an implementation detail, the class isn\textquotesingle{}t implemented with a union or variant, but rather both types are available. When the error code indicates "{}success"{} (where it has an internal value of zero), then the result value is considered valid. If the code contains an error, that takes precedence and the result value is set to the default for that type -\/ zero for an int, empty for a string, etc.
+
+The result can act as a boolean -\/ {\itshape true} for a successful result, {\itshape false} for an error/failure.
+
+The result can also be directly compared to values of type T or to any of the standard error types, {\ttfamily std\+::error\+\_\+code}, {\ttfamily std\+::error\+\_\+condition}, or {\ttfamily std\+::errc}. When comparing to type T, it will always fail if the result is an error, otherwise it will do a comparison of the T values. Comparing to an error will simply compare the error values.
+
+As a weird corner case, comparing an error code of zero -\/ which indicates "{}no error"{} -\/ against a result will always be true for {\itshape any} successful result value. This should probably not be done as it could lead to some confusion. 
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{classsockpp_1_1result_ab2f8b4e977581c915b0f7b23d6656739}\index{sockpp::result$<$ T $>$@{sockpp::result$<$ T $>$}!result@{result}}
+\index{result@{result}!sockpp::result$<$ T $>$@{sockpp::result$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{result()}{result()}\hspace{0.1cm}{\footnotesize\ttfamily [1/5]}}
+{\footnotesize\ttfamily \label{classsockpp_1_1result_ab2f8b4e977581c915b0f7b23d6656739} 
+template$<$typename T  = none$>$ \\
+\mbox{\hyperlink{classsockpp_1_1result}{sockpp\+::result}}$<$ T $>$\+::result (\begin{DoxyParamCaption}\item[{const T \&}]{val}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Construct a success result with the specified value. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em val} & The success value \\
+\hline
+\end{DoxyParams}
+\Hypertarget{classsockpp_1_1result_a1cf40665fd8728a87add1bcc512abd6d}\index{sockpp::result$<$ T $>$@{sockpp::result$<$ T $>$}!result@{result}}
+\index{result@{result}!sockpp::result$<$ T $>$@{sockpp::result$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{result()}{result()}\hspace{0.1cm}{\footnotesize\ttfamily [2/5]}}
+{\footnotesize\ttfamily \label{classsockpp_1_1result_a1cf40665fd8728a87add1bcc512abd6d} 
+template$<$typename T  = none$>$ \\
+\mbox{\hyperlink{classsockpp_1_1result}{sockpp\+::result}}$<$ T $>$\+::result (\begin{DoxyParamCaption}\item[{T \&\&}]{val}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Construct a success result with the specified value. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em val} & The success value \\
+\hline
+\end{DoxyParams}
+\Hypertarget{classsockpp_1_1result_a1a876a9198924a13c05dc071d85eeacd}\index{sockpp::result$<$ T $>$@{sockpp::result$<$ T $>$}!result@{result}}
+\index{result@{result}!sockpp::result$<$ T $>$@{sockpp::result$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{result()}{result()}\hspace{0.1cm}{\footnotesize\ttfamily [3/5]}}
+{\footnotesize\ttfamily \label{classsockpp_1_1result_a1a876a9198924a13c05dc071d85eeacd} 
+template$<$typename T  = none$>$ \\
+\mbox{\hyperlink{classsockpp_1_1result}{sockpp\+::result}}$<$ T $>$\+::result (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{error_8h_ad5857d6ec748ff40b1cc5e36e7fc3ed6}{errc}}}]{err}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Creates a failed result from a portable error condition. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em err} & The error \\
+\hline
+\end{DoxyParams}
+\Hypertarget{classsockpp_1_1result_a49bc4f76e2a907a79c4d08f16501d3bd}\index{sockpp::result$<$ T $>$@{sockpp::result$<$ T $>$}!result@{result}}
+\index{result@{result}!sockpp::result$<$ T $>$@{sockpp::result$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{result()}{result()}\hspace{0.1cm}{\footnotesize\ttfamily [4/5]}}
+{\footnotesize\ttfamily \label{classsockpp_1_1result_a49bc4f76e2a907a79c4d08f16501d3bd} 
+template$<$typename T  = none$>$ \\
+\mbox{\hyperlink{classsockpp_1_1result}{sockpp\+::result}}$<$ T $>$\+::result (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{error_8h_ab1e0c0347ae112be97a91664fd6c830d}{error\+\_\+code}} \&}]{err}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Creates a failed result from a portable error condition. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em err} & The error \\
+\hline
+\end{DoxyParams}
+\Hypertarget{classsockpp_1_1result_a6192fea7d3b0df8da5888c995f73939a}\index{sockpp::result$<$ T $>$@{sockpp::result$<$ T $>$}!result@{result}}
+\index{result@{result}!sockpp::result$<$ T $>$@{sockpp::result$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{result()}{result()}\hspace{0.1cm}{\footnotesize\ttfamily [5/5]}}
+{\footnotesize\ttfamily \label{classsockpp_1_1result_a6192fea7d3b0df8da5888c995f73939a} 
+template$<$typename T  = none$>$ \\
+\mbox{\hyperlink{classsockpp_1_1result}{sockpp\+::result}}$<$ T $>$\+::result (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{error_8h_ab1e0c0347ae112be97a91664fd6c830d}{error\+\_\+code}} \&\&}]{err}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Creates a failed result from a portable error condition. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em err} & The error \\
+\hline
+\end{DoxyParams}
+
+
+\doxysubsection{Member Function Documentation}
+\Hypertarget{classsockpp_1_1result_a8f0ca062bd663eefd25219dd22b62f2c}\index{sockpp::result$<$ T $>$@{sockpp::result$<$ T $>$}!error@{error}}
+\index{error@{error}!sockpp::result$<$ T $>$@{sockpp::result$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{error()}{error()}}
+{\footnotesize\ttfamily \label{classsockpp_1_1result_a8f0ca062bd663eefd25219dd22b62f2c} 
+template$<$typename T  = none$>$ \\
+const \mbox{\hyperlink{error_8h_ab1e0c0347ae112be97a91664fd6c830d}{error\+\_\+code}} \& \mbox{\hyperlink{classsockpp_1_1result}{sockpp\+::result}}$<$ T $>$\+::error (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Gets the error code from a failed operation. 
+
+This is only valid if the operation failed. If not, it returns the default error code which should have a value of zero (success). \begin{DoxyReturn}{Returns}
+A const reference to the error code. 
+\end{DoxyReturn}
+\Hypertarget{classsockpp_1_1result_a3f8bcf51fd538bc77e2994ed3dbb9ad3}\index{sockpp::result$<$ T $>$@{sockpp::result$<$ T $>$}!error\_message@{error\_message}}
+\index{error\_message@{error\_message}!sockpp::result$<$ T $>$@{sockpp::result$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{error\_message()}{error\_message()}}
+{\footnotesize\ttfamily \label{classsockpp_1_1result_a3f8bcf51fd538bc77e2994ed3dbb9ad3} 
+template$<$typename T  = none$>$ \\
+std\+::string \mbox{\hyperlink{classsockpp_1_1result}{sockpp\+::result}}$<$ T $>$\+::error\+\_\+message (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Gets the message corresponding to the current error. 
+
+Equivalent to {\ttfamily \doxylink{classsockpp_1_1result_a8f0ca062bd663eefd25219dd22b62f2c}{error()}.message()} \begin{DoxyReturn}{Returns}
+The message corresponding to the current error. 
+\end{DoxyReturn}
+\Hypertarget{classsockpp_1_1result_a273ebeaee3785d2fe96eec45f1767ad8}\index{sockpp::result$<$ T $>$@{sockpp::result$<$ T $>$}!from\_error@{from\_error}}
+\index{from\_error@{from\_error}!sockpp::result$<$ T $>$@{sockpp::result$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{from\_error()}{from\_error()}\hspace{0.1cm}{\footnotesize\ttfamily [1/3]}}
+{\footnotesize\ttfamily \label{classsockpp_1_1result_a273ebeaee3785d2fe96eec45f1767ad8} 
+template$<$typename T  = none$>$ \\
+static \mbox{\hyperlink{classsockpp_1_1result}{result}} \mbox{\hyperlink{classsockpp_1_1result}{sockpp\+::result}}$<$ T $>$\+::from\+\_\+error (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{error_8h_ab1e0c0347ae112be97a91664fd6c830d}{error\+\_\+code}} \&}]{err}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+Creates a failed result from an error code. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em err} & The error code from an operation. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The result of an unsucessful operation. 
+\end{DoxyReturn}
+\Hypertarget{classsockpp_1_1result_a4ba23ea7d1774ace70545b0bced32d05}\index{sockpp::result$<$ T $>$@{sockpp::result$<$ T $>$}!from\_error@{from\_error}}
+\index{from\_error@{from\_error}!sockpp::result$<$ T $>$@{sockpp::result$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{from\_error()}{from\_error()}\hspace{0.1cm}{\footnotesize\ttfamily [2/3]}}
+{\footnotesize\ttfamily \label{classsockpp_1_1result_a4ba23ea7d1774ace70545b0bced32d05} 
+template$<$typename T  = none$>$ \\
+static \mbox{\hyperlink{classsockpp_1_1result}{result}} \mbox{\hyperlink{classsockpp_1_1result}{sockpp\+::result}}$<$ T $>$\+::from\+\_\+error (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{error_8h_ad5857d6ec748ff40b1cc5e36e7fc3ed6}{errc}}}]{err}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+Creates an unsuccesful result from a portable error condition. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em err} & The error \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The result of an unsuccessful operation. 
+\end{DoxyReturn}
+\Hypertarget{classsockpp_1_1result_afbb5ab52164782eeb18a8137590d05a3}\index{sockpp::result$<$ T $>$@{sockpp::result$<$ T $>$}!from\_error@{from\_error}}
+\index{from\_error@{from\_error}!sockpp::result$<$ T $>$@{sockpp::result$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{from\_error()}{from\_error()}\hspace{0.1cm}{\footnotesize\ttfamily [3/3]}}
+{\footnotesize\ttfamily \label{classsockpp_1_1result_afbb5ab52164782eeb18a8137590d05a3} 
+template$<$typename T  = none$>$ \\
+static \mbox{\hyperlink{classsockpp_1_1result}{result}} \mbox{\hyperlink{classsockpp_1_1result}{sockpp\+::result}}$<$ T $>$\+::from\+\_\+error (\begin{DoxyParamCaption}\item[{int}]{ec}{, }\item[{const \mbox{\hyperlink{error_8h_aece68bdc9a4c31bbe3fdb87ac954ded4}{error\+\_\+category}} \&}]{ecat}{ = {\ttfamily std\+:\+:system\+\_\+category()}}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+Creates a failed result from an platform-\/specific integer error code and an optional category. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em ec} & The platform-\/specific error code. \\
+\hline
+{\em ecat} & The error category. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The result of an unsuccessful operation. 
+\end{DoxyReturn}
+\Hypertarget{classsockpp_1_1result_a9cd9c56a95c3ca7ed30102d0c699ee7a}\index{sockpp::result$<$ T $>$@{sockpp::result$<$ T $>$}!from\_last\_error@{from\_last\_error}}
+\index{from\_last\_error@{from\_last\_error}!sockpp::result$<$ T $>$@{sockpp::result$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{from\_last\_error()}{from\_last\_error()}}
+{\footnotesize\ttfamily \label{classsockpp_1_1result_a9cd9c56a95c3ca7ed30102d0c699ee7a} 
+template$<$typename T  = none$>$ \\
+static \mbox{\hyperlink{classsockpp_1_1result}{result}} \mbox{\hyperlink{classsockpp_1_1result}{sockpp\+::result}}$<$ T $>$\+::from\+\_\+last\+\_\+error (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+Creates an unsuccessful result from an platform-\/specific integer error code and an optional category. 
+
+\begin{DoxyReturn}{Returns}
+The result for the last unsuccessful system operation. 
+\end{DoxyReturn}
+\Hypertarget{classsockpp_1_1result_a7f792a9a3618f25880c07f58c990321c}\index{sockpp::result$<$ T $>$@{sockpp::result$<$ T $>$}!is\_error@{is\_error}}
+\index{is\_error@{is\_error}!sockpp::result$<$ T $>$@{sockpp::result$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{is\_error()}{is\_error()}}
+{\footnotesize\ttfamily \label{classsockpp_1_1result_a7f792a9a3618f25880c07f58c990321c} 
+template$<$typename T  = none$>$ \\
+bool \mbox{\hyperlink{classsockpp_1_1result}{sockpp\+::result}}$<$ T $>$\+::is\+\_\+error (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Determines if the result represents a failed operation. 
+
+If true, then the error variant of the result is valid. \begin{DoxyReturn}{Returns}
+{\itshape true} if the result is from a failed operation, {\itshape false} if the operation succeeded. 
+\end{DoxyReturn}
+\Hypertarget{classsockpp_1_1result_af8e4fa8ee1afdb71a9bce85384696003}\index{sockpp::result$<$ T $>$@{sockpp::result$<$ T $>$}!is\_ok@{is\_ok}}
+\index{is\_ok@{is\_ok}!sockpp::result$<$ T $>$@{sockpp::result$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{is\_ok()}{is\_ok()}}
+{\footnotesize\ttfamily \label{classsockpp_1_1result_af8e4fa8ee1afdb71a9bce85384696003} 
+template$<$typename T  = none$>$ \\
+bool \mbox{\hyperlink{classsockpp_1_1result}{sockpp\+::result}}$<$ T $>$\+::is\+\_\+ok (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Determines if the result represents a successful operation. 
+
+If true, then the success (value) variant of the result is valid. \begin{DoxyReturn}{Returns}
+{\itshape true} if the result is from a successful operation, {\itshape false} if the operation failed. 
+\end{DoxyReturn}
+\Hypertarget{classsockpp_1_1result_ab06f35877fc2ce07122735d1a80cd3c3}\index{sockpp::result$<$ T $>$@{sockpp::result$<$ T $>$}!last\_error@{last\_error}}
+\index{last\_error@{last\_error}!sockpp::result$<$ T $>$@{sockpp::result$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{last\_error()}{last\_error()}}
+{\footnotesize\ttfamily \label{classsockpp_1_1result_ab06f35877fc2ce07122735d1a80cd3c3} 
+template$<$typename T  = none$>$ \\
+static \mbox{\hyperlink{error_8h_ab1e0c0347ae112be97a91664fd6c830d}{error\+\_\+code}} \mbox{\hyperlink{classsockpp_1_1result}{sockpp\+::result}}$<$ T $>$\+::last\+\_\+error (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+Retrieves the last error from an operation. 
+
+This should be called after a failed system call to get the cause of the error. \Hypertarget{classsockpp_1_1result_ae941c4c9ac0db2f37f7b09c5d35e0a0f}\index{sockpp::result$<$ T $>$@{sockpp::result$<$ T $>$}!operator bool@{operator bool}}
+\index{operator bool@{operator bool}!sockpp::result$<$ T $>$@{sockpp::result$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{operator bool()}{operator bool()}}
+{\footnotesize\ttfamily \label{classsockpp_1_1result_ae941c4c9ac0db2f37f7b09c5d35e0a0f} 
+template$<$typename T  = none$>$ \\
+\mbox{\hyperlink{classsockpp_1_1result}{sockpp\+::result}}$<$ T $>$\+::operator bool (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [explicit]}}
+
+
+
+Determines if the result represents a successful operation. 
+
+If true, then the success (value) variant of the result is valid. \begin{DoxySeeAlso}{See also}
+\doxylink{classsockpp_1_1result_af8e4fa8ee1afdb71a9bce85384696003}{is\+\_\+ok()} 
+\end{DoxySeeAlso}
+\begin{DoxyReturn}{Returns}
+{\itshape true} if the result is from a successful operation, {\itshape false} if the operation failed. 
+\end{DoxyReturn}
+\Hypertarget{classsockpp_1_1result_a06e4fc6ac992c1745f3a3a3edfbbe2fe}\index{sockpp::result$<$ T $>$@{sockpp::result$<$ T $>$}!release@{release}}
+\index{release@{release}!sockpp::result$<$ T $>$@{sockpp::result$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{release()}{release()}}
+{\footnotesize\ttfamily \label{classsockpp_1_1result_a06e4fc6ac992c1745f3a3a3edfbbe2fe} 
+template$<$typename T  = none$>$ \\
+T \&\& \mbox{\hyperlink{classsockpp_1_1result}{sockpp\+::result}}$<$ T $>$\+::release (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Releases the value from this result. 
+
+The value is only valid if the operation was successful. Releasing the value will move it out of this result, leaving an unknown, but valid value in its place. This might be necessary to retrieve a value that only implements move semantics (such as a socket), or if the caller would rather not copy the object.
+
+The result should not be used after releasing the value.
+
+\begin{DoxyReturn}{Returns}
+The success value. 
+\end{DoxyReturn}
+\Hypertarget{classsockpp_1_1result_a1ea8441c908ab0fd47c826dd6fa6e707}\index{sockpp::result$<$ T $>$@{sockpp::result$<$ T $>$}!release\_or\_throw@{release\_or\_throw}}
+\index{release\_or\_throw@{release\_or\_throw}!sockpp::result$<$ T $>$@{sockpp::result$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{release\_or\_throw()}{release\_or\_throw()}}
+{\footnotesize\ttfamily \label{classsockpp_1_1result_a1ea8441c908ab0fd47c826dd6fa6e707} 
+template$<$typename T  = none$>$ \\
+T \&\& \mbox{\hyperlink{classsockpp_1_1result}{sockpp\+::result}}$<$ T $>$\+::release\+\_\+or\+\_\+throw (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Releases the value if the result is a success, otherwise throws a system error exception corresponding to the internal error code if it hold an error. 
+
+The result should not be used after releasing the value.
+
+\begin{DoxyReturn}{Returns}
+A const reference to the success value. 
+\end{DoxyReturn}
+
+\begin{DoxyExceptions}{Exceptions}
+{\em std\+::system\+\_\+error} & if the result is an error \\
+\hline
+\end{DoxyExceptions}
+\Hypertarget{classsockpp_1_1result_a95c7fa89b3d6f513bde329686d546b94}\index{sockpp::result$<$ T $>$@{sockpp::result$<$ T $>$}!value@{value}}
+\index{value@{value}!sockpp::result$<$ T $>$@{sockpp::result$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{value()}{value()}}
+{\footnotesize\ttfamily \label{classsockpp_1_1result_a95c7fa89b3d6f513bde329686d546b94} 
+template$<$typename T  = none$>$ \\
+const T \& \mbox{\hyperlink{classsockpp_1_1result}{sockpp\+::result}}$<$ T $>$\+::value (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Gets the value from a successful operation. 
+
+This is only valid if the operation was a success. If not, it returns the default value for type T. \begin{DoxyReturn}{Returns}
+A const reference to the success value. 
+\end{DoxyReturn}
+\Hypertarget{classsockpp_1_1result_a1a6467f31bfe060386ec7358e34d8794}\index{sockpp::result$<$ T $>$@{sockpp::result$<$ T $>$}!value\_or\_throw@{value\_or\_throw}}
+\index{value\_or\_throw@{value\_or\_throw}!sockpp::result$<$ T $>$@{sockpp::result$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{value\_or\_throw()}{value\_or\_throw()}}
+{\footnotesize\ttfamily \label{classsockpp_1_1result_a1a6467f31bfe060386ec7358e34d8794} 
+template$<$typename T  = none$>$ \\
+const T \& \mbox{\hyperlink{classsockpp_1_1result}{sockpp\+::result}}$<$ T $>$\+::value\+\_\+or\+\_\+throw (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Gets the value if the result is a success, otherwise throws a system error exception corresponding to the internal error code if it hold an error. 
+
+\begin{DoxyReturn}{Returns}
+A const reference to the success value. 
+\end{DoxyReturn}
+
+\begin{DoxyExceptions}{Exceptions}
+{\em std\+::system\+\_\+error} & if the result is an error \\
+\hline
+\end{DoxyExceptions}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+include/sockpp/\mbox{\hyperlink{result_8h}{result.\+h}}\end{DoxyCompactItemize}

@@ -1,0 +1,41 @@
+\doxysection{sockpp\+::socket\+\_\+initializer Class Reference}
+\hypertarget{classsockpp_1_1socket__initializer}{}\label{classsockpp_1_1socket__initializer}\index{sockpp::socket\_initializer@{sockpp::socket\_initializer}}
+
+
+RAII singleton class to initialize and then shut down the library.  
+
+
+
+
+{\ttfamily \#include $<$socket.\+h$>$}
+
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{classsockpp_1_1socket__initializer_afe74cc21b7eb871ab1fd7584977deb95}\label{classsockpp_1_1socket__initializer_afe74cc21b7eb871ab1fd7584977deb95} 
+{\bfseries \texorpdfstring{$\sim$}{\string~}socket\+\_\+initializer} ()
+\begin{DoxyCompactList}\small\item\em Destructor shuts down the sockpp library. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{classsockpp_1_1socket__initializer_a059be27db16e6c739adc1f6816692f21}\label{classsockpp_1_1socket__initializer_a059be27db16e6c739adc1f6816692f21} 
+static void {\bfseries initialize} ()
+\begin{DoxyCompactList}\small\item\em Creates the initializer singleton on the first call as a static object which will get destructed on program termination with the other static objects in reverse order as they were created,. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Friends}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{classsockpp_1_1socket__initializer_a711df69252d45d87bad637c690a18632}\label{classsockpp_1_1socket__initializer_a711df69252d45d87bad637c690a18632} 
+class {\bfseries socket}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+RAII singleton class to initialize and then shut down the library. 
+
+The singleton object of this class should be created before any other classes in the library are used.
+
+This is only required on some platforms, particularly Windows, but is harmless on other platforms. On some, such as POSIX, the initializer sets optional parameters for the library, and the destructor does nothing. 
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+include/sockpp/\mbox{\hyperlink{socket_8h}{socket.\+h}}\end{DoxyCompactItemize}

@@ -1,9 +1,9 @@
-// stream_connector.cpp
+// connector.cpp
 //
 // --------------------------------------------------------------------------
 // This file is part of the "sockpp" C++ socket library.
 //
-// Copyright (c) 2014-2017 Frank Pagliughi
+// Copyright (c) 2014-2023 Frank Pagliughi
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -36,28 +36,106 @@
 
 #include "sockpp/connector.h"
 
+#include <cerrno>
+#if !defined(_WIN32)
+    #include <sys/poll.h>
+    #if defined(__APPLE__)
+        #include <net/if.h>
+    #endif
+#endif
+
+using namespace std::chrono;
+
 namespace sockpp {
 
 /////////////////////////////////////////////////////////////////////////////
 
-bool connector::connect(const sock_address& addr)
-{
-    sa_family_t domain = addr.family();
-	socket_t h = create_handle(domain);
-
-	if (!check_ret_bool(h))
-		return false;
-
-	// This will close the old connection, if any.
-	reset(h);
-
-	if (!check_ret_bool(::connect(h, addr.sockaddr_ptr(), addr.size())))
-		return close_on_err();
-
-	return true;
+result<> connector::recreate(const sock_address& addr) {
+    if (auto res = create_handle(addr.family()); !res)
+        return res.error();
+    else {
+        // This will close the old connection, if any.
+        reset(res.value());
+        return none{};
+    }
 }
 
 /////////////////////////////////////////////////////////////////////////////
-// end namespace sockpp
+
+result<none> connector::connect(const sock_address& addr) {
+    if (auto res = recreate(addr); !res)
+        return res;
+
+    return check_res_none(::connect(handle(), addr.sockaddr_ptr(), addr.size()));
 }
 
+/////////////////////////////////////////////////////////////////////////////
+
+result<> connector::connect(const sock_address& addr, microseconds timeout) {
+    if (timeout.count() <= 0)
+        return connect(addr);
+
+    if (auto res = recreate(addr); !res)
+        return res;
+
+    bool non_blocking =
+#if defined(_WIN32)
+        false;
+#else
+        is_non_blocking();
+#endif
+
+    if (!non_blocking)
+        set_non_blocking(true);
+
+    result<int> res = check_res(::connect(handle(), addr.sockaddr_ptr(), addr.size()));
+
+    if (!res) {
+        auto err = res.error();
+        if (err == errc::operation_in_progress || err == errc::operation_would_block) {
+// TODO: Windows has a WSAPoll() function we can use.
+#if defined(_WIN32)
+            // Non-blocking connect -- call `select` to wait until the timeout:
+            // Note:  Windows returns errors in exceptset so check it too, the
+            // logic afterwords doesn't change
+            fd_set readset;
+            FD_ZERO(&readset);
+            FD_SET(handle(), &readset);
+            fd_set writeset = readset;
+            fd_set exceptset = readset;
+            timeval tv = to_timeval(timeout);
+            res =
+                check_res(::select(int(handle()) + 1, &readset, &writeset, &exceptset, &tv));
+#else
+            pollfd fds = {handle(), POLLIN | POLLOUT, 0};
+            int ms = int(duration_cast<milliseconds>(timeout).count());
+            res = check_res(::poll(&fds, 1, ms));
+#endif
+            if (res) {
+                if (res && res.value() > 0) {
+                    // Got a socket event, but it might be an error, so check:
+                    int err;
+                    if (get_option(SOL_SOCKET, SO_ERROR, &err))
+                        res = result<int>::from_error(err);
+                }
+                else {
+                    res = errc::timed_out;
+                }
+            }
+        }
+
+        if (!res) {
+            close();
+            return res.error();
+        }
+    }
+
+    // Restore blocking mode for socket, if needed.
+    if (!non_blocking)
+        set_non_blocking(false);
+
+    return none{};
+}
+
+/////////////////////////////////////////////////////////////////////////////
+}  // namespace sockpp

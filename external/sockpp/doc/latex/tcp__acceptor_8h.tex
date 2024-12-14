@@ -1,0 +1,43 @@
+\doxysection{include/sockpp/tcp\+\_\+acceptor.h File Reference}
+\hypertarget{tcp__acceptor_8h}{}\label{tcp__acceptor_8h}\index{include/sockpp/tcp\_acceptor.h@{include/sockpp/tcp\_acceptor.h}}
+
+
+Class for a TCP server to accept incoming connections.  
+
+
+{\ttfamily \#include "{}sockpp/acceptor.\+h"{}}\newline
+{\ttfamily \#include "{}sockpp/tcp\+\_\+socket.\+h"{}}\newline
+\doxysubsubsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+using \mbox{\hyperlink{tcp__acceptor_8h_a4d335515039bbcb41e9a68a7c46c148c}{sockpp\+::tcp\+\_\+acceptor}} = \mbox{\hyperlink{classsockpp_1_1acceptor__tmpl}{acceptor\+\_\+tmpl}}$<$\mbox{\hyperlink{tcp__socket_8h_aba3d5798e7736ea7e87ff606b836ce45}{tcp\+\_\+socket}}$>$
+\begin{DoxyCompactList}\small\item\em Class for creating a TCP server. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Class for a TCP server to accept incoming connections. 
+
+\begin{DoxyAuthor}{Author}
+Frank Pagliughi 
+
+So\+Ro Systems, Inc. 
+
+www.\+sorosys.\+com
+\end{DoxyAuthor}
+\begin{DoxyDate}{Date}
+December 2014 
+\end{DoxyDate}
+
+
+\doxysubsection{Typedef Documentation}
+\Hypertarget{tcp__acceptor_8h_a4d335515039bbcb41e9a68a7c46c148c}\index{tcp\_acceptor.h@{tcp\_acceptor.h}!tcp\_acceptor@{tcp\_acceptor}}
+\index{tcp\_acceptor@{tcp\_acceptor}!tcp\_acceptor.h@{tcp\_acceptor.h}}
+\doxysubsubsection{\texorpdfstring{tcp\_acceptor}{tcp\_acceptor}}
+{\footnotesize\ttfamily \label{tcp__acceptor_8h_a4d335515039bbcb41e9a68a7c46c148c} 
+using \mbox{\hyperlink{tcp__acceptor_8h_a4d335515039bbcb41e9a68a7c46c148c}{sockpp\+::tcp\+\_\+acceptor}} = acceptor\+\_\+tmpl$<$tcp\+\_\+socket$>$}
+
+
+
+Class for creating a TCP server. 
+
+Objects of this class bind and listen on TCP ports for incoming connections. Normally, a server thread creates one of these and blocks on the call to accept incoming connections. The call to accept creates and returns a tcp\+\_\+socket which can then be used for the actual communications. 

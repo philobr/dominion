@@ -1,0 +1,43 @@
+\doxysection{include/sockpp/tcp6\+\_\+acceptor.h File Reference}
+\hypertarget{tcp6__acceptor_8h}{}\label{tcp6__acceptor_8h}\index{include/sockpp/tcp6\_acceptor.h@{include/sockpp/tcp6\_acceptor.h}}
+
+
+Class for a TCP v6 server to accept incoming connections.  
+
+
+{\ttfamily \#include "{}sockpp/acceptor.\+h"{}}\newline
+{\ttfamily \#include "{}sockpp/tcp6\+\_\+socket.\+h"{}}\newline
+\doxysubsubsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+using \mbox{\hyperlink{tcp6__acceptor_8h_a4ca3d1d7a52f89da94e969bf19a872e0}{sockpp\+::tcp6\+\_\+acceptor}} = \mbox{\hyperlink{classsockpp_1_1acceptor__tmpl}{acceptor\+\_\+tmpl}}$<$\mbox{\hyperlink{tcp6__socket_8h_ad38a07de8131540d5c65a8c67f9938e8}{tcp6\+\_\+socket}}$>$
+\begin{DoxyCompactList}\small\item\em Class for creating a TCP v6 server. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Class for a TCP v6 server to accept incoming connections. 
+
+\begin{DoxyAuthor}{Author}
+Frank Pagliughi 
+
+So\+Ro Systems, Inc. 
+
+www.\+sorosys.\+com
+\end{DoxyAuthor}
+\begin{DoxyDate}{Date}
+May 2019 
+\end{DoxyDate}
+
+
+\doxysubsection{Typedef Documentation}
+\Hypertarget{tcp6__acceptor_8h_a4ca3d1d7a52f89da94e969bf19a872e0}\index{tcp6\_acceptor.h@{tcp6\_acceptor.h}!tcp6\_acceptor@{tcp6\_acceptor}}
+\index{tcp6\_acceptor@{tcp6\_acceptor}!tcp6\_acceptor.h@{tcp6\_acceptor.h}}
+\doxysubsubsection{\texorpdfstring{tcp6\_acceptor}{tcp6\_acceptor}}
+{\footnotesize\ttfamily \label{tcp6__acceptor_8h_a4ca3d1d7a52f89da94e969bf19a872e0} 
+using \mbox{\hyperlink{tcp6__acceptor_8h_a4ca3d1d7a52f89da94e969bf19a872e0}{sockpp\+::tcp6\+\_\+acceptor}} = acceptor\+\_\+tmpl$<$tcp6\+\_\+socket$>$}
+
+
+
+Class for creating a TCP v6 server. 
+
+Objects of this class bind and listen on TCP ports for incoming connections. Normally, a server thread creates one of these and blocks on the call to accept incoming connections. The call to accept creates and returns a tcp6\+\_\+socket which can then be used for the actual communications. 

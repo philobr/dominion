@@ -1,0 +1,151 @@
+\doxysection{acceptor.\+h}
+\hypertarget{acceptor_8h_source}{}\label{acceptor_8h_source}\index{include/sockpp/acceptor.h@{include/sockpp/acceptor.h}}
+\mbox{\hyperlink{acceptor_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ }
+\DoxyCodeLine{00010\ }
+\DoxyCodeLine{00011\ \textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{00012\ \textcolor{comment}{//\ This\ file\ is\ part\ of\ the\ "{}sockpp"{}\ C++\ socket\ library.}}
+\DoxyCodeLine{00013\ \textcolor{comment}{//}}
+\DoxyCodeLine{00014\ \textcolor{comment}{//\ Copyright\ (c)\ 2014-\/2023\ Frank\ Pagliughi}}
+\DoxyCodeLine{00015\ \textcolor{comment}{//\ All\ rights\ reserved.}}
+\DoxyCodeLine{00016\ \textcolor{comment}{//}}
+\DoxyCodeLine{00017\ \textcolor{comment}{//\ Redistribution\ and\ use\ in\ source\ and\ binary\ forms,\ with\ or\ without}}
+\DoxyCodeLine{00018\ \textcolor{comment}{//\ modification,\ are\ permitted\ provided\ that\ the\ following\ conditions\ are}}
+\DoxyCodeLine{00019\ \textcolor{comment}{//\ met:}}
+\DoxyCodeLine{00020\ \textcolor{comment}{//}}
+\DoxyCodeLine{00021\ \textcolor{comment}{//\ 1.\ Redistributions\ of\ source\ code\ must\ retain\ the\ above\ copyright\ notice,}}
+\DoxyCodeLine{00022\ \textcolor{comment}{//\ this\ list\ of\ conditions\ and\ the\ following\ disclaimer.}}
+\DoxyCodeLine{00023\ \textcolor{comment}{//}}
+\DoxyCodeLine{00024\ \textcolor{comment}{//\ 2.\ Redistributions\ in\ binary\ form\ must\ reproduce\ the\ above\ copyright}}
+\DoxyCodeLine{00025\ \textcolor{comment}{//\ notice,\ this\ list\ of\ conditions\ and\ the\ following\ disclaimer\ in\ the}}
+\DoxyCodeLine{00026\ \textcolor{comment}{//\ documentation\ and/or\ other\ materials\ provided\ with\ the\ distribution.}}
+\DoxyCodeLine{00027\ \textcolor{comment}{//}}
+\DoxyCodeLine{00028\ \textcolor{comment}{//\ 3.\ Neither\ the\ name\ of\ the\ copyright\ holder\ nor\ the\ names\ of\ its}}
+\DoxyCodeLine{00029\ \textcolor{comment}{//\ contributors\ may\ be\ used\ to\ endorse\ or\ promote\ products\ derived\ from\ this}}
+\DoxyCodeLine{00030\ \textcolor{comment}{//\ software\ without\ specific\ prior\ written\ permission.}}
+\DoxyCodeLine{00031\ \textcolor{comment}{//}}
+\DoxyCodeLine{00032\ \textcolor{comment}{//\ THIS\ SOFTWARE\ IS\ PROVIDED\ BY\ THE\ COPYRIGHT\ HOLDERS\ AND\ CONTRIBUTORS\ "{}AS}}
+\DoxyCodeLine{00033\ \textcolor{comment}{//\ IS"{}\ AND\ ANY\ EXPRESS\ OR\ IMPLIED\ WARRANTIES,\ INCLUDING,\ BUT\ NOT\ LIMITED\ TO,}}
+\DoxyCodeLine{00034\ \textcolor{comment}{//\ THE\ IMPLIED\ WARRANTIES\ OF\ MERCHANTABILITY\ AND\ FITNESS\ FOR\ A\ PARTICULAR}}
+\DoxyCodeLine{00035\ \textcolor{comment}{//\ PURPOSE\ ARE\ DISCLAIMED.\ IN\ NO\ EVENT\ SHALL\ THE\ COPYRIGHT\ HOLDER\ OR}}
+\DoxyCodeLine{00036\ \textcolor{comment}{//\ CONTRIBUTORS\ BE\ LIABLE\ FOR\ ANY\ DIRECT,\ INDIRECT,\ INCIDENTAL,\ SPECIAL,}}
+\DoxyCodeLine{00037\ \textcolor{comment}{//\ EXEMPLARY,\ OR\ CONSEQUENTIAL\ DAMAGES\ (INCLUDING,\ BUT\ NOT\ LIMITED\ TO,}}
+\DoxyCodeLine{00038\ \textcolor{comment}{//\ PROCUREMENT\ OF\ SUBSTITUTE\ GOODS\ OR\ SERVICES;\ LOSS\ OF\ USE,\ DATA,\ OR}}
+\DoxyCodeLine{00039\ \textcolor{comment}{//\ PROFITS;\ OR\ BUSINESS\ INTERRUPTION)\ HOWEVER\ CAUSED\ AND\ ON\ ANY\ THEORY\ OF}}
+\DoxyCodeLine{00040\ \textcolor{comment}{//\ LIABILITY,\ WHETHER\ IN\ CONTRACT,\ STRICT\ LIABILITY,\ OR\ TORT\ (INCLUDING}}
+\DoxyCodeLine{00041\ \textcolor{comment}{//\ NEGLIGENCE\ OR\ OTHERWISE)\ ARISING\ IN\ ANY\ WAY\ OUT\ OF\ THE\ USE\ OF\ THIS}}
+\DoxyCodeLine{00042\ \textcolor{comment}{//\ SOFTWARE,\ EVEN\ IF\ ADVISED\ OF\ THE\ POSSIBILITY\ OF\ SUCH\ DAMAGE.}}
+\DoxyCodeLine{00043\ \textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{00044\ }
+\DoxyCodeLine{00045\ \textcolor{preprocessor}{\#ifndef\ \_\_sockpp\_acceptor\_h}}
+\DoxyCodeLine{00046\ \textcolor{preprocessor}{\#define\ \_\_sockpp\_acceptor\_h}}
+\DoxyCodeLine{00047\ }
+\DoxyCodeLine{00048\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{inet__address_8h}{sockpp/inet\_address.h}}"{}}}
+\DoxyCodeLine{00049\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{stream__socket_8h}{sockpp/stream\_socket.h}}"{}}}
+\DoxyCodeLine{00050\ }
+\DoxyCodeLine{00051\ \textcolor{keyword}{namespace\ }sockpp\ \{}
+\DoxyCodeLine{00052\ }
+\DoxyCodeLine{00054\ }
+\DoxyCodeLine{00063\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classsockpp_1_1acceptor}{acceptor}}\ :\ \textcolor{keyword}{public}\ \mbox{\hyperlink{classsockpp_1_1socket}{socket}}}
+\DoxyCodeLine{00064\ \{}
+\DoxyCodeLine{00066\ \ \ \ \ \textcolor{keyword}{using\ }\mbox{\hyperlink{classsockpp_1_1socket}{base}}\ =\ \mbox{\hyperlink{classsockpp_1_1socket_a344b78b929577b8868eded1ed8416119}{socket}};}
+\DoxyCodeLine{00067\ }
+\DoxyCodeLine{00068\ \ \ \ \ \textcolor{comment}{//\ Non-\/copyable}}
+\DoxyCodeLine{00069\ \ \ \ \ \mbox{\hyperlink{classsockpp_1_1acceptor_a064cfcf1165dec8714684a2390c5f091}{acceptor}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{classsockpp_1_1acceptor}{acceptor}}\&)\ =\ \textcolor{keyword}{delete};}
+\DoxyCodeLine{00070\ \ \ \ \ \mbox{\hyperlink{classsockpp_1_1acceptor}{acceptor}}\&\ operator=(\textcolor{keyword}{const}\ \mbox{\hyperlink{classsockpp_1_1acceptor}{acceptor}}\&)\ =\ \textcolor{keyword}{delete};}
+\DoxyCodeLine{00071\ }
+\DoxyCodeLine{00072\ \textcolor{keyword}{protected}:}
+\DoxyCodeLine{00082\ \ \ \ \ \textcolor{keyword}{static}\ \mbox{\hyperlink{classsockpp_1_1result}{result<socket\_t>}}\ \mbox{\hyperlink{classsockpp_1_1acceptor_ad002f72f9b844ff90701a7704589a820}{create\_handle}}(\textcolor{keywordtype}{int}\ domain)\ \{}
+\DoxyCodeLine{00083\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{classsockpp_1_1stream__socket_ab383596f6c96f9648040d43578ff3bd5}{stream\_socket::create\_handle}}(domain);}
+\DoxyCodeLine{00084\ \ \ \ \ \}}
+\DoxyCodeLine{00085\ }
+\DoxyCodeLine{00086\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00088\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{constexpr}\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{classsockpp_1_1acceptor_a4a3f87e68bb1f9e5e5e803f4f8b9c64a}{DFLT\_QUE\_SIZE}}\ =\ 4;}
+\DoxyCodeLine{00089\ }
+\DoxyCodeLine{00090\ \textcolor{preprocessor}{\#if\ defined(\_WIN32)\ ||\ defined(\_\_CYGWIN\_\_)}}
+\DoxyCodeLine{00091\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{constexpr}\ \textcolor{keywordtype}{int}\ REUSE\ =\ SO\_REUSEADDR;}
+\DoxyCodeLine{00092\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{00093\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{constexpr}\ \textcolor{keywordtype}{int}\ REUSE\ =\ SO\_REUSEPORT;}
+\DoxyCodeLine{00094\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00095\ }
+\DoxyCodeLine{00099\ \ \ \ \ \mbox{\hyperlink{classsockpp_1_1acceptor_a064cfcf1165dec8714684a2390c5f091}{acceptor}}()\ noexcept\ \{\}}
+\DoxyCodeLine{00105\ \ \ \ \ \textcolor{keyword}{explicit}\ \mbox{\hyperlink{classsockpp_1_1acceptor_acf4b23a8ea408dfc33724a8d82d7c6d9}{acceptor}}(\mbox{\hyperlink{socket_8h_ab045671400eacfc589ce8f055ed66264}{socket\_t}}\ \mbox{\hyperlink{classsockpp_1_1socket_a8fc84fb9460a83623e954d37406986b7}{handle}})\ noexcept\ :\ \mbox{\hyperlink{classsockpp_1_1socket}{base}}(\mbox{\hyperlink{classsockpp_1_1socket_a8fc84fb9460a83623e954d37406986b7}{handle}})\ \{\}}
+\DoxyCodeLine{00116\ \ \ \ \ \mbox{\hyperlink{classsockpp_1_1acceptor_ace39806cb34a0c04f0a6352717fe1795}{acceptor}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{classsockpp_1_1sock__address}{sock\_address}}\&\ addr,\ \textcolor{keywordtype}{int}\ queSize\ =\ \mbox{\hyperlink{classsockpp_1_1acceptor_a4a3f87e68bb1f9e5e5e803f4f8b9c64a}{DFLT\_QUE\_SIZE}},\ \textcolor{keywordtype}{int}\ reuse\ =\ 0)\ \{}
+\DoxyCodeLine{00117\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\textcolor{keyword}{auto}\ res\ =\ \mbox{\hyperlink{classsockpp_1_1acceptor_a7aaada2ba2eece59ef88b7672b61379b}{open}}(addr,\ queSize,\ reuse);\ !res)}
+\DoxyCodeLine{00118\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{throw}\ std::system\_error\{res.error()\};}
+\DoxyCodeLine{00119\ \ \ \ \ \}}
+\DoxyCodeLine{00127\ \ \ \ \ \mbox{\hyperlink{classsockpp_1_1acceptor_ab86d91a432925659337398d714d6b632}{acceptor}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{classsockpp_1_1sock__address}{sock\_address}}\&\ addr,\ \textcolor{keywordtype}{int}\ queSize,\ \mbox{\hyperlink{error_8h_ab1e0c0347ae112be97a91664fd6c830d}{error\_code}}\&\ ec)\ \textcolor{keyword}{noexcept}\ \{}
+\DoxyCodeLine{00128\ \ \ \ \ \ \ \ \ ec\ =\ \mbox{\hyperlink{classsockpp_1_1acceptor_a7aaada2ba2eece59ef88b7672b61379b}{open}}(addr,\ queSize).\mbox{\hyperlink{classsockpp_1_1result_a8f0ca062bd663eefd25219dd22b62f2c}{error}}();}
+\DoxyCodeLine{00129\ \ \ \ \ \}}
+\DoxyCodeLine{00135\ \ \ \ \ \mbox{\hyperlink{classsockpp_1_1acceptor_a4cee1d32a4001d6a71256c657b765a4d}{acceptor}}(\mbox{\hyperlink{classsockpp_1_1acceptor}{acceptor}}\&\&\ acc)\ noexcept\ :\ \mbox{\hyperlink{classsockpp_1_1socket}{base}}(std::move(acc))\ \{\}}
+\DoxyCodeLine{00143\ \ \ \ \ \textcolor{keyword}{static}\ \mbox{\hyperlink{classsockpp_1_1result}{result<acceptor>}}\ \mbox{\hyperlink{classsockpp_1_1acceptor_a632b6c97e9b6dee1cf163202924fc7d9}{create}}(\textcolor{keywordtype}{int}\ domain)\ \textcolor{keyword}{noexcept};}
+\DoxyCodeLine{00149\ \ \ \ \ \mbox{\hyperlink{classsockpp_1_1acceptor}{acceptor}}\&\ \mbox{\hyperlink{classsockpp_1_1acceptor_a531602eef6543f73ac8077428e036be7}{operator=}}(\mbox{\hyperlink{classsockpp_1_1acceptor}{acceptor}}\&\&\ rhs)\ \{}
+\DoxyCodeLine{00150\ \ \ \ \ \ \ \ \ base::operator=(std::move(rhs));}
+\DoxyCodeLine{00151\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ *\textcolor{keyword}{this};}
+\DoxyCodeLine{00152\ \ \ \ \ \}}
+\DoxyCodeLine{00158\ \ \ \ \ \mbox{\hyperlink{classsockpp_1_1result}{result<>}}\ \mbox{\hyperlink{classsockpp_1_1acceptor_af115e92b927d074aa1f8b7a36c642cbd}{listen}}(\textcolor{keywordtype}{int}\ queSize\ =\ \mbox{\hyperlink{classsockpp_1_1acceptor_a4a3f87e68bb1f9e5e5e803f4f8b9c64a}{DFLT\_QUE\_SIZE}})\ \{}
+\DoxyCodeLine{00159\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{classsockpp_1_1socket_a44e4803a062c674187d0cc57c746f879}{check\_res\_none}}(\mbox{\hyperlink{classsockpp_1_1acceptor_af115e92b927d074aa1f8b7a36c642cbd}{::listen}}(\mbox{\hyperlink{classsockpp_1_1socket_a8fc84fb9460a83623e954d37406986b7}{handle}}(),\ queSize));}
+\DoxyCodeLine{00160\ \ \ \ \ \}}
+\DoxyCodeLine{00171\ \ \ \ \ \mbox{\hyperlink{classsockpp_1_1result}{result<>}}\ \mbox{\hyperlink{classsockpp_1_1acceptor_a7aaada2ba2eece59ef88b7672b61379b}{open}}(}
+\DoxyCodeLine{00172\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{classsockpp_1_1sock__address}{sock\_address}}\&\ addr,\ \textcolor{keywordtype}{int}\ queSize\ =\ \mbox{\hyperlink{classsockpp_1_1acceptor_a4a3f87e68bb1f9e5e5e803f4f8b9c64a}{DFLT\_QUE\_SIZE}},\ \textcolor{keywordtype}{int}\ reuse\ =\ 0}
+\DoxyCodeLine{00173\ \ \ \ \ )\ noexcept;}
+\DoxyCodeLine{00180\ \ \ \ \ \mbox{\hyperlink{classsockpp_1_1result}{result}}<\mbox{\hyperlink{classsockpp_1_1stream__socket}{stream\_socket}}>\ \mbox{\hyperlink{classsockpp_1_1acceptor_a252e03be5b62739eff805b59e3fac1f9}{accept}}(\mbox{\hyperlink{classsockpp_1_1sock__address}{sock\_address}}*\ clientAddr\ =\ \textcolor{keywordtype}{nullptr})\ noexcept;}
+\DoxyCodeLine{00181\ \};}
+\DoxyCodeLine{00182\ }
+\DoxyCodeLine{00184\ }
+\DoxyCodeLine{00193\ template\ <typename\ STREAM\_SOCK,\ typename\ ADDR\ =\ typename\ STREAM\_SOCK::addr\_t>}
+\DoxyCodeLine{00194\ class\ \mbox{\hyperlink{classsockpp_1_1acceptor__tmpl}{acceptor\_tmpl}}\ :\ public\ \mbox{\hyperlink{classsockpp_1_1acceptor}{acceptor}}}
+\DoxyCodeLine{00195\ \{}
+\DoxyCodeLine{00197\ \ \ \ \ \textcolor{keyword}{using\ }\mbox{\hyperlink{classsockpp_1_1acceptor}{base}}\ =\ \mbox{\hyperlink{classsockpp_1_1acceptor_a064cfcf1165dec8714684a2390c5f091}{acceptor}};}
+\DoxyCodeLine{00198\ }
+\DoxyCodeLine{00199\ \ \ \ \ \textcolor{comment}{//\ Non-\/copyable}}
+\DoxyCodeLine{00200\ \ \ \ \ \mbox{\hyperlink{classsockpp_1_1acceptor__tmpl}{acceptor\_tmpl}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{classsockpp_1_1acceptor__tmpl}{acceptor\_tmpl}}\&)\ =\ \textcolor{keyword}{delete};}
+\DoxyCodeLine{00201\ \ \ \ \ \mbox{\hyperlink{classsockpp_1_1acceptor__tmpl}{acceptor\_tmpl}}\&\ operator=(\textcolor{keyword}{const}\ \mbox{\hyperlink{classsockpp_1_1acceptor__tmpl}{acceptor\_tmpl}}\&)\ =\ \textcolor{keyword}{delete};}
+\DoxyCodeLine{00202\ }
+\DoxyCodeLine{00203\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00205\ \ \ \ \ \textcolor{keyword}{using\ }\mbox{\hyperlink{classsockpp_1_1acceptor__tmpl_acf486227e326da5eaa8e5f02e2ef35f5}{stream\_sock\_t}}\ =\ STREAM\_SOCK;}
+\DoxyCodeLine{00207\ \ \ \ \ \textcolor{keyword}{using\ }\mbox{\hyperlink{classsockpp_1_1acceptor__tmpl_a27b9976298d73cc6f96241b75894d667}{addr\_t}}\ =\ ADDR;}
+\DoxyCodeLine{00208\ }
+\DoxyCodeLine{00212\ \ \ \ \ \mbox{\hyperlink{classsockpp_1_1acceptor__tmpl_a4fad471dde7e00e534c6b0df03870ae1}{acceptor\_tmpl}}()\ noexcept\ \{\}}
+\DoxyCodeLine{00219\ \ \ \ \ \mbox{\hyperlink{classsockpp_1_1acceptor__tmpl_a4bd3ce9804359a4f3e0a034c8054271e}{acceptor\_tmpl}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{classsockpp_1_1acceptor__tmpl_a27b9976298d73cc6f96241b75894d667}{addr\_t}}\&\ addr,\ \textcolor{keywordtype}{int}\ queSize\ =\ \mbox{\hyperlink{classsockpp_1_1acceptor_a4a3f87e68bb1f9e5e5e803f4f8b9c64a}{DFLT\_QUE\_SIZE}},\ \textcolor{keywordtype}{int}\ reuse\ =\ 0)\ \{}
+\DoxyCodeLine{00220\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\textcolor{keyword}{auto}\ res\ =\ \mbox{\hyperlink{classsockpp_1_1acceptor_a7aaada2ba2eece59ef88b7672b61379b}{open}}(addr,\ queSize,\ reuse);\ !res)}
+\DoxyCodeLine{00221\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{throw}\ std::system\_error\{res.error()\};}
+\DoxyCodeLine{00222\ \ \ \ \ \}}
+\DoxyCodeLine{00229\ \ \ \ \ \mbox{\hyperlink{classsockpp_1_1acceptor__tmpl_a495f755b0315cb7c24c62c6a618e4b6a}{acceptor\_tmpl}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{classsockpp_1_1acceptor__tmpl_a27b9976298d73cc6f96241b75894d667}{addr\_t}}\&\ addr,\ \textcolor{keywordtype}{int}\ queSize,\ \mbox{\hyperlink{error_8h_ab1e0c0347ae112be97a91664fd6c830d}{error\_code}}\&\ ec)\ \textcolor{keyword}{noexcept}\ \{}
+\DoxyCodeLine{00230\ \ \ \ \ \ \ \ \ ec\ =\ \mbox{\hyperlink{classsockpp_1_1acceptor_a7aaada2ba2eece59ef88b7672b61379b}{open}}(addr,\ queSize).\mbox{\hyperlink{classsockpp_1_1result_a8f0ca062bd663eefd25219dd22b62f2c}{error}}();}
+\DoxyCodeLine{00231\ \ \ \ \ \}}
+\DoxyCodeLine{00240\ \ \ \ \ \mbox{\hyperlink{classsockpp_1_1acceptor__tmpl_ae8037a35d201a7e50bf8ca095f3d4faf}{acceptor\_tmpl}}(in\_port\_t\ port,\ \textcolor{keywordtype}{int}\ queSize\ =\ \mbox{\hyperlink{classsockpp_1_1acceptor_a4a3f87e68bb1f9e5e5e803f4f8b9c64a}{DFLT\_QUE\_SIZE}})\ \{}
+\DoxyCodeLine{00241\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\textcolor{keyword}{auto}\ res\ =\ \mbox{\hyperlink{classsockpp_1_1acceptor_a7aaada2ba2eece59ef88b7672b61379b}{open}}(port,\ queSize);\ !res)}
+\DoxyCodeLine{00242\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{throw}\ std::system\_error\{res.error()\};}
+\DoxyCodeLine{00243\ \ \ \ \ \}}
+\DoxyCodeLine{00252\ \ \ \ \ \mbox{\hyperlink{classsockpp_1_1acceptor__tmpl_a6ad8f1402ff73bd2cf36a39390930f99}{acceptor\_tmpl}}(in\_port\_t\ port,\ \textcolor{keywordtype}{int}\ queSize,\ \mbox{\hyperlink{error_8h_ab1e0c0347ae112be97a91664fd6c830d}{error\_code}}\&\ ec)\ \textcolor{keyword}{noexcept}\ \{}
+\DoxyCodeLine{00253\ \ \ \ \ \ \ \ \ ec\ =\ \mbox{\hyperlink{classsockpp_1_1acceptor_a7aaada2ba2eece59ef88b7672b61379b}{open}}(port,\ queSize).\mbox{\hyperlink{classsockpp_1_1result_a8f0ca062bd663eefd25219dd22b62f2c}{error}}();}
+\DoxyCodeLine{00254\ \ \ \ \ \}}
+\DoxyCodeLine{00260\ \ \ \ \ \mbox{\hyperlink{classsockpp_1_1acceptor__tmpl_ab773b66a42bdf96e996098961dd04e97}{acceptor\_tmpl}}(\mbox{\hyperlink{classsockpp_1_1acceptor__tmpl}{acceptor\_tmpl}}\&\&\ acc)\ noexcept\ :\ \mbox{\hyperlink{classsockpp_1_1acceptor}{base}}(std::move(acc))\ \{\}}
+\DoxyCodeLine{00267\ \ \ \ \ \textcolor{keyword}{static}\ \mbox{\hyperlink{classsockpp_1_1result}{result<acceptor\_tmpl>}}\ \mbox{\hyperlink{classsockpp_1_1acceptor__tmpl_a9b9778494351d7ece9b8d6cf935d848f}{create}}()\ \{\ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{classsockpp_1_1socket_ab68eb87fa97b0978b104b9f5b97275bc}{base::create}}(addr\_t::ADDRESS\_FAMILY);\ \}}
+\DoxyCodeLine{00273\ \ \ \ \ \mbox{\hyperlink{classsockpp_1_1acceptor__tmpl}{acceptor\_tmpl}}\&\ \mbox{\hyperlink{classsockpp_1_1acceptor__tmpl_ae7983e619f6637ad1d357351107033f9}{operator=}}(\mbox{\hyperlink{classsockpp_1_1acceptor__tmpl}{acceptor\_tmpl}}\&\&\ rhs)\ \{}
+\DoxyCodeLine{00274\ \ \ \ \ \ \ \ \ base::operator=(std::move(rhs));}
+\DoxyCodeLine{00275\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ *\textcolor{keyword}{this};}
+\DoxyCodeLine{00276\ \ \ \ \ \}}
+\DoxyCodeLine{00281\ \ \ \ \ \mbox{\hyperlink{classsockpp_1_1acceptor__tmpl_a27b9976298d73cc6f96241b75894d667}{addr\_t}}\ \mbox{\hyperlink{classsockpp_1_1acceptor__tmpl_a8c25c060845e0d0bc3ecc087e064c584}{address}}()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{classsockpp_1_1acceptor__tmpl_a27b9976298d73cc6f96241b75894d667}{addr\_t}}(\mbox{\hyperlink{classsockpp_1_1socket_ad20287690be16c6e384688e60246313a}{base::address}}());\ \}}
+\DoxyCodeLine{00287\ \ \ \ \ \mbox{\hyperlink{classsockpp_1_1result}{result<>}}\ \mbox{\hyperlink{classsockpp_1_1acceptor__tmpl_ae59e47a479275cd617e1e26174ffe899}{bind}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{classsockpp_1_1acceptor__tmpl_a27b9976298d73cc6f96241b75894d667}{addr\_t}}\&\ addr)\ \{\ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{classsockpp_1_1socket_aa40612445c51025d95548fe1f4251429}{base::bind}}(addr);\ \}}
+\DoxyCodeLine{00298\ \ \ \ \ \mbox{\hyperlink{classsockpp_1_1result}{result<>}}\ \mbox{\hyperlink{classsockpp_1_1acceptor__tmpl_a0716c02a0b823364fa65d53747565d66}{open}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{classsockpp_1_1acceptor__tmpl_a27b9976298d73cc6f96241b75894d667}{addr\_t}}\&\ addr,\ \textcolor{keywordtype}{int}\ queSize\ =\ \mbox{\hyperlink{classsockpp_1_1acceptor_a4a3f87e68bb1f9e5e5e803f4f8b9c64a}{DFLT\_QUE\_SIZE}},\ \textcolor{keywordtype}{int}\ reuse\ =\ 0)\ noexcept\ \{}
+\DoxyCodeLine{00299\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ base::open(addr,\ queSize,\ reuse);}
+\DoxyCodeLine{00300\ \ \ \ \ \}}
+\DoxyCodeLine{00311\ \ \ \ \ \mbox{\hyperlink{classsockpp_1_1result}{result<>}}\ \mbox{\hyperlink{classsockpp_1_1acceptor__tmpl_a803939268e0e780dc79f5c0393f83597}{open}}(in\_port\_t\ port,\ \textcolor{keywordtype}{int}\ queSize\ =\ \mbox{\hyperlink{classsockpp_1_1acceptor_a4a3f87e68bb1f9e5e5e803f4f8b9c64a}{DFLT\_QUE\_SIZE}},\ \textcolor{keywordtype}{int}\ reuse\ =\ 0)\ noexcept\ \{}
+\DoxyCodeLine{00312\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{classsockpp_1_1acceptor_a7aaada2ba2eece59ef88b7672b61379b}{open}}(\mbox{\hyperlink{classsockpp_1_1acceptor__tmpl_a27b9976298d73cc6f96241b75894d667}{addr\_t}}(port),\ queSize,\ reuse);}
+\DoxyCodeLine{00313\ \ \ \ \ \}}
+\DoxyCodeLine{00320\ \ \ \ \ \mbox{\hyperlink{classsockpp_1_1result}{result<stream\_sock\_t>}}\ \mbox{\hyperlink{classsockpp_1_1acceptor__tmpl_af3236024dd2ba807cdcc6ad3ffb16371}{accept}}(\mbox{\hyperlink{classsockpp_1_1acceptor__tmpl_a27b9976298d73cc6f96241b75894d667}{addr\_t}}*\ clientAddr\ =\ \textcolor{keyword}{nullptr})\ \{}
+\DoxyCodeLine{00321\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\textcolor{keyword}{auto}\ res\ =\ base::accept(clientAddr);\ res)}
+\DoxyCodeLine{00322\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{classsockpp_1_1acceptor__tmpl_acf486227e326da5eaa8e5f02e2ef35f5}{stream\_sock\_t}}\{res.release()\};}
+\DoxyCodeLine{00323\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00324\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ res.error();}
+\DoxyCodeLine{00325\ \ \ \ \ \}}
+\DoxyCodeLine{00326\ \};}
+\DoxyCodeLine{00327\ }
+\DoxyCodeLine{00329\ \}\ \ \textcolor{comment}{//\ namespace\ sockpp}}
+\DoxyCodeLine{00330\ }
+\DoxyCodeLine{00331\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//\ \_\_sockpp\_acceptor\_h}}
+
+\end{DoxyCode}

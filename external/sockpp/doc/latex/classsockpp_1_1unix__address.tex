@@ -1,0 +1,332 @@
+\doxysection{sockpp\+::unix\+\_\+address Class Reference}
+\hypertarget{classsockpp_1_1unix__address}{}\label{classsockpp_1_1unix__address}\index{sockpp::unix\_address@{sockpp::unix\_address}}
+
+
+Class that represents a UNIX domain address.  
+
+
+
+
+{\ttfamily \#include $<$unix\+\_\+address.\+h$>$}
+
+Inheritance diagram for sockpp\+::unix\+\_\+address\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{classsockpp_1_1unix__address}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{classsockpp_1_1unix__address_a988c96c49f1f40cd1ab270977d329c53}{unix\+\_\+address}} ()=default
+\begin{DoxyCompactList}\small\item\em Constructs an empty address. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classsockpp_1_1unix__address_aca08fd6d6691c1443d6d16af8df0fa55}{unix\+\_\+address}} (const string \&\mbox{\hyperlink{classsockpp_1_1unix__address_a953d2eb706f8a1db7313512dc5ab7a54}{path}})
+\begin{DoxyCompactList}\small\item\em Constructs an address given the specified path. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classsockpp_1_1unix__address_af1b373a891eeacbb11dbb5b686497c1a}{unix\+\_\+address}} (const string \&\mbox{\hyperlink{classsockpp_1_1unix__address_a953d2eb706f8a1db7313512dc5ab7a54}{path}}, \mbox{\hyperlink{error_8h_ab1e0c0347ae112be97a91664fd6c830d}{error\+\_\+code}} \&ec) noexcept
+\begin{DoxyCompactList}\small\item\em Constructs an address given the specified path. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classsockpp_1_1unix__address_a667d4ab6510c2864dda3f86839170e2e}{unix\+\_\+address}} (const sockaddr \&addr)
+\begin{DoxyCompactList}\small\item\em Constructs the address by copying the specified structure. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classsockpp_1_1unix__address_a107834492c9a253b1649d9cae25d1ee2}{unix\+\_\+address}} (const \mbox{\hyperlink{classsockpp_1_1sock__address}{sock\+\_\+address}} \&addr) noexcept
+\begin{DoxyCompactList}\small\item\em Constructs the address by copying the specified structure. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classsockpp_1_1unix__address_a79ecca7a1767758475c2c2542f610fa0}{unix\+\_\+address}} (const sockaddr\+\_\+un \&addr) noexcept
+\begin{DoxyCompactList}\small\item\em Constructs the address by copying the specified structure. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classsockpp_1_1unix__address_a7f7088ee6d7bc90bdfe2e969b5a16962}{unix\+\_\+address}} (const \mbox{\hyperlink{classsockpp_1_1unix__address}{unix\+\_\+address}} \&addr)
+\begin{DoxyCompactList}\small\item\em Constructs the address by copying the specified address. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{classsockpp_1_1unix__address_a568bc65ed14dd7cb17ee8fb58aa5674b}{is\+\_\+set}} () const noexcept override
+\begin{DoxyCompactList}\small\item\em Checks if the address is set to some value. \end{DoxyCompactList}\item 
+string \mbox{\hyperlink{classsockpp_1_1unix__address_a953d2eb706f8a1db7313512dc5ab7a54}{path}} () const
+\begin{DoxyCompactList}\small\item\em Gets the path to which this address refers. \end{DoxyCompactList}\item 
+socklen\+\_\+t \mbox{\hyperlink{classsockpp_1_1unix__address_a7e47141464e5c8b37f968bd08fae7b6f}{size}} () const override
+\begin{DoxyCompactList}\small\item\em Gets the size of the address structure. \end{DoxyCompactList}\item 
+const sockaddr \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{classsockpp_1_1unix__address_a060d5916e8f15be9f67025a0f127fe20}{sockaddr\+\_\+ptr}} () const override
+\begin{DoxyCompactList}\small\item\em Gets a pointer to this object cast to a const {\itshape sockaddr}. \end{DoxyCompactList}\item 
+sockaddr \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{classsockpp_1_1unix__address_a5179f79b4e154622f46ddfd1ea42a9e9}{sockaddr\+\_\+ptr}} () override
+\begin{DoxyCompactList}\small\item\em Gets a pointer to this object cast to a {\itshape sockaddr}. \end{DoxyCompactList}\item 
+const sockaddr\+\_\+un \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{classsockpp_1_1unix__address_a0a542ff0c2ea85a1a46435f81be40ed9}{sockaddr\+\_\+un\+\_\+ptr}} () const
+\begin{DoxyCompactList}\small\item\em Gets a const pointer to this object cast to a {\itshape sockaddr\+\_\+un}. \end{DoxyCompactList}\item 
+sockaddr\+\_\+un \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{classsockpp_1_1unix__address_a0e481ff033218f3fcd7980c3122b56a5}{sockaddr\+\_\+un\+\_\+ptr}} ()
+\begin{DoxyCompactList}\small\item\em Gets a pointer to this object cast to a {\itshape sockaddr\+\_\+un}. \end{DoxyCompactList}\item 
+string \mbox{\hyperlink{classsockpp_1_1unix__address_a855f53589b6c7e973396e9581715d4f5}{to\+\_\+string}} () const
+\begin{DoxyCompactList}\small\item\em Gets a printable string for the address. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Public Member Functions inherited from \mbox{\hyperlink{classsockpp_1_1sock__address}{sockpp\+::sock\+\_\+address}}}
+\begin{DoxyCompactItemize}
+\item 
+virtual {\bfseries \texorpdfstring{$\sim$}{\string~}sock\+\_\+address} () noexcept
+\begin{DoxyCompactList}\small\item\em Virtual destructor. \end{DoxyCompactList}\item 
+virtual sa\+\_\+family\+\_\+t \mbox{\hyperlink{classsockpp_1_1sock__address_af47688d3cff571fbf0c342c3d7885f97}{family}} () const
+\begin{DoxyCompactList}\small\item\em Gets the network family of the address. \end{DoxyCompactList}\item 
+virtual \mbox{\hyperlink{classsockpp_1_1sock__address_ab78f06a210ab1b936d25d0a8a5a9d896}{operator bool}} () const noexcept
+\begin{DoxyCompactList}\small\item\em Determines if the address is set to some value. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static \mbox{\hyperlink{classsockpp_1_1result}{result}}$<$ \mbox{\hyperlink{classsockpp_1_1unix__address}{unix\+\_\+address}} $>$ \mbox{\hyperlink{classsockpp_1_1unix__address_a76f91ee4a3b4fc8687bddf22477446a2}{create}} (const string \&\mbox{\hyperlink{classsockpp_1_1unix__address_a953d2eb706f8a1db7313512dc5ab7a54}{path}})
+\begin{DoxyCompactList}\small\item\em Creates an address from the specified path. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Static Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{classsockpp_1_1unix__address_a881a85015217f11a5453f0b25f27ad69}\label{classsockpp_1_1unix__address_a881a85015217f11a5453f0b25f27ad69} 
+static constexpr sa\+\_\+family\+\_\+t {\bfseries ADDRESS\+\_\+\+FAMILY} = AF\+\_\+\+UNIX
+\begin{DoxyCompactList}\small\item\em The address family for this type of address. \end{DoxyCompactList}\item 
+\Hypertarget{classsockpp_1_1unix__address_ade6dacec7c10d38b34eee96cf1642da6}\label{classsockpp_1_1unix__address_ade6dacec7c10d38b34eee96cf1642da6} 
+static constexpr size\+\_\+t {\bfseries MAX\+\_\+\+PATH\+\_\+\+NAME} = sizeof(sockaddr\+\_\+un\+::sun\+\_\+path)
+\begin{DoxyCompactList}\small\item\em The max length of the file path. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Class that represents a UNIX domain address. 
+
+This inherits from the UNIX form of a socket address, {\itshape sockaddr\+\_\+un}. 
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{classsockpp_1_1unix__address_a988c96c49f1f40cd1ab270977d329c53}\index{sockpp::unix\_address@{sockpp::unix\_address}!unix\_address@{unix\_address}}
+\index{unix\_address@{unix\_address}!sockpp::unix\_address@{sockpp::unix\_address}}
+\doxysubsubsection{\texorpdfstring{unix\_address()}{unix\_address()}\hspace{0.1cm}{\footnotesize\ttfamily [1/7]}}
+{\footnotesize\ttfamily \label{classsockpp_1_1unix__address_a988c96c49f1f40cd1ab270977d329c53} 
+sockpp\+::unix\+\_\+address\+::unix\+\_\+address (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [default]}}
+
+
+
+Constructs an empty address. 
+
+The address is initialized to all zeroes. \Hypertarget{classsockpp_1_1unix__address_aca08fd6d6691c1443d6d16af8df0fa55}\index{sockpp::unix\_address@{sockpp::unix\_address}!unix\_address@{unix\_address}}
+\index{unix\_address@{unix\_address}!sockpp::unix\_address@{sockpp::unix\_address}}
+\doxysubsubsection{\texorpdfstring{unix\_address()}{unix\_address()}\hspace{0.1cm}{\footnotesize\ttfamily [2/7]}}
+{\footnotesize\ttfamily \label{classsockpp_1_1unix__address_aca08fd6d6691c1443d6d16af8df0fa55} 
+sockpp\+::unix\+\_\+address\+::unix\+\_\+address (\begin{DoxyParamCaption}\item[{const string \&}]{path}{}\end{DoxyParamCaption})}
+
+
+
+Constructs an address given the specified path. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em path} & The path to the socket file. \\
+\hline
+\end{DoxyParams}
+
+\begin{DoxyExceptions}{Exceptions}
+{\em system\+\_\+error} & if the path is invalid (too long, etc) \\
+\hline
+\end{DoxyExceptions}
+\Hypertarget{classsockpp_1_1unix__address_af1b373a891eeacbb11dbb5b686497c1a}\index{sockpp::unix\_address@{sockpp::unix\_address}!unix\_address@{unix\_address}}
+\index{unix\_address@{unix\_address}!sockpp::unix\_address@{sockpp::unix\_address}}
+\doxysubsubsection{\texorpdfstring{unix\_address()}{unix\_address()}\hspace{0.1cm}{\footnotesize\ttfamily [3/7]}}
+{\footnotesize\ttfamily \label{classsockpp_1_1unix__address_af1b373a891eeacbb11dbb5b686497c1a} 
+sockpp\+::unix\+\_\+address\+::unix\+\_\+address (\begin{DoxyParamCaption}\item[{const string \&}]{path}{, }\item[{\mbox{\hyperlink{error_8h_ab1e0c0347ae112be97a91664fd6c830d}{error\+\_\+code}} \&}]{ec}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [noexcept]}}
+
+
+
+Constructs an address given the specified path. 
+
+Sets the error code on failure. 
+\begin{DoxyParams}{Parameters}
+{\em path} & The path to the socket file. \\
+\hline
+\end{DoxyParams}
+\Hypertarget{classsockpp_1_1unix__address_a667d4ab6510c2864dda3f86839170e2e}\index{sockpp::unix\_address@{sockpp::unix\_address}!unix\_address@{unix\_address}}
+\index{unix\_address@{unix\_address}!sockpp::unix\_address@{sockpp::unix\_address}}
+\doxysubsubsection{\texorpdfstring{unix\_address()}{unix\_address()}\hspace{0.1cm}{\footnotesize\ttfamily [4/7]}}
+{\footnotesize\ttfamily \label{classsockpp_1_1unix__address_a667d4ab6510c2864dda3f86839170e2e} 
+sockpp\+::unix\+\_\+address\+::unix\+\_\+address (\begin{DoxyParamCaption}\item[{const sockaddr \&}]{addr}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [explicit]}}
+
+
+
+Constructs the address by copying the specified structure. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em addr} & The generic address. This must be a proper AF\+\_\+\+UNIX address to be valid. \\
+\hline
+\end{DoxyParams}
+\Hypertarget{classsockpp_1_1unix__address_a107834492c9a253b1649d9cae25d1ee2}\index{sockpp::unix\_address@{sockpp::unix\_address}!unix\_address@{unix\_address}}
+\index{unix\_address@{unix\_address}!sockpp::unix\_address@{sockpp::unix\_address}}
+\doxysubsubsection{\texorpdfstring{unix\_address()}{unix\_address()}\hspace{0.1cm}{\footnotesize\ttfamily [5/7]}}
+{\footnotesize\ttfamily \label{classsockpp_1_1unix__address_a107834492c9a253b1649d9cae25d1ee2} 
+sockpp\+::unix\+\_\+address\+::unix\+\_\+address (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classsockpp_1_1sock__address}{sock\+\_\+address}} \&}]{addr}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
+
+
+
+Constructs the address by copying the specified structure. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em addr} & The other address. This must be a proper AF\+\_\+\+UNIX address to be valid. \\
+\hline
+\end{DoxyParams}
+\Hypertarget{classsockpp_1_1unix__address_a79ecca7a1767758475c2c2542f610fa0}\index{sockpp::unix\_address@{sockpp::unix\_address}!unix\_address@{unix\_address}}
+\index{unix\_address@{unix\_address}!sockpp::unix\_address@{sockpp::unix\_address}}
+\doxysubsubsection{\texorpdfstring{unix\_address()}{unix\_address()}\hspace{0.1cm}{\footnotesize\ttfamily [6/7]}}
+{\footnotesize\ttfamily \label{classsockpp_1_1unix__address_a79ecca7a1767758475c2c2542f610fa0} 
+sockpp\+::unix\+\_\+address\+::unix\+\_\+address (\begin{DoxyParamCaption}\item[{const sockaddr\+\_\+un \&}]{addr}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
+
+
+
+Constructs the address by copying the specified structure. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em addr} & The other address \\
+\hline
+\end{DoxyParams}
+\Hypertarget{classsockpp_1_1unix__address_a7f7088ee6d7bc90bdfe2e969b5a16962}\index{sockpp::unix\_address@{sockpp::unix\_address}!unix\_address@{unix\_address}}
+\index{unix\_address@{unix\_address}!sockpp::unix\_address@{sockpp::unix\_address}}
+\doxysubsubsection{\texorpdfstring{unix\_address()}{unix\_address()}\hspace{0.1cm}{\footnotesize\ttfamily [7/7]}}
+{\footnotesize\ttfamily \label{classsockpp_1_1unix__address_a7f7088ee6d7bc90bdfe2e969b5a16962} 
+sockpp\+::unix\+\_\+address\+::unix\+\_\+address (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classsockpp_1_1unix__address}{unix\+\_\+address}} \&}]{addr}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Constructs the address by copying the specified address. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em addr} & The other address \\
+\hline
+\end{DoxyParams}
+
+
+\doxysubsection{Member Function Documentation}
+\Hypertarget{classsockpp_1_1unix__address_a76f91ee4a3b4fc8687bddf22477446a2}\index{sockpp::unix\_address@{sockpp::unix\_address}!create@{create}}
+\index{create@{create}!sockpp::unix\_address@{sockpp::unix\_address}}
+\doxysubsubsection{\texorpdfstring{create()}{create()}}
+{\footnotesize\ttfamily \label{classsockpp_1_1unix__address_a76f91ee4a3b4fc8687bddf22477446a2} 
+static \mbox{\hyperlink{classsockpp_1_1result}{result}}$<$ \mbox{\hyperlink{classsockpp_1_1unix__address}{unix\+\_\+address}} $>$ sockpp\+::unix\+\_\+address\+::create (\begin{DoxyParamCaption}\item[{const string \&}]{path}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Creates an address from the specified path. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em path} & The path to the socket file. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+A result with the address on success, or an error code on failure. 
+\end{DoxyReturn}
+\Hypertarget{classsockpp_1_1unix__address_a568bc65ed14dd7cb17ee8fb58aa5674b}\index{sockpp::unix\_address@{sockpp::unix\_address}!is\_set@{is\_set}}
+\index{is\_set@{is\_set}!sockpp::unix\_address@{sockpp::unix\_address}}
+\doxysubsubsection{\texorpdfstring{is\_set()}{is\_set()}}
+{\footnotesize\ttfamily \label{classsockpp_1_1unix__address_a568bc65ed14dd7cb17ee8fb58aa5674b} 
+bool sockpp\+::unix\+\_\+address\+::is\+\_\+set (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [override]}, {\ttfamily [virtual]}, {\ttfamily [noexcept]}}
+
+
+
+Checks if the address is set to some value. 
+
+This doesn\textquotesingle{}t attempt to determine if the address is valid, simply that it\textquotesingle{}s a unix-\/family address with some name. \begin{DoxyReturn}{Returns}
+{\itshape true} if the address has been set, {\itshape false} otherwise. 
+\end{DoxyReturn}
+
+
+Reimplemented from \mbox{\hyperlink{classsockpp_1_1sock__address_ac4e5b06da0efbbc6b8d289e3215f13aa}{sockpp\+::sock\+\_\+address}}.
+
+\Hypertarget{classsockpp_1_1unix__address_a953d2eb706f8a1db7313512dc5ab7a54}\index{sockpp::unix\_address@{sockpp::unix\_address}!path@{path}}
+\index{path@{path}!sockpp::unix\_address@{sockpp::unix\_address}}
+\doxysubsubsection{\texorpdfstring{path()}{path()}}
+{\footnotesize\ttfamily \label{classsockpp_1_1unix__address_a953d2eb706f8a1db7313512dc5ab7a54} 
+string sockpp\+::unix\+\_\+address\+::path (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Gets the path to which this address refers. 
+
+\begin{DoxyReturn}{Returns}
+The path to which this address refers. 
+\end{DoxyReturn}
+\Hypertarget{classsockpp_1_1unix__address_a7e47141464e5c8b37f968bd08fae7b6f}\index{sockpp::unix\_address@{sockpp::unix\_address}!size@{size}}
+\index{size@{size}!sockpp::unix\_address@{sockpp::unix\_address}}
+\doxysubsubsection{\texorpdfstring{size()}{size()}}
+{\footnotesize\ttfamily \label{classsockpp_1_1unix__address_a7e47141464e5c8b37f968bd08fae7b6f} 
+socklen\+\_\+t sockpp\+::unix\+\_\+address\+::size (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Gets the size of the address structure. 
+
+Note\+: In this implementation, this should return sizeof(this) but more convenient in some places, and the implementation might change in the future, so it might be more compatible with future revisions to use this call. \begin{DoxyReturn}{Returns}
+The size of the address structure. 
+\end{DoxyReturn}
+
+
+Implements \mbox{\hyperlink{classsockpp_1_1sock__address_adf9f4a69071562366ea6d5e50258c281}{sockpp\+::sock\+\_\+address}}.
+
+\Hypertarget{classsockpp_1_1unix__address_a060d5916e8f15be9f67025a0f127fe20}\index{sockpp::unix\_address@{sockpp::unix\_address}!sockaddr\_ptr@{sockaddr\_ptr}}
+\index{sockaddr\_ptr@{sockaddr\_ptr}!sockpp::unix\_address@{sockpp::unix\_address}}
+\doxysubsubsection{\texorpdfstring{sockaddr\_ptr()}{sockaddr\_ptr()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \label{classsockpp_1_1unix__address_a060d5916e8f15be9f67025a0f127fe20} 
+const sockaddr \texorpdfstring{$\ast$}{*} sockpp\+::unix\+\_\+address\+::sockaddr\+\_\+ptr (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Gets a pointer to this object cast to a const {\itshape sockaddr}. 
+
+\begin{DoxyReturn}{Returns}
+A pointer to this object cast to a const {\itshape sockaddr}. 
+\end{DoxyReturn}
+
+
+Implements \mbox{\hyperlink{classsockpp_1_1sock__address_a3a9cb6445288251aa463529d84b7801d}{sockpp\+::sock\+\_\+address}}.
+
+\Hypertarget{classsockpp_1_1unix__address_a5179f79b4e154622f46ddfd1ea42a9e9}\index{sockpp::unix\_address@{sockpp::unix\_address}!sockaddr\_ptr@{sockaddr\_ptr}}
+\index{sockaddr\_ptr@{sockaddr\_ptr}!sockpp::unix\_address@{sockpp::unix\_address}}
+\doxysubsubsection{\texorpdfstring{sockaddr\_ptr()}{sockaddr\_ptr()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \label{classsockpp_1_1unix__address_a5179f79b4e154622f46ddfd1ea42a9e9} 
+sockaddr \texorpdfstring{$\ast$}{*} sockpp\+::unix\+\_\+address\+::sockaddr\+\_\+ptr (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Gets a pointer to this object cast to a {\itshape sockaddr}. 
+
+\begin{DoxyReturn}{Returns}
+A pointer to this object cast to a {\itshape sockaddr}. 
+\end{DoxyReturn}
+
+
+Implements \mbox{\hyperlink{classsockpp_1_1sock__address_a024c74ac9d3fe8cd5284b82f1f2d33e2}{sockpp\+::sock\+\_\+address}}.
+
+\Hypertarget{classsockpp_1_1unix__address_a0e481ff033218f3fcd7980c3122b56a5}\index{sockpp::unix\_address@{sockpp::unix\_address}!sockaddr\_un\_ptr@{sockaddr\_un\_ptr}}
+\index{sockaddr\_un\_ptr@{sockaddr\_un\_ptr}!sockpp::unix\_address@{sockpp::unix\_address}}
+\doxysubsubsection{\texorpdfstring{sockaddr\_un\_ptr()}{sockaddr\_un\_ptr()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \label{classsockpp_1_1unix__address_a0e481ff033218f3fcd7980c3122b56a5} 
+sockaddr\+\_\+un \texorpdfstring{$\ast$}{*} sockpp\+::unix\+\_\+address\+::sockaddr\+\_\+un\+\_\+ptr (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Gets a pointer to this object cast to a {\itshape sockaddr\+\_\+un}. 
+
+\begin{DoxyReturn}{Returns}
+sockaddr\+\_\+un pointer to this object. 
+\end{DoxyReturn}
+\Hypertarget{classsockpp_1_1unix__address_a0a542ff0c2ea85a1a46435f81be40ed9}\index{sockpp::unix\_address@{sockpp::unix\_address}!sockaddr\_un\_ptr@{sockaddr\_un\_ptr}}
+\index{sockaddr\_un\_ptr@{sockaddr\_un\_ptr}!sockpp::unix\_address@{sockpp::unix\_address}}
+\doxysubsubsection{\texorpdfstring{sockaddr\_un\_ptr()}{sockaddr\_un\_ptr()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \label{classsockpp_1_1unix__address_a0a542ff0c2ea85a1a46435f81be40ed9} 
+const sockaddr\+\_\+un \texorpdfstring{$\ast$}{*} sockpp\+::unix\+\_\+address\+::sockaddr\+\_\+un\+\_\+ptr (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Gets a const pointer to this object cast to a {\itshape sockaddr\+\_\+un}. 
+
+\begin{DoxyReturn}{Returns}
+const sockaddr\+\_\+un pointer to this object. 
+\end{DoxyReturn}
+\Hypertarget{classsockpp_1_1unix__address_a855f53589b6c7e973396e9581715d4f5}\index{sockpp::unix\_address@{sockpp::unix\_address}!to\_string@{to\_string}}
+\index{to\_string@{to\_string}!sockpp::unix\_address@{sockpp::unix\_address}}
+\doxysubsubsection{\texorpdfstring{to\_string()}{to\_string()}}
+{\footnotesize\ttfamily \label{classsockpp_1_1unix__address_a855f53589b6c7e973396e9581715d4f5} 
+string sockpp\+::unix\+\_\+address\+::to\+\_\+string (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Gets a printable string for the address. 
+
+\begin{DoxyReturn}{Returns}
+A string representation of the address in the form "{}unix\+:$<$path$>$"{} 
+\end{DoxyReturn}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+include/sockpp/\mbox{\hyperlink{unix__address_8h}{unix\+\_\+address.\+h}}\end{DoxyCompactItemize}

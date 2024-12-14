@@ -1,0 +1,125 @@
+\doxysection{can\+\_\+socket.\+h}
+\hypertarget{can__socket_8h_source}{}\label{can__socket_8h_source}\index{include/sockpp/can\_socket.h@{include/sockpp/can\_socket.h}}
+\mbox{\hyperlink{can__socket_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ }
+\DoxyCodeLine{00013\ \textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{00014\ \textcolor{comment}{//\ This\ file\ is\ part\ of\ the\ "{}sockpp"{}\ C++\ socket\ library.}}
+\DoxyCodeLine{00015\ \textcolor{comment}{//}}
+\DoxyCodeLine{00016\ \textcolor{comment}{//\ Copyright\ (c)\ 2021\ Frank\ Pagliughi}}
+\DoxyCodeLine{00017\ \textcolor{comment}{//\ All\ rights\ reserved.}}
+\DoxyCodeLine{00018\ \textcolor{comment}{//}}
+\DoxyCodeLine{00019\ \textcolor{comment}{//\ Redistribution\ and\ use\ in\ source\ and\ binary\ forms,\ with\ or\ without}}
+\DoxyCodeLine{00020\ \textcolor{comment}{//\ modification,\ are\ permitted\ provided\ that\ the\ following\ conditions\ are}}
+\DoxyCodeLine{00021\ \textcolor{comment}{//\ met:}}
+\DoxyCodeLine{00022\ \textcolor{comment}{//}}
+\DoxyCodeLine{00023\ \textcolor{comment}{//\ 1.\ Redistributions\ of\ source\ code\ must\ retain\ the\ above\ copyright\ notice,}}
+\DoxyCodeLine{00024\ \textcolor{comment}{//\ this\ list\ of\ conditions\ and\ the\ following\ disclaimer.}}
+\DoxyCodeLine{00025\ \textcolor{comment}{//}}
+\DoxyCodeLine{00026\ \textcolor{comment}{//\ 2.\ Redistributions\ in\ binary\ form\ must\ reproduce\ the\ above\ copyright}}
+\DoxyCodeLine{00027\ \textcolor{comment}{//\ notice,\ this\ list\ of\ conditions\ and\ the\ following\ disclaimer\ in\ the}}
+\DoxyCodeLine{00028\ \textcolor{comment}{//\ documentation\ and/or\ other\ materials\ provided\ with\ the\ distribution.}}
+\DoxyCodeLine{00029\ \textcolor{comment}{//}}
+\DoxyCodeLine{00030\ \textcolor{comment}{//\ 3.\ Neither\ the\ name\ of\ the\ copyright\ holder\ nor\ the\ names\ of\ its}}
+\DoxyCodeLine{00031\ \textcolor{comment}{//\ contributors\ may\ be\ used\ to\ endorse\ or\ promote\ products\ derived\ from\ this}}
+\DoxyCodeLine{00032\ \textcolor{comment}{//\ software\ without\ specific\ prior\ written\ permission.}}
+\DoxyCodeLine{00033\ \textcolor{comment}{//}}
+\DoxyCodeLine{00034\ \textcolor{comment}{//\ THIS\ SOFTWARE\ IS\ PROVIDED\ BY\ THE\ COPYRIGHT\ HOLDERS\ AND\ CONTRIBUTORS\ "{}AS}}
+\DoxyCodeLine{00035\ \textcolor{comment}{//\ IS"{}\ AND\ ANY\ EXPRESS\ OR\ IMPLIED\ WARRANTIES,\ INCLUDING,\ BUT\ NOT\ LIMITED\ TO,}}
+\DoxyCodeLine{00036\ \textcolor{comment}{//\ THE\ IMPLIED\ WARRANTIES\ OF\ MERCHANTABILITY\ AND\ FITNESS\ FOR\ A\ PARTICULAR}}
+\DoxyCodeLine{00037\ \textcolor{comment}{//\ PURPOSE\ ARE\ DISCLAIMED.\ IN\ NO\ EVENT\ SHALL\ THE\ COPYRIGHT\ HOLDER\ OR}}
+\DoxyCodeLine{00038\ \textcolor{comment}{//\ CONTRIBUTORS\ BE\ LIABLE\ FOR\ ANY\ DIRECT,\ INDIRECT,\ INCIDENTAL,\ SPECIAL,}}
+\DoxyCodeLine{00039\ \textcolor{comment}{//\ EXEMPLARY,\ OR\ CONSEQUENTIAL\ DAMAGES\ (INCLUDING,\ BUT\ NOT\ LIMITED\ TO,}}
+\DoxyCodeLine{00040\ \textcolor{comment}{//\ PROCUREMENT\ OF\ SUBSTITUTE\ GOODS\ OR\ SERVICES;\ LOSS\ OF\ USE,\ DATA,\ OR}}
+\DoxyCodeLine{00041\ \textcolor{comment}{//\ PROFITS;\ OR\ BUSINESS\ INTERRUPTION)\ HOWEVER\ CAUSED\ AND\ ON\ ANY\ THEORY\ OF}}
+\DoxyCodeLine{00042\ \textcolor{comment}{//\ LIABILITY,\ WHETHER\ IN\ CONTRACT,\ STRICT\ LIABILITY,\ OR\ TORT\ (INCLUDING}}
+\DoxyCodeLine{00043\ \textcolor{comment}{//\ NEGLIGENCE\ OR\ OTHERWISE)\ ARISING\ IN\ ANY\ WAY\ OUT\ OF\ THE\ USE\ OF\ THIS}}
+\DoxyCodeLine{00044\ \textcolor{comment}{//\ SOFTWARE,\ EVEN\ IF\ ADVISED\ OF\ THE\ POSSIBILITY\ OF\ SUCH\ DAMAGE.}}
+\DoxyCodeLine{00045\ \textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{00046\ }
+\DoxyCodeLine{00047\ \textcolor{preprocessor}{\#ifndef\ \_\_sockpp\_can\_socket\_h}}
+\DoxyCodeLine{00048\ \textcolor{preprocessor}{\#define\ \_\_sockpp\_can\_socket\_h}}
+\DoxyCodeLine{00049\ }
+\DoxyCodeLine{00050\ \textcolor{preprocessor}{\#include\ <linux/can/raw.h>}}
+\DoxyCodeLine{00051\ }
+\DoxyCodeLine{00052\ \textcolor{preprocessor}{\#include\ <vector>}}
+\DoxyCodeLine{00053\ }
+\DoxyCodeLine{00054\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{can__address_8h}{sockpp/can\_address.h}}"{}}}
+\DoxyCodeLine{00055\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{can__frame_8h}{sockpp/can\_frame.h}}"{}}}
+\DoxyCodeLine{00056\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{raw__socket_8h}{sockpp/raw\_socket.h}}"{}}}
+\DoxyCodeLine{00057\ }
+\DoxyCodeLine{00058\ \textcolor{keyword}{namespace\ }sockpp\ \{}
+\DoxyCodeLine{00059\ }
+\DoxyCodeLine{00061\ }
+\DoxyCodeLine{00079\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classsockpp_1_1can__socket}{can\_socket}}\ :\ \textcolor{keyword}{public}\ \mbox{\hyperlink{classsockpp_1_1raw__socket}{raw\_socket}}}
+\DoxyCodeLine{00080\ \{}
+\DoxyCodeLine{00082\ \ \ \ \ \textcolor{keyword}{using\ }\mbox{\hyperlink{classsockpp_1_1raw__socket}{base}}\ =\ \mbox{\hyperlink{classsockpp_1_1raw__socket_a85056755a9f3de39efe0bf601ddfaa3c}{raw\_socket}};}
+\DoxyCodeLine{00083\ }
+\DoxyCodeLine{00084\ \ \ \ \ \textcolor{comment}{//\ Non-\/copyable}}
+\DoxyCodeLine{00085\ \ \ \ \ \mbox{\hyperlink{classsockpp_1_1can__socket_ac70f86bdb94c5a80d6e847e0d107f774}{can\_socket}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{classsockpp_1_1can__socket}{can\_socket}}\&)\ =\ \textcolor{keyword}{delete};}
+\DoxyCodeLine{00086\ \ \ \ \ \mbox{\hyperlink{classsockpp_1_1can__socket}{can\_socket}}\&\ operator=(\textcolor{keyword}{const}\ \mbox{\hyperlink{classsockpp_1_1can__socket}{can\_socket}}\&)\ =\ \textcolor{keyword}{delete};}
+\DoxyCodeLine{00087\ }
+\DoxyCodeLine{00092\ \ \ \ \ \mbox{\hyperlink{classsockpp_1_1result}{result<>}}\ connect(\textcolor{keyword}{const}\ \mbox{\hyperlink{classsockpp_1_1sock__address}{sock\_address}}\&)\ =\ \textcolor{keyword}{delete};}
+\DoxyCodeLine{00093\ }
+\DoxyCodeLine{00094\ \textcolor{keyword}{protected}:}
+\DoxyCodeLine{00095\ \ \ \ \ \textcolor{keyword}{static}\ \mbox{\hyperlink{classsockpp_1_1result}{result<socket\_t>}}\ create\_handle(\textcolor{keywordtype}{int}\ type,\ \textcolor{keywordtype}{int}\ protocol)\ \{}
+\DoxyCodeLine{00096\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{classsockpp_1_1socket_a6e288d5771c1eeec38c3308aeda44a87}{check\_socket}}(\mbox{\hyperlink{socket_8h_ab045671400eacfc589ce8f055ed66264}{socket\_t}}(\mbox{\hyperlink{classsockpp_1_1socket_a344b78b929577b8868eded1ed8416119}{::socket}}(\mbox{\hyperlink{classsockpp_1_1can__socket_abd98871de591f2b58932186397aaff99}{PROTOCOL\_FAMILY}},\ type,\ protocol)));}
+\DoxyCodeLine{00097\ \ \ \ \ \}}
+\DoxyCodeLine{00098\ }
+\DoxyCodeLine{00099\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00105\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{classsockpp_1_1can__socket_abd98871de591f2b58932186397aaff99}{PROTOCOL\_FAMILY}}\ =\ AF\_CAN;}
+\DoxyCodeLine{00106\ }
+\DoxyCodeLine{00108\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{constexpr}\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{classsockpp_1_1can__socket_a9ea2e32adf21456b7480fc3e7074dfc3}{COMM\_TYPE}}\ =\ SOCK\_RAW;}
+\DoxyCodeLine{00109\ }
+\DoxyCodeLine{00113\ \ \ \ \ \mbox{\hyperlink{classsockpp_1_1can__socket_ac70f86bdb94c5a80d6e847e0d107f774}{can\_socket}}()\ noexcept\ \{\}}
+\DoxyCodeLine{00119\ \ \ \ \ \textcolor{keyword}{explicit}\ \mbox{\hyperlink{classsockpp_1_1can__socket_ac1ced7811afcdc76c337674b3c0d44dd}{can\_socket}}(\mbox{\hyperlink{socket_8h_ab045671400eacfc589ce8f055ed66264}{socket\_t}}\ \mbox{\hyperlink{classsockpp_1_1socket_a8fc84fb9460a83623e954d37406986b7}{handle}})\ noexcept\ :\ \mbox{\hyperlink{classsockpp_1_1raw__socket}{base}}(\mbox{\hyperlink{classsockpp_1_1socket_a8fc84fb9460a83623e954d37406986b7}{handle}})\ \{\}}
+\DoxyCodeLine{00125\ \ \ \ \ \textcolor{keyword}{explicit}\ \mbox{\hyperlink{classsockpp_1_1can__socket_a1e645fb4f469839bec51eecf442c027a}{can\_socket}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{classsockpp_1_1can__address}{can\_address}}\&\ addr)\ \{}
+\DoxyCodeLine{00126\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\textcolor{keyword}{auto}\ res\ =\ \mbox{\hyperlink{classsockpp_1_1can__socket_a060adf853f166a3ae1a750d7420c3428}{open}}(addr);\ !res)}
+\DoxyCodeLine{00127\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{throw}\ std::system\_error\{res.error()\};}
+\DoxyCodeLine{00128\ \ \ \ \ \}}
+\DoxyCodeLine{00134\ \ \ \ \ \textcolor{keyword}{explicit}\ \mbox{\hyperlink{classsockpp_1_1can__socket_a14ce3477c5697239ff7a7c0125719dfb}{can\_socket}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{classsockpp_1_1can__address}{can\_address}}\&\ addr,\ \mbox{\hyperlink{error_8h_ab1e0c0347ae112be97a91664fd6c830d}{error\_code}}\&\ ec)\ \textcolor{keyword}{noexcept}\ \{}
+\DoxyCodeLine{00135\ \ \ \ \ \ \ \ \ ec\ =\ \mbox{\hyperlink{classsockpp_1_1can__socket_a060adf853f166a3ae1a750d7420c3428}{open}}(addr).\mbox{\hyperlink{classsockpp_1_1result_a8f0ca062bd663eefd25219dd22b62f2c}{error}}();}
+\DoxyCodeLine{00136\ \ \ \ \ \}}
+\DoxyCodeLine{00141\ \ \ \ \ \mbox{\hyperlink{classsockpp_1_1can__socket_a895ee441deb3e1efd74be106bc12c4b7}{can\_socket}}(\mbox{\hyperlink{classsockpp_1_1can__socket}{can\_socket}}\&\&\ other)\ :\ \mbox{\hyperlink{classsockpp_1_1raw__socket}{base}}(std::move(other))\ \{\}}
+\DoxyCodeLine{00147\ \ \ \ \ \mbox{\hyperlink{classsockpp_1_1can__socket}{can\_socket}}\&\ \mbox{\hyperlink{classsockpp_1_1can__socket_a59962c053f93497f5d1d8e4fc0e82076}{operator=}}(\mbox{\hyperlink{classsockpp_1_1can__socket}{can\_socket}}\&\&\ rhs)\ \{}
+\DoxyCodeLine{00148\ \ \ \ \ \ \ \ \ base::operator=(std::move(rhs));}
+\DoxyCodeLine{00149\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ *\textcolor{keyword}{this};}
+\DoxyCodeLine{00150\ \ \ \ \ \}}
+\DoxyCodeLine{00156\ \ \ \ \ \mbox{\hyperlink{classsockpp_1_1result}{result<>}}\ \mbox{\hyperlink{classsockpp_1_1can__socket_a060adf853f166a3ae1a750d7420c3428}{open}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{classsockpp_1_1can__address}{can\_address}}\&\ addr)\ \textcolor{keyword}{noexcept};}
+\DoxyCodeLine{00162\ \ \ \ \ std::chrono::system\_clock::time\_point\ \mbox{\hyperlink{classsockpp_1_1can__socket_a509a3a67596c3a7f085fcc7f4d8b6afc}{last\_frame\_time}}();}
+\DoxyCodeLine{00170\ \ \ \ \ \textcolor{keywordtype}{double}\ \mbox{\hyperlink{classsockpp_1_1can__socket_a6fe47ee56bd8aa42204de50679c9897d}{last\_frame\_timestamp}}();}
+\DoxyCodeLine{00171\ }
+\DoxyCodeLine{00172\ \ \ \ \ \textcolor{comment}{//\ -\/-\/-\/-\/-\/\ Filters\ -\/-\/-\/-\/-\/}}
+\DoxyCodeLine{00173\ }
+\DoxyCodeLine{00186\ \ \ \ \ \mbox{\hyperlink{classsockpp_1_1result}{result<>}}\ \mbox{\hyperlink{classsockpp_1_1can__socket_a63f921d7269c2718e5ef313adf851a58}{set\_filters}}(\textcolor{keyword}{const}\ can\_filter*\ filters,\ \textcolor{keywordtype}{size\_t}\ n)\ \{}
+\DoxyCodeLine{00187\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{classsockpp_1_1socket_ad1b621c95b6d4241482293a5c21dadb4}{set\_option}}(SOL\_CAN\_RAW,\ CAN\_RAW\_FILTER,\ filters,\ socklen\_t(n));}
+\DoxyCodeLine{00188\ \ \ \ \ \}}
+\DoxyCodeLine{00189\ }
+\DoxyCodeLine{00201\ \ \ \ \ \mbox{\hyperlink{classsockpp_1_1result}{result<>}}\ \mbox{\hyperlink{classsockpp_1_1can__socket_a2cda38de32d5be67f2c5342f86b3aacc}{set\_filters}}(\textcolor{keyword}{const}\ std::vector<can\_filter>\&\ filters)\ \{}
+\DoxyCodeLine{00202\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{classsockpp_1_1can__socket_a63f921d7269c2718e5ef313adf851a58}{set\_filters}}(filters.data(),\ filters.size());}
+\DoxyCodeLine{00203\ \ \ \ \ \}}
+\DoxyCodeLine{00204\ }
+\DoxyCodeLine{00205\ \ \ \ \ \textcolor{comment}{//\ -\/-\/-\/-\/-\/\ I/O\ -\/-\/-\/-\/-\/}}
+\DoxyCodeLine{00206\ }
+\DoxyCodeLine{00214\ \ \ \ \ \mbox{\hyperlink{classsockpp_1_1result}{result<size\_t>}}\ \mbox{\hyperlink{classsockpp_1_1can__socket_a5d2fbc97c40b34f152700ad517ad07d4}{send\_to}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{classsockpp_1_1can__frame}{can\_frame}}\&\ frame,\ \textcolor{keywordtype}{int}\ flags,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{classsockpp_1_1can__address}{can\_address}}\&\ addr)\ \{}
+\DoxyCodeLine{00215\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{classsockpp_1_1socket_aae376bd5e94bfef429fbd4a8d6a2a076}{base::send\_to}}(\&frame,\ \textcolor{keyword}{sizeof}(\mbox{\hyperlink{classsockpp_1_1can__frame}{can\_frame}}),\ flags,\ addr);}
+\DoxyCodeLine{00216\ \ \ \ \ \}}
+\DoxyCodeLine{00223\ \ \ \ \ \mbox{\hyperlink{classsockpp_1_1result}{result<size\_t>}}\ \mbox{\hyperlink{classsockpp_1_1can__socket_a329a94cc70730ca89d2bb0d3b749ead9}{send\_to}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{classsockpp_1_1can__frame}{can\_frame}}\&\ frame,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{classsockpp_1_1can__address}{can\_address}}\&\ addr)\ \{}
+\DoxyCodeLine{00224\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{classsockpp_1_1can__socket_a5d2fbc97c40b34f152700ad517ad07d4}{send\_to}}(frame,\ 0,\ addr);}
+\DoxyCodeLine{00225\ \ \ \ \ \}}
+\DoxyCodeLine{00233\ \ \ \ \ \mbox{\hyperlink{classsockpp_1_1result}{result<size\_t>}}\ \mbox{\hyperlink{classsockpp_1_1can__socket_aaa82f388accd66cdd36cf33280e9e67a}{send}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{classsockpp_1_1can__frame}{can\_frame}}\&\ frame,\ \textcolor{keywordtype}{int}\ flags\ =\ 0)\ \{}
+\DoxyCodeLine{00234\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{classsockpp_1_1socket_a172895820c985df939cc04cdde3fdcb3}{base::send}}(\&frame,\ \textcolor{keyword}{sizeof}(\mbox{\hyperlink{classsockpp_1_1can__frame}{can\_frame}}),\ flags);}
+\DoxyCodeLine{00235\ \ \ \ \ \}}
+\DoxyCodeLine{00244\ \ \ \ \ \mbox{\hyperlink{classsockpp_1_1result}{result<size\_t>}}\ \mbox{\hyperlink{classsockpp_1_1can__socket_a907cc5f1afc61d1dace1b38e99f0f93a}{recv\_from}}(\mbox{\hyperlink{classsockpp_1_1can__frame}{can\_frame}}*\ frame,\ \textcolor{keywordtype}{int}\ flags,\ \mbox{\hyperlink{classsockpp_1_1can__address}{can\_address}}*\ srcAddr\ =\ \textcolor{keyword}{nullptr})\ \{}
+\DoxyCodeLine{00245\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{classsockpp_1_1socket_af6efaf3b35448df953429f45a1990fd2}{base::recv\_from}}(frame,\ \textcolor{keyword}{sizeof}(frame),\ flags,\ srcAddr);}
+\DoxyCodeLine{00246\ \ \ \ \ \}}
+\DoxyCodeLine{00253\ \ \ \ \ \mbox{\hyperlink{classsockpp_1_1result}{result<size\_t>}}\ \mbox{\hyperlink{classsockpp_1_1can__socket_a7f086353706825fcde8106f92333169a}{recv}}(\mbox{\hyperlink{classsockpp_1_1can__frame}{can\_frame}}*\ frame,\ \textcolor{keywordtype}{int}\ flags\ =\ 0)\ \{}
+\DoxyCodeLine{00254\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{classsockpp_1_1socket_a0a2decf8a3ca28d68acca4367790cccb}{base::recv}}(frame,\ \textcolor{keyword}{sizeof}(\mbox{\hyperlink{classsockpp_1_1can__frame}{can\_frame}}),\ flags);}
+\DoxyCodeLine{00255\ \ \ \ \ \}}
+\DoxyCodeLine{00256\ \};}
+\DoxyCodeLine{00257\ }
+\DoxyCodeLine{00259\ \}\ \ \textcolor{comment}{//\ namespace\ sockpp}}
+\DoxyCodeLine{00260\ }
+\DoxyCodeLine{00261\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//\ \_\_sockpp\_can\_socket\_h}}
+
+\end{DoxyCode}

@@ -84,12 +84,16 @@ namespace client
     }
 
     // NOLINTEND(bugprone-suspicious-enum-usage)
-    void VictoryScreenPanel::onCloseButtonClicked(wxCommandEvent & /*event*/)
+    void VictoryScreenPanel::onCloseButtonClicked(wxCommandEvent& /*event*/)
     {
-        // Assuming this panel is part of the main frame or you have a way to access it
-        wxWindow *mainFrame = wxTheApp->GetTopWindow();
-        if ( mainFrame != nullptr ) {
-            mainFrame->Close(true); // Close the main frame, which should close the application
+        // Get parent window chain until we find the main frame
+        wxWindow* parent = GetParent();
+        while (parent && !parent->IsTopLevel()) {
+            parent = parent->GetParent();
+        }
+
+        if (parent) {
+            parent->Close(true);
         }
     }
 } // namespace client

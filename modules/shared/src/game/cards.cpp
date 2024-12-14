@@ -57,6 +57,7 @@ namespace shared
     REGISTER_CARD(Treasure_Map, CardType::ACTION, 4);
     REGISTER_CARD(Sea_Hag, CardType::ACTION | CardType::ATTACK, 4);
     REGISTER_CARD(Remodel, CardType::ACTION, 4);
+    REGISTER_CARD(Poacher, CardType::ACTION, 4);
 
     // victory cards
     REGISTER_CARD(Gardens, CardType::KINGDOM | CardType::VICTORY, 4);
@@ -65,6 +66,9 @@ namespace shared
 
     // treasure cards
     REGISTER_CARD(Treasure_Trove, CardType::KINGDOM | CardType::TREASURE, 5);
+
+    // reaction cards
+    REGISTER_CARD(Moat, CardType::ACTION | CardType::REACTION, 2);
 
     // interactive
     REGISTER_CARD(Moneylender, CardType::ACTION, 4);
@@ -75,13 +79,10 @@ namespace shared
     REGISTER_CARD(Workshop, CardType::ACTION, 3);
     // REGISTER_CARD(Vassal, CardType::ACTION, 3);
     // REGISTER_CARD(Harbinger, CardType::ACTION, 3);
-    // REGISTER_CARD(Poacher, CardType::ACTION, 4);
     // REGISTER_CARD(Militia, CardType::ACTION | CardType::ATTACK, 4);
-    // REGISTER_CARD(Moat, CardType::ACTION | CardType::REACTION, 2);
     //  REGISTER_CARD(Workshop, CardType::ACTION, 3);
     //  REGISTER_CARD(Vassal, CardType::ACTION, 3);
     //  REGISTER_CARD(Harbinger, CardType::ACTION, 3);
-    //  REGISTER_CARD(Poacher, CardType::ACTION, 4);
     //  REGISTER_CARD(Moneylender, CardType::ACTION, 4);
     //  REGISTER_CARD(Bureaucrat, CardType::ACTION | CardType::ATTACK, 4);
     //  REGISTER_CARD(Sentry, CardType::ACTION, 5);

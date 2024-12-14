@@ -95,7 +95,7 @@ void server::BehaviourRegistry::initialiseBehaviours()
     // enemies get curse on discard pile
     insert<DrawCards<2>, CurseEnemy>("Witch");
     // gain card costing up to 5. put card from hand onto deck
-    insert<GainCardMaxCost<5>, CardToDrawPile>("Artisan");
+    insert<GainCardMaxCostHand<5>, CardToDrawPile>("Artisan");
     // may trash treasure from hand, gain treasure costing 3 more than it
     insert<Mine>("Mine");
     // order to trash card, then actually trash the cards
@@ -105,7 +105,9 @@ void server::BehaviourRegistry::initialiseBehaviours()
     // draw to cards and you can block enemy attacks
     insert<DrawCards<2>>("Moat");
     // gain any card costing up to 4
-    insert<GainCardMaxCost<4>>("Workshop");
+    insert<GainCardMaxCostDiscard<4>>("Workshop");
+    // discard a card per empty supply pile
+    insert<DrawCards<1>, GainActions<1>, GainCoins<1>, Poacher>("Poacher");
 
     auto gardens_filter = [](const shared::CardBase::id_t & /*card*/) -> bool { return true; };
     insertVictory<VictoryPointsPerNCards<1, 10, gardens_filter>>("Gardens");
@@ -132,8 +134,6 @@ void server::BehaviourRegistry::initialiseBehaviours()
 
     // look through discard pile, may put one card onto deck
     insert<DrawCards<1>, GainActions<1>, NOT_IMPLEMENTED_YET>("Harbinger");
-    // discard a card per empty supply pile
-    insert<DrawCards<1>, GainActions<1>, GainCoins<1>, NOT_IMPLEMENTED_YET>("Poacher");
     // enemies discard down to three
     insert<GainCoins<2>, NOT_IMPLEMENTED_YET>("Militia");
     // peek top 2 from deck, trash (and/or) discard any. return rest to draw pile in any order

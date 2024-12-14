@@ -116,7 +116,7 @@ else
 fi
 
 # Search for the "dominion" directory, starting from current directory and going up
-DIR="$HOME"
+DIR="$PWD"
 while [ "$DIR" != "/" ]; do
     if [ -d "$DIR/dominion" ]; then
         DOMINION_DIR="$DIR/dominion"

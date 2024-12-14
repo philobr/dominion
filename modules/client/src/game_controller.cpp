@@ -327,6 +327,7 @@ namespace client
         switch ( _clientState ) {
             case ClientState::LOGIN_SCREEN:
                 LOG(WARN) << "Received unexpected ResultResponseMessage while in login screen";
+                showStatus("Not connected");
                 break;
             case ClientState::JOINING_LOBBY:
                 if ( msg->success ) {
@@ -339,6 +340,7 @@ namespace client
                         showError("Failed to join lobby", "");
                     }
                     LOG(INFO) << "Returning to login screen";
+                    showStatus("Not connected");
                     _clientState = ClientState::LOGIN_SCREEN;
                 }
                 break;
@@ -355,6 +357,7 @@ namespace client
                         showError("Failed to create lobby", "");
                     }
                     LOG(INFO) << "Returning to login screen";
+                    showStatus("Not connected");
                     _clientState = ClientState::LOGIN_SCREEN;
                 }
                 break;

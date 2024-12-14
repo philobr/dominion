@@ -94,7 +94,7 @@ void server::BehaviourRegistry::initialiseBehaviours()
     // enemies get curse on discard pile
     insert<DrawCards<2>, CurseEnemy>("Witch");
     // gain card costing up to 5. put card from hand onto deck
-    insert<GainCardMaxCost<5>, CardToDrawPile>("Artisan");
+    insert<GainCardMaxCostHand<5>, CardToDrawPile>("Artisan");
     // may trash treasure from hand, gain treasure costing 3 more than it
     insert<Mine>("Mine");
     // order to trash card, then actually trash the cards
@@ -104,7 +104,7 @@ void server::BehaviourRegistry::initialiseBehaviours()
     // draw to cards and you can block enemy attacks
     insert<DrawCards<2>>("Moat");
     // gain any card costing up to 4
-    insert<GainCardMaxCost<4>>("Workshop");
+    insert<GainCardMaxCostDiscard<4>>("Workshop");
 
     auto gardens_filter = [](const shared::CardBase::id_t & /*card*/) -> bool { return true; };
     insertVictory<VictoryPointsPerNCards<1, 10, gardens_filter>>("Gardens");

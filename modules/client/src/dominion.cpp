@@ -69,7 +69,7 @@ namespace client
                 return false;
             }
         } else {
-            shared::Logger::setLevel(LogLevel::DEBUG);
+            shared::Logger::setLevel(LogLevel::WARN);
         }
 
         LOG(DEBUG) << "Initialized logger, log level: " << shared::Logger::getLevel();

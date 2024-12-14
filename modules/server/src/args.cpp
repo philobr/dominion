@@ -9,7 +9,7 @@ namespace server
     struct ArgsImpl : MainArguments<ArgsImpl>
     {
         std::string logFile = option("log-file", 'f', "Log file") = "";
-        std::string logLevel = option("log-level", 'l', "Log level") = "debug";
+        std::string logLevel = option("log-level", 'l', "Log level") = "warn";
         uint16_t port = option("port", 'p', "Port") = DEFAULT_PORT;
         bool debug = (option("debug", 'D', "Enable debug mode") = false);
     };

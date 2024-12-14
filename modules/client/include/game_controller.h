@@ -120,6 +120,10 @@ namespace client
         size_t _numPlayers;
         shared::PlayerBase::id_t _playerName;
         std::string _gameName;
+
+        // this bool ensures correct behaviour for the militia card.
+        // blocking game state updates until the player has chosen the cards to discard
+        bool _isChoosingCards;
     };
 
 } // namespace client

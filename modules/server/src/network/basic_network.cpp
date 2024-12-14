@@ -2,9 +2,12 @@
 #include <shared/utils/logger.h>
 #include <string>
 #include "server/network/server_network_manager.h"
+#include "shared/message_types.h"
 
 namespace server
 {
+    using shared::ResultResponseMessage;
+
     ssize_t BasicNetwork::sendToAddress(const std::string &message, const std::string &address)
     {
         LOG(INFO) << "Sending Message: " << message << " to Address: " << address;
@@ -50,7 +53,7 @@ namespace server
         return sendToAddress(message, address);
     }
 
-    void BasicNetwork::addPlayerToAddress(const player_id_t &player_id, const std::string &lobby_id,
+    bool BasicNetwork::addPlayerToAddress(const player_id_t &player_id, const std::string &lobby_id,
                                           const std::string &address)
     {
         // check with shared lock
@@ -58,7 +61,14 @@ namespace server
             std::shared_lock<std::shared_mutex> shared_lock(_rw_lock);
             if ( !isNewPlayer(player_id) ) {
                 LOG(INFO) << "Player with ID " << player_id << " is already registered.";
-                return;
+                if ( getAddress(player_id) != address ) {
+                    // There is already a player with this name
+                    shared::ResultResponseMessage msg = shared::ResultResponseMessage(
+                            "No lobby", false, "in_response_to deprecated", "This name is already taken!");
+                    sendToAddress(msg.toJson(), address);
+                    return false;
+                }
+                return true;
             }
         }
 
@@ -67,13 +77,21 @@ namespace server
             std::unique_lock<std::shared_mutex> lock(_rw_lock);
             if ( !isNewPlayer(player_id) ) {
                 LOG(WARN) << "Player with ID " << player_id << " is already registered (after lock).";
-                return;
+                if ( getAddress(player_id) != address ) {
+                    // There is already a player with this name
+                    shared::ResultResponseMessage msg = shared::ResultResponseMessage(
+                            "No lobby", false, "in_response_to deprecated", "This name is already taken!");
+                    sendToAddress(msg.toJson(), address);
+                    return false;
+                }
+                return true;
             }
             LOG(INFO) << "Registering new client with ID: " << player_id;
             _player_id_to_address.emplace(player_id, address);
             _address_to_player_id.emplace(address, player_id);
             _player_id_to_lobby_id.emplace(player_id, lobby_id);
         }
+        return true;
     }
 
     void BasicNetwork::addAddressToSocket(const std::string &address, const sockpp::tcp_socket socket)

@@ -65,15 +65,22 @@ wxThread::ExitCode ClientListener::Entry()
                 } else if ( this->_connection->last_error() != EWOULDBLOCK ) {
                     // Connection Error
                     LOG(ERROR) << "Network error: Read error, shutting down Listener";
+                    wxGetApp().getController().showError(
+                            "Connection lost",
+                            "Not connected to a server. Check your internet connection or whether the "
+                            "server is still running. Restart the client.");
+                    wxGetApp().getController().showStatus("Connection lost");
                     break;
                 }
 
             } catch ( std::exception &e ) {
                 // Make sure the connection isn't terminated only because of a read error
                 LOG(ERROR) << "Network error: " << e.what();
-                wxGetApp().getController().showError("Connection lost",
-                                                     "Not connected to a server. Check your internet connection or whether the "
-                                                     "server is still running. Restart the client.");
+                wxGetApp().getController().showError(
+                        "Connection lost",
+                        "Not connected to a server. Check your internet connection or whether the "
+                        "server is still running. Restart the client.");
+                wxGetApp().getController().showStatus("Connection lost");
             }
             // wxThread sleep function in milliseconds
             Sleep(5);
@@ -86,6 +93,7 @@ wxThread::ExitCode ClientListener::Entry()
         wxGetApp().getController().showError("Connection lost",
                                              "Not connected to a server. Check your internet connection or whether the "
                                              "server is still running. Restart the client.");
+        wxGetApp().getController().showStatus("Connection lost");
     }
 
     LOG(INFO) << "Exited Listener";

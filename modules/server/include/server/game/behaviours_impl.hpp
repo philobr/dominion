@@ -516,7 +516,7 @@ namespace server
 
         public:
             inline ret_t apply(server::GameState &state, const shared::PlayerBase::id_t &requestor_id,
-                               server::base::Behaviour::action_decision_t action_decision = std::nullopt);
+                               server::base::Behaviour::action_decision_t action_decision = std::nullopt) override;
         };
         inline server::base::Behaviour::ret_t
         MilitiaAttack::apply(server::GameState &game_state, const shared::PlayerBase::id_t &requestor_id,

@@ -84,15 +84,15 @@ namespace client
     }
 
     // NOLINTEND(bugprone-suspicious-enum-usage)
-    void VictoryScreenPanel::onCloseButtonClicked(wxCommandEvent& /*event*/)
+    void VictoryScreenPanel::onCloseButtonClicked(wxCommandEvent & /*event*/)
     {
         // Get parent window chain until we find the main frame
-        wxWindow* parent = GetParent();
-        while (parent && !parent->IsTopLevel()) {
+        wxWindow *parent = GetParent();
+        while ( parent && !parent->IsTopLevel() ) {
             parent = parent->GetParent();
         }
 
-        if (parent) {
+        if ( parent ) {
             parent->Close(true);
         }
     }

@@ -7,7 +7,7 @@
 #include <shared/message_types.h>
 
 #include <shared/utils/logger.h>
-#include <sockpp/exception.h>
+#include <sockpp/tcp_connector.h>
 #include <sstream>
 
 // initialize static members
@@ -22,7 +22,7 @@ void ::ClientNetworkManager::init(const std::string &host, const uint16_t port)
 {
     LOG(INFO) << "Initializing ClientNetworkManager";
     // initialize sockpp framework
-    sockpp::socket_initializer sockInit;
+    sockpp::socket_initializer::initialize();
 
     // reset connection status
     ClientNetworkManager::_connection_success = false;
@@ -68,15 +68,19 @@ bool ClientNetworkManager::connect(const std::string &host, const uint16_t port)
         // create sockpp address and catch any errors
         sockpp::inet_address address = sockpp::inet_address(host, port);
 
+        // set a timeout of 3 seconds for the connection
+        auto timeout = std::chrono::seconds(3);
+
         // establish connection to given address
-        if ( !ClientNetworkManager::_connection->connect(address) ) {
+        if ( !ClientNetworkManager::_connection->connect(host, port, timeout) ) {
             wxGetApp().getController().showError("Connection error",
                                                  "Failed to connect to server " + address.to_string());
             return false;
         }
-    } catch ( const sockpp::getaddrinfo_error &e ) {
-        wxGetApp().getController().showError("Connection error", "Failed to resolve address " + e.hostname());
-        LOG(ERROR) << "Failed to resolve address" << e.hostname();
+    } catch ( const std::exception &e ) {
+        wxGetApp().getController().showError("Connection error",
+                                             "Failed to connect to server " + host + ":" + std::to_string(port) + "\n" +
+                                                     e.what());
         return false;
     }
 
@@ -100,7 +104,7 @@ void ClientNetworkManager::sendRequest(std::unique_ptr<shared::ClientToServerMes
         return;
     }
 
-    if ( ClientNetworkManager::_connection_success && ClientNetworkManager::_connection->is_connected() ) {
+    if ( ClientNetworkManager::_connection_success && ClientNetworkManager::_connection->is_open() ) {
         LOG(INFO) << "Connected to server";
 
         // convert message to json
@@ -114,14 +118,18 @@ void ClientNetworkManager::sendRequest(std::unique_ptr<shared::ClientToServerMes
         // output message for debugging purposes
         LOG(INFO) << "Sending request : " << msg;
         // send message to server
-        ssize_t bytesSent = ClientNetworkManager::_connection->write(msg);
+        sockpp::result<size_t> result = ClientNetworkManager::_connection->write(msg);
+
+        if ( result.is_error() ) {
+            LOG(ERROR) << "Error writing to TCP stream: " << result.error_message();
+        }
 
         // if the number of bytes sent does not match the length of the msg, probably something went wrong
-        if ( bytesSent != ssize_t(msg.length()) ) {
-            LOG(ERROR) << "Error writing to TCP stream: " << ClientNetworkManager::_connection->last_error_str();
+        size_t bytesSent = result.value();
+        if ( bytesSent != msg.length() ) {
             wxGetApp().getController().showError("Network error",
-                                                 "Error writing to the TCP stream: " +
-                                                         ClientNetworkManager::_connection->last_error_str());
+                                                 "Error writing to TCP stream, only " + std::to_string(bytesSent) +
+                                                         " out of " + std::to_string(msg.length()) + " bytes sent");
         }
 
     } else {
@@ -149,5 +157,5 @@ void ClientNetworkManager::shutdown() { ClientNetworkManager::_connection->shutd
 
 bool ClientNetworkManager::failedToConnect()
 {
-    return !(ClientNetworkManager::_connection_success && ClientNetworkManager::_connection->is_connected());
+    return !(ClientNetworkManager::_connection_success && ClientNetworkManager::_connection->is_open());
 }

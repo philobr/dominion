@@ -103,7 +103,7 @@ namespace client
         sizer->SetMinSize(wxSize(num_cards * card_width_borders, 150));
 
         // Add the cards to the hand
-        for ( const auto& card_id : cards ) {
+        for ( const auto &card_id : cards ) {
             SingleCardPanel *card =
                     new SingleCardPanel(scrolledWindow, card_id, formatting_constants::DEFAULT_PLAYED_CARD_SIZE);
             card->makeClickable(wxEVT_RIGHT_UP,
@@ -157,12 +157,11 @@ namespace client
         verticalSizer->Add(drawPhaseInfo(buttonPanel, shared::gamePhaseToDisplayedString(game_state.game_phase)), 0,
                            wxALIGN_CENTER | wxRIGHT | wxLEFT, 5);
 
-        if (game_state.reduced_player->getId() == game_state.active_player) {
-            if (game_state.game_phase == GamePhase::ACTION_PHASE) {
+        if ( game_state.reduced_player->getId() == game_state.active_player ) {
+            if ( game_state.game_phase == GamePhase::ACTION_PHASE ) {
                 verticalSizer->Add(createEndActionButton(buttonPanel), 0, wxCENTER | wxALL, 5);
                 verticalSizer->Add(createEndTurnButton(buttonPanel), 0, wxCENTER | wxALL, 5);
-            }
-            else if (game_state.game_phase == GamePhase::BUY_PHASE) {
+            } else if ( game_state.game_phase == GamePhase::BUY_PHASE ) {
                 verticalSizer->Add(createEndTurnButton(buttonPanel), 0, wxCENTER | wxALL, 5);
             }
         }

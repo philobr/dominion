@@ -84,7 +84,7 @@ namespace server
         std::string buffer(BUFFER_SIZE, '\0');
         sockpp::result<size_t> result;
 
-        while ( (result = socket.read(buffer.data(), buffer.size())).is_ok() ) {
+        while ( (result = socket.read(buffer.data(), buffer.size())).is_ok() && result.value() != 0 ) {
             try {
                 std::string_view read_data(buffer.data(), result.value());
                 size_t separator_pos = read_data.find(':');

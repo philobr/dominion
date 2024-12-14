@@ -3,6 +3,51 @@
   doMINION
 </h1>
 
+## Installing
+
+### Ubuntu 24.04
+
+First, install all dependencies of the project:
+```
+apt-get update && apt-get install \
+    cmake \
+    libwxgtk3.0-gtk3-dev
+```
+
+If you also want the development dependencies:
+```
+apt-get update && apt-get install \
+    clang \
+    clang-tidy \
+    cppcheck
+```
+
+Then you can build the project with
+```
+mkdir -p build
+cd build
+cmake ..
+make
+```
+
+### Ubuntu 22.04
+
+We provide a script that does all the work for you.
+The script will install all dependencies and build the project.
+Just run the following command:
+```
+./scripts/ubuntu_setup.sh
+```
+
+### Other Platforms
+
+The project should also work on other UNIX-like systems.
+However, we only provide instructions for Ubuntu 22.04 and 24.04.
+We have also tested the project on
+ - macOS
+ - Arch Linux
+ - Manjaro Linux
+
 ## Developing
 
 In order to develop on the project, it is best to use the provided `Dockerfile` to create a development environment.

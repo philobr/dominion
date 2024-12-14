@@ -49,7 +49,7 @@ namespace server
         static std::shared_ptr<MessageInterface> _message_interface;
 
         // connect new clients
-        void connect(const std::string &url, const uint16_t port);
+        void connect(const uint16_t port);
 
         // function that listens to new clients
         static void listenerLoop();

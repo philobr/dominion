@@ -33,11 +33,13 @@ namespace client
         // Window background iamge
         const wxString WINDOW_BACKGROUND_PATH = "assets/Background.png";
         const wxColour DEFAULT_PANEL_BACKGROUND = wxColour(255, 200, 100); // light orange
+        const wxColour EMPTY_PANEL_BACKGROUND = wxColour(200, 200, 200); // light gray
 
         // Victory screen formatting constants
         const wxSize VICTORY_SCREEN_MIN_SIZE = wxSize(1200, -1);
         const wxSize VICTORY_SCREEN_IMAGE_SIZE = wxSize(500, 500);
         const wxSize VICTORY_SCREEN_TEXT_SIZE = wxSize(100, -1);
 
+        const unsigned int MAX_ENEMY_HAND_CARDS = 7;
     } // namespace formatting_constants
 } // namespace client

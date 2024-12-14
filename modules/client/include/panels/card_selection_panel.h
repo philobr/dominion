@@ -9,6 +9,9 @@
 #include <uiElements/single_card_panel.h>
 #include <uiElements/text_panel.h>
 
+#include <chrono>
+#include <random>
+
 namespace client
 {
 
@@ -55,6 +58,8 @@ namespace client
         void makeSelectable(SingleCardPanel *card_panel);
 
         void clickOnSelectableCard(SingleCardPanel *card_panel);
+
+        std::mt19937 rng = std::mt19937(std::chrono::steady_clock::now().time_since_epoch().count());
     };
 
 } // namespace client

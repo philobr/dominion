@@ -131,26 +131,17 @@ namespace client
 
         wxSize hand_card_size = formatting_constants::DEFAULT_HAND_CARD_SIZE;
 
-        // Create the hand panel
-        wxPanel *hand = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDefaultSize);
+        wxScrolledWindow *scrolledWindow = new wxScrolledWindow(this, wxID_ANY, wxDefaultPosition,
+                                                                wxSize(6 * card_width_borders + 30, 150), wxHSCROLL);
+        scrolledWindow->SetScrollRate(10, 0); // Set scroll rate in pixels
 
         // Create the sizer for the hand
         wxGridSizer *sizer = new wxGridSizer(1, hand_size, 0, 0);
-        sizer->SetMinSize(wxSize(5 * card_width_borders, 150));
-
-        // Set the sizer for the hand panel
-        hand->SetSizer(sizer);
-
-        // Set the size of the cards
-        if ( card_width_borders * hand_size > 724 ) {
-            // scale bigger hands
-            hand_card_size.SetWidth(724 / hand_size - 8);
-            hand_card_size.SetHeight(hand_card_size.GetWidth() / 4 * 5);
-        }
+        sizer->SetMinSize(wxSize(hand_size * card_width_borders, 150));
 
         // Add the cards to the hand
         for ( size_t i = 0; i < hand_size; i++ ) {
-            SingleCardPanel *card = new SingleCardPanel(hand, cards[i], hand_card_size, 5);
+            SingleCardPanel *card = new SingleCardPanel(scrolledWindow, cards[i], hand_card_size, 5);
             handPanels.push_back(card);
             bool is_action = shared::CardFactory::getCard(cards[i]).isAction();
 
@@ -165,8 +156,9 @@ namespace client
         }
 
         // Set the sizer for the hand panel
-        hand->Layout();
-        return hand;
+        scrolledWindow->SetSizer(sizer);
+        scrolledWindow->FitInside();
+        return scrolledWindow;
     }
 
     wxPanel *PlayerPanel::createDiscardPilePanel(const unsigned int discard_pile_size,
@@ -187,6 +179,9 @@ namespace client
         } else {
             DiscardPile = new PilePanel(DiscardPilePanel, shared::Pile(top_discard_card, discard_pile_size),
                                         formatting_constants::DEFAULT_BOARD_PILE_SIZE);
+            DiscardPile->makeClickable(wxEVT_RIGHT_UP,
+                                       [DiscardPile](wxMouseEvent & /*event*/)
+                                       { showCardPopup(DiscardPile, DiscardPile->getPile().card_id); });
         }
 
         // Create the sizer for the discard pile
@@ -210,8 +205,9 @@ namespace client
                                     // clear the selected cards to be ready for the next selection
                                     selectedCards.clear();
                                 });
-            confirmButton->Enable(false);
-            DiscardPileSizer->Add(confirmButton, 0, wxALIGN_CENTER, 4);
+            bool is_enabled = minCount == 0;
+            confirmButton->Enable(is_enabled);
+            DiscardPileSizer->Add(confirmButton, 0, wxALIGN_CENTER | wxBOTTOM, 5);
         }
 
 

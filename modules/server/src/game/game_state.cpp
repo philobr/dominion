@@ -111,17 +111,17 @@ namespace server
 
     void GameState::endTurn()
     {
-        getCurrentPlayer().endTurn();
+        auto &current_player = getCurrentPlayer();
+        const std::vector<shared::CardBase::id_t> &played_cards = board->getPlayedCards();
+        for ( const auto &card_id : played_cards ) {
+            current_player.add<shared::CardAccess::DISCARD_PILE>(card_id);
+        }
+        current_player.endTurn();
         switchPlayer();
         resetPhase();
-        board->resetPlayedCards();
+        board->clearPlayedCards();
 
-        bool turn_ended =
-                maybeSwitchPhase(); // a player might not have any action cards at the beginning of the action phase
-        if ( turn_ended ) {
-            LOG(ERROR) << "Tried to call " << FUNC_NAME << " twice in a row, this should NEVER happen.";
-            throw exception::UnreachableCode();
-        }
+        maybeSwitchPhase(); // a player might not have any action cards at the beginning of the action phase
     }
 
     std::vector<Player::id_t> GameState::getEnemyIDs(const Player::id_t &player_id) const
@@ -168,7 +168,7 @@ namespace server
         }
     }
 
-    bool GameState::maybeSwitchPhase()
+    void GameState::maybeSwitchPhase()
     {
         switch ( phase ) {
             case GamePhase::ACTION_PHASE:
@@ -177,17 +177,15 @@ namespace server
                          !getCurrentPlayer().hasType<shared::CardAccess::HAND>(shared::CardType::ACTION) ) {
                         phase = GamePhase::BUY_PHASE;
                     }
-                    return false;
                 }
+                break;
             case GamePhase::BUY_PHASE:
                 {
                     if ( getCurrentPlayer().getBuys() == 0 ) {
                         endTurn();
-                        return true;
-                    } else {
-                        return false;
                     }
                 }
+                break;
             case GamePhase::PLAYING_ACTION_CARD:
             default:
                 {
@@ -222,6 +220,27 @@ namespace server
         }
     }
 
+    void GameState::guaranteeNotPhase(const shared::PlayerBase::id_t &requestor_id,
+                                      const shared::CardBase::id_t &card_id, shared::GamePhase expected_phase,
+                                      const std::string &error_msg, const std::string &function_name)
+    {
+        if ( this->phase == expected_phase ) {
+            LOG(WARN) << "Player: \'" << requestor_id << "\' called " << function_name << " with card \'" << card_id
+                      << "\'. Expected to not be in \'" << toString(expected_phase) << "\'";
+            throw exception::OutOfPhase(error_msg + std::string(" while in ") + toString(phase));
+        }
+    }
+
+    void GameState::guaranteeNotPhase(const shared::PlayerBase::id_t &requestor_id, shared::GamePhase expected_phase,
+                                      const std::string &error_msg, const std::string &function_name)
+    {
+        if ( this->phase == expected_phase ) {
+            LOG(WARN) << "Player: \'" << requestor_id << "\' called " << function_name << ". Expected to not be in \'"
+                      << toString(expected_phase) << "\'";
+            throw exception::OutOfPhase(error_msg + std::string(" while in ") + toString(phase));
+        }
+    }
+
     void GameState::guaranteeIsCurrentPlayer(const shared::PlayerBase::id_t &requestor_id,
                                              const std::string &function_name)
     {
@@ -246,7 +265,7 @@ namespace server
         auto &player = getPlayer(requestor_id);
 
         auto treasure_cards = player.getType<shared::CardAccess::HAND>(shared::CardType::TREASURE);
-        player.move<shared::HAND, shared::PLAYED_CARDS>(treasure_cards);
+        player.take<shared::HAND>(treasure_cards);
         board->addToPlayedCards(treasure_cards);
 
         printSuccess(requestor_id, FUNC_NAME);

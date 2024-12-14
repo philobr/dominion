@@ -68,7 +68,7 @@ namespace server
         void addTreasure(unsigned int n) { treasure += n; }
 
         /**
-         * @brief Moves the played_cards & hand_cards to the discard_pile, then draws 5 cards again.
+         * @brief Moves the hand_cards to the discard_pile, then draws 5 cards again.
          */
         void endTurn();
 
@@ -76,7 +76,7 @@ namespace server
          * @brief Get the victory points of the player.
          *
          * This includes the draw_pile, discard_pile and hand_cards.
-         * This should only be called when played_cards and staged_cards are empty.
+         * This should only be called when staged_cards are empty.
          */
         int getVictoryPoints() const;
 
@@ -123,12 +123,28 @@ namespace server
         template <enum shared::CardAccess FROM, enum shared::CardAccess TO>
         inline void move(unsigned int n = 0);
 
+        /**
+         * @brief Removes a card with ID 'card_id' from the indicated pile.
+         * @return The same ID we passed in.
+         * @warning Throws
+         */
+        template <enum shared::CardAccess FROM>
+        inline shared::CardBase::id_t take(const shared::CardBase::id_t &card_id);
+
+        /**
+         * @brief Removes the card_ids 'cards' with card_id from the indicated pile.
+         * @return The same vector we passed in.
+         * @warning Throws
+         */
+        template <enum shared::CardAccess FROM>
+        inline std::vector<shared::CardBase::id_t> take(const std::vector<shared::CardBase::id_t> &cards);
+
     protected:
         /**
          * @brief Get all cards in the deck of the player.
          *
          * This includes the draw_pile, discard_pile and hand_cards.
-         * This should only be called when played_cards and staged_cards are empty.
+         * This should only be called when staged_cards are empty.
          */
         std::vector<shared::CardBase::id_t> getDeck() const;
 
@@ -162,29 +178,12 @@ namespace server
         template <enum shared::CardAccess TO, typename Iterator>
         inline void add(Iterator begin, Iterator end);
 
-        /**
-         * @brief Removes a card with ID 'card_id' from the indicated pile.
-         * @return The same ID we passed in.
-         * @warning Throws
-         */
-        template <enum shared::CardAccess FROM>
-        inline shared::CardBase::id_t take(const shared::CardBase::id_t &card_id);
 
         /**
-         * @brief Removes the card_ids 'cards' with card_id from the indicated pile.
-         * @return The same vector we passed in.
-         * @warning Throws
-         */
-        template <enum shared::CardAccess FROM>
-        inline std::vector<shared::CardBase::id_t> take(const std::vector<shared::CardBase::id_t> &cards);
-
-        /**
-         * @brief Removes min(n, pile.size()) cards from a pile.
+         * @brief Removes min(n, pile.size()) cards from a pile. If n == 0, pile.size() cards are taken.
          * Always takes the back, except for DRAW_PILE_TOP
          *
          * @tparam FROM, a pile from which we want to take cards
-         * @param n
-         * @return std::vector<shared::CardBase::id_t>
          */
         template <enum shared::CardAccess FROM>
         inline std::vector<shared::CardBase::id_t> take(unsigned int num_cards = 0);

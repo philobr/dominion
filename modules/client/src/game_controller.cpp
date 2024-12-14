@@ -274,11 +274,9 @@ namespace client
         ActionOrder &action_order = *msg->order;
         if ( typeid(action_order) == typeid(ActionPhaseOrder) ) {
             // TODO(#194) This will be combined with BuyPhaseOrder
-            LOG(WARN) << "Received ActionPhaseOrder, but this does not do anything yet";
             showGameScreen(std::move(msg->game_state));
         } else if ( typeid(action_order) == typeid(BuyPhaseOrder) ) {
             // TODO(#194) This will be combined with ActionPhaseOrder
-            LOG(WARN) << "Received BuyPhaseOrder, but this does not do anything yet";
             showGameScreen(std::move(msg->game_state));
         } else if ( typeid(action_order) == typeid(EndTurnOrder) ) {
             // TODO(#194) Remove this
@@ -291,7 +289,6 @@ namespace client
             return;
         } else if ( typeid(action_order) == typeid(ChooseFromStagedOrder) ) {
             // TODO(#195): Implement
-            LOG(WARN) << "Received ChooseFromStagedOrder, but this does not do anything yet";
             return;
         } else if ( typeid(action_order) == typeid(ChooseFromHandOrder) ) {
             LOG(DEBUG) << "Received a ChooseFromHandOrder";

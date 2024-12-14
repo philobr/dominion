@@ -27,13 +27,13 @@ namespace server
     {
         LOG(INFO) << "Running the server on " << host << ":" << port;
         sockpp::socket_initializer socket_initializer; // Required to initialise sockpp
-        this->connect(host, port);
+        this->connect(port);
     }
 
     ServerNetworkManager::~ServerNetworkManager() = default;
 
     // TODO: Why does this pass a URL when it is never used?
-    void ServerNetworkManager::connect(const std::string & /*url*/, const uint16_t port)
+    void ServerNetworkManager::connect(const uint16_t port)
     {
         this->_acc = sockpp::tcp_acceptor(port);
 
@@ -143,7 +143,7 @@ namespace server
             if ( req == nullptr ) {
                 // TODO: handle invalid message
                 LOG(ERROR) << "Failed to parse message";
-                throw std::runtime_error("Received an unparsable message");
+                return;
             }
 
             // check if this is a connection to a new player
@@ -152,6 +152,8 @@ namespace server
 
             _lobby_manager.handleMessage(req);
 
+                _lobby_manager.handleMessage(req);
+            }
         } catch ( const std::exception &e ) {
             LOG(ERROR) << FUNC_NAME << ": Failed to execute client request. Content was :\n"
                        << msg << std::endl

@@ -424,8 +424,9 @@ namespace server
                         {
                             const auto &enemy = game_state.getPlayer(enemy_id);
                             const auto hand_size = enemy.get<shared::HAND>().size();
+                      
 
-                            if ( hand_size <= 3 ) {
+                            if ( hand_size <= 3 || enemy.canBlock() ) {
                                 // no order for this player
                                 return std::unique_ptr<shared::ChooseFromHandOrder>(nullptr);
                             }

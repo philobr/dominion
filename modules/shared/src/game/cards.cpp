@@ -80,7 +80,6 @@ namespace shared
     //  REGISTER_CARD(Workshop, CardType::ACTION, 3);
     //  REGISTER_CARD(Vassal, CardType::ACTION, 3);
     //  REGISTER_CARD(Harbinger, CardType::ACTION, 3);
-    //  REGISTER_CARD(Poacher, CardType::ACTION, 4);
     //  REGISTER_CARD(Moneylender, CardType::ACTION, 4);
     //  REGISTER_CARD(Bureaucrat, CardType::ACTION | CardType::ATTACK, 4);
     //  REGISTER_CARD(Remodel, CardType::ACTION, 4);

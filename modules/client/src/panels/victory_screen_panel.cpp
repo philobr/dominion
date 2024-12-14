@@ -88,11 +88,11 @@ namespace client
     {
         // Get parent window chain until we find the main frame
         wxWindow* parent = GetParent();
-        while (parent && !parent->IsTopLevel()) {
+        while ((parent != nullptr) && !parent->IsTopLevel()) {
             parent = parent->GetParent();
         }
 
-        if (parent) {
+        if (parent != nullptr) {
             parent->Close(true);
         }
     }

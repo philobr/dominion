@@ -192,6 +192,39 @@ namespace server
             BEHAVIOUR_DONE;
         }
 
+        DEFINE_BEHAVIOUR(Poacher)
+        {
+            LOG_CALL;
+
+            if ( !action_decision.has_value() ) {
+                auto board = game_state.getBoard();
+                auto cards_to_discard = board->getEmptyPilesCount();
+                if ( cards_to_discard != 0) {
+                    return {game_state.getCurrentPlayerId(),
+                            std::make_unique<shared::ChooseFromHandOrder>(cards_to_discard, cards_to_discard,
+                                                                          shared::ChooseFromOrder::AllowedChoice::DISCARD)};
+                }
+            }
+
+            auto board = game_state.getBoard();
+            auto cards_to_discard = board->getEmptyPilesCount();
+
+            if ( cards_to_discard != 0 ) {
+                auto decision =
+                        helper::validateResponse(game_state, action_decision.value(), cards_to_discard, cards_to_discard);
+
+                if ( decision.cards.size() == 0 ) {
+                    BEHAVIOUR_DONE;
+                }
+
+                auto &affected_player = game_state.getCurrentPlayer();
+                for ( const auto &card_id : decision.cards ) {
+                    affected_player.move<shared::HAND, shared::DISCARD_PILE>(card_id);
+                }
+            }
+            BEHAVIOUR_DONE;
+        }
+
         DEFINE_BEHAVIOUR(TreasureMap)
         {
             LOG_CALL;

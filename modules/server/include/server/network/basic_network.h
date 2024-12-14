@@ -15,6 +15,7 @@ namespace server
     class BasicNetwork
     {
         inline static std::unordered_map<player_id_t, std::string> _player_id_to_address;
+        inline static std::unordered_map<player_id_t, std::string> _player_id_to_lobby_id;
         inline static std::unordered_map<std::string, sockpp::tcp_socket> _address_to_socket;
         inline static std::unordered_map<std::string, player_id_t> _address_to_player_id;
 
@@ -46,7 +47,8 @@ namespace server
          * @param player_id
          * @param address
          */
-        static bool addPlayerToAddress(const player_id_t &player_id, const std::string &address);
+        static bool addPlayerToAddress(const player_id_t &player_id, const std::string &lobby_id,
+                                       const std::string &address);
 
         /**
          * @brief Maps a network address to a socket.

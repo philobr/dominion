@@ -36,6 +36,15 @@ namespace client
         // Create a sizer to hold the player stuff
         wxBoxSizer *outersizer = new wxBoxSizer(wxHORIZONTAL);
 
+        // Set background colour
+        if ( phase == shared::GamePhase::ACTION_PHASE && is_active ) {
+            this->SetBackgroundColour(formatting_constants::ACTIVE_PLAYER_PANEL);
+        } else if ( phase == shared::GamePhase::ACTION_PHASE && confirm_button ) {
+            this->SetBackgroundColour(formatting_constants::ATTACKED_PLAYER_PANEL);
+        } else {
+            this->SetBackgroundColour(formatting_constants::INACTIVE_PLAYER_PANEL);
+        }
+
         // Set the minimum size of the panel
         size_t card_width_borders = hand_card_size.GetWidth() + 8;
         outersizer->SetMinSize(wxSize(7 * card_width_borders, 150));
@@ -112,8 +121,6 @@ namespace client
         DrawPileSizer->SetMinSize(wxSize(1 * hand_card_size.GetWidth(), 150));
         // Add the draw pile to the sizer
         DrawPileSizer->Add(DrawPile, 0, wxALIGN_CENTER, 4);
-
-        SetBackgroundColour(formatting_constants::DEFAULT_PANEL_BACKGROUND);
 
         // Set the sizer for the draw pile panel
         DrawPilePanel->SetSizer(DrawPileSizer);

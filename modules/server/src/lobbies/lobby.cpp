@@ -13,6 +13,14 @@ namespace server
         players.push_back(game_master);
     };
 
+    void Lobby::terminate(MessageInterface &message_interface)
+    {
+        auto results = game_interface->terminate();
+        message_interface.broadcast<shared::ResultResponseMessage>(players, lobby_id, true,
+                                                                   "The lobby crashed. Please restart your game.");
+        message_interface.broadcast<shared::EndGameBroadcastMessage>(players, lobby_id, results.getResults());
+    }
+
     void Lobby::handleMessage(MessageInterface &message_interface,
                               std::unique_ptr<shared::ClientToServerMessage> &message)
     {

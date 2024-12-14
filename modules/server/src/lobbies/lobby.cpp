@@ -5,6 +5,7 @@
 #include <shared/utils/assert.h>
 #include <shared/utils/logger.h>
 #include "server/network/basic_network.h"
+#include "server/network/message_interface.h"
 
 namespace server
 {
@@ -190,12 +191,15 @@ namespace server
         broadcastOrders(message_interface, start_orders);
     }
 
-    void Lobby::removePlayer(player_id_t &player_id)
+    void Lobby::removePlayer(player_id_t &player_id, MessageInterface &message_interface)
     {
         // Check if player is already in the lobby
         if ( playerInLobby(player_id) ) {
             LOG(INFO) << "Removing player: " << player_id << " from lobby: " << lobby_id;
             players.erase(std::find(players.begin(), players.end(), player_id));
+            if ( !gameRunning() ) {
+                message_interface.broadcast<shared::JoinLobbyBroadcastMessage>(players, lobby_id, players);
+            }
             return;
         }
         LOG(INFO) << "Tried removeing player: " << player_id << " from lobby: " << lobby_id

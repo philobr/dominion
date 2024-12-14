@@ -192,6 +192,39 @@ namespace server
             BEHAVIOUR_DONE;
         }
 
+        DEFINE_BEHAVIOUR(Poacher)
+        {
+            LOG_CALL;
+
+            if ( !action_decision.has_value() ) {
+                auto board = game_state.getBoard();
+                auto cards_to_discard = board->getEmptyPilesCount();
+                if ( cards_to_discard != 0) {
+                    return {game_state.getCurrentPlayerId(),
+                            std::make_unique<shared::ChooseFromHandOrder>(cards_to_discard, cards_to_discard,
+                                                                          shared::ChooseFromOrder::AllowedChoice::DISCARD)};
+                }
+            }
+
+            auto board = game_state.getBoard();
+            auto cards_to_discard = board->getEmptyPilesCount();
+
+            if ( cards_to_discard != 0 ) {
+                auto decision =
+                        helper::validateResponse(game_state, requestor_id, action_decision.value(), cards_to_discard, cards_to_discard);
+
+                if ( decision.cards.size() == 0 ) {
+                    BEHAVIOUR_DONE;
+                }
+
+                auto &affected_player = game_state.getCurrentPlayer();
+                for ( const auto &card_id : decision.cards ) {
+                    affected_player.move<shared::HAND, shared::DISCARD_PILE>(card_id);
+                }
+            }
+            BEHAVIOUR_DONE;
+        }
+
         DEFINE_BEHAVIOUR(TreasureMap)
         {
             LOG_CALL;
@@ -260,7 +293,7 @@ namespace server
             BEHAVIOUR_DONE;
         }
 
-        DEFINE_TEMPLATED_BEHAVIOUR(GainCardMaxCost, int, max_cost)
+        DEFINE_TEMPLATED_BEHAVIOUR(GainCardMaxCostHand, int, max_cost)
         {
             LOG_CALL;
 
@@ -286,6 +319,38 @@ namespace server
 
             const auto chosen_card_id = gain_decision->chosen_card;
             game_state.tryGain<shared::HAND>(requestor_id, chosen_card_id);
+
+            BEHAVIOUR_DONE;
+        }
+
+        DEFINE_TEMPLATED_BEHAVIOUR(GainCardMaxCostDiscard, int, max_cost)
+        {
+            LOG_CALL;
+
+            const bool has_action_decision = action_decision.has_value();
+            const auto cur_player_id = game_state.getCurrentPlayerId();
+
+            if (!has_action_decision) {
+                // choose any card
+                return { cur_player_id, std::make_unique<shared::GainFromBoardOrder>(max_cost) };
+            }
+
+            auto* gain_decision = dynamic_cast<shared::GainFromBoardDecision*>(action_decision.value().get());
+            if (gain_decision == nullptr) {
+                const auto* decision_ptr = action_decision.value().get();
+                if (decision_ptr != nullptr) {
+                    LOG(ERROR) << FUNC_NAME
+                        << " got a wrong decision type! expected: shared::GainFromBoardDecision, got: "
+                        << typeid(*decision_ptr).name();
+                }
+                else {
+                    LOG(ERROR) << FUNC_NAME << " got a null pointer for action decision!";
+                }
+                throw std::runtime_error("Decision type is not allowed!");
+            }
+
+            const auto chosen_card_id = gain_decision->chosen_card;
+            game_state.tryGain<shared::DISCARD_PILE>(cur_player_id, chosen_card_id);
 
             BEHAVIOUR_DONE;
         }
@@ -354,6 +419,39 @@ namespace server
 
             BEHAVIOUR_DONE;
         }
+
+        DEFINE_BEHAVIOUR(Remodel)
+        {
+            LOG_CALL;
+
+            const bool has_action_decision = action_decision.has_value();
+            const auto player_id = game_state.getCurrentPlayerId();
+            auto &player = game_state.getCurrentPlayer();
+
+            if ( !has_action_decision ) {
+                return {player_id,
+                        std::make_unique<shared::ChooseFromHandOrder>(1, 1,
+                                                                      shared::ChooseFromOrder::AllowedChoice::TRASH)};
+            }
+
+            if ( dynamic_cast<shared::DeckChoiceDecision *>(action_decision.value().get()) != nullptr ) {
+                auto trash_decision = helper::validateResponse(game_state, requestor_id, action_decision.value(), 1, 1);
+
+                const auto card_id = trash_decision.cards.at(0);
+                player.move<shared::CardAccess::HAND, shared::CardAccess::TRASH>(card_id);
+                game_state.getBoard()->trashCard("card_id");
+                const auto max_cost = shared::CardFactory::getCost(card_id) + 2;
+                return {player_id, std::make_unique<shared::GainFromBoardOrder>(max_cost)};
+
+            } else if ( auto *card_choice =
+                                dynamic_cast<shared::GainFromBoardDecision *>(action_decision.value().get()) ) {
+                auto card_id = card_choice->chosen_card;
+                game_state.tryGain<shared::DISCARD_PILE>(player_id, card_id);
+            }
+
+            BEHAVIOUR_DONE;
+        }
+
 
         DEFINE_TEMPLATED_BEHAVIOUR(TrashCards, int, num_cards)
         {

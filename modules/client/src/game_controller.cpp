@@ -396,7 +396,7 @@ namespace client
     {
         // TODO(#125): Unfortunately, this is currently still used to update
         // the game state of the players that are not the active player.
-        LOG(WARN) << "Received GameStateMessage, this is deprecated";
+        // In the future combining all ActionOrderMessages and this should be the goal
         if ( _isChoosingCards ) {
             LOG(INFO) << "Received GameStateMessage while choosing cards, ignoring";
             return;

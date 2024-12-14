@@ -71,18 +71,22 @@ wxThread::ExitCode ClientListener::Entry()
             } catch ( std::exception &e ) {
                 // Make sure the connection isn't terminated only because of a read error
                 LOG(ERROR) << "Network error: " << e.what();
+                wxGetApp().getController().showError("Connection lost",
+                                                     "Not connected to a server. Check your internet connection or whether the "
+                                                     "server is still running. Restart the client.");
             }
             // wxThread sleep function in milliseconds
             Sleep(5);
         }
 
         LOG(ERROR) << "Network error. Read error, shutting down Listener";
-        wxGetApp().getController().showError("Connection lost",
-                                             "Not connected to a server. Check your internet connection or whether the "
-                                             "server is still running. Restart the client.");
+        wxGetApp().getController().showStatus("Not connection");
 
     } catch ( const std::exception &e ) {
         LOG(ERROR) << "Network error. Error in listener thread: " << std::string(e.what());
+        wxGetApp().getController().showError("Connection lost",
+                                             "Not connected to a server. Check your internet connection or whether the "
+                                             "server is still running. Restart the client.");
     }
 
     LOG(INFO) << "Exited Listener";

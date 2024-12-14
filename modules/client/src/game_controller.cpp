@@ -57,7 +57,7 @@ namespace client
     }
 
     GameController::GameController(GuiEventReceiver *event_receiver) :
-        _guiEventReceiver(event_receiver), _clientState(ClientState::LOGIN_SCREEN)
+        _guiEventReceiver(event_receiver), _clientState(ClientState::LOGIN_SCREEN), _isChoosingCards(false)
     {}
 
     void GameController::createLobby()
@@ -210,6 +210,7 @@ namespace client
                                                   std::vector<shared::ChooseFromOrder::AllowedChoice> choices)
     {
         LOG(DEBUG) << "Confirming selection";
+        _isChoosingCards = false;
         std::unique_ptr<shared::ActionDecision> decision(new shared::DeckChoiceDecision(selected_cards, choices));
 
         // TODO (#120) Implement in_response_to
@@ -265,6 +266,11 @@ namespace client
             return;
         }
 
+        if ( _isChoosingCards ) {
+            LOG(INFO) << "Received ActionOrderMessage while choosing cards, ignoring";
+            return;
+        }
+
         ActionOrder &action_order = *msg->order;
         if ( typeid(action_order) == typeid(ActionPhaseOrder) ) {
             // TODO(#194) This will be combined with BuyPhaseOrder
@@ -289,6 +295,7 @@ namespace client
             return;
         } else if ( typeid(action_order) == typeid(ChooseFromHandOrder) ) {
             LOG(DEBUG) << "Received a ChooseFromHandOrder";
+            _isChoosingCards = true;
             showChooseFromHandOrder(std::move(msg->game_state),
                                     std::move(*dynamic_cast<ChooseFromHandOrder *>(&action_order)));
             return;
@@ -390,6 +397,10 @@ namespace client
         // TODO(#125): Unfortunately, this is currently still used to update
         // the game state of the players that are not the active player.
         LOG(WARN) << "Received GameStateMessage, this is deprecated";
+        if ( _isChoosingCards ) {
+            LOG(INFO) << "Received GameStateMessage while choosing cards, ignoring";
+            return;
+        }
         showGameScreen(std::move(msg->game_state));
     }
 

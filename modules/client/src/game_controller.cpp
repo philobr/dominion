@@ -389,7 +389,7 @@ namespace client
     {
         // TODO(#125): Unfortunately, this is currently still used to update
         // the game state of the players that are not the active player.
-        LOG(WARN) << "Received GameStateMessage, this is deprecated";
+        // LOG(WARN) << "Received GameStateMessage, this is deprecated";
         showGameScreen(std::move(msg->game_state));
     }
 

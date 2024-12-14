@@ -516,27 +516,14 @@ namespace server
         {
             LOG_CALL;
             // check if anything has to be done
-            unsigned count = 0;
-            for ( const auto &player_id : game_state.getAllPlayerIDs() ) {
-                if ( player_id == requestor_id ) {
-                    continue;
-                }
-                auto &affected_player = game_state.getPlayer(player_id);
-                if ( affected_player.get<shared::HAND>().size() > 3 && !affected_player.canBlock() ) {
-                  count++;
-                }
-            }
-            if (count == 0) {
-                BEHAVIOUR_DONE;
-            }
             if ( !action_decision.has_value() ) {
-                return helper::sendAttackToEnemies(
+                auto order = helper::sendAttackToEnemies(
                         game_state,
                         [this](GameState &game_state, const shared::PlayerBase::id_t &enemy_id)
                         {
                             const auto &enemy = game_state.getPlayer(enemy_id);
                             const auto hand_size = enemy.get<shared::HAND>().size();
-                      
+
 
                             if ( hand_size <= 3 || enemy.canBlock() ) {
                                 // no order for this player
@@ -551,6 +538,15 @@ namespace server
                                     n_cards_to_discard, n_cards_to_discard,
                                     shared::ChooseFromOrder::AllowedChoice::TRASH);
                         });
+
+                bool has_no_orders = std::all_of(order.begin(), order.end(),
+                                                 [](const auto &map_entry) { return map_entry.second == nullptr; });
+
+                if ( has_no_orders ) {
+                    BEHAVIOUR_DONE;
+                } else {
+                    return order;
+                }
             }
 
             auto enemy_iter = this->expect_response.find(requestor_id);

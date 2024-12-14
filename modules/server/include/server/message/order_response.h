@@ -47,6 +47,11 @@ public:
     OrderResponse &operator=(OrderResponse &&) noexcept = default;
     ~OrderResponse() = default;
 
+    auto begin() const { return response_map.begin(); }
+    auto begin() { return response_map.begin(); }
+    auto end() const { return response_map.end(); }
+    auto end() { return response_map.end(); }
+
     /**
      * @brief Check if the game is over.
      *

@@ -1,6 +1,7 @@
 #include "client_listener.h"
 #include <cerrno>
 #include <cstddef>
+#include <dominion.h>
 #include <shared/utils/logger.h>
 #include <unistd.h>
 #include "client_network_manager.h"
@@ -76,6 +77,9 @@ wxThread::ExitCode ClientListener::Entry()
         }
 
         LOG(ERROR) << "Network error. Read error, shutting down Listener";
+        wxGetApp().getController().showError("Connection lost",
+                                             "Not connected to a server. Check your internet connection or whether the "
+                                             "server is still running. Restart the client.");
 
     } catch ( const std::exception &e ) {
         LOG(ERROR) << "Network error. Error in listener thread: " << std::string(e.what());

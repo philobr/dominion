@@ -1,5 +1,6 @@
 
 #include <server/lobbies/lobby_manager.h>
+#include "server/network/basic_network.h"
 
 namespace server
 {
@@ -33,17 +34,22 @@ namespace server
 
         auto &lobby = games.at(lobby_id);
         try {
-            lobby->handleMessage(*(message_interface), message);
+            lobby->handleMessage(*message_interface, message);
         } catch ( std::exception &e ) {
             // the lobby only throws if we can not recover
             LOG(ERROR) << "Lobby: \'" << lobby_id
-                       << "\' had a fatal error while handling a message. Shutting down the lobby.";
+                       << "\' had a fatal error while handling a message. Error: " << e.what()
+                       << "\nShutting down the lobby now...";
 
-            auto players = lobby->getPlayers(); // storing the players to send messages
-            auto lobby_it = games.find(lobby_id);
-            games.erase(lobby_it);
+            std::string error_msg = "Fatal error while handling message";
+            lobby->terminate(*message_interface, error_msg);
+            games.erase(games.find(lobby_id));
+            return;
+        }
 
-            // TODO: new message type needed i guess?
+        if ( lobby->isGameOver() ) {
+            LOG(DEBUG) << "Game finished in lobby: \'" << lobby_id << "\'. Deleting the lobby.";
+            games.erase(games.find(lobby_id));
         }
     }
 
@@ -83,4 +89,34 @@ namespace server
         message_interface->send<shared::CreateLobbyResponseMessage>(game_master_id, lobby_id, available_cards,
                                                                     request->message_id);
     };
+
+    void LobbyManager::removePlayer(std::string &lobby_id, player_id_t &player_id)
+    {
+        // other messages get forwarded to the lobby
+        if ( !lobbyExists(lobby_id) ) {
+            LOG(WARN) << "Tried removing player: " << player_id << " from inexistent lobby: " << lobby_id;
+            return;
+        }
+        // get the lobby that the player should be removed from
+        auto &lobby = games.at(lobby_id);
+
+        if ( lobby->gameRunning() ) {
+            // Remove the player from the lobby
+            lobby->removePlayer(player_id);
+            LOG(INFO) << "Removed player " << player_id << " from lobby";
+
+            // End the game for the remaining players and remove the game
+            std::string error_msg = "Player " + player_id + " disconnected, closing the lobby";
+            lobby->terminate(*message_interface, error_msg);
+            games.erase(games.find(lobby_id));
+        } else {
+            // if lobby is in login screen, just remove the player
+            lobby->removePlayer(player_id);
+
+            // if lobby is empty, remove it
+            if ( lobby->getPlayers().size() == 0 ) {
+                games.erase(games.find(lobby_id));
+            }
+        }
+    }
 } // namespace server

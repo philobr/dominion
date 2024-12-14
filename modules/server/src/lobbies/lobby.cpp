@@ -1,8 +1,10 @@
 
+#include <algorithm>
 #include <server/lobbies/lobby.h>
 #include <shared/game/game_state/board_base.h>
 #include <shared/utils/assert.h>
 #include <shared/utils/logger.h>
+#include "server/network/basic_network.h"
 
 namespace server
 {
@@ -12,6 +14,14 @@ namespace server
         LOG(INFO) << "Lobby constructor called with lobby_id: " << lobby_id;
         players.push_back(game_master);
     };
+
+    void Lobby::terminate(MessageInterface &message_interface, std::string &error_msg)
+    {
+        auto results = game_interface->terminate();
+        message_interface.broadcast<shared::ResultResponseMessage>(
+                players, lobby_id, true, "The lobby closed. Please restart your game.", error_msg);
+        message_interface.broadcast<shared::EndGameBroadcastMessage>(players, lobby_id, results.getResults());
+    }
 
     void Lobby::handleMessage(MessageInterface &message_interface,
                               std::unique_ptr<shared::ClientToServerMessage> &message)
@@ -176,5 +186,17 @@ namespace server
         message_interface.broadcast<shared::StartGameBroadcastMessage>(players, lobby_id);
         auto start_orders = game_interface->startGame();
         broadcastOrders(message_interface, start_orders);
+    }
+
+    void Lobby::removePlayer(player_id_t &player_id)
+    {
+        // Check if player is already in the lobby
+        if ( playerInLobby(player_id) ) {
+            LOG(INFO) << "Removing player: " << player_id << " from lobby: " << lobby_id;
+            players.erase(std::find(players.begin(), players.end(), player_id));
+            return;
+        }
+        LOG(INFO) << "Tried removeing player: " << player_id << " from lobby: " << lobby_id
+                  << ", but player is not in lobby";
     }
 } // namespace server

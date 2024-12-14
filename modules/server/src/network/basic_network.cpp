@@ -1,6 +1,7 @@
 #include <server/network/basic_network.h>
 #include <shared/utils/logger.h>
-#include "shared/message_types.h"
+#include <string>
+#include "server/network/server_network_manager.h"
 
 namespace server
 {
@@ -51,7 +52,8 @@ namespace server
         return sendToAddress(message, address);
     }
 
-    bool BasicNetwork::addPlayerToAddress(const player_id_t &player_id, const std::string &address)
+    void BasicNetwork::addPlayerToAddress(const player_id_t &player_id, const std::string &lobby_id,
+                                          const std::string &address)
     {
         // check with shared lock
         {
@@ -86,6 +88,7 @@ namespace server
             LOG(INFO) << "Registering new client with ID: " << player_id;
             _player_id_to_address.emplace(player_id, address);
             _address_to_player_id.emplace(address, player_id);
+            _player_id_to_lobby_id.emplace(player_id, lobby_id);
         }
         return true;
     }
@@ -108,7 +111,12 @@ namespace server
         std::unique_lock<std::shared_mutex> lock(_rw_lock);
 
         if ( _address_to_player_id.find(address) != _address_to_player_id.end() ) {
-            _player_id_to_address.erase(_address_to_player_id.find(address)->second);
+            player_id_t player_id = _address_to_player_id.find(address)->second;
+            lock.unlock();
+            ServerNetworkManager::removePlayer(_player_id_to_lobby_id.find(player_id)->second, player_id);
+            lock.lock();
+            _player_id_to_lobby_id.erase(player_id);
+            _player_id_to_address.erase(player_id);
             _address_to_player_id.erase(address);
             _address_to_socket.erase(address);
             LOG(INFO) << "Player with Address " << address << " disconnected and resources released.";

@@ -376,6 +376,7 @@ namespace client
             case ClientState::IN_GAME:
                 if ( msg->success ) {
                     LOG(WARN) << "Received unexpected ResultResponseMessage while in running game";
+                    showError("Lobby closing", msg->additional_information.value_or("Unknown problem"));
                 } else {
                     showError("Error", msg->additional_information.value_or("Unknown error"));
                 }

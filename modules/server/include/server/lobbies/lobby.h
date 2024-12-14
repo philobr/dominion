@@ -69,7 +69,7 @@ namespace server
         /**
          * @brief Removes a player from the lobby
          */
-        void removePlayer(player_id_t &player_id);
+        void removePlayer(player_id_t &player_id, MessageInterface &message_interface);
 
         /**
          * @brief The game_interface gets initialised only when we start a game, so we can check if a game is already

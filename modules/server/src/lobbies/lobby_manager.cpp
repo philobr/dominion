@@ -102,7 +102,7 @@ namespace server
 
         if ( lobby->gameRunning() ) {
             // Remove the player from the lobby
-            lobby->removePlayer(player_id);
+            lobby->removePlayer(player_id, *message_interface);
             LOG(INFO) << "Removed player " << player_id << " from lobby";
 
             // End the game for the remaining players and remove the game
@@ -111,7 +111,7 @@ namespace server
             games.erase(games.find(lobby_id));
         } else {
             // if lobby is in login screen, just remove the player
-            lobby->removePlayer(player_id);
+            lobby->removePlayer(player_id, *message_interface);
 
             // if lobby is empty, remove it
             if ( lobby->getPlayers().size() == 0 || lobby->isGameMaster(player_id) ) {

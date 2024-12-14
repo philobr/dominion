@@ -372,6 +372,7 @@ namespace client
                 break;
             case ClientState::IN_LOBBY:
                 LOG(WARN) << "Received unexpected ResultResponseMessage while in lobby screen";
+                showError("Lobby closing", msg->additional_information.value_or("Unknown problem"));
                 break;
             case ClientState::IN_GAME:
                 if ( msg->success ) {

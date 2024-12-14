@@ -115,6 +115,9 @@ namespace server
 
             // if lobby is empty, remove it
             if ( lobby->getPlayers().size() == 0 || lobby->isGameMaster(player_id) ) {
+                LOG(INFO) << "Removing lobby: " << lobby_id;
+                std::string error_msg = "Game master quit, closing lobby, please restart your client";
+                lobby->terminate(*message_interface, error_msg);
                 games.erase(games.find(lobby_id));
             }
         }

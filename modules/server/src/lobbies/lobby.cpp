@@ -17,10 +17,12 @@ namespace server
 
     void Lobby::terminate(MessageInterface &message_interface, std::string &error_msg)
     {
-        auto results = game_interface->terminate();
         message_interface.broadcast<shared::ResultResponseMessage>(
                 players, lobby_id, true, "The lobby closed. Please restart your game.", error_msg);
-        message_interface.broadcast<shared::EndGameBroadcastMessage>(players, lobby_id, results.getResults());
+        if ( game_interface != nullptr ) {
+            auto results = game_interface->terminate();
+            message_interface.broadcast<shared::EndGameBroadcastMessage>(players, lobby_id, results.getResults());
+        }
     }
 
     void Lobby::handleMessage(MessageInterface &message_interface,

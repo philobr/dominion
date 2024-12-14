@@ -2,7 +2,7 @@
 
 # Print help message
 print_help() {
-    echo "Help Message Not Implemented Yet"
+    echo "This script is used to install all dependencies and then compile the dominion client and server on ubuntu 22.04"
 }
 
 

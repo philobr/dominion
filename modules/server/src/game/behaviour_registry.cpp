@@ -105,6 +105,8 @@ void server::BehaviourRegistry::initialiseBehaviours()
     insert<DrawCards<2>>("Moat");
     // gain any card costing up to 4
     insert<GainCardMaxCostDiscard<4>>("Workshop");
+    // discard a card per empty supply pile
+    insert<DrawCards<1>, GainActions<1>, GainCoins<1>, Poacher>("Poacher");
 
     auto gardens_filter = [](const shared::CardBase::id_t & /*card*/) -> bool { return true; };
     insertVictory<VictoryPointsPerNCards<1, 10, gardens_filter>>("Gardens");
@@ -131,8 +133,6 @@ void server::BehaviourRegistry::initialiseBehaviours()
 
     // look through discard pile, may put one card onto deck
     insert<DrawCards<1>, GainActions<1>, NOT_IMPLEMENTED_YET>("Harbinger");
-    // discard a card per empty supply pile
-    insert<DrawCards<1>, GainActions<1>, GainCoins<1>, NOT_IMPLEMENTED_YET>("Poacher");
     // enemies discard down to three
     insert<GainCoins<2>, NOT_IMPLEMENTED_YET>("Militia");
     // peek top 2 from deck, trash (and/or) discard any. return rest to draw pile in any order

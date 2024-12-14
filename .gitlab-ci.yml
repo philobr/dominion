@@ -34,7 +34,9 @@ test:
   stage: test
   image: ubuntu:22.04
   script:
-    - apt-get update && apt-get install -y clang cmake libwxgtk3.0-gtk3-dev
+    - apt-get update
+    - apt-get install debian-archive-keyring ubuntu-keyring
+    - apt-get install -y clang cmake libwxgtk3.0-gtk3-dev
     - mkdir -p build
     - cd build
     - cmake -DCMAKE_BUILD_TYPE=Debug ..

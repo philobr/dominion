@@ -103,11 +103,11 @@ namespace client
         sizer->SetMinSize(wxSize(num_cards * card_width_borders, 150));
 
         // Add the cards to the hand
-        for ( size_t i = 0; i < num_cards; i++ ) {
+        for ( const auto &card_id : cards ) {
             SingleCardPanel *card =
-                    new SingleCardPanel(scrolledWindow, cards[i], formatting_constants::DEFAULT_PLAYED_CARD_SIZE);
+                    new SingleCardPanel(scrolledWindow, card_id, formatting_constants::DEFAULT_PLAYED_CARD_SIZE);
             card->makeClickable(wxEVT_RIGHT_UP,
-                                [card](const wxMouseEvent & /*event*/) { showCardPopup(card, card->getCardName()); });
+                                [&card](const wxMouseEvent & /*event*/) { showCardPopup(card, card->getCardName()); });
 
             sizer->Add(card, 0, wxALL, 4);
         }
@@ -159,14 +159,13 @@ namespace client
 
         if ( game_state.reduced_player->getId() == game_state.active_player ) {
             if ( game_state.game_phase == GamePhase::ACTION_PHASE ) {
-                wxButton *endActionPhaseButton = createEndActionButton(buttonPanel);
-                verticalSizer->Add(endActionPhaseButton, 0, wxCENTER | wxALL, 5);
-            }
-            if ( game_state.game_phase == GamePhase::BUY_PHASE || game_state.game_phase == GamePhase::ACTION_PHASE ) {
-                wxButton *endTurnButton = createEndTurnButton(buttonPanel);
-                verticalSizer->Add(endTurnButton, 0, wxCENTER | wxALL, 5);
+                verticalSizer->Add(createEndActionButton(buttonPanel), 0, wxCENTER | wxALL, 5);
+                verticalSizer->Add(createEndTurnButton(buttonPanel), 0, wxCENTER | wxALL, 5);
+            } else if ( game_state.game_phase == GamePhase::BUY_PHASE ) {
+                verticalSizer->Add(createEndTurnButton(buttonPanel), 0, wxCENTER | wxALL, 5);
             }
         }
+
 
         // Set the sizer for the panel
         buttonPanel->SetSizer(verticalSizer);

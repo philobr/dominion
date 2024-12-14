@@ -46,7 +46,7 @@ namespace server
          * @param player_id
          * @param address
          */
-        static void addPlayerToAddress(const player_id_t &player_id, const std::string &address);
+        static bool addPlayerToAddress(const player_id_t &player_id, const std::string &address);
 
         /**
          * @brief Maps a network address to a socket.

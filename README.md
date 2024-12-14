@@ -3,7 +3,7 @@
   doMINION
 </h1>
 
-## Installing
+## Installation
 
 ### Ubuntu 24.04
 
@@ -47,6 +47,41 @@ We have also tested the project on
  - macOS
  - Arch Linux
  - Manjaro Linux
+
+## Running the Project
+
+After building the project, 2 executables are created:
+ - `client_exe`
+ - `server_exe`
+
+To get a list of all available options, run either of the executables with the
+`--help` flag.
+
+### Running Locally
+
+If you want to test the project locally, you can run the server and client on
+the same machine or on different machines in the same network.
+
+First, start the server:
+```bash
+./server_exe
+```
+
+Then, start anywhere from 2 to 4 clients
+```bash
+./client_exe
+```
+
+### Running on `se.nicolabruhin.com`
+
+If you like, you can also play a round of Dominion on our server.
+To do so, start the client with the following command:
+```bash
+./client_exe
+```
+
+You will be prompted to enter the server address.
+Just enter `se.nicolabruhin.com` and you are good to go.
 
 ## Developing
 

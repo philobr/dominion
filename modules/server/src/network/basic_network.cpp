@@ -94,7 +94,9 @@ namespace server
 
         if ( _address_to_player_id.find(address) != _address_to_player_id.end() ) {
             player_id_t player_id = _address_to_player_id.find(address)->second;
+            lock.unlock();
             ServerNetworkManager::removePlayer(_player_id_to_lobby_id.find(player_id)->second, player_id);
+            lock.lock();
             _player_id_to_lobby_id.erase(player_id);
             _player_id_to_address.erase(player_id);
             _address_to_player_id.erase(address);

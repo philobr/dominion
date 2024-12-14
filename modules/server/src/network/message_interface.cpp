@@ -11,7 +11,7 @@ namespace server
     {
         std::string msg = message.toJson();
 
-        LOG(INFO) << "Message Interface sending: " << msg;
+        LOG(INFO) << "Message Interface sending: " << msg << " to player: " << player_id;
         BasicNetwork::sendToPlayer(msg, player_id);
     }
 

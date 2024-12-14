@@ -101,6 +101,7 @@ namespace server
         if( lobby->gameRunning() ){
             // Remove the player from the lobby
             lobby->removePlayer(player_id);
+            LOG(INFO) << "Removed player " << player_id << " from lobby";
 
             // End the game for the remaining players and remove the game
             lobby->terminate(*message_interface);

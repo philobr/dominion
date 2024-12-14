@@ -19,7 +19,7 @@ namespace server
     {
         auto results = game_interface->terminate();
         message_interface.broadcast<shared::ResultResponseMessage>(players, lobby_id, true,
-                                                                   "The lobby crashed. Please restart your game.");
+                                                                   "The lobby closed. Please restart your game.");
         message_interface.broadcast<shared::EndGameBroadcastMessage>(players, lobby_id, results.getResults());
     }
 

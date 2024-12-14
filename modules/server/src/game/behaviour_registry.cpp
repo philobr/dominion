@@ -83,6 +83,7 @@ void server::BehaviourRegistry::initialiseBehaviours()
     insert<SeaHag>("Sea_Hag");
     insertVictory<ConstantVictoryPoints<1>, DrawCards<1>, GainActions<1>>("Great_Hall");
     insert<TreasureMap>("Treasure_Map");
+    insert<Remodel>("Remodel");
 
     // money cards
     insert<GainCoins<2>, TreasureTrove>("Treasure_Trove");

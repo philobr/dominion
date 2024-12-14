@@ -376,7 +376,8 @@ namespace server
 
                 const auto card_id = trash_decision.cards.at(0);
                 player.move<shared::CardAccess::HAND, shared::CardAccess::TRASH>(card_id);
-                const auto max_cost = shared::CardFactory::getCost(card_id) + 23;
+                game_state.getBoard()->trashCard("card_id");
+                const auto max_cost = shared::CardFactory::getCost(card_id) + 2;
                 return {player_id, std::make_unique<shared::GainFromBoardOrder>(max_cost)};
 
             } else if ( auto *card_choice =

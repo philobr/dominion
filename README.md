@@ -11,7 +11,7 @@ First, install all dependencies of the project:
 ```
 apt-get update && apt-get install \
     cmake \
-    libwxgtk3.0-gtk3-dev
+    libwxgtk3.2-dev
 ```
 
 If you also want the development dependencies:
@@ -29,6 +29,7 @@ cd build
 cmake ..
 make
 ```
+
 
 ### Ubuntu 22.04
 

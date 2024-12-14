@@ -24,7 +24,8 @@ namespace server
             Behaviour() : finished_behaviour(false) {}
             virtual ~Behaviour() = default;
 
-            virtual ret_t apply(server::GameState &state, action_decision_t action_decision = std::nullopt) = 0;
+            virtual ret_t apply(server::GameState &state, const shared::PlayerBase::id_t &player_id,
+                                action_decision_t action_decision = std::nullopt) = 0;
 
             /**
              * @brief Can be called after a behaviour returns something from apply to check if its done or if there are

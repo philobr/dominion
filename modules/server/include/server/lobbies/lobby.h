@@ -63,7 +63,7 @@ namespace server
         /**
          * @brief Forcefully ends a players turn and returns the games results.
          */
-        void terminate(MessageInterface &message_interface);
+        void terminate(MessageInterface &message_interface, std::string &error_msg);
 
         /**
          * @brief Removes a player from the lobby

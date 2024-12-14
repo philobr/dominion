@@ -41,7 +41,8 @@ namespace server
                        << "\' had a fatal error while handling a message. Error: " << e.what()
                        << "\nShutting down the lobby now...";
 
-            lobby->terminate(*message_interface);
+            std::string error_msg = "Fatal error while handling message";
+            lobby->terminate(*message_interface, error_msg);
             games.erase(games.find(lobby_id));
             return;
         }
@@ -89,7 +90,8 @@ namespace server
                                                                     request->message_id);
     };
 
-    void LobbyManager::removePlayer(std::string &lobby_id, player_id_t &player_id){
+    void LobbyManager::removePlayer(std::string &lobby_id, player_id_t &player_id)
+    {
         // other messages get forwarded to the lobby
         if ( !lobbyExists(lobby_id) ) {
             LOG(WARN) << "Tried removing player: " << player_id << " from inexistent lobby: " << lobby_id;
@@ -98,20 +100,21 @@ namespace server
         // get the lobby that the player should be removed from
         auto &lobby = games.at(lobby_id);
 
-        if( lobby->gameRunning() ){
+        if ( lobby->gameRunning() ) {
             // Remove the player from the lobby
             lobby->removePlayer(player_id);
             LOG(INFO) << "Removed player " << player_id << " from lobby";
 
             // End the game for the remaining players and remove the game
-            lobby->terminate(*message_interface);
+            std::string error_msg = "Player " + player_id + " disconnected, closing the lobby";
+            lobby->terminate(*message_interface, error_msg);
             games.erase(games.find(lobby_id));
-        } else{
+        } else {
             // if lobby is in login screen, just remove the player
             lobby->removePlayer(player_id);
-            
+
             // if lobby is empty, remove it
-            if(lobby->getPlayers().size() == 0){
+            if ( lobby->getPlayers().size() == 0 ) {
                 games.erase(games.find(lobby_id));
             }
         }

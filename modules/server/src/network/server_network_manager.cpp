@@ -165,7 +165,8 @@ namespace server
         return BasicNetwork::sendToPlayer(message->toJson(), player_id);
     }
 
-    void ServerNetworkManager::removePlayer(std::string &lobby_id, player_id_t &player_id){
+    void ServerNetworkManager::removePlayer(std::string &lobby_id, player_id_t &player_id)
+    {
         _lobby_manager.removePlayer(lobby_id, player_id);
     }
 

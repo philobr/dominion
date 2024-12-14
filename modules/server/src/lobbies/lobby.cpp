@@ -15,11 +15,11 @@ namespace server
         players.push_back(game_master);
     };
 
-    void Lobby::terminate(MessageInterface &message_interface)
+    void Lobby::terminate(MessageInterface &message_interface, std::string &error_msg)
     {
         auto results = game_interface->terminate();
-        message_interface.broadcast<shared::ResultResponseMessage>(players, lobby_id, true,
-                                                                   "The lobby closed. Please restart your game.");
+        message_interface.broadcast<shared::ResultResponseMessage>(
+                players, lobby_id, true, "The lobby closed. Please restart your game.", error_msg);
         message_interface.broadcast<shared::EndGameBroadcastMessage>(players, lobby_id, results.getResults());
     }
 
@@ -188,13 +188,15 @@ namespace server
         broadcastOrders(message_interface, start_orders);
     }
 
-    void Lobby::removePlayer(player_id_t &player_id){
+    void Lobby::removePlayer(player_id_t &player_id)
+    {
         // Check if player is already in the lobby
         if ( playerInLobby(player_id) ) {
             LOG(INFO) << "Removing player: " << player_id << " from lobby: " << lobby_id;
             players.erase(std::find(players.begin(), players.end(), player_id));
             return;
         }
-        LOG(INFO) << "Tried removeing player: " << player_id << " from lobby: " << lobby_id << ", but player is not in lobby";
+        LOG(INFO) << "Tried removeing player: " << player_id << " from lobby: " << lobby_id
+                  << ", but player is not in lobby";
     }
 } // namespace server

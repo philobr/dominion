@@ -50,7 +50,8 @@ namespace server
         return sendToAddress(message, address);
     }
 
-    void BasicNetwork::addPlayerToAddress(const player_id_t &player_id, const std::string &lobby_id, const std::string &address)
+    void BasicNetwork::addPlayerToAddress(const player_id_t &player_id, const std::string &lobby_id,
+                                          const std::string &address)
     {
         // check with shared lock
         {

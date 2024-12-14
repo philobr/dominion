@@ -85,8 +85,7 @@ You will be prompted to enter the server address.
 Just enter `se.nicolabruhin.com` and you are good to go.
 
 ## Rules of the Game
-See [Dominion Strategy Wiki on Gameplay]
-(https://wiki.dominionstrategy.com/index.php/Gameplay) 
+See [Dominion Strategy Wiki on Gameplay](https://wiki.dominionstrategy.com/index.php/Gameplay) 
 for a very detailed description of the rules. 
 Some of which are entirely unnecessary for playing this game as they are only 
 featured in extensions of the base game that weren't implemented in this project.

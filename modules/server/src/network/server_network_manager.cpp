@@ -32,7 +32,6 @@ namespace server
 
     ServerNetworkManager::~ServerNetworkManager() = default;
 
-    // TODO: Why does this pass a URL when it is never used?
     void ServerNetworkManager::connect(const uint16_t port)
     {
         this->_acc = sockpp::tcp_acceptor(port);

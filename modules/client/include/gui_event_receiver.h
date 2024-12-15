@@ -18,7 +18,6 @@ namespace client
         GuiEventReceiver(Gui *gui);
         ~GuiEventReceiver() override = default;
 
-        // TODO: This is only a temporary solution and should be removed asap
         /**
          * @brief Get the Gui object
          */

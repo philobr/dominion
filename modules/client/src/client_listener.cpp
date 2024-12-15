@@ -21,17 +21,17 @@ wxThread::ExitCode ClientListener::Entry()
     try {
         char buffer[512]; // 512 bytes
         std::string leftover; // To store incomplete messages across reads
-        ssize_t count = 0;
+        sockpp::result<size_t> result;
 
         this->_connection->set_non_blocking();
 
         while ( this->isActive() ) {
             try {
-                count = this->_connection->read(buffer, sizeof(buffer));
+                result = this->_connection->read(buffer, sizeof(buffer));
                 // if you get a message, read it
-                if ( count > 0 ) {
+                if ( result.is_ok() ) {
                     // Append new data to leftover string
-                    leftover.append(buffer, count);
+                    leftover.append(buffer, result.value());
 
                     while ( !leftover.empty() ) {
 
@@ -62,7 +62,7 @@ wxThread::ExitCode ClientListener::Entry()
                             break;
                         }
                     }
-                } else if ( this->_connection->last_error() != EWOULDBLOCK ) {
+                } else if ( result.error().value() != EWOULDBLOCK ) {
                     // Connection Error
                     LOG(ERROR) << "Network error: Read error, shutting down Listener";
                     wxGetApp().getController().showError(

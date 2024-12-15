@@ -26,15 +26,15 @@ namespace server
 
             std::stringstream ss_msg;
             ss_msg << std::to_string(message.size()) << ':' << message; // prepend message length
-            ssize_t ret = socket->write(ss_msg.str()); // TODO: make this thread safe (wrapper class)
-            if ( ret < 0 ) {
+            sockpp::result<size_t> res = socket->write(ss_msg.str()); // TODO: make this thread safe (wrapper class)
+            if ( res.is_error() ) {
                 LOG(ERROR) << "Failed to send message to address: " << address
-                           << ". Socket error: " << socket->last_error_str();
+                           << ". Socket error: " << res.error_message();
             } else {
                 LOG(INFO) << "Successfully sent Message: " << message;
             }
 
-            return ret;
+            return ssize_t(res.value());
         } catch ( const std::runtime_error &e ) {
             LOG(ERROR) << "Error in sendMessage: " << e.what();
             return ssize_t(-1); // indicate failure

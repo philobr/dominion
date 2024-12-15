@@ -36,137 +36,179 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 # ---------------------------------------------------------------------------
 
-## CMake required version
-cmake_minimum_required(VERSION 3.5)
-cmake_policy(SET CMP0076 NEW)
+# --- CMake required version ---
 
-## project
-project(sockpp VERSION "0.7.0")
+cmake_minimum_required(VERSION 3.12)
 
-## library name
-set(SOCKPP sockpp)
-set(SOCKPP_STATIC ${SOCKPP}-static)
+# --- Project setup ---
+
+project(sockpp VERSION "2.0.0")
 
 # --- Build Options ---
 
-if(WIN32)
-	option(SOCKPP_BUILD_STATIC "Build static library" ON)
-	option(SOCKPP_BUILD_SHARED "Build shared library (DLL)" OFF)
-else()
-	option(SOCKPP_BUILD_STATIC "Build static library" OFF)
-	option(SOCKPP_BUILD_SHARED "Build shared library" ON)
-endif()
-
+option(SOCKPP_BUILD_SHARED "Build shared library" ON)
+option(SOCKPP_BUILD_STATIC "Build static library" OFF)
 option(SOCKPP_BUILD_EXAMPLES "Build example applications" OFF)
 option(SOCKPP_BUILD_TESTS "Build unit tests" OFF)
 option(SOCKPP_BUILD_DOCUMENTATION "Create Doxygen reference documentation" OFF)
+#option(SOCKPP_WITH_OPENSSL "TLS Secure Sockets with OpenSSL" OFF)
+#option(SOCKPP_WITH_MBEDTLS "TLS Secure Sockets with Mbed TLS" OFF)
+option(SOCKPP_WITH_CAN "Include support for Linux SocketCAN components" OFF)
 
-# --- C++14 build flags ---
+# ----- Find any dependencies -----
 
-set(CMAKE_CXX_STANDARD 14)
+if(SOCKPP_WITH_OPENSSL)
+	set(SOCKPP_WITH_TLS ON)
+	find_package(OpenSSL REQUIRED)
+elseif(SOCKPP_WITH_MBEDTLS)
+	set(SOCKPP_WITH_TLS ON)
+	find_package(MbedTLS REQUIRED)
+endif()
+
+# --- Setting naming variables ---
+
+set(SOCKPP_SHARED_LIBRARY sockpp)
+set(SOCKPP_STATIC_LIBRARY sockpp-static)
+set(SOCKPP_OBJECT_LIBRARY sockpp-objs)
+
+set(SOCKPP_INCLUDE_DIR ${PROJECT_SOURCE_DIR}/include)
+set(SOCKPP_GENERATED_DIR ${CMAKE_CURRENT_BINARY_DIR}/generated)
+
+# --- Project uses C++17 ---
+
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 # --- Generate a version header ---
 
 configure_file(
-	${CMAKE_CURRENT_SOURCE_DIR}/version.h.in  
-	generated/${SOCKPP}/version.h
+	${PROJECT_SOURCE_DIR}/cmake/version.h.in	
+	${SOCKPP_GENERATED_DIR}/include/sockpp/version.h
 	@ONLY
 )
 
-# --- Common Library Sources, etc ---
+# --- Common library sources, etc ---
 
 add_subdirectory(src)
 
-# --- Header Locations ---
-
-target_include_directories(sockpp-objs 
-	PUBLIC
-		$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-		$<INSTALL_INTERFACE:include>
-	PRIVATE 
-		${CMAKE_CURRENT_BINARY_DIR}/generated
-		src
-)
-
 # --- System libraries ---
+
+if(WIN32)
+	set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
+	set(LIBS_SYSTEM ws2_32)
+endif()
+
+# --- Collect the targets names ---
+
+if(${SOCKPP_BUILD_SHARED})
+	list(APPEND SOCKPP_TARGETS ${SOCKPP_SHARED_LIBRARY})
+endif()
+
+if(${SOCKPP_BUILD_STATIC})
+	list(APPEND SOCKPP_TARGETS ${SOCKPP_STATIC_LIBRARY})
+endif()
+
+# --- Create the libraries and export them ---
+
+if(NOT SOCKPP_TARGETS)
+	message(FATAL_ERROR "No targets are specified")
+endif()
+
+if(${SOCKPP_BUILD_SHARED})
+	message(STATUS "Creating shared library: ${SOCKPP_SHARED_LIBRARY}")
+	add_library(${SOCKPP_SHARED_LIBRARY} SHARED $<TARGET_OBJECTS:${SOCKPP_OBJECT_LIBRARY}>)
+
+	target_include_directories(${SOCKPP_SHARED_LIBRARY}
+		PUBLIC
+			$<BUILD_INTERFACE:${SOCKPP_INCLUDE_DIR}>
+			$<INSTALL_INTERFACE:include>
+		PRIVATE
+			${SOCKPP_GENERATED_DIR}/include
+	)
+
+	target_link_libraries(${SOCKPP_SHARED_LIBRARY} PUBLIC ${LIBS_SYSTEM})
+	if(SOCKPP_WITH_OPENSSL)
+		target_link_libraries(${SOCKPP_SHARED_LIBRARY} PUBLIC OpenSSL::SSL OpenSSL::Crypto)
+	endif()
+
+	set_target_properties(${SOCKPP_SHARED_LIBRARY} PROPERTIES
+		VERSION ${PROJECT_VERSION}
+		SOVERSION ${PROJECT_VERSION_MAJOR}
+	)
+
+	list(APPEND TARGET_FILES ${SOCKPP_SHARED_LIBRARY})
+endif()
+
+if(${SOCKPP_BUILD_STATIC})
+	message(STATUS "Creating static library: ${SOCKPP_STATIC_LIBRARY}")
+	add_library(${SOCKPP_STATIC_LIBRARY} STATIC $<TARGET_OBJECTS:${SOCKPP_OBJECT_LIBRARY}>)
+
+	target_include_directories(${SOCKPP_STATIC_LIBRARY}
+		PUBLIC
+			$<BUILD_INTERFACE:${SOCKPP_INCLUDE_DIR}>
+			$<INSTALL_INTERFACE:include>
+		PRIVATE
+			${SOCKPP_GENERATED_DIR}/include
+	)
+
+	target_link_libraries(${SOCKPP_STATIC_LIBRARY} PUBLIC ${LIBS_SYSTEM})
+	if(SOCKPP_WITH_OPENSSL)
+		target_link_libraries(${SOCKPP_STATIC_LIBRARY} PUBLIC OpenSSL::SSL OpenSSL::Crypto)
+	endif()
+
+	# On *nix systems, the static library can have the same base filename
+	# as the shared library, thus 'libsockpp.a' for the static lib.
+	# On Windows they need different names to tell the static lib from the
+	# DLL import library.
+	if(UNIX)
+		set_target_properties(${SOCKPP_STATIC_LIBRARY} PROPERTIES 
+			OUTPUT_NAME ${SOCKPP_SHARED_LIBRARY}
+		)
+	endif()
+
+	list(APPEND TARGET_FILES ${SOCKPP_STATIC_LIBRARY})
+endif()
+
+# --- Install Targets ---
 
 include(GNUInstallDirs)
 
-if(WIN32)
-	set(LIBS_SYSTEM ws2_32)
-elseif(APPLE)
-	set(CMAKE_SHARED_LIBRARY_SUFFIX ".so")
-elseif(UNIX)
-	set(LIBS_SYSTEM c stdc++)
-endif()
+install(TARGETS ${TARGET_FILES}
+	EXPORT sockpp-targets
+	ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+	LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+	RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+)
 
+install(EXPORT sockpp-targets
+	FILE
+		sockppTargets.cmake
+	NAMESPACE
+		Sockpp::
+	DESTINATION
+		${CMAKE_INSTALL_LIBDIR}/cmake/sockpp
+)
 
-## --- create the shared library ---
+include(CMakePackageConfigHelpers)
 
-if(SOCKPP_BUILD_SHARED)
-	message(STATUS "Creating shared library: ${SOCKPP}")
-
-	add_library(${SOCKPP} SHARED $<TARGET_OBJECTS:sockpp-objs>)
-
-    ## add dependencies to the shared library
-    target_link_libraries(${SOCKPP} ${LIBS_SYSTEM})
-
-	target_include_directories(${SOCKPP} 
-		PUBLIC 
-			$<TARGET_PROPERTY:sockpp-objs,INCLUDE_DIRECTORIES>
-		PRIVATE
-			${CMAKE_CURRENT_BINARY_DIR}/generated
-	)
-
-	set_target_properties(${SOCKPP} PROPERTIES
+write_basic_package_version_file(
+		${SOCKPP_GENERATED_DIR}/cmake/sockppConfigVersion.cmake
 		VERSION ${PROJECT_VERSION}
-		SOVERSION ${PROJECT_VERSION_MAJOR})
+		COMPATIBILITY AnyNewerVersion
+)
 
-	install(TARGETS ${SOCKPP}
-		ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
-		LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-		RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
+install(DIRECTORY include/ ${SOCKPP_GENERATED_DIR}/include/
+	DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+)
 
-endif()
-
-# --- Create the static library ---
-
-if(SOCKPP_BUILD_STATIC)
-	message(STATUS "Creating static library: ${SOCKPP_STATIC}")
-
-	add_library(${SOCKPP_STATIC} STATIC $<TARGET_OBJECTS:sockpp-objs>)
-
-    ## add dependencies to the static library
-    target_link_libraries(${SOCKPP_STATIC} ${LIBS_SYSTEM})
-
-	target_include_directories(${SOCKPP_STATIC} 
-		PUBLIC 
-			$<TARGET_PROPERTY:sockpp-objs,INCLUDE_DIRECTORIES>
-		PRIVATE
-			${CMAKE_CURRENT_BINARY_DIR}/generated
-	)
-
-	install(TARGETS ${SOCKPP}-static
-		ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
-		LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
-
-	# Let the archive use the same name as the shared library
-	if(UNIX)
-		set_target_properties(${SOCKPP_STATIC} PROPERTIES OUTPUT_NAME ${SOCKPP})
-	endif()
-endif()
-
-# --- Install the library ---
-
-install(DIRECTORY include/${SOCKPP}/
-	DESTINATION include/${SOCKPP}
-	FILES_MATCHING PATTERN "*.h*")
-
-install(DIRECTORY ${CMAKE_BINARY_DIR}/generated/${SOCKPP}/
-	DESTINATION include/${SOCKPP}
-	FILES_MATCHING PATTERN "*.h*")
+install(
+	FILES
+		${PROJECT_SOURCE_DIR}/cmake/sockppConfig.cmake
+		${SOCKPP_GENERATED_DIR}/cmake/sockppConfigVersion.cmake
+	DESTINATION
+		${CMAKE_INSTALL_LIBDIR}/cmake/sockpp
+)
 
 # --- Documentation ---
 
@@ -177,20 +219,15 @@ endif()
 # --- Default library for examples and unit tests ---
 
 if(SOCKPP_BUILD_SHARED)
-	set(SOCKPP_LIB ${SOCKPP})
+	set(SOCKPP_LIB ${SOCKPP_SHARED_LIBRARY})
 else()
-	set(SOCKPP_LIB ${SOCKPP_STATIC})
+	set(SOCKPP_LIB ${SOCKPP_STATIC_LIBRARY})
 endif()
 
-
-# --- Examples Applications ---
+# --- Example applications ---
 
 if(SOCKPP_BUILD_EXAMPLES)
-	add_subdirectory(examples/tcp)
-	add_subdirectory(examples/udp)
-	if(UNIX)
-		add_subdirectory(examples/unix)
-	endif()
+	add_subdirectory(examples)
 endif()
 
 # --- Unit Tests ---

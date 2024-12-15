@@ -1,9 +1,12 @@
-// exception.cpp
+// test_can_address.cpp
 //
+// Unit tests for the sockpp `can_address` class.
+//
+
 // --------------------------------------------------------------------------
 // This file is part of the "sockpp" C++ socket library.
 //
-// Copyright (c) 2014-2017 Frank Pagliughi
+// Copyright (c) 2023 Frank Pagliughi
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -35,55 +38,39 @@
 // --------------------------------------------------------------------------
 //
 
-#include "sockpp/exception.h"
-#include "sockpp/platform.h"
-#include <cstring>
+#include <string>
 
-// Used to explicitly ignore the returned value of a function call.
-#define ignore_result(x) if (x) {}
+#include "catch2_version.h"
+#include "sockpp/can_address.h"
 
+using namespace sockpp;
 using namespace std;
 
-namespace sockpp {
+// *** NOTE: The "vcan0:" virtual interface must be present. Set it up:
+//   $ ip link add type vcan && ip link set up vcan0
 
-/////////////////////////////////////////////////////////////////////////////
-
-sys_error::sys_error(int err) : runtime_error(error_str(err)), errno_(err)
-{
-}
+static const string IFACE{"vcan0"};
 
 // --------------------------------------------------------------------------
-// Get a string description of the specified system error.
 
-std::string sys_error::error_str(int err)
-{
-	char buf[1024];
-	buf[0] = '\x0';
+TEST_CASE("can_address default constructor", "[address]") {
+    can_address addr;
 
-	#if defined(_WIN32)
-		FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
-			NULL, err, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
-			buf, sizeof(buf), NULL);
-    #else
-    	#ifdef _GNU_SOURCE
-			auto s = strerror_r(err, buf, sizeof(buf));
-			return s ? std::string(s) : std::string();
-        #else
-            ignore_result(strerror_r(err, buf, sizeof(buf)));
-        #endif
-    #endif
-	return std::string(buf);
+    REQUIRE(!addr.is_set());
+    REQUIRE(addr.iface().empty());
+    REQUIRE(sizeof(sockaddr_can) == addr.size());
 }
 
-/////////////////////////////////////////////////////////////////////////////
+TEST_CASE("can_address iface constructor", "[address]") {
+    SECTION("valid interface") {
+        can_address addr(IFACE);
 
-getaddrinfo_error::getaddrinfo_error(int err, const string& hostname)
-    : runtime_error(gai_strerror(err)), error_(err), hostname_(hostname)
-{
+        REQUIRE(addr);
+        REQUIRE(addr.is_set());
+        REQUIRE(IFACE == addr.iface());
+        REQUIRE(sizeof(sockaddr_can) == addr.size());
+        REQUIRE(addr.index() > 0);
+    }
+
+    SECTION("invalid interface") { REQUIRE_THROWS(can_address("invalid")); }
 }
-
-
-/////////////////////////////////////////////////////////////////////////////
-// end namespace 'sockpp'
-}
-

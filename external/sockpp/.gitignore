@@ -1,7 +1,5 @@
-# build folder
-/cmake-build-debug
-
 # Directories for temporaries & build targets
+build/
 obj/
 lib/
 
@@ -46,3 +44,7 @@ lib/
 # SlickEdit files
 *.vpj
 
+# Misc
+fmt.sh
+
+.vscode/

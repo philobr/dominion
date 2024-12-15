@@ -51,7 +51,7 @@ We have also tested the project on
 
 ## Running the Project
 
-After building the project, 2 executables are created:
+After building the project (for example by using the compile.sh script in the "scripts" folder), 2 executables are created:
  - `client_exe`
  - `server_exe`
 

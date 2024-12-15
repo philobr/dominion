@@ -22,7 +22,6 @@ namespace server
         inline static std::shared_mutex _rw_lock;
 
     public:
-        // TODO:
         static void playerDisconnect(const std::string &address);
 
         /**

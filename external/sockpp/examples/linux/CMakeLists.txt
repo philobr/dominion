@@ -1,11 +1,12 @@
 # CMakeLists.txt
 #
-# Documentation CMake build file for the 'sockpp' library.
+# CMake file for the Linux SocketCAN sample applications in the 
+# 'sockpp' library.
 #
 # ---------------------------------------------------------------------------
 # This file is part of the "sockpp" C++ socket library.
 #
-# Copyright (c) 2018 Frank Pagliughi
+# Copyright (c) 2021 Frank Pagliughi
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -36,31 +37,27 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 # ---------------------------------------------------------------------------
 
+# --- Executables ---
 
-## documentation settings
-find_package(Doxygen)
-if(NOT DOXYGEN_FOUND)
-    message(FATAL_ERROR "Doxygen is needed to build the documentation.")
-endif()
-
-set(DOXYTARGETS)
-
-file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/doc)
-
-set(DOXYFILE_SRC Doxyfile.cmake)
-set(DOXYFILE ${CMAKE_CURRENT_BINARY_DIR}/${DOXYFILE_SRC})
-
-configure_file(${DOXYFILE_SRC} ${DOXYFILE} @ONLY)
-add_custom_target(
-    ${DOXYFILE_SRC}.target
-    COMMAND ${DOXYGEN_EXECUTABLE} ${DOXYFILE}
-    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-    COMMENT "Generating API documentation with Doxygen"
-    VERBATIM
+set(EXECUTABLES 
+	cantime
+	canrecv
 )
-set(DOXYTARGETS ${DOXYTARGETS} ${DOXYFILE_SRC}.target)
 
-add_custom_target(doc ALL DEPENDS ${DOXYTARGETS})
+foreach(EXECUTABLE ${EXECUTABLES})
+	add_executable(${EXECUTABLE} ${EXECUTABLE}.cpp)
+	
+	target_include_directories(${EXECUTABLE}
+		PUBLIC
+			${SOCKPP_INCLUDE_DIR}
+		PRIVATE
+			${SOCKPP_GENERATED_DIR}/include
+	)
 
-install(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/doc DESTINATION share)
+  target_link_libraries(${EXECUTABLE} ${SOCKPP_LIB})
+endforeach()
+
+# --- Install examples ---
+
+install(TARGETS ${EXECUTABLES} RUNTIME DESTINATION bin)
 

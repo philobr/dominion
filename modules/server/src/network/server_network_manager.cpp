@@ -26,7 +26,7 @@ namespace server
     void ServerNetworkManager::run(const std::string &host, uint16_t port)
     {
         LOG(INFO) << "Running the server on " << host << ":" << port;
-        sockpp::socket_initializer socket_initializer; // Required to initialise sockpp
+        sockpp::socket_initializer::initialize(); // Required to initialise sockpp
         this->connect(port);
     }
 
@@ -34,10 +34,10 @@ namespace server
 
     void ServerNetworkManager::connect(const uint16_t port)
     {
-        this->_acc = sockpp::tcp_acceptor(port);
-
-        if ( !_acc ) {
-            LOG(ERROR) << "Error creating the acceptor: " << _acc.last_error_str();
+        try {
+            this->_acc = sockpp::tcp_acceptor(port);
+        } catch ( const std::system_error &e ) {
+            LOG(ERROR) << "Error creating the acceptor: " << e.what();
             return;
         }
 
@@ -53,13 +53,15 @@ namespace server
             sockpp::inet_address peer;
 
             // Accept a new client connection
-            sockpp::tcp_socket sock = _acc.accept(&peer);
+            sockpp::result<sockpp::tcp_socket> result = _acc.accept(&peer);
             LOG(DEBUG) << "Received a connection request from peer(" << peer << ")";
 
-            if ( !sock ) {
-                LOG(ERROR) << "Error accepting incoming connection: " << _acc.last_error_str();
+            if ( result.is_error() ) {
+                LOG(ERROR) << "Error accepting incoming connection: " << result.error_message();
                 return;
             }
+
+            auto sock = result.release();
 
             const std::string address = sock.peer_address().to_string();
             BasicNetwork::addAddressToSocket(address, sock.clone());
@@ -75,15 +77,15 @@ namespace server
     // Once a message is fully received, the string is passed on to the 'handle_message()' function
     void ServerNetworkManager::readLoop(sockpp::tcp_socket socket, const handler &message_handler)
     {
-        sockpp::socket_initializer sockInit; // initializes socket framework
+        sockpp::socket_initializer::initialize(); // initializes socket framework
 
         constexpr size_t BUFFER_SIZE = 512;
         std::string buffer(BUFFER_SIZE, '\0');
-        ssize_t count = 0;
+        sockpp::result<size_t> result;
 
-        while ( (count = socket.read(buffer.data(), buffer.size())) > 0 ) {
+        while ( (result = socket.read(buffer.data(), buffer.size())).is_ok() && result.value() != 0 ) {
             try {
-                std::string_view read_data(buffer.data(), count);
+                std::string_view read_data(buffer.data(), result.value());
                 size_t separator_pos = read_data.find(':');
 
                 if ( separator_pos == std::string_view::npos ) {
@@ -102,10 +104,12 @@ namespace server
 
                 // read the remaining packages
                 while ( msg_bytes_read < msg_length ) {
-                    count = socket.read(buffer.data(), buffer.size());
-                    if ( count <= 0 ) {
+                    result = socket.read(buffer.data(), buffer.size());
+                    if ( result.is_error() || result.value() == 0 ) {
                         break; // end of stream or error
                     }
+
+                    size_t count = result.value();
 
                     message.append(buffer.data(), count);
                     msg_bytes_read += count;
@@ -123,9 +127,8 @@ namespace server
             }
         }
 
-        if ( count < 0 ) {
-            // negative count indicates error
-            LOG(ERROR) << "Read error [" << socket.last_error() << "]: " << socket.last_error_str();
+        if ( result.is_error() ) {
+            LOG(ERROR) << "Read error: " << result.error_message();
         }
 
         LOG(DEBUG) << "Closing connection to " << socket.peer_address();

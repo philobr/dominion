@@ -154,28 +154,19 @@ TEST(SharedLibraryTest, GameStateMessageEquality)
 
 TEST(SharedLibraryTest, CreateLobbyResponseMessageEquality)
 {
-    std::vector<CardBase::id_t> available_cards = {"Adventurer", "Bureaucrat",  "Cellar",     "Chapel", "CouncilRoom",
-                                                   "Festival",   "Gardens",     "Laboratory", "Market", "Militia",
-                                                   "Moat",       "Moneylender", "Remodel",    "Smithy", "Village",
-                                                   "Witch",      "Woodcutter",  "Workshop"};
-    CreateLobbyResponseMessage message1("game1", available_cards, "message0", "message1");
+    CreateLobbyResponseMessage message1("game1", "message0", "message1");
     ASSERT_EQ(message1, message1);
 
-    CreateLobbyResponseMessage message2("game1", available_cards, "message0", "message1");
+    CreateLobbyResponseMessage message2("game1", "message0", "message1");
     ASSERT_EQ(message1, message2);
 
-    CreateLobbyResponseMessage message3("game2", available_cards, "message0", "message1");
+    CreateLobbyResponseMessage message3("game2", "message0", "message1");
     ASSERT_NE(message1, message3);
 
-    CreateLobbyResponseMessage message4("game1", available_cards, "message0", "message2");
+    CreateLobbyResponseMessage message4("game1", "message0", "message2");
     ASSERT_NE(message1, message4);
 
-    std::vector<CardBase::id_t> available_cards2 = {"Adventurer", "Bureaucrat",  "Cellar",
-                                                    "Chapel",     "CouncilRoom", "Festival"};
-    CreateLobbyResponseMessage message5("game1", available_cards2, "message0", "message1");
-    ASSERT_NE(message1, message5);
-
-    CreateLobbyResponseMessage message6("game1", available_cards, "", "message1");
+    CreateLobbyResponseMessage message6("game1", "", "message1");
     ASSERT_NE(message1, message6);
 }
 

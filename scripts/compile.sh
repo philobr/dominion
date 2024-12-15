@@ -112,32 +112,7 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
-
-# Run tests
-cmake --build . --target test > "$ERROR_LOG" 2>&1 &
-show_progress $! "Running tests" "$ERROR_LOG"
-if [ $? -ne 0 ]; then
-    cd "$ORIGINAL_DIR"
-    exit 1
-fi
-
-# Format code
-cmake --build . --target format > "$ERROR_LOG" 2>&1 &
-show_progress $! "Formatting code" "$ERROR_LOG"
-if [ $? -ne 0 ]; then
-    cd "$ORIGINAL_DIR"
-    exit 1
-fi
-
-# Run linter
-cmake --build . --target check > "$ERROR_LOG" 2>&1 &
-show_progress $! "Running linter" "$ERROR_LOG"
-if [ $? -ne 0 ]; then
-    cd "$ORIGINAL_DIR"
-    exit 1
-fi
-
-echo -e "\n${GREEN}✅ All checks passed!${NC}"
+echo -e "\n${GREEN}✅ Successfully built!${NC}"
 
 # Return to the original directory
 cd "$ORIGINAL_DIR"

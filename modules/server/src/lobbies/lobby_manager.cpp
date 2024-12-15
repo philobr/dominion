@@ -83,11 +83,7 @@ namespace server
             return;
         }
 
-        std::vector<shared::CardBase::id_t> available_cards =
-                std::vector<shared::CardBase::id_t>(); // TODO implement available cards
-
-        message_interface->send<shared::CreateLobbyResponseMessage>(game_master_id, lobby_id, available_cards,
-                                                                    request->message_id);
+        message_interface->send<shared::CreateLobbyResponseMessage>(game_master_id, lobby_id, request->message_id);
     };
 
     void LobbyManager::removePlayer(std::string &lobby_id, player_id_t &player_id)

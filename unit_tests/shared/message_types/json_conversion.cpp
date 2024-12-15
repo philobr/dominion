@@ -42,8 +42,7 @@ TEST(SharedLibraryTest, GameStateMessageTwoWayConversion)
 
 TEST(SharedLibraryTest, CreateLobbyResponseMessageTwoWayConversion)
 {
-    std::vector<CardBase::id_t> available_cards = {"copper", "silver", "gold", "estate", "duchy", "province", "curse"};
-    CreateLobbyResponseMessage original_message("123", available_cards, std::nullopt);
+    CreateLobbyResponseMessage original_message("123", std::nullopt);
 
     std::string json = original_message.toJson();
 

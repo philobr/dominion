@@ -162,18 +162,6 @@ TEST(ServerLibraryTest, StartGame)
     LOBBY_MANAGER_CALL(valid_request);
 }
 
-
-/*
-
-
-####################################################################################################
-IF THIS IS STILL COMMENTED OUT WHEN YOU REVIEW THIS I PROBABLY FORGOT TO ADD IT BACK
--> DISABLED BECAUSE IT MIGHT (probably) CHANGE HOW CERTAIN STATES+ACTION_DECISIONS GET HANDLED
-####################################################################################################
-
-
-
-// TODO: those tests fail and i dont quite understand what they are supposed to do
 TEST(ServerLibraryTest, ReceiveAction)
 {
     std::shared_ptr<MockMessageInterface> message_interface = std::make_shared<MockMessageInterface>();
@@ -186,9 +174,6 @@ TEST(ServerLibraryTest, ReceiveAction)
     auto create_lobby = std::make_unique<shared::CreateLobbyRequestMessage>("123", player_1);
     auto join_lobby = std::make_unique<shared::JoinLobbyRequestMessage>("123", player_2);
 
-    std::vector<shared::CardBase::id_t> selected_cards = getValidKingdomCards();
-    auto start_lobby = std::make_unique<shared::StartGameRequestMessage>("123", player_1, selected_cards);
-
     LOBBY_MANAGER_CALL(create_lobby);
     LOBBY_MANAGER_CALL(join_lobby);
     // Finish setup
@@ -197,41 +182,29 @@ TEST(ServerLibraryTest, ReceiveAction)
     auto nonexistent_lobby_action = std::make_unique<shared::ActionDecisionMessage>(
             "456", player_1, std::make_unique<shared::PlayActionCardDecision>("Village"));
 
+    // ActionDecision for a player that is not in the lobby
+    auto player_not_in_lobby = std::make_unique<shared::ActionDecisionMessage>(
+            "123", player_3, std::make_unique<shared::BuyCardDecision>("Copper"));
+
     // ActionDecision for a game that hasn't started yet
     auto unstarted_game_action = std::make_unique<shared::ActionDecisionMessage>(
             "123", player_1, std::make_unique<shared::PlayActionCardDecision>("Village"));
 
-    // ActionDecision for a player that is not in the lobby
-    auto player_not_in_lobby = std::make_unique<shared::ActionDecisionMessage>(
-            "123", player_3, std::make_unique<shared::BuyCardDecision>("Village"));
-
-    // ActionDecision should be handled correctly
-    auto almost_correct_action = std::make_unique<shared::ActionDecisionMessage>(
-            "123", player_1, std::make_unique<shared::BuyCardDecision>("Village"));
-
     // First part of expected function calls of sendMessage
     {
         InSequence s;
-        // request4
+        // nonexistent_lobby_action
         EXPECT_CALL(*message_interface, sendMessage(IsFailureMessage(), player_1)).Times(1);
-        // request5
-        EXPECT_CALL(*message_interface, sendMessage(IsFailureMessage(), player_1)).Times(1);
-        // Start game messages
-        EXPECT_CALL(*message_interface, sendMessage(_, _)).Times(4);
-        // request6
+        // player_not_in_lobby
         EXPECT_CALL(*message_interface, sendMessage(IsFailureMessage(), player_3)).Times(1);
-        // request7
-        EXPECT_CALL(*message_interface, sendMessage(_, player_1)).Times(1);
+        // unstarted_game_action
+        EXPECT_CALL(*message_interface, sendMessage(IsFailureMessage(), player_1)).Times(1);
+        EXPECT_CALL(*message_interface, sendMessage(IsSuccessMessage(), player_1)).Times(1);
+        EXPECT_CALL(*message_interface, sendMessage(IsSuccessMessage(), player_2)).Times(1);
     }
 
     LOBBY_MANAGER_CALL(nonexistent_lobby_action);
-    auto casted_request5 = std::unique_ptr<shared::ClientToServerMessage>(unstarted_game_action.release());
-    EXPECT_THROW(lobby_manager.handleMessage(casted_request5), std::runtime_error);
-
-    LOBBY_MANAGER_CALL(start_lobby);
     LOBBY_MANAGER_CALL(player_not_in_lobby);
-    LOBBY_MANAGER_CALL(
-            almost_correct_action); // TODO: THIS WILL FAIL SOME DAY, CHECK IN GAME_INTERFACE::HANDLE_BUY_DECISION!
+    LOBBY_MANAGER_CALL(unstarted_game_action);
 }
-*/
 #undef LOBBY_MANAGER_CALL

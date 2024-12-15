@@ -164,11 +164,10 @@ namespace shared
     {
     public:
         ~CreateLobbyResponseMessage() override = default;
-        CreateLobbyResponseMessage(std::string game_id, std::vector<CardBase::id_t> available_cards,
-                                   std::optional<std::string> in_response_to = std::nullopt,
+        CreateLobbyResponseMessage(std::string game_id, std::optional<std::string> in_response_to = std::nullopt,
                                    std::string message_id = UuidGenerator::generateUuidV4()) :
             ServerToClientMessage(game_id, message_id),
-            available_cards(available_cards), in_response_to(in_response_to)
+            in_response_to(in_response_to)
         {}
         std::string toJson() const override;
         bool operator==(const CreateLobbyResponseMessage &other) const;

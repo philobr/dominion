@@ -38,13 +38,10 @@ static std::unique_ptr<GameStateMessage> parseGameStateMessage(const Document &j
 static std::unique_ptr<CreateLobbyResponseMessage>
 parseCreateLobbyResponse(const Document &json, const std::string &game_id, const std::string &message_id)
 {
-    std::vector<CardBase::id_t> available_cards;
-    GET_STRING_ARRAY_MEMBER(available_cards, json, "available_cards");
-
     std::optional<std::string> in_response_to;
     GET_OPTIONAL_STRING_MEMBER(in_response_to, json, "in_response_to");
 
-    return std::make_unique<CreateLobbyResponseMessage>(game_id, available_cards, in_response_to, message_id);
+    return std::make_unique<CreateLobbyResponseMessage>(game_id, in_response_to, message_id);
 }
 
 static std::unique_ptr<JoinLobbyBroadcastMessage>

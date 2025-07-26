@@ -3,6 +3,9 @@
   doMINION
 </h1>
 
+## Project description
+This project was part of the course [252-0232-00L - Software Engineering](https://www.vvz.ethz.ch/Vorlesungsverzeichnis/lerneinheit.view?lerneinheitId=181757&semkez=2024W&ansicht=LEHRVERANSTALTUNGEN&lang=en) at ETH Zurich. We developed this game in a team of 6 students on the ETHZ GitLab. This repository is a clone of the repository.
+
 ## Installation
 
 ### Ubuntu 24.04
